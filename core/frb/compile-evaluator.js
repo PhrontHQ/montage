@@ -288,7 +288,7 @@ var operators = Object.clone(Operators, 1);
 Object.addEach(operators, {
 
     property: function (object, key) {
-        return object[key];
+        return object ? object[key] : object;
     },
 
     get: function (collection, key) {
@@ -358,12 +358,18 @@ var semantics = compile.semantics = {
 
             return function (scope) {
 
-                for(var args = [], _argEvaluators = argEvaluators, i=0, countI = _argEvaluators.length;i<countI;i++) {
+                for(var args = [], _argEvaluators = argEvaluators, i=0, countI = _argEvaluators.length, definedCount=0;i<countI;i++) {
                     args.push(_argEvaluators[i](scope));
+                    if(Operators.defined(args[i])) {
+                        definedCount++;
+                    }
                 }
 
-                if (!args.every(Operators.defined))
+                // if (!args.every(Operators.defined))
+                //     return;
+                if (definedCount !== countI) {
                     return;
+                }
 
                 if(args.length === 1) {
                     return operator.call(null, args[0]);

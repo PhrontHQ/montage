@@ -110,7 +110,7 @@ exports.or = function (a, b) {
 };
 
 exports.defined = function (value) {
-    return value != null;
+    return value !== undefined;
 };
 
 // "startsWith", "endsWith", and "contains"  are overridden in
@@ -133,11 +133,11 @@ exports.contains = function (a, b) {
 };
 
 exports.join = function (a, b) {
-    return a.join(b || "");
+    return a ? a.join(b || "") : a;
 };
 
 exports.split = function (a, b) {
-    return a.split(b || "");
+    return a ? a.split(b || "") : a;
 };
 
 exports.range = function (stop) {
