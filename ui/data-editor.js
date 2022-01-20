@@ -179,7 +179,10 @@ exports.DataEditor = Component.specialize(/** @lends DataEditor# */ {
                     currentDataStream = this.dataStream,
                     dataStream,
                     self = this;
-                //console.debug(this.constructor.name+" fetchData() >>>>> setField('dataLoaded', false)");
+
+                console.debug("************** "+this.constructor.name+"["+Object.hash(this)+'].fetchData()');
+                console.debug("************** "+this.constructor.name+"["+Object.hash(this)+'].setField("dataLoaded", false)');
+
                 this.canDrawGate.setField("dataLoaded", false);
                 dataStream = dataService.fetchData(this._dataQuery);
 
@@ -201,7 +204,8 @@ exports.DataEditor = Component.specialize(/** @lends DataEditor# */ {
                     console.log("fetchData failed:",error);
                 })
                 .finally(() => {
-                        // this.canDrawGate.setField("dataLoaded", true);
+                    console.debug("************** "+this.constructor.name+"["+Object.hash(this)+'].setField("dataLoaded", true)');
+                    this.canDrawGate.setField("dataLoaded", true);
                 });
             }
         }
@@ -380,6 +384,9 @@ exports.DataEditor = Component.specialize(/** @lends DataEditor# */ {
         set: function (value) {
 
             if(value !== this._data) {
+
+                console.debug("************** "+this.constructor.name+"["+Object.hash(this)+'] data set()',value);
+
             /*
                 By checking for readExpressions, we assess wether the DataEditor has everything it needs with it's data, or, if it has readExpressions, then it means it needs a subgraph off data.
 
@@ -398,11 +405,10 @@ exports.DataEditor = Component.specialize(/** @lends DataEditor# */ {
             if(dataLoadedPromise) {
                 this.canDrawGate.setField("dataLoaded", false);
                 this._updateOwnerCanDrawGate();
-                // console.debug("************** "+this.constructor.name+"["+Object.hash(this)+'].setField("dataLoaded", false)');
-                // console.debug("************** "+this.constructor.name+"["+this.uuid+'].setField("dataLoaded", false)');
+                console.debug("************** "+this.constructor.name+"["+Object.hash(this)+'].setField("dataLoaded", false)');
                 dataLoadedPromise.then(() => {
                     this.canDrawGate.setField("dataLoaded", true);
-                    // console.debug("************** "+this.constructor.name+"["+Object.hash(this)+'].setField("dataLoaded", true)');
+                    console.debug("************** "+this.constructor.name+"["+Object.hash(this)+'].setField("dataLoaded", true)');
                     this._updateOwnerCanDrawGate();
                 });
 

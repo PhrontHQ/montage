@@ -12,8 +12,8 @@ exports.Main = Component.specialize(/** @lends Main# */{
                 this.mockService.fetchEmployees(),
                 this.mockService.fetchDepartments(),
                 this.mockService.fetchStores(),
-                this.mockService.fetchCustomers(),               
-                this.mockService.fetchSettings(),   
+                this.mockService.fetchCustomers(),
+                this.mockService.fetchSettings(),
             ];
 
             this.addEventListener('cascadingListPop', this, false);
@@ -61,7 +61,7 @@ exports.Main = Component.specialize(/** @lends Main# */{
                 } else if (object === this.root[3]) {
                     return 'montage/test/mocks/data/models/customer-ui-descriptor.mjson';
                 }
-            }    
+            }
         }
     },
 
@@ -88,7 +88,7 @@ exports.Main = Component.specialize(/** @lends Main# */{
             }
         }
     },
-   
+
     listItemWillUseIconComponentModuleIdForObjectAtRowIndex: {
         value: function (listItem, moduleId, object, rowIndex, list) {
             if (object === this.root[1]) {
@@ -132,7 +132,7 @@ exports.Main = Component.specialize(/** @lends Main# */{
                     this.cascadingList.expand(
                         cascadingListContext.object,
                         cascadingListContext.columnIndex,
-                        true
+                        true /* tells the cascading list that the upcoming panel / list item is editable */
                     );
                 }
             }
@@ -153,7 +153,7 @@ exports.Main = Component.specialize(/** @lends Main# */{
                     data.isNew = false;
                     this.root[0].push(data);
                 }
-                
+
                 this.cascadingList.expand(data);
             }
         }

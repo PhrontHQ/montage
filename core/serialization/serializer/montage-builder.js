@@ -36,7 +36,7 @@ var MontageBuilder = Montage.specialize(/** @lends MontageBuilder# */ {
     },
 
     init: {
-        value: function() {
+        value: function init() {
             this._references = Object.create(null);
             this._root = new MontageAst.Root();
             this._stack = [this._root];
@@ -46,7 +46,7 @@ var MontageBuilder = Montage.specialize(/** @lends MontageBuilder# */ {
     },
 
     cleanup: {
-        value: function() {
+        value: function cleanup() {
             this._references = null;
             this._root = null;
             this._stack = null;
@@ -54,7 +54,7 @@ var MontageBuilder = Montage.specialize(/** @lends MontageBuilder# */ {
     },
 
     getExternalReferences: {
-        value: function(oldLabel, newLabel) {
+        value: function getExternalReferences(oldLabel, newLabel) {
             var references = this._references,
                 root = this._root,
                 externalReferences = [];
@@ -74,7 +74,7 @@ var MontageBuilder = Montage.specialize(/** @lends MontageBuilder# */ {
     },
 
     relabelReferences: {
-        value: function(oldLabel, newLabel) {
+        value: function relabelReferences(oldLabel, newLabel) {
             var references = this._references[oldLabel];
 
             if (references) {
@@ -87,7 +87,7 @@ var MontageBuilder = Montage.specialize(/** @lends MontageBuilder# */ {
     },
 
     _registerReference: {
-        value: function(reference) {
+        value: function _registerReference(reference) {
             var references = this._references,
                 label = reference.value;
 
@@ -100,7 +100,7 @@ var MontageBuilder = Montage.specialize(/** @lends MontageBuilder# */ {
     },
 
     _unregisterReference: {
-        value: function(reference) {
+        value: function _unregisterReference(reference) {
             var label = reference.label,
                 labelReferences = this._references[label],
                 ix;
@@ -120,7 +120,7 @@ var MontageBuilder = Montage.specialize(/** @lends MontageBuilder# */ {
     },
 
     _createPlaceholdersForReferences: {
-        value: function() {
+        value: function _createPlaceholdersForReferences() {
             var references = this._references,
                 root = this._root;
 
@@ -135,7 +135,7 @@ var MontageBuilder = Montage.specialize(/** @lends MontageBuilder# */ {
     },
 
     getSerialization: {
-        value: function(indent) {
+        value: function getSerialization(indent) {
             this._createPlaceholdersForReferences();
 
             return this._root.serialize(indent);
@@ -155,31 +155,31 @@ var MontageBuilder = Montage.specialize(/** @lends MontageBuilder# */ {
     },
 
     push: {
-        value: function(value) {
+        value: function push(value) {
             return this._stack.unshift(value);
         }
     },
 
     pop: {
-        value: function() {
+        value: function pop() {
             return this._stack.shift();
         }
     },
 
     createObjectLiteral: {
-        value: function() {
+        value: function createObjectLiteral() {
             return new MontageAst.ObjectLiteral(this._root, Object.create(null));
         }
     },
 
     createArray: {
-        value: function() {
+        value: function createArray() {
             return new MontageAst.ObjectLiteral(this._root, []);
         }
     },
 
     createObjectReference: {
-        value: function(label) {
+        value: function createObjectReference(label) {
             var reference = new MontageAst.ObjectReference(this._root, label);
 
             this._registerReference(reference);
@@ -189,43 +189,43 @@ var MontageBuilder = Montage.specialize(/** @lends MontageBuilder# */ {
     },
 
     createRegExp: {
-        value: function(regexp) {
+        value: function createRegExp(regexp) {
             return new MontageAst.RegExpObject(this._root, regexp);
         }
     },
 
     createString: {
-        value: function(string) {
+        value: function createString(string) {
             return new MontageAst.Value(this._root, string);
         }
     },
 
     createDate: {
-        value: function(date) {
+        value: function createDate(date) {
             return new MontageAst.DateObject(this._root, date);
         }
     },
 
     createNumber: {
-        value: function(number) {
+        value: function createNumber(number) {
             return new MontageAst.Value(this._root, number);
         }
     },
 
     createBoolean: {
-        value: function(boolean) {
+        value: function createBoolean(boolean) {
             return new MontageAst.Value(this._root, boolean);
         }
     },
 
     createNull: {
-        value: function(boolean) {
+        value: function createNull(boolean) {
             return new MontageAst.Value(this._root, null);
         }
     },
 
     createCustomObject: {
-        value: function() {
+        value: function createCustomObject() {
             return new MontageAst.CustomObject(this._root);
         }
     }

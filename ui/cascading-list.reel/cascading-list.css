@@ -18,9 +18,21 @@
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+    height: 100%;
+    flex-direction: row;
     -ms-flex-wrap: nowrap;
         flex-wrap: nowrap;
     -webkit-box-flex: 1;
         -ms-flex: 1;
             flex: 1;
+}
+
+
+ .CascadingList .CascadingListItem {
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.CascadingList .CascadingListItem-content.Placeholder {
+    overflow: auto;
 }

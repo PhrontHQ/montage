@@ -26,7 +26,7 @@ var MontageSerializer = Montage.specialize({
     },
 
     initWithRequire: {
-        value: function (_require) {
+        value: function initWithRequire(_require) {
             this._require = _require;
 
             this._builder = new MontageBuilder();
@@ -46,13 +46,13 @@ var MontageSerializer = Montage.specialize({
     },
 
     getExternalObjects: {
-        value: function () {
+        value: function getExternalObjects() {
             return this._visitor.getExternalObjects();
         }
     },
 
     getExternalElements: {
-        value: function () {
+        value: function getExternalElements() {
             return this._visitor.getExternalElements();
         }
     },
@@ -64,7 +64,7 @@ var MontageSerializer = Montage.specialize({
     },
 
     serialize: {
-        value: function(objects) {
+        value: function serialize(objects) {
             var serializationString;
 
             this._labeler.initWithObjects(objects);
@@ -93,7 +93,7 @@ var MontageSerializer = Montage.specialize({
     },
 
     serializeObject: {
-        value: function(object) {
+        value: function serializeObject(object) {
             return this.serialize({root: object});
         }
     },
@@ -103,14 +103,14 @@ var MontageSerializer = Montage.specialize({
     },
 
     _formatSerializationBindingsReplacer: {
-        value: function(_, g1, g2) {
+        value: function _formatSerializationBindingsReplacer(_, g1, g2) {
             return '{' + g1 + ': ' +
                 g2.replace(/\n\s*/g, "").replace(/,\s*/g, ", ") +
                 '}';
         }
     },
     _formatSerializationBindings: {
-        value: function(serialization) {
+        value: function _formatSerializationBindings(serialization) {
             return serialization.replace(
                 this._formatSerializationBindingsRegExp,
                 this._formatSerializationBindingsReplacer);
@@ -124,14 +124,14 @@ var MontageSerializer = Montage.specialize({
         value: "{$1: $2}"
     },
     _formatSerializationReferences: {
-        value: function(serialization) {
+        value: function _formatSerializationReferences(serialization) {
             return serialization.replace(
                 this._formatSerializationReferencesRegExp, this._formatSerializationReferenceseplaceNewSubstr);
         }
     },
 
     _formatSerialization: {
-        value: function(serialization) {
+        value: function _formatSerialization(serialization) {
             return this._formatSerializationBindings(
                 this._formatSerializationReferences(serialization));
         }
@@ -143,20 +143,20 @@ var MontageSerializer = Montage.specialize({
     },
 
     defineSerializationUnit: {
-        value: function (name, funktion) {
+        value: function defineSerializationUnit(name, funktion) {
             this._units[name] = funktion;
         }
     },
 
     _toCamelCaseRegExp: {value: /(?:^|-)([^-])/g},
-    _replaceToCamelCase: {value: function (_, g1) {
+    _replaceToCamelCase: {value: function _replaceToCamelCase(_, g1) {
         return g1.toUpperCase();}
     },
 
     _findObjectNameRegExp: {value: /([^\/]+?)(\.reel)?$/},
 
     getDefaultObjectNameForModuleId: {
-        value: function (moduleId) {
+        value: function getDefaultObjectNameForModuleId(moduleId) {
             this._findObjectNameRegExp.test(moduleId);
 
             return RegExp.$1.replace(this._toCamelCaseRegExp, this._replaceToCamelCase);

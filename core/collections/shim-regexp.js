@@ -6,9 +6,10 @@
     |, #, [comma], and whitespace.
 */
 if (!RegExp.escape) {
-    var special = /[-[\]{}()*+?.\\^$|,#\s]/g;
-    RegExp.escape = function (string) {
-        return string.replace(special, "\\$&");
+    var special = /[-[\]{}()*+?.\\^$|,#\s]/g,
+        replacePattern = "\\$&";
+    RegExp.escape = function RegExp_escape (string) {
+        return string && string.replace(special, "\\$&");
     };
 }
 

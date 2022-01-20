@@ -39,7 +39,11 @@ section {
     display: flex;
 }
 
-.CascadingListItem {
+.cascadingList {
+    max-height:500px;
+}
+
+/* .CascadingListItem {
     width: 256px;
     width: 16rem;
-}
+} */

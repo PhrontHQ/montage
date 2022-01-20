@@ -30,7 +30,10 @@ var Montage = require("../core/core").Montage,
     Map = require("core/collections/map"),
     Set = require("core/collections/set"),
     currentEnvironment = require("core/environment").currentEnvironment,
-    PropertyChanges = require("core/collections/listen/property-changes");
+    PropertyChanges = require("core/collections/listen/property-changes"),
+    ONE_WAY = "<-",
+    ONE_WAY_RIGHT = "->",
+    TWO_WAY = "<->";
 
 /**
  * @const
@@ -1994,6 +1997,19 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
             }
         }
     },
+
+    // defineBinding: {
+    //     value: function (targetPath, descriptor, commonDescriptor) {
+    //         var result = this.super(targetPath, descriptor, commonDescriptor),
+    //             twoWay = TWO_WAY in descriptor,
+    //             sourcePath = !twoWay ? descriptor[ONE_WAY] : descriptor[TWO_WAY] || "";
+
+    //         if(targetPath.startsWith("data") || (sourcePath && sourcePath.indexOf(".data") !== -1)) {
+    //             console.log(Object.keys(descriptor)[0]+" "+this.constructor.name+" has ["+targetPath+"] bound to ["+descriptor.sourcePath+"]"+", parentComponent:",this.parentComponent);
+    //         }
+    //         return result;
+    //     }
+    // },
 
     blueprintModuleId: {
         serializable: false,

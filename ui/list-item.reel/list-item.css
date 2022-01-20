@@ -140,7 +140,7 @@
 .ListItem.description-bottom .ListItem-text .ListItem-description,
 .ListItem.description-bottom .ListItem-text .ListItem-label {
     margin: 0 0 2px;
-    max-width: 90%;
+    max-width: 100%;
 }
 
 .ListItem.description-bottom .ListItem-text .ListItem-description {

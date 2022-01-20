@@ -681,7 +681,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
     },
 
     instantiateObject: {
-        value: function (module, locationDesc, value, objectName, context, label) {
+        value: function instantiateObject(module, locationDesc, value, objectName, context, label) {
             var object = this.getMontageObject(value, module, objectName, context, label);
 
             context.setObjectLabel(object, label);
@@ -690,7 +690,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
     },
 
     _getMJSONObject: {
-        value: function (moduleId, context) {
+        value: function _getMJSONObject(moduleId, context) {
             if(context._require.getModuleDescriptor) {
                 var moduleDescriptor = context._require.getModuleDescriptor(context._require.resolve(moduleId)),
                 dependencyContext = this._deserializer.constructor.moduleContexts.get(moduleDescriptor);
@@ -718,7 +718,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
     },
 
     getMontageObject: {
-        value: function (value, module, objectName, context, label) {
+        value: function getMontageObject(value, module, objectName, context, label) {
             var object, moduleId;
 
             if (context.hasUserObject(label)) {
@@ -844,7 +844,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
     },
 
     deserializeMontageObject: {
-        value: function (montageObjectDesc, object, context, label) {
+        value: function deserializeMontageObject(montageObjectDesc, object, context, label) {
             // Units are deserialized after all objects have been revived.
             // This happens at didReviveObjects.
             context.setUnitsToDeserialize(object, montageObjectDesc, MontageReviver._unitNames);
@@ -928,7 +928,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
     },
 
     _deserializePropertyValues: {
-        value: function (context) {
+        value: function _deserializePropertyValues(context) {
             var object, objects = context._objects,
                 serialization = context._serialization,
                 values, label;
@@ -946,7 +946,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
     },
 
     _deserializeBindings: {
-        value: function (context) {
+        value: function _deserializeBindings(context) {
             var bindingsToDeserialize = context.getBindingsToDeserialize(),
                 unitDeserializer = new UnitDeserializer(),
                 bindingsToDeserializeDesc;
@@ -979,7 +979,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
     },
 
     _deserializeObjectUnitNamed: {
-        value: function (context, object, unitName, _unitsDesc, _unitDeserializer, _unitNameIndex) {
+        value: function _deserializeObjectUnitNamed(context, object, unitName, _unitsDesc, _unitDeserializer, _unitNameIndex) {
             var unitsDesc = _unitsDesc || context.unitsToDeserialize.get(object),
             objectDesc,
             unitNames,
@@ -1021,7 +1021,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
     },
 
     _deserializeMJSONDependencyUnits: {
-        value: function (context) {
+        value: function _deserializeMJSONDependencyUnits(context) {
 
             if(context._require.getModuleDescriptor) {
 
@@ -1059,7 +1059,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
     },
 
     _deserializeUnits: {
-        value: function (context) {
+        value: function _deserializeUnits(context) {
 
             this._deserializeMJSONDependencyUnits(context);
 
@@ -1106,7 +1106,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
     },
 
     _createAssignValueFunction: {
-        value: function(object, propertyName) {
+        value: function _createAssignValueFunction(object, propertyName) {
             return function(value) {
                 object[propertyName] = value;
             };

@@ -17,32 +17,32 @@ var MontageWalker = exports.MontageWalker = Montage.specialize({
     },
 
     cleanup: {
-        value: function() {
+        value: function cleanup() {
             this._enteredObjects.clear();
         }
     },
 
     _isObjectEntered: {
-        value: function(object) {
+        value: function _isObjectEntered(object) {
             return this._enteredObjects.has(object);
         }
     },
 
     _markObjectAsEntered: {
-        value: function(object) {
+        value: function _markObjectAsEntered(object) {
             this._enteredObjects.add(object);
         }
     },
 
     visit: {
-        value: function(value, name) {
+        value: function visit(value, name) {
             this._visitValue(value, name);
         },
         enumerable: true
     },
 
     _getTypeOf: {
-        value: function(value) {
+        value: function _getTypeOf(value) {
             if (Array.isArray(value)) {
                 return "array";
             } else if (RegExp.isRegExp(value)) {
@@ -60,7 +60,7 @@ var MontageWalker = exports.MontageWalker = Montage.specialize({
     },
 
     _getObjectType: {
-        value: function(object) {
+        value: function _getObjectType(object) {
             var visitor = this._visitHandler,
                 type;
 
@@ -77,7 +77,7 @@ var MontageWalker = exports.MontageWalker = Montage.specialize({
     },
 
     _visitValue: {
-        value: function(value, name) {
+        value: function _visitValue(value, name) {
             var type = this._getTypeOf(value);
 
             //Happens often so let's do that first
@@ -108,20 +108,20 @@ var MontageWalker = exports.MontageWalker = Montage.specialize({
     },
 
     _visitCustomType: {
-        value: function(type, object, name) {
+        value: function _visitCustomType(type, object, name) {
             this._callVisitorMethod("visit" + type, object, name);
         }
     },
 
     _enterCustomObject: {
-        value: function(type, object, name) {
+        value: function _enterCustomObject(type, object, name) {
             this._callVisitorMethod("enter" + type, object, name);
             this._callVisitorMethod("exit" + type, object, name);
         }
     },
 
     _visitObject: {
-        value: function(object, name) {
+        value: function _visitObject(object, name) {
             var willEnterObject;
 
             if (this._isObjectEntered(object)) {
@@ -137,7 +137,7 @@ var MontageWalker = exports.MontageWalker = Montage.specialize({
     },
 
     _enterObject: {
-        value: function(object, name) {
+        value: function _enterObject(object, name) {
             var keys = Object.keys(object),
                 key;
 
@@ -153,7 +153,7 @@ var MontageWalker = exports.MontageWalker = Montage.specialize({
     },
 
     _visitArray: {
-        value: function(array, name) {
+        value: function _visitArray(array, name) {
             var willEnterArray;
 
             if (this._isObjectEntered(array)) {
@@ -169,7 +169,7 @@ var MontageWalker = exports.MontageWalker = Montage.specialize({
     },
 
     _enterArray: {
-        value: function(array, name) {
+        value: function _enterArray(array, name) {
             this._callVisitorMethod("enterArray", array, name);
 
             for (var i = 0, ii = array.length; i < ii; i++) {
@@ -181,49 +181,49 @@ var MontageWalker = exports.MontageWalker = Montage.specialize({
     },
 
     _visitRegExp: {
-        value: function(regexp, name) {
+        value: function _visitRegExp(regexp, name) {
             this._callVisitorMethod("visitRegExp", regexp, name);
         }
     },
 
     _visitString: {
-        value: function(string, name) {
+        value: function _visitString(string, name) {
             this._callVisitorMethod("visitString", string, name);
         }
     },
 
     _visitDate: {
-        value: function(date, name) {
+        value: function _visitDate(date, name) {
             this._callVisitorMethod("visitDate", date, name);
         }
     },
 
     _visitNumber: {
-        value: function(number, name) {
+        value: function _visitNumber(number, name) {
             this._callVisitorMethod("visitNumber", number, name);
         }
     },
 
     _visitBoolean: {
-        value: function(boolean, name) {
+        value: function _visitBoolean(boolean, name) {
             this._callVisitorMethod("visitBoolean", boolean, name);
         }
     },
 
     _visitNull: {
-        value: function(name) {
+        value: function _visitNull(name) {
             this._callVisitorMethod("visitNull", name);
         }
     },
 
     _visitUndefined: {
-        value: function(name) {
+        value: function _visitUndefined(name) {
             this._callVisitorMethod("visitUndefined", name);
         }
     },
 
     _callVisitorMethod: {
-        value: function(methodName /*, args... */) {
+        value: function _callVisitorMethod(methodName /*, args... */) {
             var visitor = this._visitHandler,
                 args;
 

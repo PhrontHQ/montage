@@ -43,7 +43,7 @@ var Root = exports.Root = Montage.specialize({
     },
 
     toJSON: {
-        value: function() {
+        value: function Root_toJSON() {
             var result = Object.create(null),
             myObject = this.object,
             labels = Object.keys(myObject),
@@ -110,7 +110,7 @@ var Value = exports.Value = Montage.specialize({
     },
 
     toJSON: {
-        value: function(index, level) {
+        value: function Value_toJSON(index, level) {
             var value = this._getSerializationValue();
 
             if (level === 1) {
@@ -208,7 +208,7 @@ var CustomObject = exports.CustomObject = Value.specialize( /** @lends CustomObj
     },
 
     toJSON: {
-        value: function(index, level) {
+        value: function CustomObject_toJSON(index, level) {
             var reference,
                 value = this._getSerializationValue();
 
@@ -232,7 +232,7 @@ var ReferenceableValue = exports.ReferenceableValue = Value.specialize( /** @len
     },
 
     toJSON: {
-        value: function(index, level) {
+        value: function ReferenceableValue_toJSON(index, level) {
             var reference,
                 value = this._getSerializationValue();
 

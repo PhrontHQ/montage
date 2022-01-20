@@ -472,6 +472,11 @@ PropertyChanges.dispatchBeforeOwnPropertyChange = function (object, key, value) 
 };
 
 PropertyChanges.makePropertyObservable = function (object, key) {
+
+    // if(key === "data") {
+    //     console.debug("~~~~~~~~~~~~~~ "+object.constructor.name+"["+Object.hash(object)+'].makePropertyObservable("data")');
+
+    // }
     if (object.makePropertyObservable) {
         return object.makePropertyObservable(key);
     } else {

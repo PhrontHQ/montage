@@ -23,7 +23,7 @@ exports.MontageLabeler = Montage.specialize({
     },
 
     getTemplatePropertyLabel: {
-        value: function (object) {
+        value: function getTemplatePropertyLabel(object) {
             var label = this._getObjectLabel(object);
 
             if (label[0] !== ":") {
@@ -35,7 +35,7 @@ exports.MontageLabeler = Montage.specialize({
     },
 
     _getObjectLabel: {
-        value: function(object) {
+        value: function _getObjectLabel(object) {
             var hash = Object.hash(object),
                 label;
 
@@ -53,7 +53,7 @@ exports.MontageLabeler = Montage.specialize({
     },
 
     getObjectLabel: {
-        value: function (object) {
+        value: function getObjectLabel(object) {
             var label = this._getObjectLabel(object);
 
             if (label[0] === ":") {
@@ -65,7 +65,7 @@ exports.MontageLabeler = Montage.specialize({
     },
 
     getObjectName: {
-        value: function (object) {
+        value: function getObjectName(object) {
             var identifier = object.identifier,
                 objectName;
 
@@ -94,7 +94,7 @@ exports.MontageLabeler = Montage.specialize({
      * considered user defined objects.
      */
     initWithObjects: {
-        value: function(labels) {
+        value: function initWithObjects(labels) {
             var keys = Object.keys(labels),
                 i, label;
             for(i=0;(label = keys[i]); i++) {
@@ -105,7 +105,7 @@ exports.MontageLabeler = Montage.specialize({
     },
 
     cleanup: {
-        value: function() {
+        value: function cleanup() {
             this._labels = null;
             this._objectsLabels = null;
             this._objects = null;
@@ -115,7 +115,7 @@ exports.MontageLabeler = Montage.specialize({
     },
 
     generateLabel: {
-        value: function(baseName) {
+        value: function generateLabel(baseName) {
             var index = this._baseNamesIndex[baseName],
                 label;
 
@@ -134,19 +134,19 @@ exports.MontageLabeler = Montage.specialize({
     },
 
     getLabelBaseName: {
-        value: function(label) {
+        value: function getLabelBaseName(label) {
             return label.replace(/\d*$/, "");
         }
     },
 
     addLabel: {
-        value: function(label) {
+        value: function addLabel(label) {
             this._labels[label] = true;
         }
     },
 
     addLabels: {
-        value: function(labels) {
+        value: function addLabels(labels) {
             for (var i = 0, ii = labels.length; i < ii; i++) {
                 this.addLabel(labels[i]);
             }
@@ -154,19 +154,19 @@ exports.MontageLabeler = Montage.specialize({
     },
 
     isLabelDefined: {
-        value: function(label) {
+        value: function isLabelDefined(label) {
             return label in this._labels;
         }
     },
 
     isUserDefinedLabel: {
-        value: function(label) {
+        value: function isUserDefinedLabel(label) {
             return label in this._userDefinedLabels;
         }
     },
 
     generateObjectLabel: {
-        value: function(object) {
+        value: function generateObjectLabel(object) {
             var objectName = this.getObjectName(object);
 
             return this.generateLabel(objectName);
@@ -174,7 +174,7 @@ exports.MontageLabeler = Montage.specialize({
     },
 
     setObjectLabel: {
-        value: function(object, label) {
+        value: function setObjectLabel(object, label) {
             if (typeof object !== "undefined") {
                 var hash = Object.hash(object);
 
@@ -186,7 +186,7 @@ exports.MontageLabeler = Montage.specialize({
     },
 
     getObjectByLabel: {
-        value: function(label) {
+        value: function getObjectByLabel(label) {
             return this._objects[label];
         }
     }

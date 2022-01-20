@@ -395,3 +395,18 @@
         exports.getPlatform();
     }
 }));
+
+if(typeof String.prototype.stringByRemovingPrefix !== "function") {
+    Object.defineProperty(String.prototype, 'stringByRemovingPrefix', {
+        value: function stringByRemovingPrefix (prefix) {
+                if(this.startsWith(prefix)) {
+                    return this.substring(prefix.length);
+                } else {
+                    return this;
+                }
+            },
+            writable: true,
+            enumerable: false,
+            configurable: true
+        });
+}

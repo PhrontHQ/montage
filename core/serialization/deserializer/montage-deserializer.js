@@ -87,7 +87,7 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
      * objects otherwise.
      */
     deserialize: {
-        value: function (instances, element) {
+        value: function deserialize(instances, element) {
             var _serializationString = this._serializationString;
             if((!_serializationString) && !this._serialization) {
                 return null;
@@ -155,7 +155,7 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
     },
 
     deserializeObject: {
-        value: function(objects) {
+        value: function deserializeObject(objects) {
             return (this._isSync    ? this.deserialize(objects).root
                                     : this.deserialize(objects).then(function(objects) {
                                             return objects.root;
