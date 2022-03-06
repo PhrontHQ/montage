@@ -2233,7 +2233,7 @@ var Montage = require("../core").Montage,
         //		throw new Date.Parsing.Exception(s);
         //	}
         //}
-        //"M/d/yyyy": function (s) { return [ new Date(Date._parse(s)), ""]; }
+        //"M/d/yyyy": function (s) { return [ new Date(Date.parse(s)), ""]; }
     };
     var _get = function (f) {
         return (_F[f] = (_F[f] || g.format(f)[0]));
@@ -2295,7 +2295,7 @@ var Montage = require("../core").Montage,
         return g._start.call({}, s);
     };
 
-    $D._parse = $D.parse;
+    //$D._parse = $D.parse;
 
     /**
      * Converts the specified string value into its JavaScript Date equivalent using CultureInfo specific format information.
@@ -2394,7 +2394,14 @@ var Montage = require("../core").Montage,
      * // July 1st of current year at 10pm.
      * var d1 = Date.parse("7/1 10pm");
      */
-    $D.parse = function (s) {
+
+
+    /*
+
+        This method overrides the native Date.parse which returns a number of milliseconds, not a date
+    */
+
+    $D.parseDate = function (s) {
         var r = null;
         if (!s) {
             return null;
