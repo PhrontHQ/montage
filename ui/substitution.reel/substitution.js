@@ -200,7 +200,7 @@ exports.Substitution = Slot.specialize( /** @lends Substitution.prototype # */ {
     _loadContent: {
         value: function (value) {
             var typeOfValue = typeof value;
-            this.content = this._switchElements[value] || null;
+            this.content = this._switchComponents[value] ? this._switchComponents[value].element : this._switchElements[value] || null;
 
             if ((typeOfValue === "string" || typeOfValue === "number") && !this._switchComponentTreeLoaded[value]) {
                 this._loadSwitchComponentTree(value);
