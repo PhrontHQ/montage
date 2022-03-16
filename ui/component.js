@@ -32,6 +32,13 @@ var Montage = require("../core/core").Montage,
     currentEnvironment = require("core/environment").currentEnvironment,
     PropertyChanges = require("core/collections/listen/property-changes");
 
+/*
+    For supporting Live Edit in apps connected to the studio, the connected app sets the global:
+     _montage_le_flag = true;
+
+     which activates some relevant logic here.
+*/
+
 /**
  * @const
  * @default
