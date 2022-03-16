@@ -171,16 +171,21 @@ describe("converter-spec", function () {
 
     describe("Test formatting of file sizes and numbers representing bytes", function () {
         it("should format a number to friendly byte size", function () {
+            var value = 100;
+            var result = bytesConverter.convert(value);
+            expect(result).toBe('100B');
+        });
+        it("should format a number to friendly Megabyte size", function () {
             var value = 100200300;
             var result = bytesConverter.convert(value);
             expect(result).toBe('95.56MB');
         });
-        it("should format a number to friendly byte size", function () {
+        it("should format a number to friendly Kilobyte size", function () {
             var value = 1024;
             var result = bytesConverter.convert(value);
             expect(result).toBe('1KB');
         });
-        it("should format a number to friendly byte size", function () {
+        it("should format a number to friendly Gigabyte size", function () {
             var value = 2048000000;
             bytesConverter.decimals = 4;
             var result = bytesConverter.convert(value);

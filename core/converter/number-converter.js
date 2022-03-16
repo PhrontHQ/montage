@@ -134,7 +134,8 @@ var _numericValueToString = exports._numericValueToString = function (val, conve
     }
     if (!symbol) {
         scale = 1;
-    } else if (optSuffix) {
+    }
+    if (optSuffix) {
         symbol += optSuffix;
     }
     var ex = Math.pow(10, isDef(optDecimals) ? optDecimals : 2);
