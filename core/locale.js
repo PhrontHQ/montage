@@ -328,7 +328,7 @@ var Locale = exports.Locale = Montage.specialize({
 
 
     /**
-     * Creates a new calendar specified by a given identifier.
+     * Creates a new locale specified by a given identifier.
      *
      *
      * @function

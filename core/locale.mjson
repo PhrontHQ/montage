@@ -1,5 +1,5 @@
 {
-    "identifier_property_descriptor": {
+    "identifier": {
         "prototype": "./meta/property-descriptor",
         "values": {
             "name": "identifier",
@@ -8,7 +8,7 @@
             "helpKey": ""
         }
     },
-    "language_property_descriptor": {
+    "language": {
         "prototype": "./meta/property-descriptor",
         "values": {
             "name": "language",
@@ -17,7 +17,7 @@
             "helpKey": ""
         }
     },
-    "region_property_descriptor": {
+    "region": {
         "prototype": "./meta/property-descriptor",
         "values": {
             "name": "region",
@@ -34,15 +34,15 @@
         "values": {
             "name": "Locale",
             "propertyDescriptors": [
-                { "@": "identifier_property_descriptor" },
-                { "@": "language_property_descriptor" },
-                { "@": "region_property_descriptor" }
+                { "@": "identifier" },
+                { "@": "language" },
+                { "@": "region" }
             ],
             "propertyDescriptorGroups": {
                 "all": [
-                    { "@": "identifier_property_descriptor" },
-                    { "@": "language_property_descriptor" },
-                    { "@": "region_property_descriptor" }
+                    { "@": "identifier" },
+                    { "@": "language" },
+                    { "@": "region" }
                 ]
             },
             "propertyValidationRules": {},
