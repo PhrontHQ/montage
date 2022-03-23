@@ -1275,15 +1275,15 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
                 }
 
             } else if((iValue = value.values)) {
-                /*iValueRevived = */this.reviveValuesObjectLiteral(iValue, context, /*label*/undefined, value);
+                iValueRevived = this.reviveValuesObjectLiteral(iValue, context, /*label*/undefined, value);
 
-                // if(iValueRevived !== iValue && isNotSync && PromiseIs(iValueRevived)) {
-                //     !firstPromise
-                //         ? firstPromise = item
-                //         : !promises
-                //             ? promises = [firstPromise, item]
-                //             : promises.push(item);
-                // }
+                if(iValueRevived !== iValue && isNotSync && PromiseIs(iValueRevived)) {
+                    !firstPromise
+                        ? firstPromise = iValueRevived
+                        : !promises
+                            ? promises = [firstPromise, iValueRevived]
+                            : promises.push(iValueRevived);
+                }
 
             }
 
@@ -1296,7 +1296,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
                         ? firstPromise = iValueRevived
                         : !promises
                             ? promises = [firstPromise, iValueRevived]
-                            : promises.push(item);
+                            : promises.push(iValueRevived);
                 }
             }
 
