@@ -3,7 +3,7 @@ var Montage = require("../../core/core").Montage,
 
 /**
  * An Identity represents an object that defined who is using the app.
- * It's typically a person, but sometime it is anonymous and could be the
+ * It's typically a person, another app/software, but sometime it is anonymous and could be the
  * description of some data. Abstract, expected to be subclassed.
 
  * @class
@@ -41,6 +41,10 @@ Identity = exports.Identity = Montage.specialize(/** @lends Identity.prototype *
     /**
      * The provider of the identity, such as Google, Apple, Facebook, AWS Cognito, OpenId / OAuth providers, etc...
      * This would allow backend logic to know where to validate the credentials.
+     *
+     * 3/2022:the term in JWT is issuer - iss in registered claims:
+     *      https://jwt.io/introduction
+     *      https://datatracker.ietf.org/doc/html/rfc7519#section-4.1)
      *
      * @type {Objec}
      */
