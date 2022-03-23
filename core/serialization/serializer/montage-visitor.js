@@ -328,7 +328,7 @@ var MontageVisitor = Montage.specialize({
                 isInstance = objectInfo.isInstance,
                 locationId = (isInstance && wasLoadedFromMJSON)
                     ? (objectInfo.require.config.name+"/"+objectInfo.module)
-                    : this.getObjectLocationId(object),
+                    : this.getObjectLocationId(object, objectInfo),
                 locationIdBuilderObject = this.builder.createString(locationId),
                 type = (isInstance && !wasLoadedFromMJSON) ? "prototype" : "object";
 
@@ -339,8 +339,10 @@ var MontageVisitor = Montage.specialize({
     },
 
     getObjectModuleId: {
-        value: function (object) {
-            var objectInfo = Montage.getInfoForObject(object);
+        value: function (object, objectInfo) {
+            if(!objectInfo) {
+                objectInfo = Montage.getInfoForObject(object);
+            }
 
             /*
                 Mr
@@ -359,10 +361,9 @@ var MontageVisitor = Montage.specialize({
     },
 
     getObjectLocationId: {
-        value: function (object) {
-            var moduleId = this.getObjectModuleId(object),
+        value: function (object, objectInfo) {
+            var moduleId = this.getObjectModuleId(object, objectInfo),
                 defaultObjectName,
-                objectInfo,
                 objectName;
 
             /*
@@ -371,8 +372,14 @@ var MontageVisitor = Montage.specialize({
             if(moduleId.endsWith(".mjson")) {
                 moduleId = this.getObjectModuleId(object.constructor);
                 objectInfo = Montage.getInfoForObject(object.constructor);
-            } else {
+            } else if(!objectInfo) {
                 objectInfo = Montage.getInfoForObject(object);
+            }
+
+            if(!objectInfo.require.isMainPackage() && objectInfo.packageName !== "montage") {
+                var _moduleId = objectInfo.packageName;
+                _moduleId += "/";
+                moduleId = (_moduleId += moduleId);
             }
 
             objectName = objectInfo.objectName;
