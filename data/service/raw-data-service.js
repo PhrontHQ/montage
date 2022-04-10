@@ -408,7 +408,10 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
 
                         //console.log(objectDescriptor.name+": fetchObjectProperty "+ " -"+propertyName);
 
-                        return DataService.mainService.fetchData(propertyNameQuery);
+                        return DataService.mainService.fetchData(propertyNameQuery)
+                        .then(function(object) {
+                            return object[propertyName];
+                        });
                     }
 
                     /*
