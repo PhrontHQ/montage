@@ -239,20 +239,38 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
     var NODE_MODULES_SLASH = "node_modules/";
     var SLASH_NODE_MODULES_SLASH = "/node_modules/";
     function findLongestDependencyPath(packageName, parent, packageLock) {
-        var pathParts = parent.split("/"),
+
+        var aPackagePath = parent === "/" ? "" : parent,
+            aPackage,
+            pathParts = parent.split("/"),
             directory = NODE_MODULES_SLASH,
             bestDirectory = null,
             i = 0,
             part;
-        while (packageLock && packageLock.dependencies) {
-            if (packageName in packageLock.dependencies) {
-                bestDirectory = directory;
+
+        while ((aPackage = packageLock.packages[aPackagePath])) {
+
+            bestDirectory = directory;
+
+            if((aPackage.dependencies && aPackage.dependencies[packageName]) || (aPackage.peerDependencies && aPackage.peerDependencies[packageName]) || (aPackage.devDependencies && aPackage.devDependencies[packageName])) {
+                if((part = pathParts[++i /* skip node_modules */])) {
+                    /*
+                        add support for modules like "@aws-sdk/client-s3"
+                    */
+                    if(part.startsWith("@")) {
+                        part += "/";
+                        part += pathParts[++i];
+                    }
+                    directory += part;
+                    directory += SLASH_NODE_MODULES_SLASH;
+                    aPackagePath = directory + packageName;
+                } else {
+                    aPackagePath = null;
+                }
             }
-            i += 2;  // skip node_modules
-            part = pathParts[i];
-            directory += part;
-            directory += SLASH_NODE_MODULES_SLASH;
-            packageLock = packageLock.dependencies[part];
+            else  {
+                aPackagePath = null;
+            }
         }
         if (bestDirectory) {
             bestDirectory += packageName;
@@ -262,7 +280,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
 
     var isRelativePattern = /\/$/;
     function normalizeDependency(dependency, config, name) {
-        var configPath, dependencyPath;
+        var dependencyPath/*, configPath, dependencyPath*/;
 
         config = config || {};
         if (typeof dependency === "string") {
@@ -285,8 +303,38 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                 //But needs to figure out
                 //why config.mainPackageLocation in node doesn't start by file:// ??
                 //BUG: configPath = config.location.slice(config.mainPackageLocation.length - 1);
-                configPath = config.location.slice(config.location.lastIndexOf(config.mainPackageLocation)+config.mainPackageLocation.length - 1);
-                dependencyPath = findLongestDependencyPath(dependency.name, configPath, config.packageLock);
+
+                // configPath = config.location.slice(config.location.lastIndexOf(config.mainPackageLocation)+config.mainPackageLocation.length - 1);
+                //-3 for .js
+                // configPath = config.location.slice(config.location.lastIndexOf(config.mainPackageLocation)-3 + (config.mainPackageLocation.length-3) - 1);
+
+                // configPath = config.location.slice(config.location.lastIndexOf(config.mainPackageLocation)-3 + (config.mainPackageLocation.length-3) - 1);
+
+                // configPath =
+                //     config.mainPackageLocation.endsWith(".js")
+                //         ? config.location.slice(config.location.lastIndexOf(config.mainPackageLocation)-3 + (config.mainPackageLocation.length-3), config.location.length-1)
+                //         : config.location.slice(config.location.lastIndexOf(config.mainPackageLocation)+config.mainPackageLocation.length - 1);
+
+                // configPath = (config.location === config.mainPackageLocation)
+                //     ? ""
+                //     : config.location.slice(config.location.lastIndexOf(config.mainPackageLocation)-3 + (config.mainPackageLocation.length-3), config.location.length-1);
+
+                if(config.path === undefined) {
+                    // config.path = config.location.slice(config.location.lastIndexOf(config.mainPackageLocation)-3 + (config.mainPackageLocation.length-3), config.location.length-1);
+
+                    config.path =
+                        config.mainPackageLocation.endsWith(".js")
+                            ? config.location.slice(config.location.lastIndexOf(config.mainPackageLocation)-3 + (config.mainPackageLocation.length-3), config.location.length-1)
+                            : config.location.slice(config.location.lastIndexOf(config.mainPackageLocation)+config.mainPackageLocation.length,config.location.length-1);
+
+                }
+
+                dependencyPath = findLongestDependencyPath(
+                    dependency.name,
+                    config.path,
+                    config.packageLock
+                );
+
                 if (dependencyPath) {
                     dependency.location = URLResolve(config.mainPackageLocation, dependencyPath);
                 }
