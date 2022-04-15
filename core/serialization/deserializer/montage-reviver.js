@@ -1255,23 +1255,12 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
                 }
                 delete value.properties;
 
-                if((iValue = value.bindings)) {
-                    iValueRevived = this.reviveValuesObjectLiteral(iValue, context, /*label*/undefined, value);
-
-                    if(iValueRevived !== iValue && isNotSync && PromiseIs(iValueRevived)) {
-                        !firstPromise
-                            ? firstPromise = iValueRevived
-                            : !promises
-                                ? promises = [firstPromise, iValueRevived]
-                                : promises.push(iValueRevived);
+                if((value.bindings)) {
+                    if(value.values) {
+                        Object.assign(value.values, value.bindings)
                     } else {
-                        if(value.values) {
-                            Object.assign(value.values, iValue)
-                        } else {
-                            value.values = iValue;
-                        }
+                        value.values = value.bindings;
                     }
-
                 }
 
             } else if((iValue = value.values)) {
