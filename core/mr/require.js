@@ -250,9 +250,10 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
 
         while ((aPackage = packageLock.packages[aPackagePath])) {
 
-            bestDirectory = directory;
 
             if((aPackage.dependencies && aPackage.dependencies[packageName]) || (aPackage.peerDependencies && aPackage.peerDependencies[packageName]) || (aPackage.devDependencies && aPackage.devDependencies[packageName])) {
+                bestDirectory = directory;
+
                 if((part = pathParts[++i /* skip node_modules */])) {
                     /*
                         add support for modules like "@aws-sdk/client-s3"
