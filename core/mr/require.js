@@ -1320,9 +1320,19 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
     Require.resolve = resolve;
 
     var extensionPattern = /\.([^\/\.]+)$/;
+    var jsExtensionWithDot = ".js",
+        jsExtension = "js",
+        jsonExtensionWithDot = ".json",
+        jsonExtension = "json";
+
     Require.extension = function (path) {
 
-        return path.substring(path.lastIndexOf(".")+1);
+        return path.endsWith(jsExtensionWithDot)
+            ? jsExtension
+            : path.endsWith(jsonExtensionWithDot)
+                ? jsonExtension
+                : path.substring(path.lastIndexOf(".")+1);
+
         // var match = extensionPattern.exec(path);
         // if (match) {
         //     return match[1];
