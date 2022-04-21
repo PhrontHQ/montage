@@ -250,8 +250,11 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
 
         while ((aPackage = packageLock.packages[aPackagePath])) {
 
-
-            if((aPackage.dependencies && aPackage.dependencies[packageName]) || (aPackage.peerDependencies && aPackage.peerDependencies[packageName]) || (aPackage.devDependencies && aPackage.devDependencies[packageName])) {
+            if(!aPackage.dependencies) {
+                bestDirectory = directory;
+                aPackagePath = null;
+            }
+            else if((aPackage.dependencies[packageName]) || (aPackage.peerDependencies && aPackage.peerDependencies[packageName]) || (aPackage.devDependencies && aPackage.devDependencies[packageName])) {
                 bestDirectory = directory;
 
                 if((part = pathParts[++i /* skip node_modules */])) {
