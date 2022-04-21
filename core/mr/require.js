@@ -1801,7 +1801,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
         function locationLoader(id, module) {
             var location, result,
                 path = id,
-                config = locationLoader.config,
+                // config = locationLoader.config,
                 extension = Require.extension(id);
             if (
                 !extension || (
