@@ -1035,7 +1035,8 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
 
     handlesType: {
         value: function(type) {
-            return (this.rootService._childServicesByType.get(type).indexOf(this) !== -1);
+            return this.types.indexOf(type) !== -1;
+            //return (this.rootService._childServicesByType.get(type).indexOf(this) !== -1);
         }
     },
 
