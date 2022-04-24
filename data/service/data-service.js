@@ -5883,7 +5883,8 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
             var appendTransactionFailedOperation = new DataOperation();
 
             appendTransactionFailedOperation.referrerId = appendTransactionOperation.id;
-            appendTransactionFailedOperation.type = DataOperation.Type.AppendTransactionFailedOperation;
+            //Make it work for both AppendTransactionOperation and PerformTransactionOperation
+            appendTransactionFailedOperation.type = appendTransactionOperation.type === DataOperation.Type.AppendTransactionOperation ? DataOperation.Type.AppendTransactionFailedOperation : DataOperation.Type.PerformTransactionFailedOperation;
             appendTransactionFailedOperation.target = appendTransactionOperation.target;
             appendTransactionFailedOperation.context = appendTransactionOperation.context;
             appendTransactionFailedOperation.clientId = appendTransactionOperation.clientId;
@@ -6088,6 +6089,12 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                     }
                 });
             }
+        }
+    },
+
+    capturePerformTransactionOperation: {
+        value: function(performTransactionOperation) {
+            return this.captureAppendTransactionOperation(performTransactionOperation)
         }
     },
 

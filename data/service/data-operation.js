@@ -110,6 +110,12 @@ var Montage = require("../../core/core").Montage,
         "batchCompletedOperation",
         "batchFailedOperation",
 
+        "performTransactionOperation",
+        "performTransactionCompletedOperation",
+        "performTransactionFailedOperation",
+
+
+
         /*
             A transaction is a unit of work that is performed atomically against a database.
             Transactions are units or sequences of work accomplished in a logical order.
@@ -1039,6 +1045,13 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
             BatchUpdateOperation: DataOperationType.batchUpdateOperation,
             BatchCompletedOperation: DataOperationType.batchCompletedOperation,
             BatchFailedOperation: DataOperationType.batchFailedOperation,
+
+
+            PerformTransactionOperation: DataOperationType.performTransactionOperation,
+            PerformTransactionCompletedOperation: DataOperationType.performTransactionCompletedOperation,
+            PerformTransactionFailedOperation: DataOperationType.performTransactionFailedOperation,
+
+
 
             CreateTransactionOperation: DataOperationType.createTransactionOperation,
             CreateTransactionCompletedOperation: DataOperationType.createTransactionCompletedOperation,
