@@ -2499,8 +2499,6 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                     object = this._createDataObject(type, service.dataIdentifierForNewDataObject(this.objectDescriptorForType(type)));
                 this.registerCreatedDataObject(object);
 
-                this.dispatchDataEventTypeForObject(DataEvent.create, object);
-
                 return object;
             } else {
                 this.rootService.createDataObject(type);
@@ -2625,6 +2623,8 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
             }
             value.add(dataObject);
             this.objectDescriptorsWithChanges.add(objectDescriptor);
+
+            this.dispatchDataEventTypeForObject(DataEvent.create, dataObject);
         }
     },
 
