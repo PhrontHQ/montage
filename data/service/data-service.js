@@ -723,7 +723,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                 self._registerTypesForService(objectDescriptors,child);
                 return self._registerChildServiceMappings(child, mappings);
             }).then(function () {
-                return self._makePrototypesForTypes(child, objectDescriptors);
+                return self._makePrototypeForTypes(child, objectDescriptors);
             }).then(function () {
                 self.addChildService(child, types);
                 return null;
@@ -748,33 +748,54 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
         }
     },
 
+    _registerObjectDescriptorForService: {
+        value: function(jObjectDescriptor, service, moduleIdToObjectDescriptorMap) {
+            var result = null;
+
+            if(jObjectDescriptor.object) {
+                this._constructorToObjectDescriptorMap.set(jObjectDescriptor.object, jObjectDescriptor);
+            } else if(jObjectDescriptor.module) {
+                var self = this;
+                result = jObjectDescriptor.loadObjectFromModule()
+                    .then(function() {
+                        self._constructorToObjectDescriptorMap.set(jObjectDescriptor.object, jObjectDescriptor);
+                    })
+            }
+            var jModule = jObjectDescriptor.module;
+            if(!jModule) {
+                jModuleId = Montage.getInfoForObject(this).moduleId;
+            } else {
+                jModuleId = jModule.id;
+                jModuleId += "/";
+                jModuleId += jObjectDescriptor.exportName;
+            }
+            moduleIdToObjectDescriptorMap[jModuleId] = jObjectDescriptor;
+
+            //Setup the event propagation chain
+            /*
+                this is now done in objectDescriptor as it follows the hierachy of objectDescriptor before getting to DataServices.
+            */
+            // jObjectDescriptor.nextTarget = service;
+            return result;
+        }
+    },
+
     _registerTypesForService: {
         value: function (types, service) {
             var map = this._moduleIdToObjectDescriptorMap, typesPromises,
-                j, countJ, jObjectDescriptor, jModule, jModuleId, jResult;
+                j, countJ, jObjectDescriptor, jModule, jModuleId, jResult,
+                self = this;
 
             for(j=0, countJ = types.length;(j<countJ);j++ ) {
                 jObjectDescriptor = types[j];
-                jResult = this._makePrototypeForType(service, jObjectDescriptor);
-                if(Promise.is(jResult)) {
+
+                jResult = this._registerObjectDescriptorForService(jObjectDescriptor, service, map);
+
+                // jResult = this._makePrototypeForType(service, jObjectDescriptor);
+                if(jResult && Promise.is(jResult)) {
                     (typesPromises || (typesPromises = [])).push(jResult);
                 }
 
-                jModule = jObjectDescriptor.module;
-                if(!jModule) {
-                    jModuleId = Montage.getInfoForObject(this).moduleId;
-                } else {
-                    jModuleId = jModule.id;
-                    jModuleId += "/";
-                    jModuleId += jObjectDescriptor.exportName;
-                }
-                map[jModuleId] = jObjectDescriptor;
-
-                //Setup the event propagation chain
-                /*
-                    this is now done in objectDescriptor as it follows the hierachy of objectDescriptor before getting to DataServices.
-                */
-                // jObjectDescriptor.nextTarget = service;
             }
 
             // types.forEach(function (objectDescriptor) {
@@ -799,7 +820,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
         }
     },
 
-    _makePrototypesForTypes: {
+    _makePrototypeForTypes: {
         value: function (childService, types) {
             var self = this;
             return Promise.all(types.map(function (objectDescriptor) {
@@ -817,9 +838,13 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                 var self = this,
                 module = objectDescriptor.module;
                 if(module) {
-                    return module.require.async(module.id).then(function (exports) {
-                        return self.__makePrototypeForType(childService, objectDescriptor, exports[objectDescriptor.exportName]);
+                    return objectDescriptor.loadObjectFromModule().then(function (moduleObject) {
+                        return self.__makePrototypeForType(childService, objectDescriptor, moduleObject);
                     });
+
+                    // return module.require.async(module.id).then(function (exports) {
+                    //     return self.__makePrototypeForType(childService, objectDescriptor, exports[objectDescriptor.exportName]);
+                    // });
                 } else {
                     return Promise.resolveNull;
                 }
@@ -836,7 +861,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
             mapping = childService.mappingForType(objectDescriptor),
             /*
                 FIXME
-                we're "lucky" here as when this is called, the current DataService hasn't registered yet the maappings, so we end up creating triggers for all property descriptors.
+                we're "lucky" here as when this is called, the current DataService hasn't registered yet the mappings, so we end up creating triggers for all property descriptors.
             */
             requisitePropertyNames = mapping && mapping.requisitePropertyNames || new Set(),
             dataTriggers = this.DataTrigger.addTriggers(this, objectDescriptor, prototype, requisitePropertyNames),
@@ -882,8 +907,8 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
         this._dataObjectPrototypes.set(constructor, prototype);
         this._dataObjectPrototypes.set(objectDescriptor, prototype);
         this._dataObjectTriggers.set(objectDescriptor, dataTriggers);
-        this._constructorToObjectDescriptorMap.set(constructor, objectDescriptor);
-        return null;
+        // this._constructorToObjectDescriptorMap.set(constructor, objectDescriptor);
+        return prototype;
 
         }
     },
@@ -912,7 +937,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
             var descriptor = this._constructorToObjectDescriptorMap.get(type) ||
                              typeof type === "string" && this._moduleIdToObjectDescriptorMap[type];
 
-            return  descriptor || type;
+            return descriptor || type;
         }
     },
 
@@ -1593,54 +1618,59 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
             type = this.objectDescriptorForType(type);
             prototype = this._dataObjectPrototypes.get(type);
             if (type && !prototype) {
-                //type.objectPrototype is legacy and should be depreated over time
-                prototypeToExtend = type.objectPrototype || Object.getPrototypeOf(type.module) || Montage.prototype;
-                prototype = Object.create(prototypeToExtend);
-                prototype.constuctor = type.objectPrototype     ? type.objectPrototype.constructor
-                                                                : type.module;
 
-                if(prototype.constuctor.name === "constructor" ) {
-                    Object.defineProperty(prototype.constuctor, "name", { value: type.typeName });
-                }
+                return this.__makePrototypeForType(this.childServiceForType(type), type, type.object);
 
-                this._dataObjectPrototypes.set(type, prototype);
-                if (type instanceof ObjectDescriptor || type instanceof DataObjectDescriptor) {
-                    triggers = this.DataTrigger.addTriggers(this, type, prototype);
-                } else {
-                    info = Montage.getInfoForObject(type.prototype);
-                    console.warn("Data Triggers cannot be created for this type. (" + (info && info.objectName) + ") is not an ObjectDescriptor");
-                    triggers = [];
-                }
-                this._dataObjectTriggers.set(type, triggers);
-                //We add a property that returns an object's snapshot
-                //We add a property that returns an object's primaryKey
-                //Let's postponed this for now and revisit when we need
-                //add more properties/logic to automatically track changes
-                //on objects
 
-                // Object.defineProperties(prototype, {
-                //      "montageDataSnapshot": {
-                //          get: this.__object__snapshotMethodImplementation
-                //      },
-                //      "montageDataPrimaryKey": {
-                //          get: this.__object_primaryKeyMethodImplementation
-                //      }
-                //  });
+                // //type.objectPrototype is legacy and should be depreated over time
+                // prototypeToExtend = type.objectPrototype || Object.getPrototypeOf(type.module) || Montage.prototype;
+                // prototype = Object.create(prototypeToExtend);
+                // prototype.constuctor = type.objectPrototype     ? type.objectPrototype.constructor
+                //                                                 : type.module;
 
-                //Adds support for event structure, setting the classes as instances next target
-                //if there's type.module
-                if(type.module) {
-                    Object.defineProperty(prototype, "nextTarget", { value: type.module });
 
-                    //setting objectDescriptor as classes next target:
-                    Object.defineProperty(type.module, "nextTarget", { value: type });
-                } else {
-                    //If no known custom JS constructor, we go straight to the object descriptor:
-                    Object.defineProperty(prototype, "nextTarget", { value: type });
-                }
+                // if(prototype.constuctor.name === "constructor" ) {
+                //     Object.defineProperty(prototype.constuctor, "name", { value: type.typeName });
+                // }
 
-                // //set data service as objectDescriptor next target:
-                // Object.defineProperty(type, "nextTarget", { value: this.mainService });
+                // this._dataObjectPrototypes.set(type, prototype);
+                // if (type instanceof ObjectDescriptor || type instanceof DataObjectDescriptor) {
+                //     triggers = this.DataTrigger.addTriggers(this, type, prototype);
+                // } else {
+                //     info = Montage.getInfoForObject(type.prototype);
+                //     console.warn("Data Triggers cannot be created for this type. (" + (info && info.objectName) + ") is not an ObjectDescriptor");
+                //     triggers = [];
+                // }
+                // this._dataObjectTriggers.set(type, triggers);
+                // //We add a property that returns an object's snapshot
+                // //We add a property that returns an object's primaryKey
+                // //Let's postponed this for now and revisit when we need
+                // //add more properties/logic to automatically track changes
+                // //on objects
+
+                // // Object.defineProperties(prototype, {
+                // //      "montageDataSnapshot": {
+                // //          get: this.__object__snapshotMethodImplementation
+                // //      },
+                // //      "montageDataPrimaryKey": {
+                // //          get: this.__object_primaryKeyMethodImplementation
+                // //      }
+                // //  });
+
+                // //Adds support for event structure, setting the classes as instances next target
+                // //if there's type.module
+                // if(type.module) {
+                //     Object.defineProperty(prototype, "nextTarget", { value: type.module });
+
+                //     //setting objectDescriptor as classes next target:
+                //     Object.defineProperty(type.module, "nextTarget", { value: type });
+                // } else {
+                //     //If no known custom JS constructor, we go straight to the object descriptor:
+                //     Object.defineProperty(prototype, "nextTarget", { value: type });
+                // }
+
+                // // //set data service as objectDescriptor next target:
+                // // Object.defineProperty(type, "nextTarget", { value: this.mainService });
 
             }
             return prototype;
