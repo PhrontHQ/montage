@@ -124,6 +124,18 @@ var ModuleObjectDescriptor = exports.ModuleObjectDescriptor = ObjectDescriptor.s
         }
     },
 
+    loadObjectFromModule: {
+        value : function() {
+            if(this.object) {
+                return Promise.resolve(this.object);
+            } else if(this.module) {
+                var self = this;
+                return this.module.require.async(this.module.id).then(function (exports) {
+                    return (self.object = exports[self.exportName]);
+                });
+            }
+        }
+    },
 
     /**
      * The name of the export. this object descriptor is for.
