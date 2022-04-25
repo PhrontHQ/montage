@@ -41,8 +41,11 @@ if(_WebSocket) {
         _webSocket: {
             value: undefined
         },
+        randomizeReconnectionInterval: {
+            value: false
+        },
         reconnectionInterval: {
-            value: 100
+            value: 300
         },
         reconnectionAttemptMaxCount: {
             value: 5
@@ -180,7 +183,7 @@ function initWebsocket(url, existingWebsocket, timeoutMs, numberOfRetries) {
                         self.reconnectionAttemptCount++;
                         self._connect();
                         self._isReconnecting = false;
-                    }, Math.random() * this.reconnectionInterval);
+                    }, (this.randomizeReconnectionInterval ? Math.random() * this.reconnectionInterval : this.reconnectionInterval));
 
                     this.reconnectionInterval *= 2;
                     if (this.reconnectionInterval > 3000) {
