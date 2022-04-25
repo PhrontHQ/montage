@@ -23,7 +23,6 @@
             "objectDescriptorModule": { "%": "core/date/calendar.mjson" },
             "exportName": "Calendar",
             "module": { "%": "core/date/calendar" },
-            "modulePrototype":{"@": "CalendarPrototype"},
             "object":{ "@": "CalendarPrototype" }
         }
     },

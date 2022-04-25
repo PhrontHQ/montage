@@ -23,7 +23,6 @@
             "objectDescriptorModule": { "%": "./time-zone.mjson" },
             "exportName": "TimeZone",
             "module": { "%": "./time-zone" },
-            "modulePrototype":{"@": "TimeZonePrototype"},
             "object":{ "@": "TimeZonePrototype" }
         }
     },
