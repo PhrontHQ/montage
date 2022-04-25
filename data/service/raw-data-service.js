@@ -2604,7 +2604,7 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
         value: false
     },
 
-    useOneShotTransaction: {
+    usePerformTransaction: {
         value: false
     },
 
