@@ -3723,6 +3723,10 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
                 var commitTransactionOperation = this.commitTransactionOperationForTransaction(transaction),
                     commitTransactionDataOperationCompletionPromise;
 
+                if(this.usePerformTransaction) {
+                    commitTransactionOperation.data.operations = transactionRawContext.operations;
+                }
+
                 this.registerPendingDataOperationWithContext(commitTransactionOperation, transaction);
                 commitTransactionDataOperationCompletionPromise = this.completionPromiseForPendingDataOperation(commitTransactionOperation);
 
