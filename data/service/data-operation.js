@@ -111,6 +111,7 @@ var Montage = require("../../core/core").Montage,
         "batchFailedOperation",
 
         "performTransactionOperation",
+        "performTransactionProgressOperation",
         "performTransactionCompletedOperation",
         "performTransactionFailedOperation",
 
@@ -1048,6 +1049,7 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
 
 
             PerformTransactionOperation: DataOperationType.performTransactionOperation,
+            PerformTransactionProgressOperation: DataOperationType.performTransactionProgressOperation,
             PerformTransactionCompletedOperation: DataOperationType.performTransactionCompletedOperation,
             PerformTransactionFailedOperation: DataOperationType.performTransactionFailedOperation,
 
