@@ -2065,7 +2065,7 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
 
     /***************************************************************************
      *
-     * Data Operaation related methods
+     * Data Operation related methods
      *
      ***************************************************************************/
     _operationListenerNamesByType: {
