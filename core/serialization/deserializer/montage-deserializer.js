@@ -90,7 +90,7 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
         value: function (instances, element) {
             var _serializationString = this._serializationString;
             if((!_serializationString) && !this._serialization) {
-                return null;
+                return this._isSync ? null : Promise.resolve(null);
             }
 
             if(!instances) {
@@ -158,7 +158,7 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
         value: function(objects) {
             return (this._isSync    ? this.deserialize(objects).root
                                     : this.deserialize(objects).then(function(objects) {
-                                            return objects.root;
+                                            return objects ? objects.root : null;
                                         }));
         }
     },
