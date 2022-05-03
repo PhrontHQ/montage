@@ -5640,6 +5640,11 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                     */
                     this.application.addEventListener(DataOperation.Type.AppendTransactionOperation,this,true);
 
+                    /*
+                        To assess PerformTransactionOperation's operations access
+                    */
+                    this.application.addEventListener(DataOperation.Type.PerformTransactionOperation,this,true);
+
                 }
             }
         }
@@ -5774,6 +5779,9 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                 console.log("Unauthorized "+ readOperation.type + " for type: "+readOperation.target.name, readOperation);
 
                 readFailedOperation.target.dispatchEvent(readFailedOperation);
+                return readFailedOperation;
+            } else {
+                return readOperation;
             }
 
         }
@@ -5875,22 +5883,22 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
      * @argument {DataOperation} appendTransactionOperation
      * @returns undefined
      */
-    _dispatchAppendTransactionFailedOperationFor: {
-        value: function(appendTransactionOperation, error) {
+    _dispatchTransactionFailedOperationFor: {
+        value: function(transactionOperation, error) {
 
-            appendTransactionOperation.stopImmediatePropagation();
+            transactionOperation.stopImmediatePropagation();
 
             var appendTransactionFailedOperation = new DataOperation();
 
-            appendTransactionFailedOperation.referrerId = appendTransactionOperation.id;
+            appendTransactionFailedOperation.referrerId = transactionOperation.id;
             //Make it work for both AppendTransactionOperation and PerformTransactionOperation
-            appendTransactionFailedOperation.type = appendTransactionOperation.type === DataOperation.Type.AppendTransactionOperation ? DataOperation.Type.AppendTransactionFailedOperation : DataOperation.Type.PerformTransactionFailedOperation;
-            appendTransactionFailedOperation.target = appendTransactionOperation.target;
-            appendTransactionFailedOperation.context = appendTransactionOperation.context;
-            appendTransactionFailedOperation.clientId = appendTransactionOperation.clientId;
+            appendTransactionFailedOperation.type = transactionOperation.type === DataOperation.Type.AppendTransactionOperation ? DataOperation.Type.AppendTransactionFailedOperation : DataOperation.Type.PerformTransactionFailedOperation;
+            appendTransactionFailedOperation.target = transactionOperation.target;
+            appendTransactionFailedOperation.context = transactionOperation.context;
+            appendTransactionFailedOperation.clientId = transactionOperation.clientId;
             appendTransactionFailedOperation.data = error ? error : (new Error("Unauthorized"));
 
-            console.log("Unauthorized "+ appendTransactionOperation.type + " for type: "+appendTransactionOperation.target.name, appendTransactionOperation);
+            console.log("Unauthorized "+ transactionOperation.type + " for type: "+transactionOperation.target.name, transactionOperation);
 
             appendTransactionFailedOperation.target.dispatchEvent(appendTransactionFailedOperation);
             return appendTransactionFailedOperation;
@@ -5898,7 +5906,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
     },
 
 
-    __evaluateCaptureAppendTransactionOperationAuthorized: {
+    __evaluateCaptureTransactionOperationAuthorized: {
         value: function(iOperation, failedOperations) {
             var result;
 
@@ -5934,8 +5942,8 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
      *
      * @type {Set}
      */
-    _evaluateCaptureAppendTransactionOperationAuthorized: {
-        value: function(appendTransactionOperation, operations, failedOperations, operationAccessPoliciesEvaluationPromises, abortAtFirstNonAuthorized) {
+    _evaluateCaptureTransactionOperationAuthorized: {
+        value: function(transactionOperation, operations, failedOperations, operationAccessPoliciesEvaluationPromises, abortAtFirstNonAuthorized) {
             var self = this,
                 i, countI, iOperation, iResult, iFailOperation, iPromise;
 
@@ -5948,29 +5956,29 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                     But we're setting that on the appendTransaction operation, which contains others, so to avoid looping on all to do it, we do it as we go.
                 */
                 if(!iOperation.clientId) {
-                    iOperation.clientId = appendTransactionOperation.clientId;
+                    iOperation.clientId = transactionOperation.clientId;
                 }
                 if(!iOperation.identity) {
-                    iOperation.identity = appendTransactionOperation.identity;
+                    iOperation.identity = transactionOperation.identity;
                 }
                 if(!iOperation.context) {
-                    iOperation.context = appendTransactionOperation.context;
+                    iOperation.context = transactionOperation.context;
                 }
 
-                iResult = this.__evaluateCaptureAppendTransactionOperationAuthorized(iOperation, failedOperations);
+                iResult = this.__evaluateCaptureTransactionOperationAuthorized(iOperation, failedOperations);
 
                 if(this._isAsync(iResult)) {
                     (operationAccessPoliciesEvaluationPromises || (operationAccessPoliciesEvaluationPromises = [])).push(
                         (iPromise = iResult.then(function(isAuthorized) {
                             if(!isAuthorized && abortAtFirstNonAuthorized) {
-                                // iFailOperation = self._dispatchAppendTransactionFailedOperationFor(appendTransactionOperation);
+                                // iFailOperation = self._dispatchTransactionFailedOperationFor(transactionOperation);
                                 throw new Error("Not Authorized");
                             }
                         })));
                         return iPromise;
 
                 } else if(!iResult/*isAuthorized*/ && abortAtFirstNonAuthorized ) {
-                    //iFailOperation = self._dispatchAppendTransactionFailedOperationFor(appendTransactionOperation);
+                    //iFailOperation = self._dispatchTransactionFailedOperationFor(transactionOperation);
                     return iResult;
                 }
             }
@@ -5982,6 +5990,12 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
 
     captureAppendTransactionOperation: {
         value: function(appendTransactionOperation) {
+            return this.performsAccessControlForTransactionOperation(appendTransactionOperation)
+        }
+    },
+
+    performsAccessControlForTransactionOperation: {
+        value: function(transactionOperation) {
 
             if(this.performsAccessControl) {
                 /*
@@ -5990,7 +6004,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                 var self = this;
                 return new Promise(function(resolve, reject) {
                     try {
-                        var operations = appendTransactionOperation.data.operations,
+                        var operations = transactionOperation.data.operations,
                             objectDescriptorModuleIds = Object.keys(operations),
                             i, countI, iOperation, iOperationsByType, iResult, isAuthorized,
                             operationAccessPoliciesEvaluationPromises = [],
@@ -6018,19 +6032,25 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                             iOperationsByType = operations[iObjectDescriptorModuleId];
 
                             if(iOperationsByType.createOperations) {
-                                isAuthorized = self._evaluateCaptureAppendTransactionOperationAuthorized(appendTransactionOperation, iOperationsByType.createOperations, failedOperations, operationAccessPoliciesEvaluationPromises, abortAtFirstNonAuthorized);
+                                isAuthorized = self._evaluateCaptureTransactionOperationAuthorized(transactionOperation, iOperationsByType.createOperations, failedOperations, operationAccessPoliciesEvaluationPromises, abortAtFirstNonAuthorized);
                                 if(typeof isAuthorized === "boolean" && !isAuthorized && abortAtFirstNonAuthorized) {
                                     break;
                                 }
                             }
                             if(iOperationsByType.updateOperations) {
-                                isAuthorized = self._evaluateCaptureAppendTransactionOperationAuthorized(appendTransactionOperation, iOperationsByType.updateOperations, failedOperations, operationAccessPoliciesEvaluationPromises, abortAtFirstNonAuthorized);
+                                isAuthorized = self._evaluateCaptureTransactionOperationAuthorized(transactionOperation, iOperationsByType.updateOperations, failedOperations, operationAccessPoliciesEvaluationPromises, abortAtFirstNonAuthorized);
+                                if(typeof isAuthorized === "boolean" && !isAuthorized && abortAtFirstNonAuthorized) {
+                                    break;
+                                }
+                            }
+                            if(iOperationsByType.mergeOperations) {
+                                isAuthorized = self._evaluateCaptureTransactionOperationAuthorized(transactionOperation, iOperationsByType.mergeOperations, failedOperations, operationAccessPoliciesEvaluationPromises, abortAtFirstNonAuthorized);
                                 if(typeof isAuthorized === "boolean" && !isAuthorized && abortAtFirstNonAuthorized) {
                                     break;
                                 }
                             }
                             if(iOperationsByType.deleteOperations) {
-                                isAuthorized = self._evaluateCaptureAppendTransactionOperationAuthorized(appendTransactionOperation, iOperationsByType.deleteOperations, failedOperations, operationAccessPoliciesEvaluationPromises, abortAtFirstNonAuthorized);
+                                isAuthorized = self._evaluateCaptureTransactionOperationAuthorized(transactionOperation, iOperationsByType.deleteOperations, failedOperations, operationAccessPoliciesEvaluationPromises, abortAtFirstNonAuthorized);
                                 if(typeof isAuthorized === "boolean" && !isAuthorized && abortAtFirstNonAuthorized) {
                                     break;
                                 }
@@ -6041,20 +6061,20 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                         // for(i = 0, countI = operations.length; (i<count); i++) {
                         //     iOperation = operations[i];
 
-                        //     iResult = this.__evaluateCaptureAppendTransactionOperationAuthorized(iOperation, failedOperations);
+                        //     iResult = this.__evaluateCaptureTransactionOperationAuthorized(iOperation, failedOperations);
 
                         //     if(this._isAsync(iResult)) {
                         //         (operationAccessPoliciesEvaluationPromises || (operationAccessPoliciesEvaluationPromises = [])).push(
                         //             iResult.then(function(isAuthorized) {
                         //                 if(!isAuthorized && abortAtFirstNonAuthorized) {
-                        //                     iFailOperation = self._dispatchAppendTransactionFailedOperationFor(appendTransactionOperation);
+                        //                     iFailOperation = self._dispatchTransactionFailedOperationFor(transactionOperation);
 
                         //                     reject(iFailOperation.data);
                         //                 }
                         //             }));
 
                         //     } else if(!iResult/*isAuthorized*/ && abortAtFirstNonAuthorized ) {
-                        //         iFailOperation = self._dispatchAppendTransactionFailedOperationFor(appendTransactionOperation);
+                        //         iFailOperation = self._dispatchTransactionFailedOperationFor(transactionOperation);
 
                         //         reject(iFailOperation.data);
                         //         break;
@@ -6067,24 +6087,56 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                         */
                         if(typeof isAuthorized !== "boolean") {
                             if(operationAccessPoliciesEvaluationPromises && operationAccessPoliciesEvaluationPromises.length) {
-                                Promise.all(operationAccessPoliciesEvaluationPromises)
+                                return Promise.all(operationAccessPoliciesEvaluationPromises)
                                 .then(function() {
                                     if(failedOperations && failedOperations.length > 0) {
-                                        iFailOperation = self._dispatchAppendTransactionFailedOperationFor(appendTransactionOperation);
-                                        reject(iFailOperation.data);
+
+                                        if(!self.delegate) {
+                                            iFailOperation = self._dispatchTransactionFailedOperationFor(transactionOperation);
+                                            reject(iFailOperation.data);
+                                        } else {
+                                            if (self.callDelegateMethod("dataServiceAccessControlFailedForOperations", self, failedOperations)) {
+                                                iFailOperation = self._dispatchTransactionFailedOperationFor(transactionOperation);
+                                                reject(iFailOperation.data);
+                                            } else {
+                                                resolve(true);
+                                            }
+                                        }
                                     } else {
                                         resolve(true);
                                     }
                                 })
                                 .catch(function(error) {
-                                    iFailOperation = self._dispatchAppendTransactionFailedOperationFor(appendTransactionOperation, error);
-                                    reject(iFailOperation.data);
+                                    if(!self.delegate) {
+                                        iFailOperation = self._dispatchTransactionFailedOperationFor(transactionOperation, error);
+                                        reject(iFailOperation.data);
+                                    } else {
+                                        if (self.callDelegateMethod("dataServiceAccessControlFailedForOperations", self, failedOperations)) {
+                                            iFailOperation = self._dispatchTransactionFailedOperationFor(transactionOperation, error);
+                                            reject(iFailOperation.data);
+                                        } else {
+                                            resolve(true);
+                                        }
+                                    }
+
                                 });
+                            } else {
+                                if(!self.delegate) {
+                                    iFailOperation = self._dispatchTransactionFailedOperationFor(transactionOperation, new Error("Unauthorized"));
+                                    reject(iFailOperation.data);
+                                } else {
+                                    if (self.callDelegateMethod("dataServiceAccessControlFailedForOperations", self, failedOperations)) {
+                                        iFailOperation = self._dispatchTransactionFailedOperationFor(transactionOperation, new Error("Unauthorized"));
+                                        reject(iFailOperation.data);
+                                    } else {
+                                        resolve(true);
+                                    }
+                                }
                             }
                         }
                     }
                     catch (error) {
-                        iFailOperation = self._dispatchAppendTransactionFailedOperationFor(appendTransactionOperation, error);
+                        iFailOperation = self._dispatchTransactionFailedOperationFor(transactionOperation, error);
                         reject(error);
                     }
                 });
@@ -6094,7 +6146,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
 
     capturePerformTransactionOperation: {
         value: function(performTransactionOperation) {
-            return this.captureAppendTransactionOperation(performTransactionOperation)
+            return this.performsAccessControlForTransactionOperation(performTransactionOperation)
         }
     },
 
@@ -6140,7 +6192,24 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
         value: false
     },
 
+    _evaluatedAccessPoliciesByDataOperation: {
+        value: new WeakMap()
+    },
     evaluateAccessPoliciesForDataOperation: {
+        value: function(dataOperation) {
+            var evaluationResult = this._evaluatedAccessPoliciesByDataOperation.get(dataOperation);
+
+            if(!evaluationResult) {
+                evaluationResult = this._evaluateAccessPoliciesForDataOperation(dataOperation);
+
+                this._evaluatedAccessPoliciesByDataOperation.set(dataOperation,evaluationResult);
+            }
+
+            return evaluationResult;
+        }
+    },
+
+    _evaluateAccessPoliciesForDataOperation: {
         value: function(dataOperation) {
             //console.log("evaluateAccessPoliciesForDataOperation "+dataOperation.type+" "+dataOperation.target.name,dataOperation);
 
@@ -6159,7 +6228,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
 
                 if(!accessPolicies || (accessPolicies && accessPolicies.length === 0)) {
                     console.log("accessPolicies: this.authorizesDataOperationsWithoutAccessPolicy is ",this.authorizesDataOperationsWithoutAccessPolicy);
-                    return (dataOperation.isAuthorized = this.authorizesDataOperationsWithoutAccessPolicy);
+                    return Promise.resolve((dataOperation.isAuthorized = this.authorizesDataOperationsWithoutAccessPolicy));
 
                 } else {
                     var i, countI, iAccessPolicy, iAccessPolicyEvaluation, iAccessPolicyEvaluationPromises,
@@ -6175,7 +6244,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
 
                         /* If sync so far... */
                         if(!iAccessPolicyEvaluationPromises && !this.isDataOperationAuthorized(dataOperation)) {
-                            return false;
+                            return Promise.resolve(false);
                         }
                     }
 
@@ -6187,7 +6256,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                         });
                     } else {
                         //whatever the rules do, they set a state on the dataOperation, so nothing to resolve.
-                        return this.isDataOperationAuthorized(dataOperation);
+                        return Promise.resolve(this.isDataOperationAuthorized(dataOperation));
                     }
 
                 }
