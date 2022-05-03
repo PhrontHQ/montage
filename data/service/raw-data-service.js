@@ -100,9 +100,11 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
                 */
 
                 this.addEventListener(DataOperation.Type.ReadOperation, this, false);
-                this.addEventListener(DataOperation.Type.UpdateOperation, this, false);
                 this.addEventListener(DataOperation.Type.CreateOperation, this, false);
+                this.addEventListener(DataOperation.Type.UpdateOperation, this, false);
+                this.addEventListener(DataOperation.Type.MergeOperation, this, false);
                 this.addEventListener(DataOperation.Type.DeleteOperation, this, false);
+                this.addEventListener(DataOperation.Type.PerformTransactionOperation,this, false);
                 this.addEventListener(DataOperation.Type.CreateTransactionOperation, this, false);
                 this.addEventListener(DataOperation.Type.AppendTransactionOperation, this, false);
                 this.addEventListener(DataOperation.Type.CommitTransactionOperation, this, false);
@@ -3504,32 +3506,32 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
                 return this._mapObjectChangesToOperationData(object, dataObjectChanges, operationData, snapshot, dataSnapshot, isDeletedObject, objectDescriptor)
                     .then(function (resolvedOperationData) {
 
-                        if (!isDeletedObject && Object.keys(operationData).length === 0) {
-                            /*
-                                if there are no changes known, it's a no-op: if it's an existing object nothing to do and if it's a new empty object... should it go through?? Or it's either a CreateCancelled or an UpdateCancelled.
+                        if (!isDeletedObject) {
 
-                                It also can be considered a no-op of a property on an object changes, but it is stored as a foreign key or in an array of foreign keys on the inverse relationship side, in which case, there's nothing to do, as thanks to inverse value propagation, it will become an update operation on the other side.
-                            */
+                            if(Object.keys(operationData).length === 0) {
+                                /*
+                                    if there are no changes known, it's a no-op: if it's an existing object nothing to do and if it's a new empty object... should it go through?? Or it's either a CreateCancelled or an UpdateCancelled.
 
-                            operation.type = DataOperation.Type.NoOp;
-                            /*
-                                If a property change would turn as a no-op from a raw data stand point, we still need to tell the object layer client of the saveChanges did save it
-                            */
-                            operation.changes = dataObjectChanges;
-                        }
-                        else {
-                            /*
-                                Now that we got them, clear it so we don't conflict with further changes if we have some async mapping stuff in-between.
+                                    It also can be considered a no-op of a property on an object changes, but it is stored as a foreign key or in an array of foreign keys on the inverse relationship side, in which case, there's nothing to do, as thanks to inverse value propagation, it will become an update operation on the other side.
+                                */
 
-                                If somehow things fail, we have the pending operation at hand to re-try
-                            */
-                            if (!isDeletedObject) {
+                                operation.type = DataOperation.Type.NoOp;
+                                /*
+                                    If a property change would turn as a no-op from a raw data stand point, we still need to tell the object layer client of the saveChanges did save it
+                                */
+                                operation.changes = dataObjectChanges;
+                            }
+                            else {
+                                /*
+                                    Now that we got them, clear it so we don't conflict with further changes if we have some async mapping stuff in-between.
+                                    If somehow things fail, we have the pending operation at hand to re-try
+                                */
                                 //We cache the changes on the operation. As this isn't part of an operation's serializeSelf,
                                 //we keep track of it for dispatching events when save is complete and don't have to worry
                                 //about side effects for the server side.
                                 operation.changes = dataObjectChanges;
+                                //self.clearRegisteredChangesForDataObject(object);
                             }
-                            //self.clearRegisteredChangesForDataObject(object);
                         }
                         if (dataOperationsByObject) {
                             dataOperationsByObject.set(object, operation);
