@@ -691,9 +691,12 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
                     }
                     /*
                         When we fetch a property of an object that's not a relationship, typically a basic type, the value is returned and mapped to the existing object already. If that's the case, propertyValue[0] would be the object itself. If that's the case, then there's nothing to do.
+
+                        Benoit: 5/5/2022 - FIXME. We need to assess wether we'd propertyValue could be return as a value in an array for a to-one, or just the objecy as expected. Adding a check for that as the code apparently expecyted an array with only a value in it.
+
                     */
-                    else if(propertyValue[0] !== object) {
-                        object[self._propertyName] = propertyValue[0];
+                    else if((propertyValue = (Array.isArray(propertyValue) ? propertyValue[0] : propertyValue)) !== object) {
+                        object[self._propertyName] = propertyValue;
                     }
                 }
                 return self._fulfillObjectPropertyFetch(object);
