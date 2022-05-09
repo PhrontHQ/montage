@@ -73,7 +73,7 @@ var Environment = exports.Environment = Montage.specialize({
                 if(stageArgument) {
                     this._stage = stageArgument;
                 } else if(applicationURL && (applicationURL.hostname === "127.0.0.1" || applicationURL.hostname === "localhost" || applicationURL.hostname.endsWith(".local")) ) {
-                    this._stage = "dev";
+                    this._stage = "mod";
                 } else {
                     /*
                         could be staging or production or anything else, we don't know and stop the guessing game.
