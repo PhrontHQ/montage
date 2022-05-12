@@ -555,17 +555,21 @@
     }
 
     var _dependenciesWorkingSet = new Set();
-    exports.parseMJSONDependencies = function parseMJSONDependencies(jsonRoot, callback) {
+    exports.parseMJSONDependencies = function parseMJSONDependencies(module, callback) {
 
         _dependenciesWorkingSet.clear();
 
-        var rootEntries = Object.keys(jsonRoot),
-            i=0, iLabel, iDependency, dependencies = _dependenciesWorkingSet, iLabelObject;
+        var jsonRoot = module.parsedText,
+            base = module.location,
+            rootEntries = Object.keys(jsonRoot),
+            _moduleIdWithoutExportSymbol = moduleIdWithoutExportSymbol,
+            i=0, iLabel, iDependency, dependencies = _dependenciesWorkingSet, iLabelObject,
+            values, valuesKeys, j, countJ, jModule, jKeyValue;
 
         while ((iLabel = rootEntries[i])) {
             iLabelObject = jsonRoot[iLabel];
-            if(iLabelObject.hasOwnProperty("prototype")) {
-                dependencies.add((iDependency = moduleIdWithoutExportSymbol(iLabelObject["prototype"])));
+            if(typeof iLabelObject.prototype === "string") {
+                dependencies.add((iDependency = _moduleIdWithoutExportSymbol(iLabelObject.prototype)));
                 if(callback) {
                     callback(iDependency);
                 }
@@ -596,19 +600,39 @@
                 }
 
             }
-            else if(iLabelObject.hasOwnProperty("object")) {
-                dependencies.add((iDependency = moduleIdWithoutExportSymbol(iLabelObject["object"])));
+            else if(typeof iLabelObject.object === "string") {
+                dependencies.add((iDependency = _moduleIdWithoutExportSymbol(iLabelObject.object)));
                 if(callback) {
                     callback(iDependency);
                 }
             }
+
             /*
-                TODO: introspwect values block to detect properties that hold modules.
+                introspect values block to detect properties that hold modules.
             */
-            // else if(iLabelObject.hasOwnProperty("values")) {
+            values = iLabelObject.values || iLabelObject.properties;
 
-            // }
+            if((valuesKeys = values ? Object.keys(values) : null)) {
+                for(j=0, countJ = valuesKeys.length, jModule, jKeyValue; (j < countJ); j++) {
+                    if(typeof (jKeyValue = values[valuesKeys[j]]) === "object" && jKeyValue && typeof (jKeyValue = jKeyValue["%"]) === "string") {
+                        jModule = _moduleIdWithoutExportSymbol(jKeyValue);
+                        /*
+                            We need to eliminate cases where the module refers to the current file,
+                            like the objectDescriptorModule property in serialized "montage/core/meta/module-object-descriptor"
+                            This is not perfect but will do for now.
+                        */
+                        if(!(jModule.startsWith("./") && (base.endsWith(jModule.substring(1))))) {
+                            dependencies.add(jModule);
 
+                            if(callback) {
+                                callback(jModule);
+                            }
+
+                        }
+                    }
+
+                }
+            }
 
             i++;
         }
@@ -728,7 +752,7 @@
                             );
                         }
                     }
-                    module.dependencies = montageExports.parseMJSONDependencies(module.parsedText);
+                    module.dependencies = montageExports.parseMJSONDependencies(module);
                     module.factory = exports.MJSONCompilerFactory;
 
                     return module;
