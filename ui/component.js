@@ -349,6 +349,17 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
      */
 
     /**
+     * The combination from the root component of all owner's component's identifiers.
+     * This represents the unique position of a component in an app's tree.
+     *
+     * @example "main.list.0.appointment"
+     *
+     * @name Component#absoluteIdentifier
+     * @property {String}
+     */
+
+
+    /**
      * Lifecycle hook for when Component's domContent changes.
      *
      * @name Component#contentWillChange
@@ -1914,6 +1925,18 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
     },
 
     _loadTemplatePromise: {value: null},
+    /**
+     * Returns the promise that resolves to the component's template object
+     * if it has one.
+     *
+     * @property {Promise}
+     */
+
+    loadTemplatePromise: {
+        get: function() {
+            return this._loadTemplatePromise || this._loadTemplate();
+        }
+    },
     _loadTemplate: {
         value: function _loadTemplate() {
             var info;
