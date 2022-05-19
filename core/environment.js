@@ -76,9 +76,9 @@ var Environment = exports.Environment = Montage.specialize({
                     this._stage = "mod";
                 } else {
                     /*
-                        could be staging or production or anything else, we don't know and stop the guessing game.
+                        This means we're live:
                     */
-                   this._stage = null;
+                   this._stage = "live";
                 }
             }
 
