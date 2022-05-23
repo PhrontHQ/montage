@@ -231,7 +231,7 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
     constructor: {
         value: function DataOperation() {
             this.timeStamp = performance.now();
-            this.id = uuid.generate();
+            // this.id = uuid.generate();
             this.constructionIndex = exports.DataOperation.prototype.constructionSequence++;
             this._completionPromiseFunctionsByParticipant = new Map();
             exports.DataOperation.prototype.constructionSequence = this.constructionIndex;
@@ -489,8 +489,19 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
      *
      * @type {number}
      */
-    id: {
+    _id: {
         value: undefined
+    },
+
+    id: {
+        get: function() {
+            return this._id || (this._id = uuid.generate());
+        },
+        set:  function(value) {
+            if(value !== this._id) {
+                this._id = value;
+            }
+        }
     },
 
     identifier: {
