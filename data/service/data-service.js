@@ -918,13 +918,13 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
             var service = this;
             return Promise.all([
                 mapping.objectDescriptor,
-                mapping.schemaDescriptor
-            ]).spread(function (objectDescriptor, schemaDescriptor) {
+                mapping.rawDataDescriptor
+            ]).spread(function (objectDescriptor, rawDataDescriptor) {
                 // TODO -- remove looking up by string to unique.
                 var type = [objectDescriptor.module.id, objectDescriptor.name].join("/");
                 objectDescriptor = service._moduleIdToObjectDescriptorMap[type];
                 mapping.objectDescriptor = objectDescriptor;
-                mapping.schemaDescriptor = schemaDescriptor;
+                mapping.rawDataDescriptor = rawDataDescriptor;
                 mapping.service = child;
                 child.addMappingForType(mapping, objectDescriptor);
                 return null;
@@ -2128,7 +2128,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                     Another approch would be to map all dependencies and let the rule's converter assess if it has everytrhing it needs to do the job, but at that level, the converter doesn't know the object, but it has the primaryKey in the criteria's syntax and the value in the associated parameters, so it could find out if there's a corresponding object that is created. It might be needed, let's see if this first heuristic works first.
                 */
                 if(isObjectCreated) {
-                    var rule = mapping.objectMappingRules.get(propertyName),
+                    var rule = mapping.objectMappingRuleForPropertyName(propertyName),
                         rawDataPrimaryKeys = mapping.rawDataPrimaryKeys,
                         requiredRawProperties = rule && rule.requirements;
 
