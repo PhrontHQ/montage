@@ -2218,8 +2218,8 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
         value: function () {
             if (!this._areRulesInitialized) {
                 this._areRulesInitialized = true;
-                this._mapObjectMappingRules(this._rawOwnObjectMappingRules || {});
-                this._mapRawDataMappingRules(this._rawOwnRawDataMappingRules || {});
+                this._mapObjectMappingRules(this._rawOwnObjectMappingRules);
+                this._mapRawDataMappingRules(this._rawOwnRawDataMappingRules);
             }
         }
     },
