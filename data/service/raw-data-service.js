@@ -372,7 +372,7 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
             }
 
             return valueDescriptor.then(function (valueDescriptor) {
-                var objectRule = mapping && mapping.objectMappingRules.get(propertyName),
+                var objectRule = mapping && mapping.objectMappingRuleForPropertyName(propertyName),
                     snapshot = self.snapshotForObject(object),
                     objectRuleConverter = objectRule && objectRule.converter;
 
@@ -1885,18 +1885,32 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
     },
 
     /**
-     * Method called by mappings when asked for a schemaDescriptor and don't have one.
+     * Method called by mappings when asked for a rawDataDescriptor and don't have one.
      *
      * @method
      * @argument {Object} mapping        - the mapping object
      *                                     to assign the values.
      * @returns {ObjectDescriptor}  -
      */
-    // mappingRequestsSchemaDescriptor: {
-    //     value: function (mapping) {
-    //         return null;
-    //     }
-    // },
+    rawDataDescriptorForDataMapping: {
+        value: function (mapping) {
+            return this.rawDataDescriptorForObjectDescriptor(mapping.objectDescriptor);
+        }
+    },
+
+    /**
+     * Method called by mappings when asked for a schemaDescriptor and don't have one.
+     *
+     * @abstract    Needs to be overriden by subclasses
+     * @method
+     * @argument {ObjectDescriptor} objectDescriptor        - the objectDescriptor object
+     * @returns {ObjectDescriptor}  -
+     */
+     rawDataDescriptorForObjectDescriptor: {
+        value: function (objectDescriptor) {
+            return null;
+        }
+    },
 
     /**
      * @todo Document.
@@ -2040,7 +2054,7 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
 
         value: function (objectDescriptor, propertyName) {
             var mapping = this.mappingForType(objectDescriptor),
-                objectRule = mapping.objectMappingRules.get(propertyName),
+                objectRule = mapping.objectMappingRuleForPropertyName(propertyName),
                 objectRuleConverter = objectRule && objectRule.converter,
                 valueDescriptor = objectRule && objectRule.propertyDescriptor._valueDescriptorReference;
 

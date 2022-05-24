@@ -42,7 +42,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
         value: function (service, objectDescriptor, schema) {
             this.service = service;
             this.objectDescriptor = objectDescriptor;
-            this.schemaDescriptor = schema;
+            this.rawDataDescriptor = schema;
             return this;
         }
     },
@@ -168,12 +168,12 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     _resolveSchemaReferenceIfNecessary: {
         value: function () {
             var self = this,
-                requiresInitialization = !this.schemaDescriptor && this.schemaDescriptorReference,
-                promise = requiresInitialization ?  this.schemaDescriptorReference :
+                requiresInitialization = !this.rawDataDescriptor && this.rawDataDescriptorReference,
+                promise = requiresInitialization ?  this.rawDataDescriptorReference :
                     Promise.resolve(null);
             return promise.then(function (objectDescriptor) {
                 if (objectDescriptor) {
-                    self.schemaDescriptor = objectDescriptor;
+                    self.rawDataDescriptor = objectDescriptor;
                 }
                 return null;
             });
@@ -527,24 +527,24 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
      * data mapping.
      * @type {ObjectDescriptor}
      */
-    _schemaDescriptor: {
+    _rawDataDescriptor: {
         value: undefined
     },
-    schemaDescriptor: {
+    rawDataDescriptor: {
         get: function () {
-            // if(this._schemaDescriptor === undefined) {
+            // if(this._rawDataDescriptor === undefined) {
             //     //Give service a chance to provide one, likely programmatically buit otherwise it would have been set in serialization
-            //     var value = this.service.mappingRequestsSchemaDescriptor(this);
+            //     var value = this.service.rawDataDescriptorForDataMapping(this);
             //     if(value !== undefined) {
-            //         this._schemaDescriptor = value;
+            //         this._rawDataDescriptor = value;
             //     }
             // }
-            return this._schemaDescriptor;
+            return this._rawDataDescriptor;
         },
         set: function (value) {
-            this._schemaDescriptor = value;
+            this._rawDataDescriptor = value;
             if (value) {
-                this._schemaDescriptorReference = new ObjectDescriptorReference().initWithValue(value);
+                this._rawDataDescriptorReference = new ObjectDescriptorReference().initWithValue(value);
             }
         }
     },
@@ -554,14 +554,14 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
      * is used by this mapping.  Used by serialized data mappings.
      * @type {ObjectDescriptorReference}
      */
-    schemaDescriptorReference: {
+    rawDataDescriptorReference: {
         get: deprecate.deprecateMethod(void 0, function () {
-            return this._schemaDescriptorReference ? this._schemaDescriptorReference.promise(require) :
+            return this._rawDataDescriptorReference ? this._rawDataDescriptorReference.promise(require) :
                                                      Promise.resolve(null);
-        }, "schemaDescriptorReference", "schemaDescriptor", true),
+        }, "rawDataDescriptorReference", "rawDataDescriptor", true),
         set: deprecate.deprecateMethod(void 0, function (value) {
-            this._schemaDescriptorReference = value;
-        }, "schemaDescriptorReference", "schemaDescriptor", true)
+            this._rawDataDescriptorReference = value;
+        }, "rawDataDescriptorReference", "rawDataDescriptor", true)
     },
 
 
@@ -897,7 +897,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
 
 
     //                 iKey = dataKeys[i];
-    //                 iRule = this.rawDataMappingRules.get(iKey);
+    //                 iRule = this.rawDataMappingRuleForPropertyName(iKey);
     //                 if(iRule) {
     //                     result = this.mapRawDataToObjectProperty(data, object, iRule.targetPath, context);
     //                     if (this._isAsync(result)) {
@@ -1251,7 +1251,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     //     value: function(object, data, propertyName, rawDataMappingRule) {
     //         var propertyScope = this._scope.nest(object),
     //             result,
-    //             rawDataMappingRules = this.rawDataMappingRulesForPropertyName(propertyName);
+    //             rawDataMappingRules = this.rawDataMappingRulesForObjectPropertyName(propertyName);
 
     //         if(rawDataMappingRules) {
     //             var i=0,
@@ -1383,7 +1383,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     __mapObjectToRawDataProperty: {
         value: function(object, data, propertyName, _rule, lastReadSnapshot, rawDataSnapshot) {
             var propertyScope = this._scope.nest(object),
-            rule = _rule ? _rule : this.rawDataMappingRules.get(propertyName),
+            rule = _rule ? _rule : this.rawDataMappingRuleForPropertyName(propertyName),
             result,
                 propertyDescriptor = rule && rule.propertyDescriptor,
                 isRelationship = propertyDescriptor && propertyDescriptor.valueDescriptor,
@@ -1460,7 +1460,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
             rawDataProperty;
 
             if(objectRule) {
-                rawDataMappingRules = this.rawDataMappingRulesForPropertyName(propertyName);
+                rawDataMappingRules = this.rawDataMappingRulesForObjectPropertyName(propertyName);
                 if(rawDataMappingRules) {
                     var iterator = rawDataMappingRules.values(), rule, result, self = this, iPreviousPromise, iPromises;
 
@@ -1526,7 +1526,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     //             rawProperty;
 
     //         if(objectRule) {
-    //             var rawDataMappingRules = this.rawDataMappingRulesForPropertyName(property);
+    //             var rawDataMappingRules = this.rawDataMappingRulesForObjectPropertyName(property);
 
     //             if(rawDataMappingRules) {
     //                 if(rawDataMappingRules.length === 1) {
@@ -1582,7 +1582,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
 
 
     //             // var objectRuleSourcePathSyntax = objectRule.sourcePathSyntax,
-    //             // rawDataRule = this.rawDataMappingRules.get(objectRule.sourcePath);
+    //             // rawDataRule = this.rawDataMappingRuleForPropertyName(objectRule.sourcePath);
 
     //             // if(rawDataRule && objectRuleSourcePathSyntax) {
     //             //     if(objectRuleSourcePathSyntax.type === "property") {
@@ -1688,7 +1688,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                 var isMapPropertyDescriptor = (propertyDescriptor._keyDescriptorReference != null || propertyDescriptor.keyType != null),
                     propertyDescriptorValueDescriptor = propertyDescriptor._valueDescriptorReference,
                     objectRule = this.objectMappingRules.get(property),
-                    rule = objectRule && this.rawDataMappingRules.get(objectRule.sourcePath),
+                    rule = objectRule && this.rawDataMappingRuleForPropertyName(objectRule.sourcePath),
                     converterforeignDescriptorMappings = objectRule && objectRule.converter && objectRule.converter.foreignDescriptorMappings,
                     objectRuleSourcePathSyntax = objectRule && objectRule.sourcePathSyntax,
                     j, countJ, jRawProperty,
@@ -1802,7 +1802,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     // mapObjectPropertyNameToRawPropertyName: {
     //     value: function(property) {
     //         var objectRule = this.objectMappingRules.get(property),
-    //             rule = objectRule && this.rawDataMappingRules.get(objectRule.sourcePath);
+    //             rule = objectRule && this.rawDataMappingRuleForPropertyName(objectRule.sourcePath);
 
     //         if(rule) {
     //             //A sourcePath that's part the primary key doesn't sounds good, it has to be a relationship...
@@ -1848,7 +1848,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
      */
     mapObjectToRawDataProperty: {
         value: function (object, data, propertyName, lastReadSnapshot, rawDataSnapshot, ignoreRequiredObjectProperties) {
-            var rule = this.rawDataMappingRules.get(propertyName),
+            var rule = this.rawDataMappingRuleForPropertyName(propertyName),
                 //Adding a test for rawDataPrimaryKeys. Types that are meant to be
                 //embedded in others don't have a rawDataPrimaryKeys
                 //as they don't exists on their own.
@@ -2251,6 +2251,13 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
         }
     },
 
+    objectMappingRuleForPropertyName: {
+        value: function(propertyName) {
+            return this.objectMappingRules.get(propertyName);
+        }
+    },
+
+
     _rawOwnRawDataMappingRules: {
         value: undefined
     },
@@ -2277,17 +2284,22 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
             return this._rawDataMappingRules;
         }
     },
+    rawDataMappingRuleForPropertyName: {
+        value: function(propertyName) {
+            return this.rawDataMappingRules.get(propertyName);
+        }
+    },
 
-    _rawDataMappingRulesByPropertyName: {
+    _rawDataMappingRulesByObjectPropertyName: {
         value: undefined
     },
-    rawDataMappingRulesForPropertyName: {
+    rawDataMappingRulesForObjectPropertyName: {
         value: function(propertyName) {
 
             /*
                 for some cases,
             */
-            var rawDataMappingRules = (this._rawDataMappingRulesByPropertyName && this._rawDataMappingRulesByPropertyName.get(propertyName)) || (this.parent && this.parent.rawDataMappingRulesForPropertyName(propertyName));
+            var rawDataMappingRules = (this._rawDataMappingRulesByObjectPropertyName && this._rawDataMappingRulesByObjectPropertyName.get(propertyName)) || (this.parent && this.parent.rawDataMappingRulesForObjectPropertyName(propertyName));
 
             if(rawDataMappingRules === undefined) {
 
@@ -2295,14 +2307,14 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
 
                 if(objectRule) {
                     //Most common case for two-way rules
-                    // var rawDataMappingRule = this.rawDataMappingRules.get(objectRule.sourcePath);
+                    // var rawDataMappingRule = this.rawDataMappingRuleForPropertyName(objectRule.sourcePath);
                     // if(rawDataMappingRule) {
-                    //     (this._rawDataMappingRulesByPropertyName || (this._rawDataMappingRulesByPropertyName = new Map())).set(propertyName,(rawDataMappingRules = [rawDataMappingRule]));
+                    //     (this._rawDataMappingRulesByObjectPropertyName || (this._rawDataMappingRulesByObjectPropertyName = new Map())).set(propertyName,(rawDataMappingRules = [rawDataMappingRule]));
                     // }
 
                     var rawDataMappingRules = this.rawDataMappingRulesForObjectProperty(objectRule.targetPath);
                     if(rawDataMappingRules) {
-                        (this._rawDataMappingRulesByPropertyName || (this._rawDataMappingRulesByPropertyName = new Map())).set(propertyName,rawDataMappingRules);
+                        (this._rawDataMappingRulesByObjectPropertyName || (this._rawDataMappingRulesByObjectPropertyName = new Map())).set(propertyName,rawDataMappingRules);
                     }
                 }
             }
@@ -2315,7 +2327,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
         value: function(rawPropertyName) {
             //Check that that this isn't the primary key
             if(!this.rawDataPrimaryKeys || (this.rawDataPrimaryKeys && this.rawDataPrimaryKeys.indexOf(rawPropertyName) === -1)) {
-                var mappingRule = this.rawDataMappingRules.get(rawPropertyName),
+                var mappingRule = this.rawDataMappingRuleForPropertyName(rawPropertyName),
                     propertyName = mappingRule ? mappingRule.sourcePath : rawPropertyName;
 
                 return this.objectDescriptor.propertyDescriptorForName(propertyName);
@@ -2334,27 +2346,33 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     _mapObjectMappingRules: {
         value: function (rawRules) {
             var propertyNames = rawRules ? Object.keys(rawRules) : null,
-                propertyName, rawRule, rule, i;
+                propertyName, i;
 
             //TODO Add path change listener for objectDescriptor to
             //account for chance that objectDescriptor is added after the rules
             if (this.objectDescriptor && propertyNames) {
                 for (i = 0; (propertyName = propertyNames[i]); ++i) {
-                    rawRule = rawRules[propertyName];
-                    if (this._shouldMapRule(rawRule, true)) {
-                        rule = this._makeRuleFromRawRule(rawRule, propertyName, true, true);
-                        this._ownObjectMappingRules.set(rule.targetPath, rule);
-                    }
-
-                    if (this._shouldMapRule(rawRule, false)) {
-                        rule = this._makeRuleFromRawRule(rawRule, propertyName, false, true);
-                        this._ownRawDataMappingRules.set(rule.targetPath, rule);
-                    }
+                    this._mapObjectMappingRuleForPropertyName(rawRules[propertyName], propertyName);
                 }
             }
         }
     },
 
+    _mapObjectMappingRuleForPropertyName: {
+        value: function (rawRule, propertyName) {
+            var rule;
+
+            if (this._shouldMapRule(rawRule, true)) {
+                rule = this._makeRuleFromRawRule(rawRule, propertyName, true, true);
+                this._ownObjectMappingRules.set(rule.targetPath, rule);
+            }
+
+            if (this._shouldMapRule(rawRule, false)) {
+                rule = this._makeRuleFromRawRule(rawRule, propertyName, false, true);
+                this._ownRawDataMappingRules.set(rule.targetPath, rule);
+            }
+        }
+    },
 
     /**
      * Maps raw object to rawData rules to MappingRule objects
@@ -2365,42 +2383,51 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     _mapRawDataMappingRules: {
         value: function (rawRules) {
             var propertyNames = rawRules ? Object.keys(rawRules) : null,
-                propertyName, rawRule, rule, i;
+                propertyName, i;
 
 
             //TODO Add path change listener for objectDescriptor to
             //account for chance that objectDescriptor is added after the rules
             if (this.objectDescriptor && propertyNames) {
                 for (i = 0; (propertyName = propertyNames[i]); ++i) {
-                    rawRule = rawRules[propertyName];
-                    if (this._shouldMapRule(rawRule, false)) {
-                        rule = this._makeRuleFromRawRule(rawRule, propertyName, false, false);
-                        this._ownObjectMappingRules.set(rule.targetPath, rule);
-                    }
-                    if (this._shouldMapRule(rawRule, true)) {
-                        rule = this._makeRuleFromRawRule(rawRule, propertyName, true, false);
-                        this._ownRawDataMappingRules.set(rule.targetPath, rule);
+                    this._mapRawDataMappingRuleForPropertyName(rawRules[propertyName], propertyName)
+                }
+            }
 
-                        //Let's add indexing for each of rule.requiremts properties if any.
-                        if(rule.requirements && rule.requirements.length) {
-                            var requirements = rule.requirements,
-                                _rawDataMappingRulesByPropertyName = (this._rawDataMappingRulesByPropertyName || (this._rawDataMappingRulesByPropertyName = new Map())),
-                                j=0, countJ = requirements.length, jRequirement, jRequirementRules;
+        }
+    },
 
-                            /*
-                                A property in requirements could be present in more than one rule, which the case for example in the case of polymorphic associations implemented with the Exclusive Belongs To (AKA Exclusive Arc) strategy where each potential destination table has a matching foreignKey.
-                            */
+    _mapRawDataMappingRuleForPropertyName: {
+        value: function (rawRule, propertyName) {
+            var rule;
 
-                            for(;(j<countJ); j++) {
-                                jRequirement = requirements[j];
-                                jRequirementRules = _rawDataMappingRulesByPropertyName.get(jRequirement) || (_rawDataMappingRulesByPropertyName.set(jRequirement,(jRequirementRules = [])) && jRequirementRules);
+            if (this._shouldMapRule(rawRule, false)) {
+                rule = this._makeRuleFromRawRule(rawRule, propertyName, false, false);
+                this._ownObjectMappingRules.set(rule.targetPath, rule);
+            }
+            if (this._shouldMapRule(rawRule, true)) {
+                rule = this._makeRuleFromRawRule(rawRule, propertyName, true, false);
+                this._ownRawDataMappingRules.set(rule.targetPath, rule);
 
-                                jRequirementRules.push(rule);
-                            }
-                        }
+                //Let's add indexing for each of rule.requiremts properties if any.
+                if(rule.requirements && rule.requirements.length) {
+                    var requirements = rule.requirements,
+                        _rawDataMappingRulesByObjectPropertyName = (this._rawDataMappingRulesByObjectPropertyName || (this._rawDataMappingRulesByObjectPropertyName = new Map())),
+                        j=0, countJ = requirements.length, jRequirement, jRequirementRules;
+
+                    /*
+                        A property in requirements could be present in more than one rule, which the case for example in the case of polymorphic associations implemented with the Exclusive Belongs To (AKA Exclusive Arc) strategy where each potential destination table has a matching foreignKey.
+                    */
+
+                    for(;(j<countJ); j++) {
+                        jRequirement = requirements[j];
+                        jRequirementRules = _rawDataMappingRulesByObjectPropertyName.get(jRequirement) || (_rawDataMappingRulesByObjectPropertyName.set(jRequirement,(jRequirementRules = [])) && jRequirementRules);
+
+                        jRequirementRules.push(rule);
                     }
                 }
             }
+
 
         }
     },
@@ -2446,8 +2473,8 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
 
     _defaultConverter: {
         value: function (sourcePath, targetPath, isObjectMappingRule) {
-            var sourceObjectDescriptor = isObjectMappingRule ? this.schemaDescriptor : this.objectDescriptor,
-                targetObjectDescriptor = isObjectMappingRule ? this.objectDescriptor : this.schemaDescriptor,
+            var sourceObjectDescriptor = isObjectMappingRule ? this.rawDataDescriptor : this.objectDescriptor,
+                targetObjectDescriptor = isObjectMappingRule ? this.objectDescriptor : this.rawDataDescriptor,
                 sourceDescriptor = sourceObjectDescriptor && sourceObjectDescriptor.propertyDescriptorForName(sourcePath),
                 targetDescriptor = targetObjectDescriptor && targetObjectDescriptor.propertyDescriptorForName(targetPath),
                 sourceDescriptorValueType = sourceDescriptor && sourceDescriptor.valueType,
@@ -2512,7 +2539,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                     if(countI === 1 && object.dataIdentifier) {
                         (criteriaParameters || (criteriaParameters = {}))[iKey] = object.dataIdentifier.primaryKey;
                     } else {
-                        iKeyRawRule = this.rawDataMappingRules.get(iKey);
+                        iKeyRawRule = this.rawDataMappingRuleForPropertyName(iKey);
                         if(iKeyRawRule) {
                             this.__mapObjectToRawDataProperty(object, (criteriaParameters || (criteriaParameters = {})), iKey, iKeyRawRule, snapshot);
                         }
