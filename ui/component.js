@@ -5093,6 +5093,7 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
 });
 
 exports.__root__ = rootComponent = new RootComponent().init();
+rootComponent.identifier = "rootComponent";
 
 //https://github.com/kangax/html-minifier/issues/63
 //http://www.w3.org/TR/html-markup/global-attributes.html
