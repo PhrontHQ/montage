@@ -648,9 +648,10 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 domArguments,
                 name,
                 node,
-                element = this.element;
+                element = this.element,
+                DOM_ARG_ATTRIBUTE = this.DOM_ARG_ATTRIBUTE;
 
-            candidates = element.querySelectorAll("*[" + this.DOM_ARG_ATTRIBUTE + "]");
+            candidates = element.childElementCount && element.querySelectorAll("*[" + DOM_ARG_ATTRIBUTE + "]");
 
             // Need to make sure that we filter dom args that are for nested
             // components and not for this component.
@@ -668,8 +669,8 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 }
                 this._findAndDetachComponents(candidate);
                 candidate.parentNode.removeChild(candidate);
-                name = candidate.getAttribute(this.DOM_ARG_ATTRIBUTE);
-                candidate.removeAttribute(this.DOM_ARG_ATTRIBUTE);
+                name = candidate.getAttribute(DOM_ARG_ATTRIBUTE);
+                candidate.removeAttribute(DOM_ARG_ATTRIBUTE);
                 domArguments[name] = candidate;
             }
 
