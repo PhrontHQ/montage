@@ -1927,6 +1927,20 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             target.nativeAddEventListener("focus", this._activationHandler, true);
             this._registeredTargetForActivation.set("focus", target);
 
+            // Clicking on a label element with a for attribute pointing to an
+            // input type radio or checkbox will check the input. In Chrome
+            // this will fire a focus event in the input element, this focus
+            // will call the _activationHandler, and that will allow a change
+            // event to fire in the input. In Safari, at least in the version at
+            // the time of writing this comment (15.5), the focus event is not
+            // fired and that was causing the event manager to fail to fire the
+            // expected change event. The following two lines fix the issue by
+            // directly listening to the change event in the window to call
+            // the _activationHandler:
+
+            target.nativeAddEventListener("change", this._activationHandler, true);
+            this._registeredTargetForActivation.set("change", target);
+
         }
 
     },
