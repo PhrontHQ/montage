@@ -1296,6 +1296,21 @@ var Repetition = exports.Repetition = Component.specialize(/** @lends Repetition
         }
     },
 
+    addChildComponent: {
+        value: function (childComponent) {
+            /*
+                This should be the case where a template component is re-assigned to us, like in a flow or any component that wrap has a repetiton in it's template with template arguments passed from the outside.
+
+                component.addChildComponent() sets _detachedParentComponent to null, so we need to check before calling super.
+            */
+            if(childComponent._detachedParentComponent) {
+                childComponent.needsDraw = false;
+            }
+            this.super(childComponent);
+
+        }
+    },
+
     /**
      * Called by Component to build the component tree.
      * @private
@@ -1391,9 +1406,10 @@ var Repetition = exports.Repetition = Component.specialize(/** @lends Repetition
             // children will be purged on first draw.  We use the innerTemplate
             // as the iteration template and replicate it for each iteration
             // instead of using the initial DOM and components.
-            var childComponents = this.childComponents;
-            var childComponent;
-            var index = childComponents.length - 1;
+            var childComponents = this.childComponents,
+                childComponent,
+                index = childComponents.length - 1;
+
             // pop() each component instead of shift() to avoid bubbling the
             // indexes of each child component on every iteration.
             while ((childComponent = childComponents[index--])) {

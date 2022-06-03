@@ -667,7 +667,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                         continue nextCandidate;
                     }
                 }
-                this._findAndDetachComponents(candidate);
+                this._findAndDetachComponentsFromNode(candidate);
                 candidate.parentNode.removeChild(candidate);
                 name = candidate.getAttribute(DOM_ARG_ATTRIBUTE);
                 candidate.removeAttribute(DOM_ARG_ATTRIBUTE);
@@ -1145,6 +1145,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
             if (this.childComponents.indexOf(childComponent) === -1) {
                 this.childComponents.push(childComponent);
                 childComponent._parentComponent = this;
+                childComponent._detachedParentComponent = null;
                 childComponent._prepareForEnterDocument();
                 if (childComponent.needsDraw &&
                     !this.rootComponent.isComponentWaitingNeedsDraw(childComponent)) {
@@ -1188,6 +1189,10 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
 
             if (parentComponent) {
                 parentComponent.removeChildComponent(this);
+
+                if(!this._detachedParentComponent) {
+                    this._detachedParentComponent = parentComponent;
+                }
             }
 
             /*
@@ -1463,12 +1468,12 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
             }
             if (value instanceof Element) {
                 this._contentElementsToAppend.push(value);
-                this._findAndDetachComponents(value, (componentsToAdd = []));
+                this._findAndDetachComponentsFromNode(value, (componentsToAdd = []));
             } else if (value && value[0]) {
                 componentsToAdd = [];
                 for (i = 0; i < value.length; i++) {
                     this._contentElementsToAppend.push(value[i]);
-                    this._findAndDetachComponents(value[i], componentsToAdd);
+                    this._findAndDetachComponentsFromNode(value[i], componentsToAdd);
                 }
             }
 
@@ -1485,26 +1490,22 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
         value: false
     },
 
-    _findAndDetachComponents: {
+    _findAndDetachComponentsFromNode: {
         value: function (node, components) {
             // TODO: Check if searching the childComponents of the parent
             //       component can make the search faster..
-            var component = node.component,
-                children;
 
-            if (!components) {
-                components = [];
-            }
-
-            if (component) {
-                component.detachFromParentComponent();
-                components.push(component);
+            if (node.component) {
+                node.component.detachFromParentComponent();
+                if(components) {
+                    components.push(node.component);
+                }
             } else {
                 // DocumentFragments don't have children so we default to
                 // childNodes.
-                children = node.children || node.childNodes;
+                var children = node.children || node.childNodes;
                 for (var i = 0, child; (child = children[i]); i++) {
-                    this._findAndDetachComponents(child, components);
+                    this._findAndDetachComponentsFromNode(child, components);
                 }
             }
 
@@ -1774,7 +1775,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
 
                                 So more to look at before we can enjoy that win.
                             */
-                            self.needsDraw = true;
+                            //self.needsDraw = true;
                         }).catch(function (error) {
                             console.error(error);
                         });
@@ -2474,7 +2475,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                             }
                         }
 
-                        components = this._findAndDetachComponents(contents);
+                        components = this._findAndDetachComponentsFromNode(contents, (components = []));
                         parameterElement.parentNode.replaceChild(contents, parameterElement);
 
                         for (i = 0; (component = components[i]); i++) {
