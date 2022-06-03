@@ -363,6 +363,9 @@ exports.Loader = Component.specialize( /** @lends Loader.prototype # */ {
             this._mainComponent.enterDocument = this.mainComponentEnterDocument.bind(this);
             this._mainComponent.setElementWithParentComponent(document.createElement("div"), this);
             this._mainComponent.attachToParentComponent();
+            if(!this._mainComponent.identifier) {
+                this._mainComponent.identifier = "main";
+            }
             this._mainComponent._canDrawOutsideDocument = true;
             this._mainComponent.needsDraw = true;
             return this;
