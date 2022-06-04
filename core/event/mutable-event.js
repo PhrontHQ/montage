@@ -370,19 +370,15 @@ var wrapPropertyGetter = function (key, storageKey) {
          * @returns newEvent
          */
         fromEvent: {
-            value: function (event) {
-                var type = event.type,
-                    constructor = _eventConstructorsByType[type],
-                    newEvent;
+            value: function fromEvent(event) {
+                var constructor = _eventConstructorsByType[event.type];
                 if (!constructor) {
                     constructor = function MutableEvent() {
                     };
                     constructor.prototype = new exports.MutableEvent()._initPrototypeWithEvent(event);
-                    _eventConstructorsByType[type] = constructor;
+                    _eventConstructorsByType[event.type] = constructor;
                 }
-                newEvent = new constructor();
-                newEvent._initWithEvent(event);
-                return newEvent;
+                return new constructor()._initWithEvent(event);
             }
         },
 
