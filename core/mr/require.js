@@ -593,6 +593,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
         config.requireById = config.requireById || new Map();
         config.normalizeId = normalizeId;
         config.resolve = resolve;
+        config._identified = new Map();
 
         // Modules: { exports, id, location, directory, factory, dependencies,
         // dependees, text, type }
@@ -890,8 +891,9 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
         // the function to return null instead of throwing an exception. I’m
         // guessing that throwing exceptions *and* being recursive would be
         // too much performance evil for one function.
-        function identify(id2, require2, seen) {
-            var location = config.location;
+        function _identify(id2, require2, seen) {
+            var _config = config,
+                location = _config.location;
             if (require2.location === location) {
                 return id2;
             }
@@ -902,23 +904,28 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                 return null; // break the cycle of violence.
             }
             seen.set(location,true);
+
+            var configMappings = config.mappings,
+                mapping,
+                candidate,
+                id1;
+
             /*jshint -W089 */
-            for (var name in config.mappings) {
-                var mapping = config.mappings[name];
+            for (var name in configMappings) {
+                mapping = configMappings[name];
                 location = mapping.location;
-                if (!config.hasPackage(location)) {
+                if (!_config.hasPackage(location)) {
                     continue;
                 }
-                var candidate = config.getPackage(location);
-                var id1 = candidate.identify(id2, require2, seen);
+                candidate = _config.getPackage(location);
+                id1 = candidate.identify(id2, require2, seen);
                 if (id1 === null) {
                     continue;
                 } else if (id1 === "") {
                     return name;
                 } else {
                     name += "/";
-                    name += id1;
-                    return name;
+                    return (name += id1);
                 }
             }
             if (internal) {
@@ -929,6 +936,20 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                 );
             }
             /*jshint +W089 */
+        }
+
+        function identify(id2, require2, seen) {
+            var identifiedRequire2 = this.config._identified.get(require2),
+                identified;
+
+            if(!identifiedRequire2) {
+                this.config._identified.set(require2, (identifiedRequire2 = new Map()));
+                return identifiedRequire2.set(id2, (identified = _identify(id2, require2, seen))) && identified;
+            } else {
+                return (identified = identifiedRequire2.get(id2)) !== undefined
+                    ? identified
+                    : identifiedRequire2.set(id2, (identified = _identify(id2, require2, seen))) && identified;
+            }
         }
 
         // Creates a unique require function for each module that encapsulates
@@ -1002,6 +1023,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                 require.injectMapping({name: name}, name);
             };
 
+            require._identify = _identify;
             require.identify = identify;
             require.inject = inject;
 
