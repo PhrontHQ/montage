@@ -2775,13 +2775,14 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
                     operationObjectDescriptors = [],
                     // transactionCreateStartDispatched = false,
                     dataOperationCreationPromises,
-                    createTransactionOperation = new DataOperation();
-                dataOperationsByObject = new Map();/* Key is object, value is operation */
+                    createTransactionOperation,
+                    dataOperationsByObject = new Map();/* Key is object, value is operation */
 
 
                 //console.log("handleTransactionCreate: transaction-"+transaction.identifier, transaction);
 
                 //To help debug tracability, let's assign to the createTransactionOperation's id transaction.identifier
+                createTransactionOperation = new DataOperation();
                 createTransactionOperation.id = transaction.identifier;
 
                 createTransactionOperation.type = DataOperation.Type.CreateTransactionOperation;
@@ -2790,6 +2791,8 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
 
                 transactionRawContext.operations = {};
                 transactionRawContext.dataOperationsByObject = dataOperationsByObject;
+
+                this.rawContextForTransaction(transaction).createTransactionOperation = createTransactionOperation;
 
                 while (!(iteration = iterator.next()).done) {
                     iObjectDescriptor = iteration.value;
@@ -3431,7 +3434,7 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
      */
 
     _saveDataOperationForObject: {
-        value: function (object, operationType, dataObjectChangesMap, dataOperationsByObject) {
+        value: function (object, operationType, dataObjectChangesMap, dataOperationsByObject, commitTransactionOperation) {
             try {
 
                 //TODO
@@ -3471,6 +3474,8 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
                     localizableProperties = objectDescriptor.localizablePropertyDescriptors,
                     criteria,
                     i, iValue, countI;
+
+                operation.referrer = commitTransactionOperation;
 
                 operation.target = objectDescriptor;
 
@@ -3573,10 +3578,11 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
                         percentCompletion,
                         lastProgressSent = (createTransaction && createTransaction.lastProgressSent) || 0,
                         transactionPrepareProgressEvent,
+                        commitTransactionOperation = self.commitTransactionOperationForTransaction(transaction),
                         iObject;
 
                     while ((iObject = iterator.next().value)) {
-                        iOperationPromise = self._saveDataOperationForObject(iObject, operationType, dataObjectChangesMap, dataOperationsByObject);
+                        iOperationPromise = self._saveDataOperationForObject(iObject, operationType, dataObjectChangesMap, dataOperationsByObject, commitTransactionOperation);
                         (iOperationPromises || (iOperationPromises = [])).push(iOperationPromise);
                         iOperationPromise.then(function (resolvedOperation) {
                             var operationCreationProgress = (createTransaction && createTransaction.operationCreationProgress) || 0;
@@ -3800,22 +3806,26 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
         value: function (transaction) {
 
             var transactionRawContext = this.rawContextForTransaction(transaction),
+                commitTransaction = transactionRawContext.commitTransactionOperation;
+
+            if(!commitTransaction) {
                 rawTransactions = transactionRawContext.rawTransactions,
                 createTransactionOperation = transactionRawContext.createTransactionOperation,
                 commitTransaction = new DataOperation();
 
-            commitTransaction.type = DataOperation.Type.CommitTransactionOperation;
-            commitTransaction.target = this;
-            commitTransaction.referrerId = createTransactionOperation.id;
-            commitTransaction.data = {
-                rawTransactions: rawTransactions
-            };
+                commitTransaction.type = DataOperation.Type.CommitTransactionOperation;
+                commitTransaction.target = this;
+                commitTransaction.referrerId = createTransactionOperation.id;
+                commitTransaction.data = {
+                    rawTransactions: rawTransactions
+                };
 
-            /*
-                DataOperations coming in:
-            */
-            this.mainService.addEventListener(DataOperation.Type.CommitTransactionCompletedOperation, this, false);
-            this.mainService.addEventListener(DataOperation.Type.CommitTransactionFailedOperation, this, false);
+                /*
+                    DataOperations coming in:
+                */
+                this.mainService.addEventListener(DataOperation.Type.CommitTransactionCompletedOperation, this, false);
+                this.mainService.addEventListener(DataOperation.Type.CommitTransactionFailedOperation, this, false);
+            }
 
             return commitTransaction;
 
