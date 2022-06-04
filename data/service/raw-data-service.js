@@ -1899,7 +1899,7 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
     },
 
     /**
-     * Method called by mappings when asked for a schemaDescriptor and don't have one.
+     * Method called by mappings when asked for a rawDataDescriptor and don't have one.
      *
      * @abstract    Needs to be overriden by subclasses
      * @method
@@ -1924,26 +1924,26 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
      * @method
      */
     _mapObjectToRawData: {
-        value: function (object, record, context, keyIterator) {
+        value: function (object, record, context) {
             var mapping = this.mappingForObject(object),
                 result;
 
             if (mapping) {
                 //Benoit: third argument was context but it's not defined on
                 //ExpressionDataMapping's mapObjectToRawData method
-                result = mapping.mapObjectToRawData(object, record, keyIterator);
+                result = mapping.mapObjectToRawData(object, record);
             }
 
             if (record) {
                 if (result) {
-                    var otherResult = this.mapObjectToRawData(object, record, context, keyIterator);
+                    var otherResult = this.mapObjectToRawData(object, record, context);
                     if (this._isAsync(result) && this._isAsync(otherResult)) {
                         result = Promise.all([result, otherResult]);
                     } else if (this._isAsync(otherResult)) {
                         result = otherResult;
                     }
                 } else {
-                    result = this.mapObjectToRawData(object, record, context, keyIterator);
+                    result = this.mapObjectToRawData(object, record, context);
                 }
             }
 
