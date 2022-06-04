@@ -505,7 +505,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             this._elementEventHandlerByElement = new WeakMap();
             this.environment = currentEnvironment;
             this._trackingTouchTimeoutIDs = new Map();
-            this._functionType = "function";
+            // this._functionType = "function";
 
             this._targetEventListeners = new Map();
             /*
@@ -3111,7 +3111,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
 
 
     __invokeTargetListenersForEventPhase: {
-        value: function(iTarget, mutableEvent, phase, _eventType) {
+        value: function __invokeTargetListenersForEventPhase(iTarget, mutableEvent, phase, _eventType) {
             var eventType = (_eventType || mutableEvent.type),
                 listenerEntries = this._registeredEventListenersOnTarget_eventType_eventPhase(iTarget, eventType, phase);
 
@@ -3120,18 +3120,20 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 // currentTargetIdentifierSpecificCaptureMethodName = this.methodNameForCapturePhaseOfEventType(eventType, iTarget.identifier, capitalizedEventType);
                 if (Array.isArray(listenerEntries)) {
                     var j=0,
-                    _currentDispatchedTargetListeners = this._currentDispatchedTargetListeners,
-                    nextEntry,
-                    previousPromise,
-                    promise,
-                    promises;
+                        _currentDispatchedTargetListeners = this._currentDispatchedTargetListeners,
+                        nextEntry,
+                        previousPromise,
+                        promise,
+                        promises,
+                        mutableEventPhase = mutableEvent.eventPhase,
+                        self = this;
 
                     _currentDispatchedTargetListeners.set(listenerEntries,null);
                     while ((nextEntry = listenerEntries[j++]) && !mutableEvent.immediatePropagationStopped) {
                         if(promise) {
                             previousPromise = promise;
                         }
-                        promise = this._invokeTargetListenerEntryForEvent(iTarget, nextEntry, mutableEvent, mutableEvent.eventPhase, undefined/*currentTargetIdentifierSpecificCaptureMethodName*/, undefined/*identifierSpecificCaptureMethodName*/, undefined/*captureMethodName*/, previousPromise);
+                        promise = this._invokeTargetListenerEntryForEvent(iTarget, nextEntry, mutableEvent, mutableEventPhase, undefined/*currentTargetIdentifierSpecificCaptureMethodName*/, undefined/*identifierSpecificCaptureMethodName*/, undefined/*captureMethodName*/, previousPromise);
 
                         // if(previousPromise && promise) {
                         //     if(!promises) {
@@ -3154,7 +3156,6 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                         // ? Promise.all(promises)
                         // : promise;
 
-                        var self = this;
                         return promise.finally(function() {
                             self._processCurrentDispatchedTargetListenersToRemove(iTarget, eventType, phase, listenerEntries);
                             _currentDispatchedTargetListeners.delete(listenerEntries);
@@ -3170,8 +3171,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                     /*
                         There's only one listener, so no previous promise to pass
                     */
-                    promise = this._invokeTargetListenerEntryForEvent(iTarget, listenerEntries, mutableEvent, mutableEvent.eventPhase, undefined/*currentTargetIdentifierSpecificCaptureMethodName*/, undefined/*identifierSpecificCaptureMethodName*/, undefined/*captureMethodName*/, /*promise*/undefined);
-                    return promise;
+                    return this._invokeTargetListenerEntryForEvent(iTarget, listenerEntries, mutableEvent, mutableEvent.eventPhase, undefined/*currentTargetIdentifierSpecificCaptureMethodName*/, undefined/*identifierSpecificCaptureMethodName*/, undefined/*captureMethodName*/, /*promise*/undefined);
                 }
             }
         }
@@ -3280,12 +3280,14 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             }
 
             // Bubble Phase Distribution
-            mutableEvent.eventPhase = BUBBLING_PHASE;
-            for (i = 0; eventBubbles && !mutableEvent.immediatePropagationStopped && !mutableEvent.propagationStopped && (iTarget = eventPath[i]); i++) {
-                mutableEvent.currentTarget = iTarget;
+            if(eventBubbles) {
+                mutableEvent.eventPhase = BUBBLING_PHASE;
+                for (i = 0; !mutableEvent.immediatePropagationStopped && !mutableEvent.propagationStopped && (iTarget = eventPath[i]); i++) {
+                    mutableEvent.currentTarget = iTarget;
 
-                promise = this._invokeTargetListenersForEventPhase(iTarget, mutableEvent, BUBBLING_PHASE, eventType, promise);
+                    promise = this._invokeTargetListenersForEventPhase(iTarget, mutableEvent, BUBBLING_PHASE, eventType, promise);
 
+                }
             }
 
 
@@ -3330,35 +3332,35 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
     /**
      * @private
      */
-    _invokeTargetListenerForEvent: {
-        value: function _invokeTargetListenerForEvent(iTarget, jListener, mutableEvent, currentTargetIdentifierSpecificPhaseMethodName, targetIdentifierSpecificPhaseMethodName, phaseMethodName) {
-            // var functionType = "function";
-            // if (typeof jListener === functionType) {
-            //     jListener.call(iTarget, mutableEvent);
-            // }
-            // else if (identifierSpecificPhaseMethodName && typeof jListener[identifierSpecificPhaseMethodName] === functionType) {
-            //     jListener[identifierSpecificPhaseMethodName](mutableEvent);
-            // }
-            // else if (typeof jListener[phaseMethodName] === functionType) {
-            //     jListener[phaseMethodName](mutableEvent);
-            // }
-            // else if (typeof jListener.handleEvent === functionType) {
-            //     jListener.handleEvent(mutableEvent);
-            // }
-        (currentTargetIdentifierSpecificPhaseMethodName && typeof jListener[currentTargetIdentifierSpecificPhaseMethodName] === this._functionType)
-            ? jListener[currentTargetIdentifierSpecificPhaseMethodName](mutableEvent)
-            : (targetIdentifierSpecificPhaseMethodName && typeof jListener[targetIdentifierSpecificPhaseMethodName] === this._functionType)
-                ? jListener[targetIdentifierSpecificPhaseMethodName](mutableEvent)
-                : (typeof jListener[phaseMethodName] === this._functionType)
-                    ? jListener[phaseMethodName](mutableEvent)
-                    : (typeof jListener.handleEvent === this._functionType)
-                        ? jListener.handleEvent(mutableEvent)
-                        : (typeof jListener === this._functionType)
-                            ? jListener.call(iTarget, mutableEvent)
-                            : void 0;
+    // _invokeTargetListenerForEvent: {
+    //     value: function _invokeTargetListenerForEvent(iTarget, jListener, mutableEvent, currentTargetIdentifierSpecificPhaseMethodName, targetIdentifierSpecificPhaseMethodName, phaseMethodName) {
+    //         // var functionType = "function";
+    //         // if (typeof jListener === functionType) {
+    //         //     jListener.call(iTarget, mutableEvent);
+    //         // }
+    //         // else if (identifierSpecificPhaseMethodName && typeof jListener[identifierSpecificPhaseMethodName] === functionType) {
+    //         //     jListener[identifierSpecificPhaseMethodName](mutableEvent);
+    //         // }
+    //         // else if (typeof jListener[phaseMethodName] === functionType) {
+    //         //     jListener[phaseMethodName](mutableEvent);
+    //         // }
+    //         // else if (typeof jListener.handleEvent === functionType) {
+    //         //     jListener.handleEvent(mutableEvent);
+    //         // }
+    //     (currentTargetIdentifierSpecificPhaseMethodName && typeof jListener[currentTargetIdentifierSpecificPhaseMethodName] === this._functionType)
+    //         ? jListener[currentTargetIdentifierSpecificPhaseMethodName](mutableEvent)
+    //         : (targetIdentifierSpecificPhaseMethodName && typeof jListener[targetIdentifierSpecificPhaseMethodName] === this._functionType)
+    //             ? jListener[targetIdentifierSpecificPhaseMethodName](mutableEvent)
+    //             : (typeof jListener[phaseMethodName] === this._functionType)
+    //                 ? jListener[phaseMethodName](mutableEvent)
+    //                 : (typeof jListener.handleEvent === this._functionType)
+    //                     ? jListener.handleEvent(mutableEvent)
+    //                     : (typeof jListener === this._functionType)
+    //                         ? jListener.call(iTarget, mutableEvent)
+    //                         : void 0;
 
-        }
-    },
+    //     }
+    // },
 
     _invokeTargetListenerEntryForEvent: {
         value: function _invokeTargetListenerEntryForEvent(iTarget, listenerEntry, mutableEvent, phase, currentTargetIdentifierSpecificPhaseMethodName, targetIdentifierSpecificPhaseMethodName, phaseMethodName, promise) {
@@ -3393,15 +3395,15 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
         value: function callbackForEventTypeListenerOnTargetInPhase(type, listener, target, capture, currentTarget) {
             var callback, currentTargetIdentifierSpecificPhaseMethodName, targetIdentifierSpecificPhaseMethodName, phaseMethodName;
 
-            callback = ((currentTargetIdentifierSpecificPhaseMethodName = this._currentTargetIdentifierSpecificPhaseMethodName(capture, type, currentTarget.identifier)) && typeof listener[currentTargetIdentifierSpecificPhaseMethodName] === this._functionType)
+            callback = ((currentTargetIdentifierSpecificPhaseMethodName = this._currentTargetIdentifierSpecificPhaseMethodName(capture, type, currentTarget.identifier)) && typeof listener[currentTargetIdentifierSpecificPhaseMethodName] === "function")
             ? currentTargetIdentifierSpecificPhaseMethodName
-            : ((targetIdentifierSpecificPhaseMethodName =  this._currentTargetIdentifierSpecificPhaseMethodName(capture,type,target.identifier)) && typeof listener[targetIdentifierSpecificPhaseMethodName] === this._functionType)
+            : ((targetIdentifierSpecificPhaseMethodName =  this._currentTargetIdentifierSpecificPhaseMethodName(capture,type,target.identifier)) && typeof listener[targetIdentifierSpecificPhaseMethodName] === "function")
                 ? targetIdentifierSpecificPhaseMethodName
-                : (typeof listener[(phaseMethodName = this._currentTargetIdentifierSpecificPhaseMethodName(capture,type, null))] === this._functionType)
+                : (typeof listener[(phaseMethodName = this._currentTargetIdentifierSpecificPhaseMethodName(capture,type, null))] === "function")
                     ? phaseMethodName
-                    : (typeof listener.handleEvent === this._functionType)
+                    : (typeof listener.handleEvent === "function")
                         ? "handleEvent"
-                        : typeof listener === this._functionType
+                        : typeof listener === "function"
                             ? listener
                             : void 0;
 
@@ -3482,7 +3484,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
 
 
                     //callback.call(listener, mutableEvent);
-                    result = typeof callback !== this._functionType
+                    result = typeof callback !== "function"
                     ? listener[callback](mutableEvent)
                     : (callback === listener)
                         ? callback.call(iTarget, mutableEvent)
