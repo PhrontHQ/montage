@@ -104,7 +104,7 @@ exports.Target = Montage.specialize( /** @lends Target.prototype */{
      * @param {Event} event The event object to dispatch
      */
     dispatchEvent: {
-        value: function (event) {
+        value: function dispatchEvent(event) {
             if(!event) return;
             var targettedEvent = (event instanceof MutableEvent) ? event : MutableEvent.fromEvent(event);
             targettedEvent.target = this;
