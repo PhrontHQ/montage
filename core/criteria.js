@@ -430,7 +430,7 @@ var Criteria = exports.Criteria = Montage.specialize({
                 //We replace $ syntax by the $key/$.key syntax:
                 aliasedSyntaxparameterArg = {};
                 aliasedSyntaxparameterArg.type = "property";
-                aliasedParameter = "parameter"+(++parameterCounter);
+                aliasedParameter = "parameter"+(++parameterCounter.value);
                 aliasedSyntaxparameterArg.args = [
                     {
                         "type":"parameters"
@@ -450,7 +450,7 @@ var Criteria = exports.Criteria = Montage.specialize({
                 parameter = otherArg.value;
                 parameterValue = _thisParameters[parameter];
                 if(aliasedParameters.hasOwnProperty(parameter) && aliasedParameters[parameter] !== parameterValue) {
-                    aliasedParameter = parameter+(++parameterCounter);
+                    aliasedParameter = parameter+(++parameterCounter.value);
                     aliasedParameters[aliasedParameter] = parameterValue;
                 } else {
                     aliasedParameter = parameter;
@@ -478,7 +478,7 @@ var Criteria = exports.Criteria = Montage.specialize({
                 //We replace $ syntax by the $key/$.key syntax:
                 aliasedSyntaxparameterArg = {};
                 aliasedSyntaxparameterArg.type = "property";
-                aliasedParameter = "parameter"+(++parameterCounter);
+                aliasedParameter = "parameter"+(++parameterCounter.value);
                 aliasedSyntaxparameterArg.args = [
                     {
                         "type":"parameters"
@@ -498,7 +498,7 @@ var Criteria = exports.Criteria = Montage.specialize({
                 parameter = otherArg.value;
                 parameterValue = _thisParameters[parameter];
                 if(aliasedParameters.hasOwnProperty(parameter) && aliasedParameters[parameter] !== parameterValue) {
-                    aliasedParameter = parameter+(++parameterCounter);
+                    aliasedParameter = parameter+(++parameterCounter.value);
                     aliasedParameters[aliasedParameter] = parameterValue;
                 } else {
                     aliasedParameter = parameter;
@@ -707,7 +707,7 @@ var Criteria = exports.Criteria = Montage.specialize({
 
     syntaxByAliasingSyntaxWithParameters: {
         value: function (aliasedParameters, aliasedScopeComponents, scopeComponentTranslation, parameterCounters) {
-            return this._syntaxByAliasingSyntaxWithParameters(this.syntax, aliasedParameters, parameterCounters||0, this.parameters, aliasedScopeComponents, this._scope.components, scopeComponentTranslation);
+            return this._syntaxByAliasingSyntaxWithParameters(this.syntax, aliasedParameters, parameterCounters||{value:0}, this.parameters, aliasedScopeComponents, this._scope.components, scopeComponentTranslation);
         }
     }
 
@@ -785,6 +785,11 @@ function _combinedCriteriaFromArguments(type, receiver, _arguments) {
     // });
     var args = [],
         isInstanceReceiver = (typeof receiver === "object"),
+        combinedSyntax = {
+            type: type,
+            args: []
+        },
+        parameterCounters = {value:0},
         // parameters = isInstanceReceiver ? receiver.parameters : null,
         i = 0, argument, countI,
         j, countJ, argumentParameters, argumentParametersKeys, argumentParameter,
@@ -792,16 +797,22 @@ function _combinedCriteriaFromArguments(type, receiver, _arguments) {
         aliasedScopeComponents = new Map,
         scopeComponentTranslation = new Map;
 
+    //When called from aCriteria.and("b") pattern
+    if(isInstanceReceiver) {
+        combinedSyntax.args.push(receiver.syntaxByAliasingSyntaxWithParameters(aliasedParameters, aliasedScopeComponents, scopeComponentTranslation, parameterCounters));
+    }
+
+
     for(countI = _arguments.length; (i<countI) ; i++ ) {
         argument = _arguments[i];
         if (typeof argument === "string") {
             //If it's a string, there can't really be a parameter argument with it's likely safe to just parse it
-            args.push(parse(argument));
+            combinedSyntax.args.push(parse(argument));
         } else if (argument.syntax) {
             //We alias anyway, as there could be an need in subsequent arguments.
             //if that's too expensive we can do a quick first pass to avoid creating new syntaxes.
             //at the same time, it might be safer that the new combined criteria has it's own independent syntactic tree.
-            args.push(argument.syntaxByAliasingSyntaxWithParameters(aliasedParameters, aliasedScopeComponents, scopeComponentTranslation));
+            combinedSyntax.args.push(argument.syntaxByAliasingSyntaxWithParameters(aliasedParameters, aliasedScopeComponents, scopeComponentTranslation, parameterCounters));
 
             // if(argumentParameters = argument.parameters) {
             //     if(parameters) {
@@ -860,27 +871,19 @@ function _combinedCriteriaFromArguments(type, receiver, _arguments) {
             //}
 
         } else if (typeof argument === "object") {
-            args.push(argument);
+            combinedSyntax.args.push(argument);
+        }
+
+        if(combinedSyntax.args.length === 2 && ((i+1) < countI)) {
+            combinedSyntax = {
+                type: type,
+                args: [combinedSyntax]
+            }
         }
     }
 
-    //When called from aCriteria.and("b") pattern
-    if(isInstanceReceiver) {
-        return new (receiver.constructor)().initWithSyntax({
-            type: type,
 
-            //args: [receiver.syntax].concat(args)
-            args: [receiver.syntaxByAliasingSyntaxWithParameters(aliasedParameters, aliasedScopeComponents, scopeComponentTranslation)].concat(args)
-        }, aliasedParameters, aliasedScopeComponents);
-    }
-    //When called from the Criteria.and("a", "b") pattern
-    else {
-        // invoked as class method
-        return new receiver().initWithSyntax({
-            type: type,
-            args: args
-        }, aliasedParameters, aliasedScopeComponents);
-    }
+        return new (isInstanceReceiver ? receiver.constructor : receiver)().initWithSyntax(combinedSyntax, aliasedParameters, aliasedScopeComponents);
 }
 
 // generate methods on Criteria for each of the tokens of the language.
@@ -895,7 +898,7 @@ operatorTypes.forEach(function (value,operator, operatorTypes) {
     });
     Montage.defineProperty(Criteria, operator, {
         value: function () {
-            return _combinedCriteriaFromArguments(operator, this, arguments);
+            return _combinedCriteriaFromArguments(operator, this, arguments.length === 1 && Array.isArray(arguments[0]) ? arguments[0] : arguments);
         }
     });
 });
