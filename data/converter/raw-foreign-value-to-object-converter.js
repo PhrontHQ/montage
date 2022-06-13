@@ -243,121 +243,347 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
 
                 var fetchPromise = self._registeredFetchPromiseMapForObjectDescriptorCriteria(typeToFetch,criteria);
 
-                if(!fetchPromise) {
-                    var query = DataQuery.withTypeAndCriteria(typeToFetch, criteria);
+                if(!self.combinesFetchData) {
+                    console.log("_fetchConvertedDataForObjectDescriptorCriteria()",typeToFetch, criteria, currentRule);
+
+                    if(!fetchPromise) {
+                        var query = DataQuery.withTypeAndCriteria(typeToFetch, criteria);
+
+                        /*
+                            Sounds twisted, but this is to deal with the case where we need to fetch to resolve a property of the object itself.
+                        */
+                        if(currentRule && !currentRule.propertyDescriptor._valueDescriptorReference) {
+                            query.readExpressions = [currentRule.targetPath];
+                        }
 
                     /*
-                        Sounds twisted, but this is to deal with the case where we need to fetch to resolve a priperty of the object itself.
+                        When we fetch objects that have inverse relationships on each others none can complete their mapRawDataProcess because the first one's promise for mapping the relationship to the second never commpletes because the second one itself has it's raw data the foreignKey to the first and attemps to do so by default on processing operations, where the previous way was only looping on requisite proprties. If both relationships were requisite, on each side we'd end up with the same problem.
+
+                        When the second try to map it's foreignKey relationship back to the first, the first exists, and is being mapped, which we can know by checking:
+                                if(!this.service._objectsBeingMapped.has(object)) {}
+
+                        So let's try to find a local object that we may already have. This is a specific converter to resolve foreign keys, but we should be able to run the criteria on all local instances' snapshots. We don't have right now an indexation of the snapshots by type, just by dataIdentifier.
+
+                        However, we could start by identifying if the criteria's property involves the typeToFetch's primary key.
+
+                        We also now know currentRule = this.currentRule;
+
+                        Quick draft bellow, un-tested to be refined and continued to.
+
+                        One more thought that's been on my mind. We want to leverage indexedDB anyway so the app has data offline as needed, or to be able to do edge machine learning or keep private data there. If we need to build an index to find objects known client side, we might be able to kill 2 birds with one stone to look for them in the indexedDB directly, where we wou;d build index to match foreign relationships etc...
                     */
-                    if(currentRule && !currentRule.propertyDescriptor._valueDescriptorReference) {
-                        query.readExpressions = [currentRule.targetPath];
-                    }
 
-                /*
-                    When we fetch objects that have inverse relationships on each others none can complete their mapRawDataProcess because the first one's promise for mapping the relationship to the second never commpletes because the second one itself has it's raw data the foreignKey to the first and attemps to do so by default on processing operations, where the previous way was only looping on requisite proprties. If both relationships were requisite, on each side we'd end up with the same problem.
+                    /*
 
-                    When the second try to map it's foreignKey relationship back to the first, the first exists, and is being mapped, which we can know by checking:
-                            if(!this.service._objectsBeingMapped.has(object)) {}
+                    var criteria = query.criteria;
 
-                    So let's try to find a local object that we may already have. This is a specific converter to resolve foreign keys, but we should be able to run the criteria on all local instances' snapshots. We don't have right now an indexation of the snapshots by type, just by dataIdentifier.
+                    if(criteria.syntax.type === "equals") {
+                        var args = criteria.syntax.args,
+                            parameters = criteria.parameters,
+                            parameterValue,
+                            propertySyntax;
 
-                    However, we could start by identifying if the criteria's property involves the typeToFetch's primary key.
-
-                    We also now know currentRule = this.currentRule;
-
-                    Quick draft bellow, un-tested to be refined and continued to.
-
-                    One more thought that's been on my mind. We want to leverage indexedDB anyway so the app has data offline as needed, or to be able to do edge machine learning or keep private data there. If we need to build an index to find objects known client side, we might be able to kill 2 birds with one stone to look for them in the indexedDB directly, where we wou;d build index to match foreign relationships etc...
-                */
-
-                /*
-
-                var criteria = query.criteria;
-
-                if(criteria.syntax.type === "equals") {
-                    var args = criteria.syntax.args,
-                        parameters = criteria.parameters,
-                        parameterValue,
-                        propertySyntax;
-
-                        // propertySyntax = args[0].type === "property"
-                        //     ? args[0]
-                        //     : args[1].type === "property"
-                        //         ? args[1]
-                        //         : null;
-                    if(args[0].type === "property") {
-                        if(args[1].type === "parameters") {
-                            //parameterSyntax = args[1];
-                            parameterValue = parameters;
-                            propertySyntax = args[0];
+                            // propertySyntax = args[0].type === "property"
+                            //     ? args[0]
+                            //     : args[1].type === "property"
+                            //         ? args[1]
+                            //         : null;
+                        if(args[0].type === "property") {
+                            if(args[1].type === "parameters") {
+                                //parameterSyntax = args[1];
+                                parameterValue = parameters;
+                                propertySyntax = args[0];
+                            } else if(args[1].type === "property") {
+                                if(args[1].args[0].type === "parameters") {
+                                    parameterValue = parameters[args[1].args[1].value];
+                                    propertySyntax = args[0];
+                                } else {
+                                    parameterValue = parameters[args[0].args[1].value];
+                                    propertySyntax = args[1];
+                                }
+                            }
                         } else if(args[1].type === "property") {
-                            if(args[1].args[0].type === "parameters") {
-                                parameterValue = parameters[args[1].args[1].value];
-                                propertySyntax = args[0];
-                            } else {
-                                parameterValue = parameters[args[0].args[1].value];
+                            if(args[0].type === "parameters") {
+                                //parameterSyntax = args[1];
+                                parameterValue = parameters;
                                 propertySyntax = args[1];
+                            } else if(args[0].type === "property") {
+                                if(args[0].args[0].type === "parameters") {
+                                    parameterValue = parameters[args[0].args[1].value];
+                                    propertySyntax = args[1];
+                                } else {
+                                    parameterValue = parameters[args[1].args[1].value];
+                                    propertySyntax = args[0];
+                                }
                             }
                         }
-                    } else if(args[1].type === "property") {
-                        if(args[0].type === "parameters") {
-                            //parameterSyntax = args[1];
-                            parameterValue = parameters;
-                            propertySyntax = args[1];
-                        } else if(args[0].type === "property") {
-                            if(args[0].args[0].type === "parameters") {
-                                parameterValue = parameters[args[0].args[1].value];
-                                propertySyntax = args[1];
-                            } else {
-                                parameterValue = parameters[args[1].args[1].value];
-                                propertySyntax = args[0];
+
+                        if(propertySyntax) {
+                            var propertyArgs = propertySyntax.args,
+                                propertyName = propertyArgs[0].type === "literal"
+                                    ? propertyArgs[0].value
+                                    : propertyArgs[1].type === "literal"
+                                        ? propertyArgs[1].value
+                                        : null;
+
+                            if(propertyName && self._owner.rawDataPrimaryKeys.indexOf(propertyName) !== -1) {
+                                //Our criteria is about a primary key, let's find the value:
+                                var primaryKeyValue = parameterValue;
+
                             }
                         }
                     }
 
-                    if(propertySyntax) {
-                        var propertyArgs = propertySyntax.args,
-                            propertyName = propertyArgs[0].type === "literal"
-                                ? propertyArgs[0].value
-                                : propertyArgs[1].type === "literal"
-                                    ? propertyArgs[1].value
-                                    : null;
+                    */
 
-                        if(propertyName && self._owner.rawDataPrimaryKeys.indexOf(propertyName) !== -1) {
-                            //Our criteria is about a primary key, let's find the value:
-                            var primaryKeyValue = parameterValue;
+                        fetchPromise = service.rootService.fetchData(query)
+                                .then(function(value) {
+                                    self._unregisterFetchPromiseForObjectDescriptorCriteria(typeToFetch, criteria);
+                                    return value;
+                                });
 
-                        }
+                        self._registerFetchPromiseForObjectDescriptorCriteria(fetchPromise, typeToFetch, criteria);
+                    } else {
+                        fetchPromise = fetchPromise.then(function(value) {
+                            /*
+                                #WARNING here we're piggy-backing on an existing promise. Upper layers (expression data mapping) typically directly assign this returned array to the object's property it belongs to, assuming it's unique because fetched.
+
+                                So to truly behave like a fetch that would return results in a new unique array, we're going to return a clone of it. Because if returned directly, the same array could end up being used by different objects, creating changes in the other objects listeners (in DataTrigger) which leads to bugs.
+
+                                While Array.from() is the fastest on WebKit, Array.slice() is the overal fastest choice.
+                                DO NOT REMOVE THIS .slice() !! SEE EXPLAINATION ABOVE
+                            */
+
+                            return Array.isArray(value) ? value.slice() : value;
+                        });
                     }
-                }
-
-                */
-
-                    fetchPromise = service.rootService.fetchData(query)
-                            .then(function(value) {
-                                self._unregisterFetchPromiseForObjectDescriptorCriteria(typeToFetch, criteria);
-                                return value;
-                            });
-
-                    self._registerFetchPromiseForObjectDescriptorCriteria(fetchPromise, typeToFetch, criteria);
                 } else {
-                    fetchPromise = fetchPromise.then(function(value) {
+
+                    //console.log("_fetchConvertedDataForObjectDescriptorCriteria()",typeToFetch, criteria, currentRule);
+
+                    /*
+                        If there wasn't one registered for this already, we still need an individual promise that will resolve to the value for (typeToFetch, criteria) once we filter the combined fetched values to dispatch back to the caller of convert().
+                    */
+                    if(!fetchPromise) {
+
+                        var fetchPromiseResolve, fetchPromiseReject;
+                        fetchPromise = new Promise(function(resolve, reject) {
+                            fetchPromiseResolve = resolve;
+                            fetchPromiseReject = reject;
+                        });
+                        fetchPromise.resolve = fetchPromiseResolve;
+                        fetchPromise.reject = fetchPromiseReject;
+
+                        self._registerFetchPromiseForObjectDescriptorCriteria(fetchPromise, typeToFetch, criteria);
+
                         /*
-                            #WARNING here we're piggy-backing on an existing promise. Upper layers (expression data mapping) typically directly assign this returned array to the object's property it belongs to, assuming it's unique because fetched.
-
-                            So to truly behave like a fetch that would return results in a new unique array, we're going to return a clone of it. Because if returned directly, the same array could end up being used by different objects, creating changes in the other objects listeners (in DataTrigger) which leads to bugs.
-
-                            While Array.from() is the fastest on WebKit, Array.slice() is the overal fastest choice.
-                            DO NOT REMOVE THIS .slice() !! SEE EXPLAINATION
+                            The structure behind _registeredFetchPromiseMapForObjectDescriptorCriteria() ensures that different instances of criteria are uniqued by their expression and parameters
                         */
+                        //Add to the structure combineFetchDataMicrotask() will use:
+                        var queryParts = self._pendingCriteriaByTypeToCombine.get(typeToFetch);
+                        if(!queryParts) {
+                            queryParts = {
+                                criteria: [],
+                                readExpressions: []
+                            };
+                            self._pendingCriteriaByTypeToCombine.set(typeToFetch, queryParts);
+                        }
+                        queryParts.criteria.push(criteria);
 
-                        return Array.isArray(value) ? value.slice() : value;
-                    });
+                        /*
+                            Sounds twisted, but this is to deal with the case where we need to fetch to resolve a property of the object itself.
+                        */
+                        if(currentRule && !currentRule.propertyDescriptor._valueDescriptorReference) {
+                            queryParts.readExpressions.push(currentRule.targetPath);
+                        }
+
+                        /*
+                            Now we need to scheduled a queueMicrotask() if it's not done.
+                        */
+                        if(!self.constructor.prototype._isCombineFetchDataMicrotaskQueued) {
+                            self.constructor.prototype._isCombineFetchDataMicrotaskQueued = true;
+                            queueMicrotask(function() {
+                                self._combineFetchDataMicrotask(service)
+                            });
+                        }
+
+                    }
+                    // else {
+                    //     fetchPromise = fetchPromise.then(function(value) {
+                    //         /*
+                    //             #WARNING here we're piggy-backing on an existing promise. Upper layers (expression data mapping) typically directly assign this returned array to the object's property it belongs to, assuming it's unique because fetched.
+
+                    //             So to truly behave like a fetch that would return results in a new unique array, we're going to return a clone of it. Because if returned directly, the same array could end up being used by different objects, creating changes in the other objects listeners (in DataTrigger) which leads to bugs.
+
+                    //             While Array.from() is the fastest on WebKit, Array.slice() is the overal fastest choice.
+                    //             DO NOT REMOVE THIS .slice() !! SEE EXPLAINATION ABOVE
+                    //         */
+
+                    //         return Array.isArray(value) ? value.slice() : value;
+                    //     });
+                    // }
+
+
+                    /*
+                        We probably need only one queueMicrotask() for all types/criteria
+
+                        Then when that function fires:
+                            - loop on each type:
+                                Build a or of all registered criteria
+
+                                        var fetchPromise = self._registeredFetchPromiseMapForObjectDescriptorCriteria(typeToFetch,criteria);
+
+                    */
+
                 }
+
 
                 return fetchPromise;
             }) : null;
 
+        }
+    },
+
+    _pendingCriteriaByTypeToCombine: {
+        value: new Map()
+    },
+
+    combinesFetchData: {
+        value: true
+    },
+    _isCombineFetchDataMicrotaskQueued: {
+        value: false
+    },
+
+    _combineFetchDataMicrotaskFunctionForTypeQueryParts: {
+        value: function(type, queryParts, service, rootService) {
+            var self = this,
+                combinedCriteria = queryParts.criteria.length > 1 ? Criteria.or(queryParts.criteria) : queryParts.criteria[0],
+                //query = DataQuery.withTypeAndCriteria(type, combinedCriteria),
+                query,
+                mapIterationFetchPromise;
+
+
+            //console.log("A combinedCriteria syntax:" + JSON.stringify(combinedCriteria.syntax));
+            // var testOrCriteria = (new Criteria).initWithExpression(
+            //     "a == $.a || b == $.b || c == $.c || d == $.d || e == $.e", {
+            //         a: 1,
+            //         b: 2,
+            //         c: 3,
+            //         d: 4,
+            //         e: 5
+            //     }
+            // );
+            // console.log(testOrCriteria.syntax);
+
+            //DEBUGGING THE SYNTAX creation
+            // if( queryParts.criteria.length > 1) {
+            //     var criteria = queryParts.criteria,
+            //         previousCriteria;
+            //     combinedCriteria = criteria[0];
+            //     for(var i=1, countI = criteria.length; (i<countI); i++) {
+            //         previousCriteria = combinedCriteria;
+            //         combinedCriteria = combinedCriteria.or(criteria[i]);
+            //         console.log("combinedCriteria: ",combinedCriteria);
+            //     }
+            // }
+            // console.log("B combinedCriteria syntax:" + JSON.stringify(combinedCriteria.syntax));
+
+            query = DataQuery.withTypeAndCriteria(type, combinedCriteria);
+
+            if(queryParts.readExpressions && queryParts.readExpressions.length > 0) {
+                query.readExpressions = queryParts.readExpressions;
+            }
+
+            mapIterationFetchPromise = rootService.fetchData(query)
+            .then(function(combinedFetchedValues) {
+                /*
+                    value contains all the instances matching any of the combined criteria. Each criteria is expressed in term of raw data, so we need to evaluate it on the snapshots of these objects.
+
+                    So we're going to loop on the objects, and for each object's snapshot, we're going to evaluate it on each criteria.
+                */
+
+                var i, countI, iCriteria, criteria = queryParts.criteria, combinedFetchedValuesSnapshots, iFetchPromise,
+                    j, countJ = combinedFetchedValues.length, jValue, jSnapshot;
+
+                    for(i=0, countI = criteria.length; (i<countI); i++) {
+                        iCriteria = criteria[i];
+
+                        /*
+                            We lazily get the iFetchPromise if a criteria finds a match
+                        */
+                        iFetchPromise = null;
+
+                        for(j=0; (j < countJ); j++) {
+                            jSnapshot = combinedFetchedValuesSnapshots && combinedFetchedValuesSnapshots[j];
+                            if(!jSnapshot) {
+                                jValue = combinedFetchedValues[j];
+                                jSnapshot = service.snapshotForObject(jValue);
+                                (combinedFetchedValuesSnapshots || (combinedFetchedValuesSnapshots = []))[j] = jSnapshot;
+                            }
+
+                            if(iCriteria.evaluate(jSnapshot)) {
+                                iFetchPromise = (iFetchPromise || (iFetchPromise = self._registeredFetchPromiseMapForObjectDescriptorCriteria(type,iCriteria)));
+                                (iFetchPromise.result || (iFetchPromise.result = [])).push(jValue);
+
+                            }
+                        }
+
+                        if(countJ == 0) {
+                            iFetchPromise = self._registeredFetchPromiseMapForObjectDescriptorCriteria(type,iCriteria);
+                            iFetchPromise.resolve(combinedFetchedValues);
+
+                        } else if(iFetchPromise) {
+                            iFetchPromise.result.objectDescriptor = combinedFetchedValues.objectDescriptor;
+                            iFetchPromise.resolve(iFetchPromise.result);
+                        }
+
+                        self._unregisterFetchPromiseForObjectDescriptorCriteria(type, iCriteria);
+
+                    }
+
+
+
+            //    var i, countI, iValue, iValueSnapshot, criteria = queryParts.criteria,
+            //         j, countJ = criteria.length, jCriteria;
+            //    for(i=0, countI = combinedFetchedValues.length; (i<countI); i++) {
+            //         iValue = combinedFetchedValues[i];
+            //         iValueSnapshot = service.snapshotForObject(iValue);
+
+            //         for(j=0; (j < countJ); j++) {
+            //             if(criteria[j].evaluate(iValueSnapshot)) {
+            //                 jFetchPromise = this._registeredFetchPromiseMapForObjectDescriptorCriteria(type,criteria[j]);
+            //                 (fetchPromise.result || (fetchPromise.result = [])).push(iValue);
+
+            //             }
+            //         }
+            //    }
+
+            //     self._unregisterFetchPromiseForObjectDescriptorCriteria(type, criteria);
+            //     return value;
+            });
+
+        }
+    },
+
+    _combineFetchDataMicrotask: {
+        value: function(service) {
+
+            //console.log("_combineFetchDataMicrotask("+this._pendingCriteriaByTypeToCombine.size+")");
+            var mapIterator = this._pendingCriteriaByTypeToCombine.entries(),
+                mapIterationEntry,
+                mapIterationType,
+                mapIterationQueryParts;
+
+            while ((mapIterationEntry = mapIterator.next().value)) {
+                mapIterationType = mapIterationEntry[0];
+                mapIterationQueryParts = mapIterationEntry[1];
+
+                this._combineFetchDataMicrotaskFunctionForTypeQueryParts(mapIterationType, mapIterationQueryParts, service, service.rootService);
+            }
+
+            this.constructor.prototype._isCombineFetchDataMicrotaskQueued = false;
+            this._pendingCriteriaByTypeToCombine.clear();
         }
     },
 
