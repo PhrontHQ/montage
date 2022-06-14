@@ -244,7 +244,7 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
                 var fetchPromise = self._registeredFetchPromiseMapForObjectDescriptorCriteria(typeToFetch,criteria);
 
                 if(!self.combinesFetchData) {
-                    console.log("_fetchConvertedDataForObjectDescriptorCriteria()",typeToFetch, criteria, currentRule);
+                    //console.log("_fetchConvertedDataForObjectDescriptorCriteria()",typeToFetch, criteria, currentRule);
 
                     if(!fetchPromise) {
                         var query = DataQuery.withTypeAndCriteria(typeToFetch, criteria);
@@ -495,6 +495,8 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
                 query.readExpressions = queryParts.readExpressions;
             }
 
+            //console.log("_combineFetchDataMicrotaskFunctionForTypeQueryParts query:",query);
+
             mapIterationFetchPromise = rootService.fetchData(query)
             .then(function(combinedFetchedValues) {
                 /*
@@ -502,6 +504,8 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
 
                     So we're going to loop on the objects, and for each object's snapshot, we're going to evaluate it on each criteria.
                 */
+
+                //console.log("_combineFetchDataMicrotaskFunctionForTypeQueryParts results:",combinedFetchedValues, " query:",query);
 
                 var i, countI, iCriteria, criteria = queryParts.criteria, combinedFetchedValuesSnapshots, iFetchPromise,
                     j, countJ = combinedFetchedValues.length, jValue, jSnapshot;
@@ -522,8 +526,9 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
                                 (combinedFetchedValuesSnapshots || (combinedFetchedValuesSnapshots = []))[j] = jSnapshot;
                             }
 
+                            iFetchPromise = (iFetchPromise || (iFetchPromise = self._registeredFetchPromiseMapForObjectDescriptorCriteria(type,iCriteria)));
+
                             if(iCriteria.evaluate(jSnapshot)) {
-                                iFetchPromise = (iFetchPromise || (iFetchPromise = self._registeredFetchPromiseMapForObjectDescriptorCriteria(type,iCriteria)));
                                 (iFetchPromise.result || (iFetchPromise.result = [])).push(jValue);
 
                             }
@@ -534,8 +539,12 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
                             iFetchPromise.resolve(combinedFetchedValues);
 
                         } else if(iFetchPromise) {
-                            iFetchPromise.result.objectDescriptor = combinedFetchedValues.objectDescriptor;
-                            iFetchPromise.resolve(iFetchPromise.result);
+                            if(iFetchPromise.result) {
+                                iFetchPromise.result.objectDescriptor = combinedFetchedValues.objectDescriptor;
+                                iFetchPromise.resolve(iFetchPromise.result);
+                            } else {
+                                iFetchPromise.resolve(null);
+                            }
                         }
 
                         self._unregisterFetchPromiseForObjectDescriptorCriteria(type, iCriteria);
