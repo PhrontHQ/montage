@@ -191,6 +191,11 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
 
                     if(parametersToFetch) {
                         criteria.parameters = parametersToFetch;
+                    } else if(existingObject && existingObject.length === array.length) {
+                        /*
+                            Looks like we found everything locally
+                        */
+                        criteria.parameters = Array.empty;
                     }
                 }
             }
