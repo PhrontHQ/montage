@@ -71,6 +71,23 @@ GenericSet.prototype.remove = function (value) {
     return this["delete"](value);
 };
 
+GenericSet.prototype.hasEqual = function (value, equals) {
+    equals = equals || Object.equals;
+
+    var iterator = this.values(),
+        iteration, iValue;
+
+    while(!(iteration = iterator.next()).done) {
+        iValue = iteration.value;
+        if(equals(iValue, value)) {
+            return true;
+        }
+    }
+    return false;
+
+};
+
+
 GenericSet.prototype.toggle = function (value) {
     if (this.has(value)) {
         this["delete"](value);
