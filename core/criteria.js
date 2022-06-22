@@ -891,16 +891,62 @@ function _combinedCriteriaFromArguments(type, receiver, _arguments) {
 // Criteria.and("a", "b") and aCriteria.and("b")
 var CriteriaPrototype = Criteria.prototype;
 operatorTypes.forEach(function (value,operator, operatorTypes) {
-    Montage.defineProperty(CriteriaPrototype, operator, {
-        value: function () {
-            return _combinedCriteriaFromArguments(operator, this, arguments);
+    if(operator === "and" || operator === "or") {
+        Montage.defineProperty(CriteriaPrototype, operator, {
+            value: function () {
+                return _combinedCriteriaFromArguments(operator, this, arguments);
+            }
+        });
+        Montage.defineProperty(Criteria, operator, {
+            value: function () {
+                return _combinedCriteriaFromArguments(operator, this, arguments.length === 1 && Array.isArray(arguments[0]) ? arguments[0] : arguments);
+            }
+        });
+    }
+    else {
+        if(!operator in CriteriaPrototype) {
+            Montage.defineProperty(CriteriaPrototype, operator, {
+                value: function () {
+                    var args = Array.prototype.map.call(arguments, function (argument) {
+                        if (typeof argument === "string") {
+                            return parse(argument);
+                        } else if (argument.syntax) {
+                            return argument.syntax;
+                        } else if (typeof argument === "object") {
+                            return argument;
+                        }
+                    });
+                    // invoked as instance method
+                    return new (this.constructor)().initWithSyntax({
+                        type: operator,
+                        args: [this.syntax].concat(args)
+                    });
+                }
+            });
         }
-    });
-    Montage.defineProperty(Criteria, operator, {
-        value: function () {
-            return _combinedCriteriaFromArguments(operator, this, arguments.length === 1 && Array.isArray(arguments[0]) ? arguments[0] : arguments);
+
+        if(!operator in Criteria) {
+            Montage.defineProperty(Criteria, operator, {
+                value: function () {
+                    var args = Array.prototype.map.call(arguments, function (argument) {
+                        if (typeof argument === "string") {
+                            return parse(argument);
+                        } else if (argument.syntax) {
+                            return argument.syntax;
+                        } else if (typeof argument === "object") {
+                            return argument;
+                        }
+                    });
+                    // invoked as class method
+                    return new this().initWithSyntax({
+                        type: operator,
+                        args: args
+                    });
+                }
+            });
+
         }
-    });
+    }
 });
 
 // Object.defineProperties(Criteria.prototype,{
