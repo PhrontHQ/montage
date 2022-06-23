@@ -6309,20 +6309,30 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
         }
     },
 
-
-    createStorageForObjectDescriptor: {
+    createStorageOperationForObjectDescriptor: {
         value: function (objectDescriptor) {
-            //console.log("create "+objectDescriptor.name);
-            var iOperation = new DataOperation(),
-                self = this;
+            var iOperation = new DataOperation();
 
             iOperation.type = DataOperation.Type.CreateOperation;
             iOperation.data = objectDescriptor.module.id;
             iOperation.target = objectDescriptor;
 
+            return iOperation;
+        }
+    },
 
+    createStorageForObjectDescriptor: {
+        value: function (objectDescriptor) {
+            //console.log("create "+objectDescriptor.name);
+            var iOperation = this.createStorageOperationForObjectDescriptor(objectDescriptor),
+                self = this;
 
             var createPromise = new Promise(function(resolve, reject) {
+
+                /*
+
+                    The reason we're creating anonymous event handlers like this is that we're missing the semantic of having a "RawObjectDescriptor" that should be the target of this operation, which would mean that we could implement handleCreateCompletedOperation() and handleCreateFailedOperation() ao handles propagation would deliver the relevant operations to us. So if a subclass needed to do something to handle a failure, it would only have to override the handleCreateFailedOperation() method, before callig super here that would then take care of the promise aspect.
+                */
 
                 function createCompletedHandler(operation) {
                     if(operation.referrerId === iOperation.id) {
