@@ -61,7 +61,7 @@ MontageBoot.loadPackage = function (location, config, callback) {
     }
 
     config = config || {};
-    config.overlays = ["node", "server", "montage"];
+    config.overlays = config.overlays || ["node", "server", "montage"];
     config.location = location;
     // config.location = URL.resolve(Require.getLocation(), location);
     // config.location = Require.getLocation();
