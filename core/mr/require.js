@@ -478,6 +478,9 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                         bk = URLResolve(location, bk);
 
                         //Now remove location and file extension.
+                        /*
+                            TODO FIXME OPTIMIZE: Do we really need to run URLResolve() twice here?
+                        */
                         bk = URLResolve(location, bk);
                         bk = bk.stringByRemovingPrefix(location);
                         bk = bk.stringByRemovingPathExtension();
