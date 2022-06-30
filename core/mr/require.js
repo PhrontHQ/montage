@@ -434,7 +434,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
         var redirects,
             overlay = description.overlay || {};
 
-        if (typeof process === "undefined") {
+        if (typeof process === "undefined" || "buildLocation" in config) {
             // but first, convert "browser" field, as pioneered by Browserify, to
             // an overlay
             if (typeof description.browser === "string") {
