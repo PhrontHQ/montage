@@ -1255,14 +1255,6 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
                 }
                 delete value.properties;
 
-                if((value.bindings)) {
-                    if(value.values) {
-                        Object.assign(value.values, value.bindings)
-                    } else {
-                        value.values = value.bindings;
-                    }
-                }
-
             } else if((iValue = value.values)) {
                 iValueRevived = this.reviveValuesObjectLiteral(iValue, context, /*label*/undefined, value);
 
