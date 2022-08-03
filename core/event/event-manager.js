@@ -3734,9 +3734,13 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             var oldEventHandler = this.eventHandlerForElement(anElement);
             // unreference unused event handlers
             if (oldEventHandler) {
-                this.unregisterEventHandlerForElement(anElement);
+                if(oldEventHandler !== anElementEventHandler) {
+                    this.unregisterEventHandlerForElement(anElement);
+                    this._elementEventHandlerByElement.set(anElement,anElementEventHandler);
+                }
+            } else {
+                this._elementEventHandlerByElement.set(anElement,anElementEventHandler);
             }
-            this._elementEventHandlerByElement.set(anElement,anElementEventHandler);
         }
     },
 
