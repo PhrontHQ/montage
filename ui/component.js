@@ -2263,9 +2263,21 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 } else {
                     templateAttributeValue = template.getAttribute(attributeName) || "";
                     if (templateAttributeValue) {
-                        value = templateAttributeValue +
-                            (attributeName === "style" ? "; " : " ") +
-                            attribute.nodeValue;
+                        /*
+                            Assuming only style and class are actually multi-value and we merge them
+                        */
+                        if(attributeName === "style") {
+                            value = templateAttributeValue;
+                            value += "; ";
+                            value += attribute.nodeValue;
+
+                        } else if(attributeName === "class") {
+                            value = templateAttributeValue;
+                            value += " ";
+                            value += attribute.nodeValue;
+                        } else {
+                            value = attribute.nodeValue;
+                        }
                     } else {
                         value = attribute.nodeValue;
                     }
