@@ -2248,13 +2248,14 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 value,
                 i,
                 attribute,
-                templateAttributeValue;
+                templateAttributeValue,
+                _montage_le_flag = attributes.length ? global._montage_le_flag : false;
 
             // TODO: get a spec for this, what attributes should we merge?
             for (i = 0; (attribute = attributes[i]); i++) {
                 attributeName = attribute.nodeName;
                 //jshint -W106
-                if (global._montage_le_flag && attributeName === ATTR_LE_COMPONENT) {
+                if (_montage_le_flag && attributeName === ATTR_LE_COMPONENT) {
                     //jshint +W106
                     value = attribute.nodeValue;
                 } else if (attributeName === "id" || attributeName === "data-montage-id") {
