@@ -3612,13 +3612,16 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
     _draw: {
         value: function () {
             var element = this.element,
+                _elementAttributeValues,
+                value,
                 descriptor;
 
             //Buffered/deferred element attribute values
-            if(this.__elementAttributeValues !== null) {
-                for(var attributeName in this._elementAttributeValues) {
-                    if(this._elementAttributeValues.hasOwnProperty(attributeName)) {
-                        var value = this[attributeName];
+            if((_elementAttributeValues = this.__elementAttributeValues) !== null) {
+                var attributeNames = Object.keys(_elementAttributeValues);
+                for(var i=0, attributeName; (attributeName = attributeNames[i]); i++) {
+                        //value = this[attributeName];
+                        value = _elementAttributeValues[attributeName];
                         descriptor = this._getElementAttributeDescriptor(attributeName, this);
                         if(descriptor) {
 
@@ -3638,14 +3641,16 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                                         //https://developer.mozilla.org/en/DOM/element.setAttribute
                                         element.setAttribute(attributeName, value);
                                     }
-
+                                } else {
+                                    element.setAttribute(attributeName, "");
                                 }
                             }
 
+                        } else {
+                            element.setAttribute(attributeName, value === undefined ? "" : String(value));
                         }
 
-                        delete this._elementAttributeValues[attributeName];
-                    }
+                        delete _elementAttributeValues[attributeName];
                 }
             }
 
@@ -3653,7 +3658,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
             this._drawClassListIntoComponent();
 
             //Layout
-            var style = this.element && this.element.style;
+            var style = element && element.style;
             if(style) {
                 if(this.top) {
                     style.setProperty("top", this.top);
