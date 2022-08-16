@@ -578,6 +578,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             cut: {bubbles: true, cancelable: true}, //ClipboardEvent
             dblclick: {bubbles: true, cancelable: false}, //DOM3
             DOMActivate: {bubbles: true, cancelable: true, deprecated: true}, //DOM2, DOM3 deprecated
+            DOMContentLoaded: {bubbles: true, cancelable: false},
             DOMMouseScroll: {bubbles: true}, //GECKO
             drag: {bubbles: true, cancelable: true}, //DND
             dragend: {bubbles: true, cancelable: false}, //DND
