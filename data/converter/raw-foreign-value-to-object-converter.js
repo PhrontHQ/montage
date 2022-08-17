@@ -513,7 +513,7 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
                 //console.log("_combineFetchDataMicrotaskFunctionForTypeQueryParts results:",combinedFetchedValues, " query:",query);
 
                 var i, countI, iCriteria, criteria = queryParts.criteria, combinedFetchedValuesSnapshots, iFetchPromise,
-                    j, countJ = combinedFetchedValues.length, jValue, jSnapshot;
+                    j, countJ = combinedFetchedValues.length, jValue, jSnapshot, jFetchPromise;
 
                     for(i=0, countI = criteria.length; (i<countI); i++) {
                         iCriteria = criteria[i];
@@ -524,9 +524,9 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
                         iFetchPromise = null;
 
                         for(j=0; (j < countJ); j++) {
+                            jValue = combinedFetchedValues[j];
                             jSnapshot = combinedFetchedValuesSnapshots && combinedFetchedValuesSnapshots[j];
                             if(!jSnapshot) {
-                                jValue = combinedFetchedValues[j];
                                 jSnapshot = service.snapshotForObject(jValue);
                                 (combinedFetchedValuesSnapshots || (combinedFetchedValuesSnapshots = []))[j] = jSnapshot;
                             }
