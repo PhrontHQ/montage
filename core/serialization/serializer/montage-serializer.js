@@ -153,7 +153,7 @@ var MontageSerializer = Montage.specialize({
         return g1.toUpperCase();}
     },
 
-    _findObjectNameRegExp: {value: /([^\/]+?)(\.reel)?$/},
+    _findObjectNameRegExp: {value: /([^\/]+?)(\.reel|mod)?$/},
 
     getDefaultObjectNameForModuleId: {
         value: function (moduleId) {

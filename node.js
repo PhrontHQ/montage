@@ -202,7 +202,7 @@ function parseHtmlDependencies(text/*, location*/) {
 var html_regex = /(.*\/)?(?=[^\/]+\.html$)/,
     json_regex = /(?=[^\/]+\.json$)/,
     mjson_regex = /(?=[^\/]+\.(?:mjson|meta)$)/,
-    reel_regex = /(.*\/)?([^\/]+)\.reel\/\2$/;
+    reel_regex = /(.*\/)?([^\/]+)\.reel|mod\/\2$/;
 MontageBoot.TemplateLoader = function (config, load) {
     return function (moduleId, module) {
 

@@ -1569,7 +1569,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
     _unitNames: {value: []},
 
     _findObjectNameRegExp: {
-        value: /([^\/]+?)(\.reel)?$/
+        value: /([^\/]+?)(\.reel|mod)?$/
     },
     _toCamelCaseRegExp: {
         value: /(?:^|-)([^-])/g

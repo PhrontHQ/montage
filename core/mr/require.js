@@ -1312,14 +1312,14 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
             pkg = Require.injectLoadedPackageDescription(location, packageDescription, config);
         } else {
             if (config.preloaded) {
-                pkg = config.loadPackage(dependency);
+                pkg = config.loadPackage(dependency, config);
             } else {
                 pkg = Require.loadPackageLock(dependency, config)
                 .then(function (packageLock) {
                     if (packageLock) {
                         config.packageLock = packageLock;
                     }
-                    return config.loadPackage(dependency);
+                    return config.loadPackage(dependency, config);
                 });
             }
         }
@@ -1636,7 +1636,12 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
         reverseReelExpression = /((.*)\.reel)\/\2$/,
         reverseReelFunction = function($0, $1) {
             return $1;
+        },
+        reverseModExpression = /((.*)\.mod)\/\2$/,
+        reverseModFunction = function($0, $1) {
+            return $1;
         };
+
 
     Require.executeCompiler = function executeCompiler(factory, require, exports, module) {
         //module.directory = module.location.substring(0,module.location.lastIndexOf("/")+1);
@@ -1724,7 +1729,16 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                         //jshint +W106
                     } else if ((typeof object.getInfoForObject === "function" || typeof object.constructor.getInfoForObject === "function" ) && !_Object.isSealed(object)) {
 
-                        object._montage_metadata = new MontageMetadata(require, module.id.includes(".reel") ? module.id.replace(reverseReelExpression, reverseReelFunction) : module.id, name,/*isInstance*/(typeof object !== "function"));
+                        object._montage_metadata = new MontageMetadata(
+                            require,
+                            module.id.includes(".reel")
+                                ? module.id.replace(reverseReelExpression, reverseReelFunction)
+                                : module.id.includes(".mod")
+                                    ? module.id.replace(reverseModExpression, reverseModFunction)
+                                    : module.id,
+                                name,
+                                /*isInstance*/(typeof object !== "function")
+                        );
                     }
                 }
             }
@@ -1861,16 +1875,31 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
      * @param loader the next loader in the chain
      */
     var _reelExpression = /([^\/]+)\.reel$/,
-        _dotREEL = ".reel";
+        _dotREEL = ".reel",
+        _REEL = "reel",
+        _modExpression = /([^\/]+)\.mod$/,
+        _mod = "mod",
+        _dotMod = ".mod";
     Require.ReelLoader = function ReelLoader(config, load) {
         var reelExpression = _reelExpression,
-            dotREEL = _dotREEL;
+            dotREEL = _dotREEL,
+            REEL = _REEL,
+            modExpression = _modExpression,
+            dotMod = _dotMod,
+            mod = _mod;
 
         return function reelLoader(id, module) {
             if (id.endsWith(dotREEL)) {
                 module.redirect = id;
                 module.redirect += SLASH;
                 module.redirect += reelExpression.exec(id)[1];
+                module.extension = REEL;
+                return module;
+            } else if (id.endsWith(_dotMod)) {
+                module.redirect = id;
+                module.redirect += SLASH;
+                module.redirect += modExpression.exec(id)[1];
+                module.extension = mod;
                 return module;
             } else {
                 return load(id, module);
