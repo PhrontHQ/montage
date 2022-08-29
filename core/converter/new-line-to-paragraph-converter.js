@@ -60,10 +60,13 @@ var NewLineToParagraphConverter = exports.NewLineToParagraphConverter = Converte
     convert: {
         value: function (v) {
             if (v && v !== "" & typeof v === 'string') {
-                var value  = "<p>";
-                value += newLineToParagraph(v);
-                value  += "</p>";
-                return value;
+                var value = newLineToParagraph(v);
+
+                if(value !== v) {
+                    value  = "<p>"+value;
+                    value  += "</p>";
+                    return value;
+                }
             }
             return v;
         }
