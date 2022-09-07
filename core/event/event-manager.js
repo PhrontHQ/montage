@@ -643,7 +643,27 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             touchmove: {bubbles: true, cancelable: true}, //TouchEvent
             touchstart: {bubbles: true, cancelable: true}, //TouchEvent
             unload: {bubbles: false, cancelable: false}, //DOM2, DOM3
-            visibilitychange: {bubbles: true, cancelable: false}, //DOM2, DOM3
+            visibilitychange: {
+                bubbles: true,
+                cancelable: false,
+                type: (typeof document !== "undefined")
+                    ? (typeof document.msHidden !== "undefined")
+                        ? "msvisibilitychange"
+                        : (typeof document.webkitHidden !== "undefined")
+                            ? "webkitvisibilitychange"
+                            : undefined
+                    : undefined
+            }, //DOM2, DOM3
+            webkitvisibilitychange: {
+                bubbles: true,
+                cancelable: false,
+                type: "visibilitychange"
+            },
+            msvisibilitychange: {
+                bubbles: true,
+                cancelable: false,
+                type: "visibilitychange"
+            }, //DOM2, DOM3
             wheel: {bubbles: true, cancelable: true}, //DOM3
             pointerdown: {bubbles: true, cancelable: true}, //PointerEvent
             pointerup: {bubbles: true, cancelable: true}, //PointerEvent
@@ -1779,17 +1799,17 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 }
                 this._observedTarget_byEventType_[eventType].set(listenerTarget,this);
 
-                var eventDefinitions = this.eventDefinitions[eventType],
+                var eventDefinition = this.eventDefinitions[eventType],
                     eventOpts;
 
-                if(!eventDefinitions) {
+                if(!eventDefinition) {
                     console.debug("Event type "+eventType+" missed definition");
                 }
 
                 eventOpts = this.isPassiveEventType(eventType)
                     ? {passive: true}
-                    : eventDefinitions
-                        ? eventDefinitions.bubbles
+                    : eventDefinition
+                        ? eventDefinition.bubbles
                         : true; //by default
 
 
@@ -1798,7 +1818,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 //     capture: true
                 // }
 
-                listenerTarget.nativeAddEventListener(eventType, this, eventOpts);
+                listenerTarget.nativeAddEventListener((eventDefinition ? (eventDefinition.type || eventType) : eventType), this, eventOpts);
             }
             // console.log("started listening: ", eventType, listenerTarget)
         }
@@ -3125,14 +3145,16 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                         nextEntry,
                         previousPromise,
                         promise,
-                        promises,
+                        // promises,
                         mutableEventPhase = mutableEvent.eventPhase,
                         self = this;
 
                     _currentDispatchedTargetListeners.set(listenerEntries,null);
                     while ((nextEntry = listenerEntries[j++]) && !mutableEvent.immediatePropagationStopped) {
                         if(promise) {
-                            previousPromise = promise;
+                            if(promise.then) {
+                                previousPromise = promise;
+                            }
                         }
                         promise = this._invokeTargetListenerEntryForEvent(iTarget, nextEntry, mutableEvent, mutableEventPhase, undefined/*currentTargetIdentifierSpecificCaptureMethodName*/, undefined/*identifierSpecificCaptureMethodName*/, undefined/*captureMethodName*/, previousPromise);
 
@@ -3145,7 +3167,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                         // }
                     }
 
-                    if(promises || promise) {
+                    if(/*promises || */promise && promise.then) {
                         /*
                             We now chain each listener promise, so we can enforce an stopImmedidatePopagation
 
@@ -3193,6 +3215,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 iTarget,
                 eventPath,
                 eventType = event.type,
+                eventDefinition = this.eventDefinitions[eventType],
                 eventBubbles = event.bubbles,
                 mutableEvent,
                 mutableEventTarget,
@@ -3237,6 +3260,10 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 mutableEvent = MutableEvent.fromEvent(event);
             } else {
                 mutableEvent = event;
+            }
+
+            if(eventDefinition && eventDefinition.type) {
+                mutableEvent.type = eventType = eventDefinition.type;
             }
 
             mutableEventTarget = mutableEvent.target;
