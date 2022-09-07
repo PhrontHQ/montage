@@ -4,7 +4,8 @@
     @requires montage/ui/component
     @requires montage/ui/text-input
 */
-var TextInput = require("ui/text-input").TextInput;
+var TextInput = require("ui/text-input").TextInput,
+    dateToDateInputStringConverter = require("../../../core/converter/date-to-date-input-string-converter").singleton;
 
 /**
   	Wraps an &lt;input type="date"> element as a component.
@@ -12,7 +13,14 @@ var TextInput = require("ui/text-input").TextInput;
     @extends module:montage/ui/text-input.TextInput
  */
 var DateField = exports.DateField = TextInput.specialize({
-    hasTemplate: {value: false }
+    hasTemplate: {value: true },
+    inputsTime: {
+        value: false
+    },
+    converter: {
+        value: dateToDateInputStringConverter
+    }
+
 });
 
 DateField.addAttributes( /** @lends module:"montage/ui/native/input-date.reel".InputDate# */{
