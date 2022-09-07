@@ -27,6 +27,10 @@ var MontageText = exports.Text = Component.specialize( /**  @lends module:montag
         value: null
     },
 
+    parseValueAsHTML: {
+        value: false
+    },
+
     /**
      * The string to be displayed. `null` is equivalent to the empty string.
      * @type {string}
@@ -78,8 +82,10 @@ var MontageText = exports.Text = Component.specialize( /**  @lends module:montag
                 var range = this._RANGE;
                 range.selectNodeContents(this.element);
                 range.deleteContents();
-                this._valueNode = document.createTextNode("");
-                range.insertNode(this._valueNode);
+                if(!this.parseValueAsHTML) {
+                    this._valueNode = document.createTextNode("");
+                    range.insertNode(this._valueNode);
+                }
                 this.element.classList.add("montage-Text");
             }
         }
@@ -91,7 +97,12 @@ var MontageText = exports.Text = Component.specialize( /**  @lends module:montag
             var displayValue = (typeof this._value !== "undefined" && this._value !== null) ? this._value : this.defaultValue;
 
             //push to DOM
-            this._valueNode.data = this.converter ? this.converter.convert(displayValue) : displayValue;
+            if(!this.parseValueAsHTML) {
+                this._valueNode.data = this.converter ? this.converter.convert(displayValue) : displayValue;
+            } else {
+                this._RANGE.selectNodeContents(this.element);
+                this._RANGE.insertNode(this._RANGE.createContextualFragment(displayValue));
+            }
         }
     }
 
