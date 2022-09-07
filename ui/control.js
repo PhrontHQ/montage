@@ -352,9 +352,10 @@ var Control = exports.Control = Component.specialize(/** @lends module:montage/u
 
                     this.callDelegateMethod("didChange", this);
 
-                    this._elementAttributeValues["value"] = value;
-
-                    this.needsDraw = true;
+                    if(!fromInput) {
+                        this._elementAttributeValues["value"] = value;
+                        this.needsDraw = true;
+                    }
                 }
             }
         }
