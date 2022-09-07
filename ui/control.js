@@ -394,9 +394,11 @@ var Control = exports.Control = Component.specialize(/** @lends module:montage/u
             return this._error;
         },
         set: function (v) {
-            this._error = v;
-            this.errorMessage = this._error ? this._error.message : null;
-            this.needsDraw = true;
+            if(v !== this._error ) {
+                this._error = v;
+                this.errorMessage = this._error ? this._error.message : null;
+                this.needsDraw = true;
+            }
         }
     },
 
