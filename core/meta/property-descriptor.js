@@ -161,6 +161,11 @@ exports.PropertyDescriptor = Montage.specialize( /** @lends PropertyDescriptor# 
             this._setPropertyWithDefaults(serializer, "isSerializable", this.isSerializable);
             this._setPropertyWithDefaults(serializer, "isSearchable", this.isSearchable);
             this._setPropertyWithDefaults(serializer, "isOrdered", this.isOrdered);
+
+            if(this.dataOrderings) {
+                serializer.setProperty("dataOrderings", this.dataOrderings);
+            }
+
             this._setPropertyWithDefaults(serializer, "isUnique", this.isUnique);
             this._setPropertyWithDefaults(serializer, "isOneWayEncrypted", this.isOneWayEncrypted);
             this._setPropertyWithDefaults(serializer, "hasUniqueValues", this.hasUniqueValues);
@@ -208,6 +213,12 @@ exports.PropertyDescriptor = Montage.specialize( /** @lends PropertyDescriptor# 
             this._overridePropertyWithDefaults(deserializer, "isSerializable");
             this._overridePropertyWithDefaults(deserializer, "isSearchable");
             this._overridePropertyWithDefaults(deserializer, "isOrdered");
+
+            value = deserializer.getProperty("dataOrderings");
+            if (value !== void 0) {
+                this.dataOrderings = value;
+            }
+
             this._overridePropertyWithDefaults(deserializer, "isUnique");
             this._overridePropertyWithDefaults(deserializer, "isOneWayEncrypted");
             this._overridePropertyWithDefaults(deserializer, "hasUniqueValues");
@@ -435,6 +446,19 @@ exports.PropertyDescriptor = Montage.specialize( /** @lends PropertyDescriptor# 
     isOrdered: {
         value: Defaults.isOrdered
     },
+
+    /**
+     * allows to specify how the values of a relationship should be ordered.
+     * The array of DataOrderings objects
+     *
+     *
+     * @type {Array <DataOrdering>}
+     * @default null
+     */
+    dataOrderings: {
+        value: null
+    },
+
 
     /**
      * models if the value of the property is unique among all instances described
