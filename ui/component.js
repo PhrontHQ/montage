@@ -1974,15 +1974,19 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
 
     _getDefaultTemplateModuleId: {
         value: function () {
-            var templateModuleId,
-                slashIndex,
-                moduleId,
-                info;
+            var info = Montage.getInfoForObject(this),
+                moduleId = info.moduleId,
+                moduleExtension = info.require.getModuleDescriptor(info.module).extension,
+                slashIndex = moduleId.lastIndexOf("/"),
+                templateModuleId = moduleId;
 
-            info = Montage.getInfoForObject(this);
-            moduleId = info.moduleId;
-            slashIndex = moduleId.lastIndexOf("/");
-            templateModuleId = moduleId + "/" + moduleId.slice(slashIndex === -1 ? 0 : slashIndex+1, -5 /* ".reel".length */) + ".html";
+
+
+
+            templateModuleId += "/";
+            /* . of extenson added here */
+            templateModuleId +=  moduleId.slice(slashIndex === -1 ? 0 : slashIndex+1, moduleId.length - moduleExtension.length -1)
+            templateModuleId +=  ".html";
 
             return templateModuleId;
         }
