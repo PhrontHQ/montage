@@ -422,14 +422,17 @@ var Control = exports.Control = Component.specialize(/** @lends module:montage/u
         }
     },
 
-    // // set value from user input
-    // /**
-    //   @private
-    // */
+    /**
+     * sets value from the elemnt's value. if isFromInput is true, it means it came from a DOM event, therefore the element alreaady has that value, we're
+     * just catching up.
+     *   @private
+     */
     takeValueFromElement: {
-        value: function() {
-            this.value = this.elementValue;
-            // Object.getPropertyDescriptor(this, "value").set.call(this, this.element.value, true);
+        value: function(isFromInput) {
+            //console.log(this.identifier+".takeValueFromElement - this.elementValue is "+this.elementValue);
+            isFromInput
+                ? Object.getPropertyDescriptor(this, "value").set.call(this, this.elementValue, true)
+                : this.value = this.elementValue;
         }
     },
     /**
