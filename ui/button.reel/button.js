@@ -294,7 +294,7 @@ var Button = exports.Button = Control.specialize(/** @lends module:"montage/ui/n
         value: function (event) {
             if (!this._promise){
                 this.active = false;
-                this.dispatchActionEvent();
+                this.dispatchActionEvent(event.details);
                 this._removeEventListeners();
             }
         }
@@ -367,7 +367,7 @@ var Button = exports.Button = Control.specialize(/** @lends module:"montage/ui/n
                     }
                     //<button> && Custom
                 } else {
-                    if(this.originalElement === this.element && 
+                    if(this.originalElement === this.element &&
                         this._label === void 0 &&
                         this.originalElement.firstChild
                     ) {
