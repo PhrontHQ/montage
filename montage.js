@@ -1,5 +1,17 @@
 /*global define, module, console, MontageElement, Reflect, customElements */
 (function (root, factory) {
+    /*
+        https://mathiasbynens.be/notes/globalthis
+    */
+    if (typeof globalThis !== 'object') {
+        Object.prototype.__defineGetter__('__magic__', function() {
+            return this;
+        });
+        __magic__.globalThis = __magic__; // lolwat
+        delete Object.prototype.__magic__;
+    }
+
+
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define('montage', [], factory);
@@ -17,9 +29,13 @@
     "use strict";
 
     // reassigning causes eval to not use lexical scope.
-    var globalEval = eval,
+    //var globalEval = eval,
         /*jshint evil:true */
-        global = globalEval('this'),
+        //global = globalEval('this'),
+        /*
+            By leveraging globalThis we probably don't need to do this anymore
+        */
+        var global = globalThis,
         /*jshint evil:false */
         montageExports = exports;
 
