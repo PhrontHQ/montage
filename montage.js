@@ -195,7 +195,7 @@
                 resolve = this.makeResolve(),
                 montageLocation, appLocation;
 
-                montageLocation = montageLocation || resolve(global.location, params.montageLocation || "node_modules/montage");
+                montageLocation = montageLocation || resolve(global.location, params.montageLocation || browser.runtime.getURL("node_modules/montage"));
                 if(params.package) {
                     appLocation = resolve(global.location, params.package);
                     //should be endsWith
