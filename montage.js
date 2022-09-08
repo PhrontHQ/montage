@@ -45,7 +45,7 @@
     // TODO make sure mop closure has it also cause it's mop role to expose
     global.global = global;
 
-    var browser = {
+    var browserPlatform = {
 
         makeResolve: function () {
 
@@ -297,12 +297,12 @@
 
             function loadModuleScript(path, callback) {
                 // try loading script relative to app first (npm 3+)
-                browser.load(resolve(appLocation || global.location, path), function (err, script) {
+                browserPlatform.load(resolve(appLocation || global.location, path), function (err, script) {
                     if (err) {
                         // if that fails, the app may have been installed with
                         // npm 2 or with --legacy-bundling, in which case the
                         // script will be under montage's node_modules
-                        browser.load(resolve(montageLocation, path), callback);
+                        browserPlatform.load(resolve(montageLocation, path), callback);
                     } else if (callback) {
                         callback(null, script);
                     }
@@ -1042,7 +1042,7 @@
                 global.BUNDLE.forEach(function (bundleLocations) {
                     preloaded = preloaded.then(function () {
                         return Promise.all(bundleLocations.map(function (bundleLocation) {
-                            browser.load(bundleLocation);
+                            browserPlatform.load(bundleLocation);
                             return getDefinition(bundleLocation).promise;
                         }));
                     });
@@ -1209,7 +1209,7 @@
     // Bootstrapping for multiple-platforms
     exports.getPlatform = function () {
         if (typeof window !== "undefined" && window && window.document) {
-            return browser;
+            return browserPlatform;
         } else if (typeof process !== "undefined") {
             return require("./node.js");
         } else {
