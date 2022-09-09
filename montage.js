@@ -47,6 +47,133 @@
     // TODO make sure mop closure has it also cause it's mop role to expose
     global.global = global;
 
+    /*
+        To better desl with browser extensions:
+    */
+
+    function isCurrentPathname(path) {
+        if (!path) {
+            return false;
+        }
+        try {
+            const { pathname } = new URL(path, location.origin);
+            return pathname === location.pathname;
+        }
+        catch {
+            return false;
+        }
+    }
+    function getManifest(_version) {
+        return globalThis.chrome?.runtime?.getManifest?.();
+    }
+    function once(function_) {
+        let result;
+        return () => {
+            if (!cache || typeof result === 'undefined') {
+                result = function_();
+            }
+            return result;
+        };
+    }
+
+    /*
+        See: https://github.com/fregante/webext-detect-page/blob/main/index.ts
+    */
+
+    Object.defineProperties((typeof browser !== "undefined" ? browser : chrome), {
+        /** Indicates whether the code is being run in extension contexts that have access to the chrome API */
+        "_isExtensionContext": {
+            value: undefined,
+            writable: true,
+            enumerable: false
+        },
+        "isExtensionContext": {
+            get: function() {
+                return this._isExtensionContext !== undefined
+                    ? this._isExtensionContext
+                    : (this._isExtensionContext = typeof globalThis.chrome?.extension === 'object');
+            },
+            enumerable: false
+        },
+        "_isWebPage": {
+            value: undefined,
+            writable: true,
+            enumerable: false
+        },
+        /** Indicates whether the code is being run on http(s):// pages (it could be in a content script or regular web context) */
+        "isWebPage": {
+            get: function() {
+                return this._isWebPage !== undefined
+                    ? this._isWebPage
+                    : (this._isWebPage = globalThis.location?.protocol.startsWith('http'));
+            }
+        },
+        /** Indicates whether the code is being run in a content script */
+        "_isContentScript": {
+            value: undefined,
+            writable: true,
+            enumerable: false
+        },
+        "isContentScript": {
+            get: function() {
+                return this._isContentScript !== undefined
+                    ? this._isContentScript
+                    : (this._isContentScript = (this.isExtensionContext && this.isWebPage));
+            }
+        },
+        /** Indicates whether the code is being run in a background context */
+        "_isBackground": {
+            value: undefined,
+            writable: true,
+            enumerable: false
+        },
+        "isBackground": {
+            get: function() {
+                return this._isBackground !== undefined
+                    ? this._isBackground
+                    : (this._isBackground = (this.isBackgroundPage || this.isBackgroundWorker));
+            }
+        },
+        /** Indicates whether the code is being run in a background page */
+        "_isBackgroundPage": {
+            value: undefined,
+            writable: true,
+            enumerable: false
+        },
+        "isBackgroundPage": {
+            get: function() {
+                return this._isBackgroundPage !== undefined
+                    ? this._isBackgroundPage
+                    : (function() {
+                        const manifest = getManifest(2);
+                        if (manifest
+                            && isCurrentPathname(manifest.background_page || manifest.background?.page)) {
+                                return (this._isBackgroundPage = true);
+                        } else {
+                            return (this._isBackgroundPage = Boolean(manifest?.background?.scripts
+                                && isCurrentPathname('/_generated_background_page.html')));
+
+                        }
+                    })()
+            }
+        },
+        /** Indicates whether the code is being run in a background worker */
+        "_isBackgroundWorker": {
+            value: undefined,
+            writable: true,
+            enumerable: false
+        },
+        "isBackgroundWorker": {
+            get: function() {
+                return this._isBackgroundWorker !== undefined
+                    ? this._isBackgroundWorker
+                    : (this._isBackgroundWorker = (isCurrentPathname(getManifest(3)?.background?.service_worker)));
+            }
+        }
+
+    });
+
+
     var browserPlatform = {
 
         makeResolve: function () {
@@ -204,49 +331,59 @@
                 name;
             if (!this._params) {
                 this._params = {};
-                // Find the <script> that loads us, so we can divine our
-                // parameters from its attributes.
-                var scripts = document.getElementsByTagName("script");
-                for (i = 0; i < scripts.length; i++) {
-                    script = scripts[i];
-                    montage = false;
-                    if (script.src && (match = script.src.match(/^(.*)montage.js(?:[\?\.]|$)/i))) {
-                        this._params.montageLocation = match[1];
-                        montage = true;
-                    }
-                    if (script.hasAttribute("data-montage-location")) {
-                        this._params.montageLocation = script.getAttribute("data-montage-location");
-                        montage = true;
-                    }
-                    if (montage) {
-                        if (script.dataset) {
-                            for (name in script.dataset) {
-                                if (script.dataset.hasOwnProperty(name)) {
-                                    this._params[name] = script.dataset[name];
-                                }
-                            }
-                        } else if (script.attributes) {
-                            var dataRe = /^data-(.*)$/, // TODO cache RegEx
-                                letterAfterDash = /-([a-z])/g,
-                                upperCaseChar = function (_, c) {
-                                    return c.toUpperCase();
-                                };
 
-                            for (j = 0; j < script.attributes.length; j++) {
-                                attr = script.attributes[j];
-                                match = attr.name.match(dataRe);
-                                if (match) {
-                                    this._params[match[1].replace(letterAfterDash, upperCaseChar)] = attr.value;
+                if(globalThis.chrome.isContentScript) {
+                    /*
+                        for now, we set the root of the content script's world as the root of the extension
+                    */
+                    this._params.montageLocation = "";
+                } else {
+
+                    // Find the <script> that loads us, so we can divine our
+                    // parameters from its attributes.
+                    var scripts = document.getElementsByTagName("script");
+                    for (i = 0; i < scripts.length; i++) {
+                        script = scripts[i];
+                        montage = false;
+                        if (script.src && (match = script.src.match(/^(.*)montage.js(?:[\?\.]|$)/i))) {
+                            this._params.montageLocation = match[1];
+                            montage = true;
+                        }
+                        if (script.hasAttribute("data-montage-location")) {
+                            this._params.montageLocation = script.getAttribute("data-montage-location");
+                            montage = true;
+                        }
+                        if (montage) {
+                            if (script.dataset) {
+                                for (name in script.dataset) {
+                                    if (script.dataset.hasOwnProperty(name)) {
+                                        this._params[name] = script.dataset[name];
+                                    }
+                                }
+                            } else if (script.attributes) {
+                                var dataRe = /^data-(.*)$/, // TODO cache RegEx
+                                    letterAfterDash = /-([a-z])/g,
+                                    upperCaseChar = function (_, c) {
+                                        return c.toUpperCase();
+                                    };
+
+                                for (j = 0; j < script.attributes.length; j++) {
+                                    attr = script.attributes[j];
+                                    match = attr.name.match(dataRe);
+                                    if (match) {
+                                        this._params[match[1].replace(letterAfterDash, upperCaseChar)] = attr.value;
+                                    }
                                 }
                             }
+                            // Permits multiple montage.js <scripts>; by
+                            // removing as they are discovered, next one
+                            // finds itself.
+                            script.parentNode.removeChild(script);
+                            break;
                         }
-                        // Permits multiple montage.js <scripts>; by
-                        // removing as they are discovered, next one
-                        // finds itself.
-                        script.parentNode.removeChild(script);
-                        break;
                     }
                 }
+
             }
             return this._params;
         },
