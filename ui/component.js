@@ -225,9 +225,9 @@ var CssBasedAnimation = Montage.specialize({
             } else {
                 if (this._needsToMeasureAnimationTime) {
                     this._onAnimationsCompleted(function () {
-                        if (this._finishedDeferred) {
-                            this._finishedDeferred.resolve();
-                            this._finishedDeferred = null;
+                        if (this._finishedPromise) {
+                            this._finishedPromise.resolve();
+                            this._finishedPromise = null;
                         }
                     });
                     this.component.removeEventListener("didDraw", this, false);
@@ -237,25 +237,34 @@ var CssBasedAnimation = Montage.specialize({
         }
     },
 
-    _finishedDeferred: {
+    _finishedPromise: {
         value: null
     },
 
     finished: {
         get: function () {
-            if (!this._finishedDeferred) {
-                this._finishedDeferred = Promise.pending();
+            if (!this._finishedPromise) {
+                var _resolve, _reject;
+                this._finishedPromise = new Promise(function(resolve, reject) {
+                    _resolve = resolve;
+                    _reject = reject;
+                });
+
+                this._finishedPromise.resolve = _resolve;
+                this._finishedPromise.reject = _reject;
             }
-            return this._finishedDeferred.promise;
+            return this._finishedPromise;
         }
     },
 
     play: {
         value: function () {
             if (this.component) {
-                if (!this._finishedDeferred || this._cancelled) {
+                if (!this._finishedPromise || this._cancelled) {
                     this._cancelled = false;
-                    this._finishedDeferred = Promise.pending();
+
+                    //This will create
+                    this.finished;
                 }
                 this.component.needsDraw = true;
                 if (this.fromCssClass) {
@@ -307,8 +316,8 @@ var CssBasedAnimation = Montage.specialize({
                 this.component.classList.remove(this.toCssClass);
             }
             this.component.removeEventListener("didDraw", this, false);
-            if (this._finishedDeferred) {
-                this._finishedDeferred.reject();
+            if (this._finishedPromise) {
+                this._finishedPromise.reject(new Error("cancelled"));
             }
         }
     }
