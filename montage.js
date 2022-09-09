@@ -2,6 +2,8 @@
 (function (root, factory) {
     /*
         https://mathiasbynens.be/notes/globalthis
+
+        Also see: https://www.npmjs.com/package/globalthis
     */
     if (typeof globalThis !== 'object') {
         Object.prototype.__defineGetter__('__magic__', function() {
