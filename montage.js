@@ -13,6 +13,9 @@
         delete Object.prototype.__magic__;
     }
 
+    if(typeof browser === "undefined") {
+        globalThis.browser = chrome;
+    }
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
@@ -64,7 +67,7 @@
         }
     }
     function getManifest(_version) {
-        return globalThis.chrome?.runtime?.getManifest?.();
+        return globalThis.browser?.runtime?.getManifest?.();
     }
     function once(function_) {
         let result;
@@ -80,7 +83,7 @@
         See: https://github.com/fregante/webext-detect-page/blob/main/index.ts
     */
 
-    Object.defineProperties((typeof browser !== "undefined" ? browser : chrome), {
+    Object.defineProperties(browser, {
         /** Indicates whether the code is being run in extension contexts that have access to the chrome API */
         "_isExtensionContext": {
             value: undefined,
@@ -91,7 +94,7 @@
             get: function() {
                 return this._isExtensionContext !== undefined
                     ? this._isExtensionContext
-                    : (this._isExtensionContext = typeof globalThis.chrome?.extension === 'object');
+                    : (this._isExtensionContext = typeof globalThis.browser?.extension === 'object');
             },
             enumerable: false
         },
@@ -332,7 +335,7 @@
             if (!this._params) {
                 this._params = {};
 
-                if(globalThis.chrome.isContentScript) {
+                if(globalThis.browser.isContentScript) {
                     /*
                         for now, we set the root of the content script's world as the root of the extension
                     */
@@ -394,7 +397,7 @@
                 resolve = this.makeResolve(),
                 montageLocation, appLocation;
 
-                montageLocation = montageLocation || resolve(global.location, params.montageLocation || browser.runtime.getURL("node_modules/montage/"));
+                montageLocation = montageLocation || resolve((browser.isContentScript ? browser.runtime.getURL("") : global.location), params.montageLocation);
                 if(params.package) {
                     appLocation = resolve(global.location, params.package);
                     //should be endsWith
