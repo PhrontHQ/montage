@@ -13,7 +13,7 @@
         delete Object.prototype.__magic__;
     }
 
-    if(typeof browser === "undefined") {
+    if(typeof browser === "undefined" && typeof chrome === "object") {
         globalThis.browser = chrome;
     }
 
@@ -82,7 +82,7 @@
     /*
         See: https://github.com/fregante/webext-detect-page/blob/main/index.ts
     */
-
+if(globalThis.browser) {
     Object.defineProperties(browser, {
         /** Indicates whether the code is being run in extension contexts that have access to the chrome API */
         "_isExtensionContext": {
@@ -175,6 +175,7 @@
         }
 
     });
+}
 
 
     var browserPlatform = {
