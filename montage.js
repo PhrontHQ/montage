@@ -143,7 +143,7 @@
                         }
 
                     } catch (error) {
-                        console.error("eval failed", error);
+                        console.error("eval failed for '"+location+"' with error:", error);
                         if (callback) {
                             callback(error, undefined);
                         }
