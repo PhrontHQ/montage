@@ -373,7 +373,7 @@ bootstrap("require/browser", function (require) {
     };
 
     // global
-    montageDefine = function (hash, id, module) {
+    globalThis.montageDefine = function (hash, id, module) {
         getDefinition(hash, id).resolve(module);
     };
 
