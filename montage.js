@@ -336,7 +336,7 @@
                     /*
                         for now, we set the root of the content script's world as the root of the extension
                     */
-                    this._params.montageLocation = "";
+                    this._params.montageLocation = "node_modules/montage/";
                 } else {
 
                     // Find the <script> that loads us, so we can divine our
