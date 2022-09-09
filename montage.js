@@ -116,23 +116,83 @@
         },
 
         load: function (location, callback) {
-            var script = document.createElement("script");
-            script.src = location;
-            script.onload = function () {
-                if (callback) {
-                    callback(null, script);
+
+            var xhr = new XMLHttpRequest(),
+                global = globalThis;
+
+            xhr.onload = function onload(event) {
+                var xhr = event.target;
+                // Determine if an XMLHttpRequest was successful
+                // Some versions of WebKit return 0 for successful file:// URLs
+                if (xhr.status === 200 || (xhr.status === 0 && xhr.responseText)) {
+
+                    var evalText = "(function (require, exports, module, global) {";
+                    evalText += xhr.responseText;
+                    evalText += "//*/\n})\n//# sourceURL=";
+                    evalText += location;
+
+                    try {
+                        var resultFunction = eval(evalText),
+                            exports = {},
+                            module = {};
+
+                        resultFunction(function require(){}, exports, module, global);
+
+                        if (callback) {
+                            callback(null, module.exports);
+                        }
+
+                    } catch (error) {
+                        console.error("eval failed", error);
+                        if (callback) {
+                            callback(error, undefined);
+                        }
+                    }
+                } else {
+                    if (callback) {
+                        callback(new Error("Can't load script " + JSON.stringify(location)), undefined);
+                    }
                 }
-                // remove clutter
-                script.parentNode.removeChild(script);
+                //This clears the response from memory
+                xhr.abort();
+
             };
-            script.onerror = function () {
+            xhr.onerror = function onerror(event) {
+                var xhr = event.target;
+
+                //This clears the response from memory
+                xhr.abort();
+
                 if (callback) {
-                    callback(new Error("Can't load script " + JSON.stringify(location)), script);
+                    callback(new Error("Can't load script " + JSON.stringify(location)), undefined);
                 }
-                // remove clutter
-                script.parentNode.removeChild(script);
+
             };
-            document.getElementsByTagName("head")[0].appendChild(script);
+            xhr.open("GET", location, true);
+            xhr.send(null);
+
+            return;
+
+            /*
+                Previous script tag based approach that doesn't work an an extension content script
+            */
+            // var script = document.createElement("script");
+            // script.src = location;
+            // script.addEventListener("load", function () {
+            //     if (callback) {
+            //         callback(null, script);
+            //     }
+            //     // remove clutter
+            //     script.parentNode.removeChild(script);
+            // });
+            // script.addEventListener("error", function () {
+            //     if (callback) {
+            //         callback(new Error("Can't load script " + JSON.stringify(location)), script);
+            //     }
+            //     // remove clutter
+            //     script.parentNode.removeChild(script);
+            // });
+            // document.getElementsByTagName("head")[0].appendChild(script);
         },
 
         getParams: function () {
@@ -197,7 +257,7 @@
                 resolve = this.makeResolve(),
                 montageLocation, appLocation;
 
-                montageLocation = montageLocation || resolve(global.location, params.montageLocation || browser.runtime.getURL("node_modules/montage"));
+                montageLocation = montageLocation || resolve(global.location, params.montageLocation || browser.runtime.getURL("node_modules/montage/"));
                 if(params.package) {
                     appLocation = resolve(global.location, params.package);
                     //should be endsWith
@@ -299,14 +359,14 @@
 
             function loadModuleScript(path, callback) {
                 // try loading script relative to app first (npm 3+)
-                browserPlatform.load(resolve(appLocation || global.location, path), function (err, script) {
+                browserPlatform.load(resolve(appLocation || global.location, path), function (err, exports) {
                     if (err) {
                         // if that fails, the app may have been installed with
                         // npm 2 or with --legacy-bundling, in which case the
                         // script will be under montage's node_modules
                         browserPlatform.load(resolve(montageLocation, path), callback);
                     } else if (callback) {
-                        callback(null, script);
+                        callback(null, exports);
                     }
                 });
             }
@@ -316,15 +376,18 @@
             if (typeof global.BUNDLE === "undefined") {
 
                 // Special Case bluebird for now:
-                loadModuleScript(pending.promise, function () {
+                loadModuleScript(pending.promise, function (error, exports) {
                     delete pending.promise;
 
+                    var bluebirdPromise = exports;
                     //global.bootstrap cleans itself from global once all known are loaded. "bluebird" is not known, so needs to do it first
                     global.bootstrap("bluebird", function (require, exports) {
-                        return global.Promise;
+                        return bluebirdPromise;
+                        //return global.Promise;
                     });
                     global.bootstrap("promise", function (require, exports) {
-                        return global.Promise;
+                        return bluebirdPromise;
+                        //return global.Promise;
                     });
 
                     for (var module in pending) {
