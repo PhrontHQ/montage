@@ -77,13 +77,24 @@ bootstrap("require/browser", function (require) {
 
     Require.getLocation = function() {
         if (!location) {
-            var base = document.querySelector("head > base");
-            if (base) {
-                location = base.href;
+
+            if(typeof globalThis.chrome?.extension === 'object') {
+                /*
+                    If we're in an extension, the root of the extension is our main content script app:
+
+                    We should probably put the popup html in a separate folder so it can have it's own package.json
+                */
+                location = browser.runtime.getURL("");
+
             } else {
-                location = window.location;
+                var base = document.querySelector("head > base");
+                if (base) {
+                    location = base.href;
+                } else {
+                    location = window.location;
+                }
+                location = miniURL.resolve(location, ".");
             }
-            location = miniURL.resolve(location, ".");
         }
         return location;
     };
