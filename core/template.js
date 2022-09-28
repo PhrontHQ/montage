@@ -360,7 +360,7 @@ var Template = Montage.specialize( /** @lends Template# */ {
                 self._invokeDelegates(part, instances);
                 part.stopActingAsTopComponent();
 
-                return resourcePromise || self.resolvedPromise;
+                return resourcePromise ? resourcePromise : self.resolvedPromise;
             })
             .then(function() {
                 return part;
