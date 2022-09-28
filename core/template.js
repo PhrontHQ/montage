@@ -346,19 +346,23 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
             return this._instantiateObjects(templateObjects, fragment)
             .then(function (objects) {
-                var resources = self.getResources();
+                var resources = self.getResources(),
+                    resourcePromise;
 
                 if (!resources.resourcesLoaded() && resources.hasResources()) {
                     // Start preloading the resources as soon as possible, no
                     // need to wait for them as the draw cycle will take care
                     // of that when loading the stylesheets into the document.
-                    resources.loadResources(targetDocument);
+                    resourcePromise = resources.loadResources(targetDocument);
                 }
 
                 part.objects = objects;
                 self._invokeDelegates(part, instances);
                 part.stopActingAsTopComponent();
 
+                return resourcePromise || self.resolvedPromise;
+            })
+            .then(function() {
                 return part;
             });
         }
