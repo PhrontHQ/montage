@@ -1994,7 +1994,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
 
             templateModuleId += "/";
             /* . of extenson added here */
-            templateModuleId +=  moduleId.slice(slashIndex === -1 ? 0 : slashIndex+1, moduleId.length - moduleExtension.length -1)
+            templateModuleId +=  moduleId.slice(slashIndex === -1 ? 0 : slashIndex+1, moduleId.length - (moduleExtension ? moduleExtension.length : 0) -1)
             templateModuleId +=  ".html";
 
             return templateModuleId;
