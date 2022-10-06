@@ -1862,16 +1862,18 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
 
     getObjectsProperties: {
         value: function (objects, propertyNames) {
-            var promises = [], i, countI;
 
             if(!objects || objects.length === 0) {
                 return Promise.resolve(null);
-            }
-            for(i=0, countI = objects.length; (i<countI); i++) {
-                promises.push(this.getObjectProperties(objects[i],propertyNames));
-            }
+            } else {
+                var promises = [], i, countI;
 
-            return Promise.all(promises);
+                for(i=0, countI = objects.length; (i<countI); i++) {
+                    promises.push(this.getObjectProperties(objects[i],propertyNames));
+                }
+
+                return Promise.all(promises);
+            }
         }
     },
 
