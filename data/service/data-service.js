@@ -2191,7 +2191,12 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                     Object.assign(data, self.snapshotForObject(object));
                     result = mapping.mapRawDataToObjectProperty(data, object, propertyName);
                     if (!this._isAsync(result)) {
-                        result = this.nullPromise;
+                        /*
+                            BUG: when we map from values already in the snapshot we end up here, but the value has alredy been assigned to the object by  mapping.mapRawDataToObjectProperty(data, object, propertyName).
+
+                            So there's really nothing else to do but return result. If we re-set result to null bellow, it does end up as the result of DataTrigger._fetchObjectProperty() promise and erases the value that was there, the one just mapped, causing loss of data and bugs.
+                        */
+                        // result = this.nullPromise;
                         this._objectsBeingMapped.delete(object);
                     }
                     else {
