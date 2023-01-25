@@ -45,6 +45,11 @@ exports.URLSearchParamIdentityService = URLSearchParamIdentityService = Identity
                 this.identityQuery = value;
             }
 
+            value = deserializer.getProperty("defaultSearchParamValue");
+            if (value) {
+                this.defaultSearchParamValue = value;
+            }
+
         }
     },
 
@@ -59,7 +64,30 @@ exports.URLSearchParamIdentityService = URLSearchParamIdentityService = Identity
         value: undefined
     },
 
+    _searchParamValue: {
+        value: undefined
+    },
     searchParamValue: {
+        get: function() {
+            return this._searchParamValue != undefined
+            ? this._searchParamValue
+            : this.defaultSearchParamValue;
+        },
+        set: function(value) {
+            if(!value !== this._searchParamValue) {
+                this._searchParamValue = value;
+            }
+        }
+    },
+
+    /**
+     * in case nothing is found, the value to be returned.
+     *
+     * @property {String} serializable
+     * @default undefined
+     */
+
+    defaultSearchParamValue: {
         value: undefined
     },
 
@@ -86,8 +114,7 @@ exports.URLSearchParamIdentityService = URLSearchParamIdentityService = Identity
             if(!this._identity) {
                 this._identity = new Identity();
 
-                this.searchParamValue =
-                appointmentOriginId = this.application.url.searchParams.get(this.searchParamName);
+                this.searchParamValue = this.application.url.searchParams.get(this.searchParamName);
 
                 this._identity.scope = [this.identityQuery];
             }
