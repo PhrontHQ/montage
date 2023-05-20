@@ -1844,9 +1844,11 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                 extension = Require.extension(id);
             if (
                 !extension || (
+                    //!extension.endsWith("js")
                     extension !== "js" &&
-                        extension !== "json" &&
-                            !configModuleTypes.has(extension)
+                        extension !== "cjs" &&
+                            extension !== "json" &&
+                                !configModuleTypes.has(extension)
                 )
             ) {
                 path += ".js";
