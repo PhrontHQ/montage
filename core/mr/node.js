@@ -68,6 +68,7 @@ Require.read = function read(location, module) {
     } catch (error) {
 
         if (
+            !location.endsWith(".json") && // it's not .json file
             location.includes(jsPreffix) && // is .js
             !location.includes(jsIndexPrefix) // is not /index.js
         ) {
