@@ -154,6 +154,8 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
                 setting connectionIdentifier will set the current connection
                 based on connectionDescriptor.
 
+                TODO: this should then be named: currentConnectionIdentifier
+
                 I can still be overriden by the direct setting of connection bellow
             */
             value = deserializer.getProperty("connectionIdentifier");
@@ -272,6 +274,37 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
     connection: {
         value: undefined
     },
+
+
+    _rawClientPromises: {
+        value: undefined
+    },
+
+    rawClientPromises: {
+        get: function () {
+
+            if (!this._rawClientPromises) {
+                var promises = this._rawClientPromises = [];
+            }
+            return this._rawClientPromises;
+        }
+    },
+
+    _rawClientPromise: {
+        value: undefined
+    },
+
+    rawClientPromise: {
+        get: function () {
+            if (!this._rawClientPromise) {
+                this._rawClientPromise = Promise.all(this.rawClientPromises);
+            }
+            return this._rawClientPromise;
+        }
+    },
+
+
+
 
     /***************************************************************************
      * Data Object Properties
