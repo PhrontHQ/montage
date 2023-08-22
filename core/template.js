@@ -18,7 +18,15 @@ var Montage = require("./core").Montage,
 var Template = Montage.specialize( /** @lends Template# */ {
     _SERIALIZATION_SCRIPT_TYPE: {value: "text/montage-serialization"},
     _ELEMENT_ID_ATTRIBUTE: {value: "data-montage-id"},
+    __ELEMENT_ID_ATTRIBUTE_SELECTOR: {value: undefined},
+    _ELEMENT_ID_ATTRIBUTE_SELECTOR: {
+        get: function() {
+            return this.__ELEMENT_ID_ATTRIBUTE_SELECTOR || (this.__ELEMENT_ID_ATTRIBUTE_SELECTOR = "*[" + this._ELEMENT_ID_ATTRIBUTE + "]");
+        }
+    },
+
     PARAM_ATTRIBUTE: {value: "data-param"},
+    PARAM_ATTRIBUTE_SELECTOR: {value: "*[data-param]"},
 
     _require: {value: null},
     _resources: {value: null},
@@ -134,7 +142,10 @@ var Template = Montage.specialize( /** @lends Template# */ {
             return this._document;
         },
         set: function (value) {
-            this._document = value;
+            if(value !== this._document) {
+                this._hasFoundParameters = undefined;
+                this._document = value;
+            }
         }
     },
 
@@ -517,28 +528,49 @@ var Template = Montage.specialize( /** @lends Template# */ {
         }
     },
 
+    _hasFoundParameters: {
+        value: undefined
+    },
+    _emptyParameters: {
+        value: Object.freeze({})
+    },
+
     _getParameters: {
         value: function (rootElement) {
-            var elements = rootElement.querySelectorAll("*[" + this.PARAM_ATTRIBUTE + "]"),
-                elementsCount = elements.length,
-                element,
-                parameterName,
-                parameters = {};
+            if(this._hasFoundParameters === undefined || this._hasFoundParameters === true) {
 
-            for (var i = 0; i < elementsCount; i++) {
-                element = elements[i];
-                parameterName = this.getParameterName(element);
+                var elements = rootElement.querySelectorAll("*[" + this.PARAM_ATTRIBUTE + "]"),
+                elementsCount = elements.length;
 
-                if (parameterName in parameters) {
-                    throw new Error('The parameter "' + parameterName + '" is' +
-                        ' declared more than once in ' + this.getBaseUrl() +
-                        '.');
+                if(elementsCount) {
+
+                    this._hasFoundParameters = true;
+
+                    var element,
+                    parameterName,
+                    parameters = {};
+
+                    for (var i = 0; i < elementsCount; i++) {
+                        element = elements[i];
+                        parameterName = this.getParameterName(element);
+
+                        if (parameterName in parameters) {
+                            throw new Error('The parameter "' + parameterName + '" is' +
+                                ' declared more than once in ' + this.getBaseUrl() +
+                                '.');
+                        }
+
+                        parameters[parameterName] = element;
+                    }
+
+                    return parameters;
+                } else {
+                    this._hasFoundParameters = false;
+                    return this._emptyParameters;
                 }
-
-                parameters[parameterName] = element;
+            } else {
+                return this._emptyParameters;
             }
-
-            return parameters;
         }
     },
 
@@ -849,7 +881,10 @@ var Template = Montage.specialize( /** @lends Template# */ {
                 clonedDocument.documentElement
             );
 
-            this.normalizeRelativeUrls(clonedDocument, baseURI);
+            /*
+                This doesn't seems to be needed, specs pass, but keeping around in case we didn't have a test for it and it ends up causing a regression
+            */
+            //this.normalizeRelativeUrls(clonedDocument, baseURI);
 
             return clonedDocument;
         }
@@ -1217,9 +1252,7 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
     getElementId: {
         value: function (element) {
-            if (element.getAttribute) {
-                return element.getAttribute(this._ELEMENT_ID_ATTRIBUTE);
-            }
+            return element.getAttribute ? element.getAttribute(this._ELEMENT_ID_ATTRIBUTE) : undefined;
         }
     },
 
@@ -1237,12 +1270,11 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
     _getElements: {
         value: function (rootNode) {
-            var selector = "*[" + this._ELEMENT_ID_ATTRIBUTE + "]",
-                elements,
+            var elements,
                 result = {},
                 elementId;
 
-            elements = rootNode.querySelectorAll(selector);
+            elements = rootNode.querySelectorAll(this._ELEMENT_ID_ATTRIBUTE_SELECTOR);
 
             for (var i = 0, element; (element = elements[i]); i++) {
                 elementId = this.getElementId(element);
@@ -1260,12 +1292,12 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
     _getChildrenElementIds: {
         value: function (rootNode) {
-            // XPath might do a better job here...should test.
-            var selector = "*[" + this._ELEMENT_ID_ATTRIBUTE + "]",
-                elements,
+
+            var elements,
                 elementIds = [];
 
-            elements = rootNode.querySelectorAll(selector);
+            // XPath might do a better job here...should test.
+            elements = rootNode.querySelectorAll(this._ELEMENT_ID_ATTRIBUTE_SELECTOR);
 
             for (var i = 0, element; (element = elements[i]); i++) {
                 elementIds.push(this.getElementId(element));
@@ -1291,9 +1323,7 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
     getElementById: {
         value: function (elementId) {
-            var selector = "*[" + this._ELEMENT_ID_ATTRIBUTE + "='" + elementId + "']";
-
-            return this.document.querySelector(selector);
+            return this.document.querySelector("*[" + this._ELEMENT_ID_ATTRIBUTE + "='" + elementId + "']");
         }
     },
 
@@ -1429,7 +1459,7 @@ var Template = Montage.specialize( /** @lends Template# */ {
                 template = new Template()
                 .initWithModuleId(moduleId, _require);
 
-                //this._templateCache.moduleId[cacheKey] = template;
+                this._templateCache.moduleId[cacheKey] = template;
             } else {
                 return Promise.resolve(template);
             }
@@ -1522,7 +1552,13 @@ var TemplateResources = Montage.specialize( /** @lends TemplateResources# */ {
                 template = this.template;
 
                 scripts = this._resources.scripts = [];
-                templateScripts = template.document.querySelectorAll("script");
+
+                /*
+                    getElementsByTagName() returns HTML Collection which is cached and returned, which is faster than querySelectorAll() that creates a Node List every time.
+                */
+
+                // templateScripts = template.document.querySelectorAll("script");
+                templateScripts = template.document.getElementsByTagName("script");
 
                 for (var i = 0, ii = templateScripts.length; i < ii; i++) {
                     script = templateScripts[i];
@@ -1742,18 +1778,21 @@ var TemplateResources = Montage.specialize( /** @lends TemplateResources# */ {
         }
     },
 
+    styleSelector: {
+        value: 'link[rel="stylesheet"], style'
+    },
+
     getStyles: {
         value: function () {
-            var styles = this._resources.styles,
-                template,
-                templateStyles,
-                styleSelector;
+            var styles = this._resources.styles;
 
             if (!styles) {
-                styleSelector = 'link[rel="stylesheet"], style';
+                var template,
+                    templateStyles;
+
                 template = this.template;
 
-                templateStyles = template.document.querySelectorAll(styleSelector);
+                templateStyles = template.document.querySelectorAll(this.styleSelector);
 
                 styles = Array.prototype.slice.call(templateStyles, 0);
                 this._resources.styles = styles;
