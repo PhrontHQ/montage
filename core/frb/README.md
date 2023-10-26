@@ -1,5 +1,8 @@
 <img src="frb.png" align="right" alt="FRB Logo">
 
+Peggy JS Tutorial:
+https://tomassetti.me/a-peggy-js-tutorial/
+
 # Functional Reactive Bindings
 
 [![npm version](https://img.shields.io/npm/v/frb.svg?style=flat)](https://www.npmjs.com/package/frb)
