@@ -581,8 +581,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
 
     reviveElement: {
         value: function reviveElement(value, context, label) {
-            var elementId = value["#"],
-                element = context.getElementById(elementId);
+            var element = context.getElementById(value["#"]);
 
             if (element) {
                 if (label) {
@@ -590,7 +589,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
                 }
                 return element;
             } else {
-                throw new Error("Element with id '" + elementId + "' was not found.");
+                throw new Error("Element with id '" + value["#"] + "' was not found.");
             }
         }
     },
