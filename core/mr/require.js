@@ -288,6 +288,8 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
 
         config = config || {};
         if (typeof dependency === "string") {
+            //console.log("normalizeDependency('"+dependency+"',config,'"+name+"'");
+
             dependency = {
                 location: dependency
             };
@@ -373,6 +375,10 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                 config.location,
                 dependency.location
             );
+        }
+
+        if(!dependency.name && name) {
+            dependency.name = name;
         }
 
         // register the package name so the location can be reused
