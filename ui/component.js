@@ -2326,10 +2326,8 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
 
     _addTemplateStylesIfNeeded: {
         value: function () {
-            var part = this._templateDocumentPart;
-
-            if (part) {
-                this.rootComponent.addStyleSheetsFromTemplate(part.template);
+            if(this._templateDocumentPart) {
+                this.rootComponent.addStyleSheetsFromTemplate(this._templateDocumentPart.template);
             }
         }
     },
