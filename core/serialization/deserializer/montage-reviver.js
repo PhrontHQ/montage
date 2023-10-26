@@ -883,14 +883,16 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
         value: function (object, values, context) {
             var value;
 
-            if (typeof object.deserializeProperties === "function" || typeof object.deserializeValues === "function") {
+
+            if(typeof object.deserializeValues === "function") {
+                var valuesDeserializer = new ValuesDeserializer()
+                .initWithReviverAndObjects(this, context);
+                value = object.deserializeValues(valuesDeserializer);
+            } else if(typeof object.deserializeProperties === "function") {
                 var valuesDeserializer = new ValuesDeserializer()
                     .initWithReviverAndObjects(this, context);
-                if (object.deserializeValues) {
-                    value = object.deserializeValues(valuesDeserializer);
-                } else { // deprecated
+                    // deprecated
                     value = object.deserializeProperties(valuesDeserializer);
-                }
             } else {
                 /* jshint forin: true */
                 for (var key in values) {
