@@ -444,14 +444,20 @@ var Application = exports.Application = Target.specialize( /** @lends Applicatio
             // assign to the exports so that it is available in the deserialization of the template
             exports.application = self;
 
-            return require.async("ui/component").then(function(exports) {
+            return require.async("ui/component")
+            .then(function(exports) {
                 var authorizationPromise;
 
                 self.rootComponent = rootComponent = exports.__root__;
                 if (typeof document !== "undefined") {
                     rootComponent.element = document;
-                }
 
+                    return Template.instantiateDocument(document, applicationRequire);
+                } else {
+                    Promise.resolve(true);
+                }
+            })
+            .then(function(part) {
 
                 /*
 
@@ -494,16 +500,7 @@ var Application = exports.Application = Target.specialize( /** @lends Applicatio
                     authenticationPromise = Promise.resolve(true);
                 }
 
-                return authenticationPromise.finally(function() {
-                    // if (typeof document !== "undefined") {
-                    //     rootComponent.element = document;
-                    // }
-
-                    if (typeof document !== "undefined") {
-                        return Template.instantiateDocument(document, applicationRequire);
-                    }
-
-                });
+                return authenticationPromise;
 
 
 /*
@@ -521,7 +518,9 @@ var Application = exports.Application = Target.specialize( /** @lends Applicatio
                 });
                 */
 
-            }).then(function (part) {
+            })
+
+            .then(function (part) {
                 self.callDelegateMethod("willFinishLoading", self);
                 rootComponent.needsDraw = true;
                 if (callback) {
