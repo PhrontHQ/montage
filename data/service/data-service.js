@@ -291,12 +291,17 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                     this._childServices = [];
                 }
                 this.addChildServices(this._deserializedChildServices);
+
+                //Sets ourselve as application's main service
+                if(!this.parentService && !defaultEventManager.application.mainService) {
+                    defaultEventManager.application.service = defaultEventManager.application.dataService = defaultEventManager.application.mainService = this;
+                }
+
             }
 
             if (this.authorizationPolicy === AuthorizationPolicyType.UpfrontAuthorizationPolicy) {
                 exports.DataService.authorizationManager.registerServiceWithUpfrontAuthorizationPolicy(this);
             }
-
 
 
         }
