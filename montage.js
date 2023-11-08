@@ -182,68 +182,13 @@ if(globalThis.browser) {
 
         makeResolve: function () {
 
-            try {
-
-                var testHost = "http://example.org",
-                    testPath = "/test.html",
-                    resolved = new URL(testPath, testHost).href;
-
-                if (!resolved || resolved !== testHost + testPath) {
-                    throw new Error('NotSupported');
+            return function (base, relative) {
+                if(relative === "./") {
+                    return base.substring(0,base.lastIndexOf("/")+1);
+                } else {
+                    return new URL(relative, base).href;
                 }
-
-                return function (base, relative) {
-                    if(relative === "./") {
-                        return base.substring(0,base.lastIndexOf("/")+1);
-                    } else {
-                        return new URL(relative, base).href;
-                    }
-                };
-
-            } catch (err) {
-
-                var IS_ABSOLUTE_REG = /^[\w\-]+:/,
-                    head = document.querySelector("head"),
-                    currentBaseElement = head.querySelector("base"),
-                    baseElement = document.createElement("base"),
-                    relativeElement = document.createElement("a"),
-                    needsRestore = false;
-
-                    if(currentBaseElement) {
-                        needsRestore = true;
-                    }
-                    else {
-                        currentBaseElement = document.createElement("base");
-                    }
-
-                // Optimization, we won't check ogain if there's a base tag.
-                baseElement.href = "";
-
-                return function (base, relative) {
-                    var restore;
-
-                    if (!needsRestore) {
-                        head.appendChild(currentBaseElement);
-                    }
-
-                    base = String(base);
-                    if (IS_ABSOLUTE_REG.test(base) === false) {
-                        throw new Error("Can't resolve from a relative location: " + JSON.stringify(base) + " " + JSON.stringify(relative));
-                    }
-                    if(needsRestore) {
-                        restore = currentBaseElement.href;
-                    }
-                    currentBaseElement.href = base;
-                    relativeElement.href = relative;
-                    var resolved = relativeElement.href;
-                    if (needsRestore) {
-                        currentBaseElement.href = restore;
-                    } else {
-                        head.removeChild(currentBaseElement);
-                    }
-                    return resolved;
-                };
-            }
+            };
         },
 
         load: function (location, callback) {
