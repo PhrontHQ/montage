@@ -569,48 +569,18 @@ if(globalThis.browser) {
                     defaultEventManager.application = application;
                     application.eventManager = defaultEventManager;
 
-                    // Load main.datareel/main.mjson
-                    var mainDatareel = applicationRequire.packageDescription.mainDatareel,
-                    mainDatareelLocation, mainDatareelModulePromise;
+                    return application._load(applicationRequire, function () {
+                        if (params.module) {
+                            // If a module was specified in the config then we initialize it now
+                            applicationRequire.async(params.module);
+                        }
+                        if (typeof global.montageDidLoad === "function") {
+                            global.montageDidLoad();
+                        }
 
-                    if (mainDatareel) {
-                        mainDatareelLocation = MontageReviver.parseObjectLocationId(mainDatareel);
-                        mainDatareelModulePromise = applicationRequire.async(mainDatareelLocation.moduleId);
-                    } else {
-                        mainDatareelLocation = "data/main.datareel/main.mjson";
-
-                        //Check if we have a redirection in mappings. Mr does that, when we bring mr inside montage.js, we should be able to simplify this.
-                        // mainDatareelLocation = applicationRequire.mappings[mainDatareelLocation].location || mainDatareelLocation;
-
-                        mainDatareelModulePromise = applicationRequire.async(mainDatareelLocation);
-                        //mainDatareelModulePromise = mrPromise.resolve();
-                    }
-
-
-                    return mainDatareelModulePromise.then(function(mainDataServiceExport) {
-                        // fulfillment
-                        application.service = application.dataService =  application.mainService = mainDataServiceExport.montageObject;
-                        return application;
-                    }, function(reason) {
-                        // rejection
-                        console.log("App failed to load datareel at location:",mainDatareelLocation,reason);
-                        return application;
-                    }).finally(function() {
-
-                        return application._load(applicationRequire, function () {
-                            if (params.module) {
-                                // If a module was specified in the config then we initialize it now
-                                applicationRequire.async(params.module);
-                            }
-                            if (typeof global.montageDidLoad === "function") {
-                                global.montageDidLoad();
-                            }
-
-                            if (window.MontageElement) {
-                                MontageElement.ready(applicationRequire, application, MontageReviver);
-                            }
-                        });
-
+                        if (window.MontageElement) {
+                            MontageElement.ready(applicationRequire, application, MontageReviver);
+                        }
                     });
 
                 });
