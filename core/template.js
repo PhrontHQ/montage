@@ -357,14 +357,17 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
             return this._instantiateObjects(templateObjects, fragment)
             .then(function (objects) {
-                var resources = self.getResources(),
+
+                if(targetDocument !== window.document) {
+                    var resources = self.getResources(),
                     resourcePromise;
 
-                if (!resources.resourcesLoaded() && resources.hasResources()) {
-                    // Start preloading the resources as soon as possible, no
-                    // need to wait for them as the draw cycle will take care
-                    // of that when loading the stylesheets into the document.
-                    resourcePromise = resources.loadResources(targetDocument);
+                    if (!resources.resourcesLoaded() && resources.hasResources()) {
+                        // Start preloading the resources as soon as possible, no
+                        // need to wait for them as the draw cycle will take care
+                        // of that when loading the stylesheets into the document.
+                        resourcePromise = resources.loadResources(targetDocument);
+                    }
                 }
 
                 part.objects = objects;
@@ -1852,16 +1855,16 @@ var TemplateResources = Montage.specialize( /** @lends TemplateResources# */ {
 // Used to create a DocumentPart from a document without a Template
 function instantiateDocument(_document, _require, instances) {
     var template = new Template(),
-        html = _document.documentElement.outerHTML,
+        //html = _document.documentElement.outerHTML,
         part = new DocumentPart(),
-        clonedDocument,
+       // clonedDocument,
         templateObjects,
         rootElement = _document.documentElement;
 
     // Setup a template just like we'd do for a document in a template
-    clonedDocument = template.createHtmlDocumentWithHtml(html, _document.location.href);
+    //clonedDocument = template.createHtmlDocumentWithHtml(html, _document.location.href);
 
-    return template.initWithDocument(clonedDocument, _require)
+    return template.initWithDocument(_document, _require)
     .then(function () {
         template.setBaseUrl(_document.location.href);
         // Instantiate it using the document given since we don't want to clone
