@@ -1855,15 +1855,11 @@ var TemplateResources = Montage.specialize( /** @lends TemplateResources# */ {
 // Used to create a DocumentPart from a document without a Template
 function instantiateDocument(_document, _require, instances) {
     var template = new Template(),
-        //html = _document.documentElement.outerHTML,
         part = new DocumentPart(),
-       // clonedDocument,
         templateObjects,
         rootElement = _document.documentElement;
 
     // Setup a template just like we'd do for a document in a template
-    //clonedDocument = template.createHtmlDocumentWithHtml(html, _document.location.href);
-
     return template.initWithDocument(_document, _require)
     .then(function () {
         template.setBaseUrl(_document.location.href);
