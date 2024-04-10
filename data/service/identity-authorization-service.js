@@ -15,7 +15,7 @@ exports.IdentityAuthorizationService = IdentityAuthorizationService = RawDataSer
 
     constructor: {
         value: function IdentityAuthorizationService() {
-            RawDataService.call(this);
+            this.super();
         }
     },
     deserializedFromSerialization: {

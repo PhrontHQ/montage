@@ -330,7 +330,126 @@ var rootComponent;
  * @classdesc Base class for all Montage components.
  * @extends Target
  */
-var Component = exports.Component = Target.specialize(/** @lends Component.prototype */{
+var Component = exports.Component = class Component extends Target {
+    static userInterfaceDescriptorLoadedField = 'userInterfaceDescriptorLoaded';
+
+    /**
+     * Add the specified properties as properties of this component.
+     * @function
+     * @param {object} properties An object that contains the properties you want to add.
+     * @private
+     */
+     //TODO, this should be renamed addAttributeProperties
+    static addAttributes(properties) {
+        var i, descriptor, property, object;
+        this.prototype._elementAttributeDescriptors = properties;
+
+        for(property in properties) {
+            if(properties.hasOwnProperty(property)) {
+                object = properties[property];
+                // Make sure that the descriptor is of the correct form.
+                if(object === null || typeof object === "string") {
+                    descriptor = {value: object, dataType: "string"};
+                    properties[property] = descriptor;
+                } else {
+                    descriptor = object;
+                }
+
+                // Only add the internal property, and getter and setter if
+                // they don't already exist.
+                if(typeof this.prototype[property] === 'undefined') {
+                    this.defineAttribute(property, descriptor);
+                }
+            }
+        }
+    }
+
+
+    //TODO, this should be renamed attributePropertySetter
+    static defineAttributeSetter(name, _name, descriptor) {
+        return (function (name, attributeName, setter) {
+            return function (value, fromInput) {
+                var descriptor = this._getElementAttributeDescriptor(name, this);
+
+                // if requested dataType is boolean (eg: checked, readonly etc)
+                // coerce the value to boolean
+                if(descriptor && "boolean" === descriptor.dataType) {
+                    value = ( (value || value === "") ? true : false);
+                }
+
+                // If the set value is different to the current one,
+                // update it here, and set it to be updated on the
+                // element in the next draw cycle.
+                if(typeof value !== 'undefined' && (this[attributeName] !== value)) {
+
+                    if (setter) {
+                        setter.call(this, value);
+                    } else {
+                        this[attributeName] = value;
+                    }
+
+                    this._elementAttributeValues[name] = value;
+                    if (!fromInput) {
+                        this.needsDraw = true;
+                    }
+                }
+            };
+        }(name, _name, descriptor.set));
+    }
+
+    //TODO, this should be renamed attributePropertySetter
+    static defineAttributeGetter(_name) {
+        return (function (attributeName) {
+            return function () {
+                return this[attributeName];
+            };
+        }(_name));
+    }
+    /**
+     * Adds a property to the component with the specified name.
+     * This method is used internally by the framework convert a DOM element's
+     * standard attributes into bindable properties.
+     * It creates an accessor property (getter/setter) with the same name as
+     * the specified property, as well as a "backing" data property whose name
+     * is prepended with an underscore (_).
+     * The backing variable is assigned the value from the property descriptor.
+     * For example, if the name "title" is passed as the first parameter, a
+     * "title" accessor property is created as well a data property named
+     * "_title".
+     * @function
+     * @param {string} name The property name to add.
+     * @param {Object} descriptor An object that specifies the new properties default attributes such as configurable and enumerable.
+     * @private
+     */
+     //https://github.com/kangax/html-minifier/issues/63 for a list of boolean attributes
+     //TODO, this should be renamed defineAttributeProperty
+    static defineAttribute (name, descriptor) {
+        descriptor = descriptor || {};
+        var _name = '_' + name;
+
+
+        var newDescriptor = {
+            configurable: (typeof descriptor.configurable === 'undefined') ? true: descriptor.configurable,
+            enumerable: (typeof descriptor.enumerable === 'undefined') ?  true: descriptor.enumerable,
+            set: this.defineAttributeSetter(name, _name, descriptor),
+            get: descriptor.get || this.defineAttributeGetter(_name)
+        };
+
+        // Define _ property
+        // TODO this.constructor.defineProperty
+        if(!this.prototype.hasOwnProperty(_name)) {
+            Montage.defineProperty(this.prototype, _name, {value: descriptor.value});
+        }
+        // Define property getter and setter
+        Montage.defineProperty(this.prototype, name, newDescriptor);
+    }
+
+}
+
+Component.addClassProperties(
+    {
+
+// var Component = exports.Component = Target.specialize(/** @lends Component.prototype */{
     // Virtual Interface
 
     /**
@@ -904,12 +1023,12 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
      * Convenience to access the defaultEventManager object.
      * @type {EventManager}
      */
-    eventManager: {
-        enumerable: false,
-        get: function () {
-            return defaultEventManager;
-        }
-    },
+    // eventManager: {
+    //     enumerable: false,
+    //     get: function () {
+    //         return defaultEventManager;
+    //     }
+    // },
 
     /**
      * Convenience to access the rootComponent object.
@@ -1637,11 +1756,11 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
         value: true
     },
 
-    _loadComponentTreeDeferred: {value: null},
+    _loadComponentTreePromise: {value: null},
     loadComponentTree: {
         value: function loadComponentTree() {
 
-            if (!this._loadComponentTreeDeferred) {
+            if (!this._loadComponentTreePromise) {
 
                 this.canDrawGate.setField("componentTreeLoaded", false);
 
@@ -1656,7 +1775,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 var self = this;
 
 
-                this._loadComponentTreeDeferred = this.expandComponent()
+                this._loadComponentTreePromise = this.expandComponent()
                     .then(function() {
                         if (self.hasTemplate || self.shouldLoadComponentTree) {
                             var promises,
@@ -1690,7 +1809,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                         console.error(error);
                     });
             }
-            return this._loadComponentTreeDeferred;
+            return this._loadComponentTreePromise;
         }
     },
 
@@ -1985,7 +2104,8 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
         value: function () {
             var info = Montage.getInfoForObject(this),
                 moduleId = info.moduleId,
-                moduleExtension = info.require.getModuleDescriptor(info.module).extension,
+                //moduleExtension = info.require.getModuleDescriptor(info.module).extension,
+                moduleIdExtension = moduleId.substring(moduleId.lastIndexOf(".")+1),
                 slashIndex = moduleId.lastIndexOf("/"),
                 templateModuleId = moduleId;
 
@@ -1994,7 +2114,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
 
             templateModuleId += "/";
             /* . of extenson added here */
-            templateModuleId +=  moduleId.slice(slashIndex === -1 ? 0 : slashIndex+1, moduleId.length - (moduleExtension ? moduleExtension.length : 0) -1)
+            templateModuleId +=  moduleId.slice(slashIndex === -1 ? 0 : slashIndex+1, moduleId.length - (moduleIdExtension ? moduleIdExtension.length : 0) -1)
             templateModuleId +=  ".html";
 
             return templateModuleId;
@@ -2018,6 +2138,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
 
     _deserializedFromTemplate: {
         value: function (owner, label, documentPart) {
+            //console.log("_deserializedFromTemplate(",owner,label,documentPart);
             Montage.getInfoForObject(this).label = label;
             this._ownerDocumentPart = documentPart;
 
@@ -2061,13 +2182,14 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 info = Montage.getInfoForObject(self);
                 var moduleId = info.moduleId,
                     slashIndex = moduleId.lastIndexOf("/"),
-                    dotIndex = moduleId.lastIndexOf(".");
+                    dotIndex = moduleId.lastIndexOf("."),
+                    dotExtension;
                 slashIndex = ( slashIndex === -1 ? 0 : slashIndex + 1 );
                 dotIndex = ( dotIndex === -1 ? moduleId.length : dotIndex );
                 dotIndex = ( dotIndex < slashIndex ? moduleId.length : dotIndex );
 
                 var objectDescriptorModuleId;
-                if ((dotIndex < moduleId.length) && ( moduleId.slice(dotIndex, moduleId.length) === ".reel")) {
+                if ((dotIndex < moduleId.length) && ( ((dotExtension = moduleId.slice(dotIndex, moduleId.length)) === ".mod")) || (dotExtension === ".reel")) {
                     // We are in a reel
                     objectDescriptorModuleId = moduleId + "/" + moduleId.slice(slashIndex, dotIndex) + ".mjson";
                 } else {
@@ -4217,128 +4339,6 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
     }
 
 
-}, {
-
-    userInterfaceDescriptorLoadedField: {
-        value: 'userInterfaceDescriptorLoaded'
-    },
-    /**
-     * Add the specified properties as properties of this component.
-     * @function
-     * @param {object} properties An object that contains the properties you want to add.
-     * @private
-     */
-     //TODO, this should be renamed addAttributeProperties
-    addAttributes: {
-        value: function (properties) {
-            var i, descriptor, property, object;
-            this.prototype._elementAttributeDescriptors = properties;
-
-            for(property in properties) {
-                if(properties.hasOwnProperty(property)) {
-                    object = properties[property];
-                    // Make sure that the descriptor is of the correct form.
-                    if(object === null || typeof object === "string") {
-                        descriptor = {value: object, dataType: "string"};
-                        properties[property] = descriptor;
-                    } else {
-                        descriptor = object;
-                    }
-
-                    // Only add the internal property, and getter and setter if
-                    // they don't already exist.
-                    if(typeof this.prototype[property] === 'undefined') {
-                        this.defineAttribute(property, descriptor);
-                    }
-                }
-            }
-        }
-    },
-
-
-    //TODO, this should be renamed attributePropertySetter
-    defineAttributeSetter: {
-        value: function (name, _name, descriptor) {
-            return (function (name, attributeName, setter) {
-                return function (value, fromInput) {
-                    var descriptor = this._getElementAttributeDescriptor(name, this);
-
-                    // if requested dataType is boolean (eg: checked, readonly etc)
-                    // coerce the value to boolean
-                    if(descriptor && "boolean" === descriptor.dataType) {
-                        value = ( (value || value === "") ? true : false);
-                    }
-
-                    // If the set value is different to the current one,
-                    // update it here, and set it to be updated on the
-                    // element in the next draw cycle.
-                    if(typeof value !== 'undefined' && (this[attributeName] !== value)) {
-
-                        if (setter) {
-                            setter.call(this, value);
-                        } else {
-                            this[attributeName] = value;
-                        }
-
-                        this._elementAttributeValues[name] = value;
-                        if (!fromInput) {
-                            this.needsDraw = true;
-                        }
-                    }
-                };
-            }(name, _name, descriptor.set));
-        }
-    },
-    //TODO, this should be renamed attributePropertySetter
-    defineAttributeGetter: {
-        value: function (_name) {
-            return (function (attributeName) {
-                return function () {
-                    return this[attributeName];
-                };
-            }(_name));
-        }
-    },
-    /**
-     * Adds a property to the component with the specified name.
-     * This method is used internally by the framework convert a DOM element's
-     * standard attributes into bindable properties.
-     * It creates an accessor property (getter/setter) with the same name as
-     * the specified property, as well as a "backing" data property whose name
-     * is prepended with an underscore (_).
-     * The backing variable is assigned the value from the property descriptor.
-     * For example, if the name "title" is passed as the first parameter, a
-     * "title" accessor property is created as well a data property named
-     * "_title".
-     * @function
-     * @param {string} name The property name to add.
-     * @param {Object} descriptor An object that specifies the new properties default attributes such as configurable and enumerable.
-     * @private
-     */
-     //https://github.com/kangax/html-minifier/issues/63 for a list of boolean attributes
-     //TODO, this should be renamed defineAttributeProperty
-    defineAttribute: {
-        value: function (name, descriptor) {
-            descriptor = descriptor || {};
-            var _name = '_' + name;
-
-
-            var newDescriptor = {
-                configurable: (typeof descriptor.configurable === 'undefined') ? true: descriptor.configurable,
-                enumerable: (typeof descriptor.enumerable === 'undefined') ?  true: descriptor.enumerable,
-                set: this.defineAttributeSetter(name, _name, descriptor),
-                get: descriptor.get || this.defineAttributeGetter(_name)
-            };
-
-            // Define _ property
-            // TODO this.constructor.defineProperty
-            if(!this.prototype.hasOwnProperty(_name)) {
-                Montage.defineProperty(this.prototype, _name, {value: descriptor.value});
-            }
-            // Define property getter and setter
-            Montage.defineProperty(this.prototype, name, newDescriptor);
-        }
-    }
 });
 
 /**

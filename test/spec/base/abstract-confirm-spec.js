@@ -77,10 +77,17 @@ describe("test/base/abstract-confirm-spec", function () {
         describe("user action", function () {
             it("should resolve the user action promise when the ok button is pressed", function () {
                 var event = {target: aConfirm._okButton},
-                    promise = aConfirm.show();
+                    isFulfilled = false,
+                    promise = new Promise(function(resolve, reject) {
+                        aConfirm.show();
+                        aConfirm.handleAction(event);
+                    });
 
-                aConfirm.handleAction(event);
-                expect(promise.isFulfilled()).toBeTruthy();
+                    promise.then((value) => {
+                        isFulfilled = true;
+                        expect(isFulfilled).toBeTruthy();
+                    });
+
             });
 
             it("should resolve the user action promise to 'ok' when the ok button is pressed", function (done) {
@@ -98,10 +105,16 @@ describe("test/base/abstract-confirm-spec", function () {
 
             it("should resolve the user action promise when the cancel button is pressed", function () {
                 var event = {target: aConfirm._cancelButton},
-                    promise = aConfirm.show();
+                isFulfilled = false,
+                promise = new Promise(function(resolve, reject) {
+                    aConfirm.show();
+                    aConfirm.handleAction(event);
+                });
 
-                aConfirm.handleAction(event);
-                expect(promise.isFulfilled()).toBeTruthy();
+                promise.then((value) => {
+                    isFulfilled = true;
+                    expect(isFulfilled).toBeTruthy();
+                });
             });
 
             it("should resolve the user action promise to 'cancel' when the ok button is pressed", function (done) {

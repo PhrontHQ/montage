@@ -52,7 +52,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
         throw new Error("Can't support require on this platform");
     }
 
-})(function (Require, Promise, URL) {
+})(function (Require, _Promise, URL) {
 
     "use strict";
 
@@ -60,6 +60,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
     var URLResolve = URL.resolve,
         ObjectKeys = Object.keys,
         ObjectCreate = Object.create,
+        Promise = _Promise || globalThis.Promise,
         PromiseAll = Promise.all,
         globalEval = eval,
         /*jshint evil:true */
@@ -961,6 +962,16 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
             }
         }
 
+        // Asynchronous "require.async()" which ensures async executation
+        // (even with synchronous loaders)
+        function require_async(id) {
+            var topId = this.config.normalizeId(this.config.resolve(id, this.viaId), this.config);
+            return deepLoad(topId, this.viaId).then( () => {
+                return this(topId);
+            });
+        };
+
+
         // Creates a unique require function for each module that encapsulates
         // that module's id for resolving relative module IDs against.
         function makeRequire(viaId) {
@@ -977,12 +988,14 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
 
             // Asynchronous "require.async()" which ensures async executation
             // (even with synchronous loaders)
-            require.async = function(id) {
-                var topId = config.normalizeId(config.resolve(id, viaId), config);
-                return deepLoad(topId, viaId).then(function () {
-                    return require(topId);
-                });
-            };
+            require.async = require_async;
+
+            // require.async = function(id) {
+            //     var topId = config.normalizeId(config.resolve(id, viaId), config);
+            //     return deepLoad(topId, viaId).then(function () {
+            //         return require(topId);
+            //     });
+            // };
 
             require.resolve = function (id) {
                 return config.normalizeId(config.resolve(id, viaId), config);
@@ -1570,7 +1583,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
     };
 
     /**
-     * Allows the reel's html file to be loaded via require.
+     * Allows the mod's html file to be loaded via require.
      *
      * @see Compiler middleware in require/require.js
      * @param config
@@ -1898,15 +1911,21 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
 
         return function reelLoader(id, module) {
             if (id.endsWith(dotREEL)) {
-                module.redirect = id;
-                module.redirect += SLASH;
-                module.redirect += reelExpression.exec(id)[1];
-                module.extension = REEL;
-                return module;
+                if(module.require.config.name === "montage") {
+                    module.redirect = `${id.substr(0,id.length-4)}${mod}/${reelExpression.exec(id)[1]}`;
+                    module.extension = mod;
+                    return module;
+
+                } else {
+                    module.redirect = `${id}/${reelExpression.exec(id)[1]}`;
+                    module.extension = REEL;
+                    return module;
+                }
             } else if (id.endsWith(_dotMod)) {
-                module.redirect = id;
-                module.redirect += SLASH;
-                module.redirect += modExpression.exec(id)[1];
+                module.redirect = `${id}/${modExpression.exec(id)[1]}`;
+                // module.redirect = id;
+                // module.redirect += SLASH;
+                // module.redirect += modExpression.exec(id)[1];
                 module.extension = mod;
                 return module;
             } else {

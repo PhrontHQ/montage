@@ -20,7 +20,7 @@ var AbstractCheckbox = exports.AbstractCheckbox = AbstractControl.specialize( /*
 
     constructor: {
         value: function AbstractCheckbox() {
-            if(this.constructor === AbstractCheckbox) {
+            if(this.constructor === exports.AbstractCheckbox) {
                 throw new Error("AbstractCheckbox cannot be instantiated.");
             }
 

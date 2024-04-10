@@ -59,5 +59,8 @@ Montage.loadPackage(PATH.join(__dirname, "."), {
     exitCode = 1;
 }).then(function () {
     process.exit(exitCode);
-}).thenReturn();
+}).then(() => {
+    return;
+});
+//.thenReturn();
 

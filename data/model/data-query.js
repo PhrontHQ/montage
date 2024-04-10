@@ -43,17 +43,20 @@ exports.DataQuery = Montage.specialize(/** @lends DataQuery.prototype */ {
             value = deserializer.getProperty("type");
             if (value !== void 0) {
                 this.type = value;
-            } else {
-                value = deserializer.getProperty("typeModule");
-                if (value) {
-                    var self = this;
-
-                    result = value.require.async(value.id).then(function (exports) {
-                        self.type = exports.montageObject;
-                        return self;
-                    });
-                }
             }
+
+            // else {
+            //     value = deserializer.getProperty("typeModule");
+            //     if (value) {
+            //         var self = this;
+            //         this.typeModule = value;
+
+            //         result = value.require.async(value.id).then(function (exports) {
+            //             self.type = exports.montageObject;
+            //             return self;
+            //         });
+            //     }
+            // }
 
             value = deserializer.getProperty("fetchLimit");
             if (value !== void 0) {
@@ -86,14 +89,18 @@ exports.DataQuery = Montage.specialize(/** @lends DataQuery.prototype */ {
                 serializer.setProperty("fetchLimit", this.fetchLimit);
             }
 
-            if (this.type.objectDescriptorInstanceModule) {
-                serializer.setProperty("type", this.type);
-                //serializer.setProperty("type", this.type, "reference");
-
-                //serializer.setProperty("typeModule", this.type.objectDescriptorInstanceModule);
-            } else {
+            if(this.type) {
                 serializer.setProperty("type", this.type);
             }
+
+            // if (this.typeModule || (this.type && this.type.objectDescriptorInstanceModule)) {
+            //     //serializer.setProperty("type", this.type);
+            //     //serializer.setProperty("type", this.type, "reference");
+
+            //     serializer.setProperty("typeModule", (this.typeModule || this.type.objectDescriptorInstanceModule));
+            // } else {
+            //     serializer.setProperty("type", this.type);
+            // }
 
         }
     },

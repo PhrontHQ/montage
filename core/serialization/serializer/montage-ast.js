@@ -1,171 +1,278 @@
 var Montage = require("../../core").Montage;
 
-var Root = exports.Root = Montage.specialize({
+// var Root = exports.Root = Montage.specialize({
+var Root = exports.Root = class Root extends Montage {
 
-    constructor: {
-        value:  function Root() {
-            this.object = Object.create(null);
+    static {
+        Montage.defineProperties(this.prototype, {
+            object: {value: null}
+        });
+    }
+
+    constructor () {
+        super();
+        this.object = Object.create(null);
+    }
+
+    setProperty (name, value) {
+        if (name !== null && name !== undefined) {
+            this.object[name] = value;
         }
-    },
+    }
 
-    object: {value: null},
+    getProperty (name) {
+        return this.object[name];
+    }
 
-    setProperty: {
-        value: function(name, value) {
-            if (name !== null && name !== undefined) {
-                this.object[name] = value;
-            }
-        }
-    },
+    clearProperty (name) {
+        delete this.object[name];
+    }
 
-    getProperty: {
-        value: function(name) {
-            return this.object[name];
-        }
-    },
+    hasProperty (name) {
+        return name in this.object;
+    }
 
-    clearProperty: {
-        value: function(name) {
-            delete this.object[name];
-        }
-    },
+    serialize (indent) {
+        return JSON.stringify(this, null, indent);
+    }
 
-    hasProperty: {
-        value: function(name) {
-            return name in this.object;
-        }
-    },
+    toJSON () {
+        var result = Object.create(null),
+        myObject = this.object,
+        labels = Object.keys(myObject),
+        i,
+        label,
+        object;
 
-    serialize: {
-        value: function(indent) {
-            return JSON.stringify(this, null, indent);
-        }
-    },
+        for(i=0;(label = labels[i]); i++) {
+                object = myObject[label];
 
-    toJSON: {
-        value: function() {
-            var result = Object.create(null),
-            myObject = this.object,
-            labels = Object.keys(myObject),
-            i,
-            label,
-            object;
-
-            for(i=0;(label = labels[i]); i++) {
-                    object = myObject[label];
-
-                    if (object.toJSON) {
-                        result[label] = object.toJSON(label, 1);
-                    } else {
-                        result[label] = object;
-                    }
+                if (object.toJSON) {
+                    result[label] = object.toJSON(label, 1);
+                } else {
+                    result[label] = object;
                 }
-
-            return result;
-        }
-    }
-});
-
-
-var Value = exports.Value = Montage.specialize({
-    root: {value: null},
-    label: {value: null},
-    value: {value: null},
-
-    constructor: {
-        value: function Value(root, value) {
-            this.root = root;
-            this.value = value;
-        }
-    },
-
-    setLabel: {
-        value: function(label) {
-            if (this.label) {
-                this.root.clearProperty(this.label);
             }
 
-            this.label = label;
-            this.root.setProperty(label, this);
-        }
-    },
-
-    getLabel: {
-        value: function() {
-            return this.label;
-        }
-    },
-
-    clearLabel: {
-        value: function() {
-            this.root.clearProperty(this.label);
-            this.label = null;
-        }
-    },
-
-    _getSerializationValue: {
-        value: function() {
-            return this.value;
-        }
-    },
-
-    toJSON: {
-        value: function(index, level) {
-            return (level === 1)
-                ? {value: this._getSerializationValue()}
-                : this._getSerializationValue();
-        }
+        return result;
     }
-});
+
+}
+
+
+// Montage.defineProperties(Root.prototype, {
+
+    // constructor: {
+    //     value:  function Root() {
+    //         this.object = Object.create(null);
+    //     }
+    // },
+
+    // object: {value: null},
+
+    // setProperty: {
+    //     value: function(name, value) {
+    //         if (name !== null && name !== undefined) {
+    //             this.object[name] = value;
+    //         }
+    //     }
+    // },
+
+    // getProperty: {
+    //     value: function(name) {
+    //         return this.object[name];
+    //     }
+    // },
+
+    // clearProperty: {
+    //     value: function(name) {
+    //         delete this.object[name];
+    //     }
+    // },
+
+    // hasProperty: {
+    //     value: function(name) {
+    //         return name in this.object;
+    //     }
+    // },
+
+    // serialize: {
+    //     value: function(indent) {
+    //         return JSON.stringify(this, null, indent);
+    //     }
+    // },
+
+    // toJSON: {
+    //     value: function() {
+    //         var result = Object.create(null),
+    //         myObject = this.object,
+    //         labels = Object.keys(myObject),
+    //         i,
+    //         label,
+    //         object;
+
+    //         for(i=0;(label = labels[i]); i++) {
+    //                 object = myObject[label];
+
+    //                 if (object.toJSON) {
+    //                     result[label] = object.toJSON(label, 1);
+    //                 } else {
+    //                     result[label] = object;
+    //                 }
+    //             }
+
+    //         return result;
+    //     }
+    // }
+// });
+
+var Value = exports.Value = class Value extends Montage {
+    static {
+        Montage.defineProperties(this.prototype, {
+            root: {value: null},
+            label: {value: null},
+            value: {value: null}
+        });
+    }
+
+    constructor(root, value) {
+        super(root, value);
+        return this.initWithRootAndValue(root, value);
+    }
+
+    initWithRootAndValue (root, value) {
+        this.root = root;
+        this.value = value;
+        return this;
+    }
+
+
+    setLabel (label) {
+        if (this.label) {
+            this.root.clearProperty(this.label);
+        }
+
+        this.label = label;
+        this.root.setProperty(label, this);
+    }
+
+    getLabel () {
+        return this.label;
+    }
+
+    clearLabel () {
+        this.root.clearProperty(this.label);
+        this.label = null;
+    }
+
+    _getSerializationValue () {
+        return this.value;
+    }
+
+    toJSON (index, level) {
+        return (level === 1)
+            ? {value: this._getSerializationValue()}
+            : this._getSerializationValue();
+    }
+
+
+}
+
+//var Value = exports.Value = Montage.specialize({
+// Montage.defineProperties(Value.prototype, {
+//         root: {value: null},
+//     label: {value: null},
+//     value: {value: null},
+
+//     constructor: {
+//         value: function Value(root, value) {
+//             this.root = root;
+//             this.value = value;
+//         }
+//     },
+
+//     setLabel: {
+//         value: function(label) {
+//             if (this.label) {
+//                 this.root.clearProperty(this.label);
+//             }
+
+//             this.label = label;
+//             this.root.setProperty(label, this);
+//         }
+//     },
+
+//     getLabel: {
+//         value: function() {
+//             return this.label;
+//         }
+//     },
+
+//     clearLabel: {
+//         value: function() {
+//             this.root.clearProperty(this.label);
+//             this.label = null;
+//         }
+//     },
+
+//     _getSerializationValue: {
+//         value: function() {
+//             return this.value;
+//         }
+//     },
+
+//     toJSON: {
+//         value: function(index, level) {
+//             return (level === 1)
+//                 ? {value: this._getSerializationValue()}
+//                 : this._getSerializationValue();
+//         }
+//     }
+// });
 
 /**
  * @class ElementReference
  * @extends Value
  */
-var ElementReference = exports.ElementReference = Value.specialize(/** @lends ElementReference# */ {
 
-    initWithRootAndId: {
-        value: function (root, id) {
-            Value.call(this, root, id);
-            return this;
-        }
-    },
+var ElementReference = exports.ElementReference = class ElementReference extends Value {
 
-    _getSerializationValue: {
-        value: function () {
-            return {"#": this.value};
-        }
+    initWithRootAndId (root, id) {
+        super.initWithRootAndValue(root, id);
+        return this;
     }
-});
+
+
+    _getSerializationValue() {
+        return {"#": this.value};
+    }
+
+}
 
 /**
  * @class ModuleReference
  * @extends Value
  */
-var ModuleReference = exports.ModuleReference = Value.specialize( /** @lends ModuleReference# */ {
+var ModuleReference = exports.ModuleReference = class ModuleReference extends Value {
 
-    initWithRootAndModuleId: {
-        value: function (root, moduleId) {
-            Value.call(this, root, moduleId);
-            return this;
-        }
-    },
-
-    _getSerializationValue: {
-        value: function () {
-            return {"%": this.value};
-        }
+    initWithRootAndModuleId(root, moduleId) {
+        super.initWithRootAndValue(root, moduleId);
+        return this;
     }
-});
+
+    _getSerializationValue() {
+        return {"%": this.value};
+    }
+}
 
 
-var ObjectReference = exports.ObjectReference = Value.specialize( /** @lends ObjectReference# */ {
+var ObjectReference = exports.ObjectReference = class ObjectReference extends Value {
+    constructor(root, referenceLabel) {
+        super(root, referenceLabel);
+    }
+}
 
-    constructor: {
-        value: function ObjectReference(root, referenceLabel) {
-            Value.call(this, root, referenceLabel);
-        }
-    },
+ObjectReference.addClassProperties( /** @lends ObjectReference# */ {
 
     _getSerializationValue: {
         value: function() {
@@ -175,17 +282,20 @@ var ObjectReference = exports.ObjectReference = Value.specialize( /** @lends Obj
 });
 
 
-var CustomObject = exports.CustomObject = Value.specialize( /** @lends CustomObject# */ {
+var CustomObject = exports.CustomObject = class CustomObject extends Value {
 
-    constructor: {
-        value: function CustomObject(root) {
-            Value.call(this, root, Object.create(null));
-        }
-    },
+    constructor(root) {
+        super(root, Object.create(null));
+    }
+
+}
+
+Montage.defineProperties(CustomObject.prototype, /** @lends CustomObject# */ {
 
     setProperty: {
         value: function(name, value) {
             if (name !== null && name !== undefined) {
+                // console.log(this.constructor === CustomObject);
                 this.value[name] = value;
             }
         }
@@ -212,13 +322,14 @@ var CustomObject = exports.CustomObject = Value.specialize( /** @lends CustomObj
     }
 });
 
-var ReferenceableValue = exports.ReferenceableValue = Value.specialize( /** @lends ObjectLiteral# */ {
 
-    constructor: {
-        value: function ReferenceableValue(root, value) {
-            Value.call(this, root, value);
-        }
-    },
+var ReferenceableValue = exports.ReferenceableValue = class ReferenceableValue extends Value {
+    constructor(root, value) {
+        super(root, value);
+    }
+}
+
+ReferenceableValue.addClassProperties( /** @lends ObjectLiteral# */ {
 
     toJSON: {
         value: function(index, level) {
@@ -231,13 +342,14 @@ var ReferenceableValue = exports.ReferenceableValue = Value.specialize( /** @len
     }
 });
 
-var ObjectLiteral = exports.ObjectLiteral = ReferenceableValue.specialize( /** @lends ObjectLiteral# */ {
 
-    constructor: {
-        value: function ObjectLiteral(root, object) {
-            Value.call(this, root, object);
-        }
-    },
+var ObjectLiteral = exports.ObjectLiteral = class ObjectLiteral extends ReferenceableValue {
+    constructor(root, object) {
+        super(root, object);
+    }
+}
+
+ObjectLiteral.addClassProperties( /** @lends ObjectLiteral# */ {
 
     setProperty: {
         value: function(name, value) {
@@ -270,7 +382,7 @@ var RegExpObject = exports.RegExpObject = ReferenceableValue.specialize( /** @le
 
     constructor: {
         value: function RegExpObject(root, regexp) {
-            Value.call(this, root, regexp);
+            this.super(root, regexp);
         }
     },
 
@@ -290,7 +402,7 @@ var DateObject = exports.DateObject = Value.specialize( /** @lends RegExpObject#
 
     constructor: {
         value: function DateObject(root, date) {
-            Value.call(this, root, date);
+            this.super(root, date);
         }
     },
 

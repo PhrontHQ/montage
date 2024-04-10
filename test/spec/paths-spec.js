@@ -1,16 +1,16 @@
 var Montage = require("montage").Montage;
 var Map = require("montage/core/collections/map");
 
-describe("paths-spec", function () {
+describe("expressions-spec", function () {
 
-    describe("getPath", function () {
+    describe("valueForExpression", function () {
 
         it("should return snapshot of map-change array", function () {
 
             var object = new Montage();
             object.array = [{foo: 1}, {foo: 2}, {foo: 3}];
 
-            var foos = object.getPath("array.map{foo}");
+            var foos = object.valueForExpression("array.map{foo}");
             expect(foos).toEqual([1, 2, 3]);
 
             object.array.push({foo: 3});
@@ -22,7 +22,7 @@ describe("paths-spec", function () {
 
             var object = new Montage();
             Object.addEach(object, {a: {b: {c: {}}}});
-            object.setPath("a.b.c.d", 10);
+            object.setValueForExpression(10, "a.b.c.d");
             expect(object.a.b.c.d).toBe(10);
 
         });

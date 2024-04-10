@@ -81,7 +81,7 @@ describe("copyTree", function () {
                 mock.stat("a/f/c")
             ]);
         })
-        .spread(function (dStat, fStat, cStat) {
+        .then(function ([dStat, fStat, cStat]) {
             expect(dStat.node.mode & mode0777).toEqual(mode0777);
             expect(fStat.node.mode & mode0777).toEqual(mode0700);
             expect(cStat.node.mode & mode0777).toEqual(mode0700);

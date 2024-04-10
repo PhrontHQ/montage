@@ -2,7 +2,7 @@
 // used for bootstrapping, this file will never actually be required, but will
 // be injected instead.
 
-var Promise = require("bluebird");
+// var Promise = require("bluebird");
 
 // Patch "Promise.is" to support native
 Promise.is = function (obj) {
@@ -78,6 +78,15 @@ if(!Promise.resolveFalse) {
     });
 }
 
+Promise.withResolvers || (Promise.withResolvers = function withResolvers() {
+    var a, b, c = new this(function (resolve, reject) {
+      a = resolve;
+      b = reject;
+    });
+    return {resolve: a, reject: b, promise: c};
+  });
+
+
 if(!Promise.timeout) {
     /**
      * The timeoutPromise helper allows you to wrap any promise to fulfill within a timeout.
@@ -97,6 +106,30 @@ if(!Promise.timeout) {
                     }, timeoutInMilliseconds);
                 })
             ]);
+        },
+        enumerable: false
+    });
+
+    Object.defineProperty(Promise.prototype, "timeout", {
+        value: function PromiseTimeout(timeoutInMilliseconds){
+            return Promise.timeout(this,timeoutInMilliseconds);
+        },
+        enumerable: false
+    });
+
+}
+
+if (!Promise.hasOwnProperty("delay")) {
+
+    Object.defineProperty(Promise, "delay", {
+        value: function PromiseDelay(delay) {
+            return new Promise(function(resolve, reject){
+                var timerId = setTimeout(function() {
+                    clearTimeout(timerId);
+                    resolve();
+                    timerId = null;
+                }, delay);
+            });
         },
         enumerable: false
     });

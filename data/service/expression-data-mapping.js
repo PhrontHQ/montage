@@ -947,10 +947,10 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
             }
 
 
-            return promises && promises.length &&
+            return (promises && promises.length &&
                 ( promises.length === 1
                     ? promises[0]
-                    : Promise.all(promises));
+                    : Promise.all(promises))) || Promise.resolveNull;
         }
     },
 
@@ -2203,8 +2203,8 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
             rawRule[targetPath] = rule;
 
             this._mapObjectMappingRules(rawRule);
-            this._objectMappingRules = null; //To ensure all arguments are added to this.objectMappingRules
-            this._rawDataMappingRules = null; //To ensure all arguments are added to this.rawDataMappingRules
+            // this._objectMappingRules = null; //To ensure all arguments are added to this.objectMappingRules
+            // this._rawDataMappingRules = null; //To ensure all arguments are added to this.rawDataMappingRules
         }
     },
 
@@ -2222,8 +2222,8 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
             var rawRule = {};
             rawRule[targetPath] = rule;
             this._mapRawDataMappingRules(rawRule);
-            this._objectMappingRules = null; //To ensure all arguments are added to this.objectMappingRules
-            this._rawDataMappingRules = null; //To ensure all arguments are added to this.rawDataMappingRules
+            // this._objectMappingRules = null; //To ensure all arguments are added to this.objectMappingRules
+            // this._rawDataMappingRules = null; //To ensure all arguments are added to this.rawDataMappingRules
         }
     },
 
@@ -2305,7 +2305,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
 
     _initializeObjectMappingRules: {
         value: function() {
-                //this._objectMappingRules = new Map();
+            if(!this._objectMappingRules) {
                 if (this.parent) {
                     this._objectMappingRules = Object.create(this.parent.objectMappingRules);
                 } else {
@@ -2313,7 +2313,8 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                 }
 
                 this._initializeRules();
-                return this._objectMappingRules;
+            }
+            return this._objectMappingRules;
         }
     },
 
@@ -2345,6 +2346,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
 
     _initializeRawDataMappingRules: {
         value: function() {
+            if(!this._rawDataMappingRules) {
                 if (this.parent) {
                     this._rawDataMappingRules = Object.create(this.parent.rawDataMappingRules);
                 } else {
@@ -2352,7 +2354,9 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                 }
 
                 this._initializeRules();
-                return this._rawDataMappingRules;
+            }
+
+            return this._rawDataMappingRules;
         }
     },
 
@@ -2616,7 +2620,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                         targetDescriptor = targetObjectDescriptor && targetObjectDescriptor.propertyDescriptorForName(targetPath);
 
                     return (targetDescriptor && targetDescriptor.valueType && sourceDescriptor.valueType && (sourceDescriptor.valueType !== targetDescriptor.valueType))
-                    ? this._converterForValueTypes(targetDescriptorValueType, sourceDescriptorValueType)
+                    ? this._converterForValueTypes(targetDescriptor.valueType, sourceDescriptor.valueType)
                     : null;
 
                 } else {

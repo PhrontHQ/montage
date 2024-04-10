@@ -894,7 +894,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
             Object.defineProperty(prototype,"nextTarget", {
                 enumerable: true,
                     get: function() {
-                        return objectDescriptor;
+                        return this.objectDescriptor;
                 }
             });
 
@@ -924,7 +924,7 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
             return Promise.all([
                 mapping.objectDescriptor,
                 mapping.rawDataDescriptor
-            ]).spread(function (objectDescriptor, rawDataDescriptor) {
+            ]).then(function ([objectDescriptor, rawDataDescriptor]) {
                 // TODO -- remove looking up by string to unique.
                 var type = [objectDescriptor.module.id, objectDescriptor.name].join("/");
                 objectDescriptor = service._moduleIdToObjectDescriptorMap[type];
@@ -2574,6 +2574,9 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
         value: function (type, dataIdentifier) {
             var objectDescriptor = this.objectDescriptorForType(type),
                 object = Object.create(this._getPrototypeForType(objectDescriptor));
+                // constructor = this._getPrototypeForType(objectDescriptor).constructor,
+                // object = new constructor;
+                // //object = Reflect.construct(constructor, this._emptyArray);
             if (object) {
 
                 //This needs to be done before a user-land code can attempt to do
@@ -2586,7 +2589,8 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                 //     this.recordObjectForDataIdentifier(object, dataIdentifier);
                 // }
 
-                object = object.constructor.call(object) || object;
+                //This can't work with ES Classes
+                //object = object.constructor.call(object) || object;
                 if (object) {
                     this._setObjectType(object, objectDescriptor);
                     this._objectDescriptorForObjectCache.set(object,objectDescriptor);
@@ -6496,6 +6500,9 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
 
     _emptyArrayPromise: {
         value: undefined
+    },
+    _emptyArray: {
+        value: Object.freeze([])
     },
 
     /**

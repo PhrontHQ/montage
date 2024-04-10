@@ -10,26 +10,7 @@
  * @class Montage
  * @classdesc The basis of all types using the MontageJS framework.
  */
-var Montage = exports.Montage = function Montage() {};
 
-require("./collections/shim");
-require("./shim/object");
-require("./shim/array");
-require("./extras/object");
-require("./extras/date");
-require("./extras/element");
-require("./extras/function");
-require("./extras/map");
-require("./extras/regexp");
-require("./extras/string");
-require("./extras/set");
-require("./extras/weak-map");
-require("proxy-polyfill/proxy.min");
-
-
-var Map = require("./collections/map"),
-    Set = require("./collections/set"),
-    deprecate = require("./deprecate");
 
 var ATTRIBUTE_PROPERTIES = "AttributeProperties",
     UNDERSCORE = "_",
@@ -84,6 +65,314 @@ var ATTRIBUTE_PROPERTIES = "AttributeProperties",
 var PROTO_IS_SUPPORTED = {}.__proto__ === Object.prototype;
 var PROTO_PROPERTIES_BLACKLIST = {"_montage_metadata": 1, "__state__": 1, "_hasUserDefinedConstructor": 1};
 
+/**
+ * Customizes a type with idiomatic JavaScript constructor and prototype
+ * inheritance, using ECMAScript 5 property descriptors with customizations
+ * for common usage in MontageJS.
+ *
+ * See {@link Montage.defineProperty}
+ * @function Montage.specialize
+ * @param {Object} prototypeProperties a object mapping property names to
+ * customized Montage property descriptors, to be applied to the new
+ * prototype
+ * @param {?Object} constructorProperties a object mapping property names to
+ * customized Montage property descriptors, to be applied to the new
+ * constructor
+ * @returns {function} a constructor function for the new type, which
+ * derrives prototypically from `this`, with a prototype that inherits
+ * `this.prototype`, with the given property descriptors applied.
+ */
+
+
+function addClassProperties(prototypeProperties, staticProperties) {
+
+    if ("objectDescriptor" in prototypeProperties) {
+        Montage.defineProperty(this, "objectDescriptor", prototypeProperties.objectDescriptor);
+    }
+
+    if ("blueprint" in prototypeProperties) {
+        Montage.defineProperty(this, "blueprint", prototypeProperties.blueprint);
+    }
+
+    if ("objectDescriptorModuleId" in prototypeProperties) {
+        Montage.defineProperty(this, "objectDescriptorModuleId", prototypeProperties.objectDescriptorModuleId);
+    }
+
+    if ("blueprintModuleId" in prototypeProperties) {
+        Montage.defineProperty(this, "blueprintModuleId", prototypeProperties.blueprintModuleId);
+    }
+
+
+    if(prototypeProperties) Montage.defineProperties(this.prototype, prototypeProperties, true);
+    if(staticProperties) Montage.defineProperties(this, staticProperties, true);
+}
+
+
+ function specialize(prototypeProperties, constructorProperties) {
+    var constructor, prototype, names, propertyName, property, i, length,
+        // check if this constructor has Montage capabilities
+        parent = this,
+        isParentClass = false,
+        foreignParent = typeof this.specialize === "undefined";
+
+    prototypeProperties = prototypeProperties || Object.empty;
+    constructorProperties = constructorProperties || Object.empty;
+
+    if (prototypeProperties.constructor && prototypeProperties.constructor.value) {
+        constructor = prototypeProperties.constructor.value;
+
+        /* Since Montage is now a class, we're only going to get in here. TODO: cleanup */
+        if(parent.toString().startsWith("class")) {
+
+            isParentClass = true;
+
+            let className = constructor.name || "",
+            specializeConstructor = constructor,
+                specializeConstructorSource = constructor.toString();
+
+            //We need to avoid to go and re-declare it which ends up clearing the __registerFunction's SuperFunction
+            // delete prototypeProperties.constructor;
+            // __registerFunctionSuperFunction(specializeConstructor, parent);
+
+                                        //${specializeConstructorSource.substring(specializeConstructorSource.indexOf("{")+1, specializeConstructorSource.indexOf("}"))};
+
+            constructor = ((function specializeClassWithNameAndConstructor(className, parent, constructorSource, specializeConstructor) {
+                const  constructorFunction =
+                 Function("className", "parent", "constructorSource", "specializeConstructor", `
+                    return class ${className} extends parent {
+                        constructor (...args) {
+                            super(...args);
+                            if(specializeConstructor.classConstructor === new.target) {
+                                specializeConstructor.call(this, ...args);
+                            }
+                        }
+                    };`);
+
+                    /*
+                        https://stackoverflow.com/questions/60955867/how-to-extend-a-class-wrapped-in-a-proxy
+
+                        const PublicFoo = new Proxy(Foo, {
+                        construct(Foo, args, newTarget) {
+                            const p = …; // Use internal functions to get "p"
+                            return Reflect.construct(Foo, [p, ...args], newTarget);
+                        }
+                        });
+
+                    */
+
+                return constructorFunction(className, parent, specializeConstructorSource, specializeConstructor);
+            })(className, parent, specializeConstructorSource, constructor));
+            prototype = constructor.prototype;
+
+
+                        // constructor = ((function specializeClassWithNameAndConstructor() {
+            //     return Function("className", "parent", "constructorSource", `
+            //         "use strict";
+            //         return class ${className} extends ${parent} {
+            //             constructor (...args) {
+            //                 super(...args);
+            //                 ${constructorSource.substring(constructorSource.indexOf("{")+1, constructorSource.indexOf("}"))};
+            //             }
+            //         };`);
+            // })(className, parent, constructorSource))();
+
+
+            // constructor = ((function specializeClassWithNameAndConstructor() {
+            //     return Function(`
+            //         // "use strict";
+            //         return class ${className} extends ${parent} {
+            //             constructor (...args) {
+            //                 super(...args);
+            //                 ${constructorSource.substring(constructorSource.indexOf("{")+1, constructorSource.indexOf("}"))};
+            //             }
+            //         };`);
+            // })())();
+
+            /*
+                We record the constructor specified in specialize() since it's not possible
+                to invoke a class constructor... (#FacePalm)
+            */
+            // constructor.specializeConstructor = specializeConstructor;
+            Object.defineProperty(constructor, "specializeConstructor", {
+                enumerable: false,
+                configurable: true,
+                writable: true,
+                value: specializeConstructor
+            });
+
+            specializeConstructor.classConstructor = constructor;
+            specializeConstructor._hasUserDefinedConstructor = true;
+
+
+            /*
+                We set things straight on the specializeConstructor
+            */
+                specializeConstructor.prototype = constructor.prototype;
+
+            // console.log(constructor);
+
+        }
+        /*
+            This is inherited by descendant functions / class, so we know to call super
+            as there's a custom custom constructor
+        */
+        constructor._hasUserDefinedConstructor = true;
+
+
+    } else {
+        if (this._hasUserDefinedConstructor) {
+            constructor = function() {
+                return this.super() || this;
+                //return parent.apply(this, arguments) || this;
+            };
+
+            // constructor = class className extends parent {
+            //                 constructor (...args) {
+            //                     super(...args);
+            //                 }
+            //             };
+            // prototype = constructor.prototype;
+
+        } else {
+            constructor = function() {
+                return this;
+            };
+
+            // constructor = class className extends parent {
+            //     constructor (...args) {
+            //         super(...args);
+            //     }
+            // };
+            // prototype = constructor.prototype;
+
+        }
+
+    }
+
+    if(!prototype) {
+        prototype = Object.create(this.prototype);
+        constructor.prototype = prototype;
+    }
+
+    if (PROTO_IS_SUPPORTED) {
+        constructor.__proto__ = parent;
+    } else {
+        names = Object.getOwnPropertyNames(parent);
+
+        for (i = 0, length = names.length; i < length; i++) {
+            propertyName = names[i];
+
+            if (!(PROTO_PROPERTIES_BLACKLIST.hasOwnProperty(propertyName))) {
+                property = Object.getOwnPropertyDescriptor(constructor, propertyName);
+
+                if (!property || property.configurable) {
+                    Montage.defineProperty(constructor, propertyName, Object.getOwnPropertyDescriptor(parent, propertyName));
+                }
+            }
+        }
+
+        constructor.__constructorProto__ = parent;
+
+        Montage.defineProperty(constructor, "isPrototypeOf", {
+            value: function (object) {
+                var prototype;
+
+                while (object !== null) {
+                    prototype = Object.getPrototypeOf(object);
+
+                    if(prototype === this) {
+                        return true;
+                    }
+
+                    object = prototype;
+                }
+
+                return false;
+            },
+            enumerable: false
+        });
+    }
+
+
+    if (foreignParent) {
+        // give the constructor all the properties of Montage
+        names = Object.getOwnPropertyNames(Montage);
+
+        for (i = 0, length = names.length; i < length; i++) {
+            propertyName = names[i];
+            property = Object.getOwnPropertyDescriptor(constructor, propertyName);
+
+            if (!property || property.configurable) {
+                Montage.defineProperty(constructor, propertyName, Object.getOwnPropertyDescriptor(Montage, propertyName));
+            }
+        }
+
+        // give the prototype all the properties of Montage.prototype
+        names = Object.getOwnPropertyNames(Montage.prototype);
+
+        for (i = 0, length = names.length; i < length; i++) {
+            propertyName = names[i];
+            property = Object.getOwnPropertyDescriptor(constructor, propertyName);
+
+            if (!property || property.configurable) {
+                Montage.defineProperty(prototype, propertyName, Object.getOwnPropertyDescriptor(Montage.prototype, propertyName));
+            }
+        }
+    }
+
+    // Montage.defineProperties(prototype, prototypeProperties, true);
+
+    // // needs to be done afterwards so that it overrides any prototype properties
+    // Montage.defineProperties(constructor, constructorProperties, true);
+
+    constructor.addClassProperties(prototypeProperties, constructorProperties);
+
+    Montage.defineProperty(constructor,"__isConstructor__", {
+        value: true,
+        enumerable: false
+    });
+
+
+
+    // if(isParentClass) {
+    //     console.log("here");
+    // }
+    Montage.defineValueProperty(prototype, "constructor",constructor,true,false,true );
+
+    // Super needs
+    Montage.defineValueProperty(constructor, "constructor",constructor,true,false,true );
+
+    return constructor;
+
+};
+var Montage = exports.Montage = class Montage {
+    static {
+        this.specialize = specialize;
+        this.addClassProperties = addClassProperties;
+    }
+};
+
+
+require("./collections/shim");
+require("./shim/object");
+require("./shim/array");
+require("./extras/object");
+// require("./extras/date");
+require("./extras/element");
+require("./extras/function");
+require("./extras/map");
+require("./extras/regexp");
+require("./extras/string");
+require("./extras/set");
+require("./extras/weak-map");
+require("proxy-polyfill/proxy.min");
+
+
+const Map = require("./collections/map"),
+    Set = require("./collections/set"),
+    deprecate = require("./deprecate");
+
+
 Montage.defineValueProperty = function Montage_defineValueProperty(object, propertyName, value, configurable, enumerable, writable) {
     Montage_defineValueProperty.template.value = value;
     Montage_defineValueProperty.template.configurable = configurable;
@@ -105,162 +394,19 @@ Montage.defineAccessorProperty = function Montage_defineAccessorProperty(object,
 
 Montage.defineAccessorProperty.template = accessorPropertyDescriptor;
 
-
-valuePropertyDescriptor.value = false;
-Object.defineProperty(Montage, "_hasUserDefinedConstructor", valuePropertyDescriptor);
-
-/**
- * Customizes a type with idiomatic JavaScript constructor and prototype
- * inheritance, using ECMAScript 5 property descriptors with customizations
- * for common usage in MontageJS.
- *
- * See {@link Montage.defineProperty}
- * @function Montage.specialize
- * @param {Object} prototypeProperties a object mapping property names to
- * customized Montage property descriptors, to be applied to the new
- * prototype
- * @param {?Object} constructorProperties a object mapping property names to
- * customized Montage property descriptors, to be applied to the new
- * constructor
- * @returns {function} a constructor function for the new type, which
- * derrives prototypically from `this`, with a prototype that inherits
- * `this.prototype`, with the given property descriptors applied.
- */
-
-valuePropertyDescriptor.value = function specialize(prototypeProperties, constructorProperties) {
-        var constructor, prototype, names, propertyName, property, i, length,
-            // check if this constructor has Montage capabilities
-            parent = this,
-            foreignParent = typeof this.specialize === "undefined";
-
-        prototypeProperties = prototypeProperties || Object.empty;
-        constructorProperties = constructorProperties || Object.empty;
-
-        if (prototypeProperties.constructor && prototypeProperties.constructor.value) {
-            constructor = prototypeProperties.constructor.value;
-            constructor._hasUserDefinedConstructor = true;
-
-        } else {
-            if (this._hasUserDefinedConstructor) {
-                constructor = function() {
-                    return this.super() || this;
-                    //return parent.apply(this, arguments) || this;
-                };
-            } else {
-                constructor = function() {
-                    return this;
-                };
-            }
-        }
-
-        if (PROTO_IS_SUPPORTED) {
-            constructor.__proto__ = parent;
-        } else {
-            names = Object.getOwnPropertyNames(parent);
-
-            for (i = 0, length = names.length; i < length; i++) {
-                propertyName = names[i];
-
-                if (!(PROTO_PROPERTIES_BLACKLIST.hasOwnProperty(propertyName))) {
-                    property = Object.getOwnPropertyDescriptor(constructor, propertyName);
-
-                    if (!property || property.configurable) {
-                        Montage.defineProperty(constructor, propertyName, Object.getOwnPropertyDescriptor(parent, propertyName));
-                    }
-                }
-            }
-
-            constructor.__constructorProto__ = parent;
-
-            Montage.defineProperty(constructor, "isPrototypeOf", {
-                value: function (object) {
-                    var prototype;
-
-                    while (object !== null) {
-                        prototype = Object.getPrototypeOf(object);
-
-                        if(prototype === this) {
-                            return true;
-                        }
-
-                        object = prototype;
-                    }
-
-                    return false;
-                },
-                enumerable: false
-            });
-        }
-
-        prototype = Object.create(this.prototype);
-
-        if (foreignParent) {
-            // give the constructor all the properties of Montage
-            names = Object.getOwnPropertyNames(Montage);
-
-            for (i = 0, length = names.length; i < length; i++) {
-                propertyName = names[i];
-                property = Object.getOwnPropertyDescriptor(constructor, propertyName);
-
-                if (!property || property.configurable) {
-                    Montage.defineProperty(constructor, propertyName, Object.getOwnPropertyDescriptor(Montage, propertyName));
-                }
-            }
-
-            // give the prototype all the properties of Montage.prototype
-            names = Object.getOwnPropertyNames(Montage.prototype);
-
-            for (i = 0, length = names.length; i < length; i++) {
-                propertyName = names[i];
-                property = Object.getOwnPropertyDescriptor(constructor, propertyName);
-
-                if (!property || property.configurable) {
-                    Montage.defineProperty(prototype, propertyName, Object.getOwnPropertyDescriptor(Montage.prototype, propertyName));
-                }
-            }
-        }
-
-        if ("objectDescriptor" in prototypeProperties) {
-            Montage.defineProperty(constructor, "objectDescriptor", prototypeProperties.objectDescriptor);
-        }
-
-        if ("blueprint" in prototypeProperties) {
-            Montage.defineProperty(constructor, "blueprint", prototypeProperties.blueprint);
-        }
-
-        if ("objectDescriptorModuleId" in prototypeProperties) {
-            Montage.defineProperty(constructor, "objectDescriptorModuleId", prototypeProperties.objectDescriptorModuleId);
-        }
-
-        if ("blueprintModuleId" in prototypeProperties) {
-            Montage.defineProperty(constructor, "blueprintModuleId", prototypeProperties.blueprintModuleId);
-        }
-
-        Montage.defineProperties(prototype, prototypeProperties, true);
-
-        // needs to be done afterwards so that it overrides any prototype properties
-        Montage.defineProperties(constructor, constructorProperties, true);
-
-        Montage.defineProperty(constructor,"__isConstructor__", {
-            value: true,
-            enumerable: false
-        });
+Object.defineProperty(Montage, "_hasUserDefinedConstructor", {
+    value: false,
+    configurable: false,
+    enumerable: false,
+    writable: true
+});
 
 
-        constructor.prototype = prototype;
-
-        Montage.defineValueProperty(prototype, "constructor",constructor,true,false,true );
-
-        // Super needs
-        Montage.defineValueProperty(constructor, "constructor",constructor,true,false,true );
-
-        return constructor;
-
-    };
-valuePropertyDescriptor.writable = false;
-valuePropertyDescriptor.configurable = true;
-valuePropertyDescriptor.enumerable = false;
-Object.defineProperty(Montage, "specialize", valuePropertyDescriptor);
+// valuePropertyDescriptor.value = specialize;
+// valuePropertyDescriptor.writable = false;
+// valuePropertyDescriptor.configurable = true;
+// valuePropertyDescriptor.enumerable = false;
+// Object.defineProperty(Montage, "specialize", valuePropertyDescriptor);
 
 
 if (!PROTO_IS_SUPPORTED) {
@@ -528,7 +674,7 @@ valuePropertyDescriptor.value = function Montage_defineProperty(obj, prop, descr
         // clear the cache for super() for property we're about to redefine.
         // But If we're defining a property as part of a Type/Class construction, we most likely don't need to worry about
         // clearing super calls caches.
-        if(!inSpecialize) {
+        if(!inSpecialize && (prop !== "constructor") && (prop in obj)) {
             __clearSuperDepencies(obj,prop, descriptor);
         }
 
@@ -613,9 +759,13 @@ function __findSuperMethodImplementation( method, classFn, isFunctionSuper, meth
                 //As we start, we don't really know which property name points to method, we're going to find out:
                 for (i=0;(propertyName = propertyNames[i]);i++) {
                     if ((property = Object.getOwnPropertyDescriptor(context, propertyName))) {
-                        func = property.value;
-                        if (func !== undefined && func !== null) {
-                            if (func === method || func.deprecatedFunction === method) {
+                        if ((func = property.value) !== undefined && func !== null) {
+                            /*
+                                Adds check for propertyName === "constructor" && func.specializeConstructor to support backward compatibility
+                                with specialize() class emulation without requiring code change to evolve to using JS Class.
+                            */
+
+                            if (func === method || func.deprecatedFunction === method || (propertyName === "constructor" && func.specializeConstructor === method && Object.hasOwn(func,"specializeConstructor"))) {
                             //if (func === method || (isValueArg && methodPropertyNameArg && propertyName === methodPropertyNameArg) || func.deprecatedFunction === method) {
                                 methodPropertyName = propertyName;
                                 isValue = true;
@@ -652,6 +802,21 @@ function __findSuperMethodImplementation( method, classFn, isFunctionSuper, meth
                 if((property = Object.getOwnPropertyDescriptor(context, methodPropertyName))) {
                     if (property.hasOwnProperty("value")) {
                         func = property.value;
+
+                        /*
+                            To support backward compatibility with specialize() class emulation without requiring code change to evolve to using JS Class.
+                            If we reach a call to this.super() where we reach a pure class, there's no specializeConstructor to invoke,
+                            so in that case we return a no-op
+                        */
+                        if(methodPropertyName === "constructor") {
+                            if(func.specializeConstructor) {
+                                func = func.specializeConstructor;
+                            }
+                            else if(func.isClass) {
+                                func = Function.noop;
+                            }
+                        }
+
                         foundSuper = true;
                         break;
                     }
@@ -691,13 +856,54 @@ function __super(callerFn, methodPropertyName, isValue, isGetter, isSetter) {
         // Find the class implementing this method.
         superFn = __findSuperMethodImplementation( callerFn, isFunctionSuper ? this : this.constructor , isFunctionSuper, methodPropertyName, isValue, isGetter, isSetter);
         if ( superFn ) {
-            __superWeakMap.set(callerFn,superFn);
-            _superMethodDependenciesFor(superFn).add(callerFn);
+            __registerFunctionSuperFunction(callerFn,superFn);
+            // __superWeakMap.set(callerFn,superFn);
+            // _superMethodDependenciesFor(superFn).add(callerFn);
         }
     }
 
     return superFn;
 }
+
+function __registerFunctionSuperFunction(callerFn, superFn) {
+    __superWeakMap.set(callerFn,superFn);
+    _superMethodDependenciesFor(superFn).add(callerFn);
+}
+
+
+
+/*
+    Borrowed from https://github.com/goatslacker/get-parameter-names/blob/master/index.js
+    To ease transition to Classes, detecting super in constructors
+*/
+
+const getFunctionParameterNames_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+const getFunctionParameterNames_DEFAULT_PARAMS = /=[^,]+/mg;
+const getFunctionParameterNames_FAT_ARROWS = /=>.*$/mg;
+const getFunctionParameterNames_EMPTY_PARAMS = Object.freeze([]);
+
+
+function getFunctionParameterNames(fn) {
+
+    if(!fn.__parameterNames) {
+
+        var code = fn.toString()
+            .replace(getFunctionParameterNames_COMMENTS, '')
+            .replace(getFunctionParameterNames_FAT_ARROWS, '')
+            .replace(getFunctionParameterNames_DEFAULT_PARAMS, '');
+
+        var result = code.slice(code.indexOf('(') + 1, code.indexOf(')'))
+            .match(/([^\s,]+)/g);
+
+            fn.__parameterNames =  (result === null
+            ? getFunctionParameterNames_EMPTY_PARAMS
+            : result);
+    }
+    return fn.__parameterNames;
+}
+
+// module.exports = getFunctionParameterNames;
+
 
 /*
  * Call a function of the same name in a superclass.
@@ -734,13 +940,46 @@ function __super(callerFn, methodPropertyName, isValue, isGetter, isSetter) {
  * a relative term, and this approach might easily have acceptable performance
  * for many applications.
  */
-function _super() {
+function _super(...args) {
     // Figure out which function called us.
     // var callerFn = ( _super && _super.caller ) ? _super.caller : arguments.callee.caller,
     //     superFn = __super.call(this,callerFn);
     // return superFn ? superFn.apply(this, arguments) : undefined;
 
-    return ((__super.call(this, /* callerFn - Figure out which function called us.*/ (( _super && _super.caller ) ? _super.caller : arguments.callee.caller))) || Function.noop).apply(this, arguments);
+    try {
+        return ((__super.call(this, /* callerFn - Figure out which function called us.*/ (( _super && _super.caller ) ? _super.caller : arguments.callee.caller))) || Function.noop).apply(this, arguments);
+    } catch (error) {
+        if(error.name === "TypeError") {
+
+            //If there's no argument, we already did native super() in the class we build in .specialize()
+            if(args.length > 0) {
+                const superFunction = (__super.call(this, /* callerFn - Figure out which function called us.*/ (( _super && _super.caller ) ? _super.caller : arguments.callee.caller))),
+                    className = this.constructor.name,
+                    constructorParameterNames = getFunctionParameterNames(( _super && _super.caller ) ? _super.caller : arguments.callee.caller),
+                    parentName = Object.getPrototypeOf(Object.getPrototypeOf(this)).constructor.name,
+                    parentConstructorParameterNames = getFunctionParameterNames(superFunction),
+                    errorMessage = `var ${className} = exports.${className} = class ${className} extends ${parentName} {
+                    constructor(${constructorParameterNames.join(", ")}) {
+                        super(${parentConstructorParameterNames.join(", ")});
+                    }
+                }
+
+                ${className}.addClassProperties( { /** prototype properties */ }, { /** static properties */ });
+                `
+
+                throw ("this._super(...) can't invoke Class's constructors as a function. Please create a real class like this:\n\n\n"+errorMessage);
+                // console.log("hasConstructor:", Reflect.has(superFunction, 'constructor'));
+                //console.warn("superFunction.prototype.constructor: ", superFunction.prototype.constructor);
+                let clonedObject = Reflect.construct((superFunction || Function.noop), arguments, this.constructor);
+                Object.assign(this, clonedObject);
+            }
+            return this;
+        } else {
+            throw error;
+        }
+    }
+
+
 
 }
 
@@ -1780,7 +2019,10 @@ exports._objectDescriptorDescriptor = {
 
             if (!exports._objectDescriptorDescriptor.ObjectDescriptorModulePromise) {
                 exports._objectDescriptorDescriptor.ObjectDescriptorModulePromise = (
-                    require.async("./meta/module-object-descriptor").get("ModuleObjectDescriptor")
+                    require.async("./meta/module-object-descriptor")
+                    .then((exports) => {
+                        return exports["ModuleObjectDescriptor"];
+                    })
                 );
             }
 

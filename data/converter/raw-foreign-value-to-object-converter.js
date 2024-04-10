@@ -533,7 +533,7 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
 
                             iFetchPromise = (iFetchPromise || (iFetchPromise = self._registeredFetchPromiseMapForObjectDescriptorCriteria(type,iCriteria)));
 
-                            if(iCriteria.evaluate(jSnapshot)) {
+                            if((jSnapshot && iCriteria.evaluate(jSnapshot)) || (countI === 1 && combinedFetchedValues.length === 1)) {
                                 (iFetchPromise.result || (iFetchPromise.result = [])).push(jValue);
 
                             }

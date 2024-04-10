@@ -58,19 +58,19 @@ describe("A DataQuery", function() {
         }, dataType, dataCriteria, dataQuerySource, dataQueryJson, dataQueryJsonObj;
 
         it("with constructor as type", function (done) {
-    
+
             dataType = WeatherReport;
             dataCriteria = new Criteria().initWithExpression(dataExpression, dataParameters);
-    
+
             dataQuerySource  = DataQuery.withTypeAndCriteria(dataType, dataCriteria);
             dataQueryJson = serialize(dataQuerySource, require);
-    
+
             try {
                 expect(dataQueryJson).toBeDefined();
                 var dataQueryJsonObj = JSON.parse(dataQueryJson);
                 expect(dataQueryJsonObj.weatherreport).toBeDefined();
                 expect(dataQueryJsonObj.weatherreport.object).toBe('spec/data/logic/model/weather-report');
-    
+
                 expect(dataQueryJsonObj.criteria).toBeDefined();
                 expect(dataQueryJsonObj.criteria.prototype).toBe('montage/core/criteria');
                 var dataQuery = deserialize(dataQueryJson, require).then(function (dataQueryFromJson) {
@@ -79,7 +79,7 @@ describe("A DataQuery", function() {
                 }, function (err) {
                     fail(err);
                 });
-    
+
             } catch (err) {
                 fail(err);
             }
@@ -89,21 +89,21 @@ describe("A DataQuery", function() {
 
             var weatherReportReference = new ModuleReference().initWithIdAndRequire("spec/data/logic/model/weather-report", require),
                 weatherReportDescriptor = new ModuleObjectDescriptor().initWithModuleAndExportName(weatherReportReference, "WeatherReport");
-                
+
             weatherReportDescriptor.addPropertyDescriptor(new PropertyDescriptor().initWithNameObjectDescriptorAndCardinality("title", weatherReportDescriptor, 1));
-    
+
             dataType = weatherReportDescriptor;
             dataCriteria = new Criteria().initWithExpression(dataExpression, dataParameters);
-    
+
             dataQuerySource  = DataQuery.withTypeAndCriteria(dataType, dataCriteria);
             dataQueryJson = serialize(dataQuerySource, require);
             try {
                 expect(dataQueryJson).toBeDefined();
                 var dataQueryJsonObj = JSON.parse(dataQueryJson);
-                expect(dataQueryJsonObj.objectDescriptor_weatherreport).toBeDefined();
-                expect(dataQueryJsonObj.objectDescriptor_weatherreport.prototype).toBeDefined();
+                expect(dataQueryJsonObj.WeatherReport).toBeDefined();
+                expect(dataQueryJsonObj.WeatherReport.prototype).toBeDefined();
                 // expect(dataQueryJsonObj.weatherreport.object).toBe('spec/data/logic/model/weather-report');
-    
+
                 expect(dataQueryJsonObj.criteria).toBeDefined();
                 expect(dataQueryJsonObj.criteria.prototype).toBe('montage/core/criteria');
 
@@ -113,7 +113,7 @@ describe("A DataQuery", function() {
                 }, function (err) {
                     fail(err);
                 });
-    
+
             } catch (err) {
                 fail(err);
             }
@@ -123,15 +123,15 @@ describe("A DataQuery", function() {
         it("with mjson objectDescriptor as type", function (done) {
             dataType = movieDescriptor;
             dataCriteria = new Criteria().initWithExpression(dataExpression, dataParameters);
-    
+
             dataQuerySource  = DataQuery.withTypeAndCriteria(dataType, dataCriteria);
             dataQueryJson = serialize(dataQuerySource, require);
 
             try {
                 expect(dataQueryJson).toBeDefined();
                 dataQueryJsonObj = JSON.parse(dataQueryJson);
-                expect(dataQueryJsonObj.root.values.typeModule["%"]).toBe(movieDescriptor.objectDescriptorInstanceModule.id);
-    
+                expect(dataQueryJsonObj.root.values.type["@"]).toBe(movieDescriptor.name);
+
                 expect(dataQueryJsonObj.criteria).toBeDefined();
                 expect(dataQueryJsonObj.criteria.prototype).toBe('montage/core/criteria');
 
@@ -142,7 +142,7 @@ describe("A DataQuery", function() {
                 }, function (err) {
                     fail(err);
                 });
-    
+
             } catch (err) {
                 fail(err);
             }

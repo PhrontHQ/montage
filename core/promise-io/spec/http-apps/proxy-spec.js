@@ -59,7 +59,7 @@ describe("http proxy", function () {
 
             return [server1, server2.listen(0)];
         })
-        .spread(function (server1, server2) {
+        .then(function ([server1, server2]) {
             var port = server2.node.address().port;
             return Http.read({
                 url: "http://127.0.0.1:" + port + "/bar",

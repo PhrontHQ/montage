@@ -14,7 +14,7 @@ exports.SelectionTest = TestController.specialize( {
 
     constructor: {
         value: function () {
-            TestController.prototype.constructor.call(this);
+            this.super();
             this.content = ["Alice", "Bob", "Carol", "Dave", "Eve"];
         }
     },

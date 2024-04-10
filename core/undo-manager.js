@@ -650,7 +650,11 @@ var UndoManager = exports.UndoManager = Target.specialize( /** @lends UndoManage
 
             this._operationQueue.push(operationPromise);
 
-            return this._flushOperationQueue().thenReturn(deferredOperationPromise);
+            return this._flushOperationQueue()
+                .then(() => {
+                    return deferredOperationPromise;
+                });
+            // return this._flushOperationQueue().thenReturn(deferredOperationPromise);
         }
     },
 

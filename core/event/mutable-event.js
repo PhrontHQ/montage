@@ -103,9 +103,7 @@ var wrapPropertyGetter = function (key, storageKey) {
 
         defaultPrevented: {
             value: function () {
-                return (typeof this._event.defaultPrevented === "boolean")
-                ?  this._event.defaultPrevented
-                :  this.getPreventDefault();
+                return this._event.defaultPrevented;
             }
         },
 
@@ -363,6 +361,9 @@ var wrapPropertyGetter = function (key, storageKey) {
         }
 
     }, {
+        wrapEvent: {
+            value: true
+        },
 
         /**
          * @function
@@ -371,14 +372,280 @@ var wrapPropertyGetter = function (key, storageKey) {
          */
         fromEvent: {
             value: function fromEvent(event) {
-                var constructor = _eventConstructorsByType[event.type];
-                if (!constructor) {
-                    constructor = function MutableEvent() {
+                console.groupTime("fromEvent");
+                var eventSubclass = _eventConstructorsByType[event.type];
+                if (!eventSubclass) {
+
+                    if(this.wrapEvent) {
+                        eventSubclass = function MutableEvent() {
+                        };
+                        _eventConstructorsByType[event.type] = eventSubclass;
+                        eventSubclass.prototype = new exports.MutableEvent()._initPrototypeWithEvent(event);
+
+                    } else {
+
+                    eventSubclass = class extends event.constructor {
+
+                        static {
+                            // const p = this.prototype;
+
+                            // /**
+                            //  * @type {Property}
+                            //  * @default {boolean} false
+                            //  */
+                            // p.propagationStopped = false;
+
+                            // /**
+                            //  * @type {Property}
+                            //  * @default {boolean} false
+                            //  */
+                            // p.immediatePropagationStopped = false;
+
+                            // /**
+                            //  * @type {Property}
+                            //  * @default {Promise} null
+                            //  */
+                            // p.propagationPromise = null;
+
+
+                            // p._eventPhase = void 0;
+                            // p._target = void 0;
+                            // p._currentTarget = void 0;
+                            // p._type = void 0;
+                            // p._bubbles = void 0;
+                            // p._cancelable = void 0;
+                            // p._defaultPrevented = void 0;
+                            // p._timeStamp = void 0;
+                            // p._detail = void 0;
+
+
+                            Montage.defineProperties(this.prototype, {
+
+                                /**
+                                 * @type {Property}
+                                 * @default {boolean} false
+                                 */
+                                propagationStopped: {value: false},
+
+                                /**
+                                 * @type {Property}
+                                 * @default {boolean} false
+                                 */
+                                immediatePropagationStopped: {value: false},
+
+                                /**
+                                 * @type {Property}
+                                 * @default {Promise} null
+                                 */
+                                propagationPromise: {value: null},
+
+                                _eventPhase: {value: void 0},
+                                _target: {value: void 0},
+                                _currentTarget: {value:  void 0},
+                                _type: {value: void 0},
+                                _bubbles: {value:  void 0},
+                                _cancelable: {value:  void 0},
+                                _defaultPrevented: {value:  void 0},
+                                _timeStamp: {value:  void 0},
+                                _detail: {value:  void 0}
+                            });
+
+                        }
+                        /**
+                         * @function
+                         */
+                        preventDefault() {
+                            super.preventDefault();
+                        }
+
+                        defaultPrevented() {
+                            return super.defaultPrevented;
+                        }
+
+                        /**
+                         * @function
+                         */
+                        stopImmediatePropagation() {
+                            super.stopImmediatePropagation();
+                            // TODO only if the event is cancellable?
+                            this.propagationStopped = true;
+                            this.immediatePropagationStopped = true;
+                        };
+
+
+                        /**
+                         * @function
+                         */
+                        stopPropagation() {
+                            super.stopPropagation();
+                            // TODO only if the event is cancellable?
+                            this.propagationStopped = true;
+                        }
+
+                        /**
+                         * @function
+                         */
+                        stop() {
+                            this.preventDefault();
+                            this.stopPropagation();
+                        }
+
+
+                        /**
+                         * @type {Property}
+                         * @default {Element} null
+                         */
+                        get eventPhase() {
+                            return (this._eventPhase !== void 0)
+                                ? this._eventPhase
+                                : super.eventPhase;
+                        }
+                        set eventPhase(value) {
+                            this._eventPhase = value;
+                        }
+
+
+                        /**
+                         * @type {Property}
+                         * @default {Element} null
+                         */
+                        get target() {
+                            return (this._target !== void 0)
+                                ? this._target
+                                : super.target;
+                        }
+                        set target(value) {
+                            this._target = value;
+                        }
+
+                        /**
+                         * @type {Property}
+                         * @default {Element} null
+                         */
+                        get currentTarget() {
+                            return (this._currentTarget !== void 0)
+                                ? this._currentTarget
+                                : super.currentTarget;
+                        }
+                        set currentTarget(value) {
+                            this._currentTarget = value;
+                        }
+
+                        /**
+                         * @type {Property}
+                         * @default {Element} null
+                         */
+                        get type() {
+                            return (this._type !== void 0) ? this._type : super.type;
+                        }
+                        set type (value) {
+                            this._type = value;
+                        }
+
+                        /**
+                         * @type {Property}
+                         * @default {Element} null
+                         */
+                        get bubbles() {
+                                return (this._bubbles !== void 0)
+                                    ? this._bubbles
+                                    : super.bubbles;
+                            }
+                        set bubbles(value) {
+                            this._bubbles = value;
+                        }
+
+                        /**
+                         * @type {Property}
+                         * @default {Element} null
+                         */
+                        get touches () {
+                            return this.touches;
+                        }
+                        set touches (value) {
+                            this.touches = value;
+                        }
+
+                        /**
+                         * @type {Property}
+                         * @default {Element} null
+                         */
+                        get changedTouches () {
+                            return super.changedTouches;
+                        }
+                        set changedTouches (value) {
+                            this.changedTouches = value;
+                        }
+
+                        /**
+                         * @type {Property}
+                         * @default {Element} null
+                         */
+                        get targetTouches() {
+                            return this.targetTouches;
+                        }
+
+                        /**
+                         * @type {Property}
+                         * @default {boolean} should be false by default
+                         */
+                        get cancelable () {
+                            return (this._cancelable !== void 0) ? this._cancelable : super.cancelable;
+                        }
+                        set cancelable (value) {
+                            this._cancelable = value;
+                        }
+
+                        /**
+                         * @type {Property}
+                         * @default {boolean} false
+                         */
+                        get defaultPrevented () {
+                            return (this._defaultPrevented !== void 0)
+                                ? this._defaultPrevented
+                                : super.defaultPrevented;
+                        }
+                        set defaultPrevented (value) {
+                            this._defaultPrevented = value;
+                        }
+
+                        /**
+                         * @type {Property}
+                         * @default {Element} null
+                         */
+                        get timeStamp () {
+                            return (this._timeStamp !== void 0)
+                                ? this._timeStamp
+                                : super.timeStamp;
+                        }
+                        set timeStamp(value) {
+                            this._timeStamp = value;
+                        }
+
+                        /**
+                         * @type {Property}
+                         * @default {Object} null
+                         */
+                        get detail() {
+                            return (this._detail !== void 0)
+                                ? this._detail
+                                : super.detail;
+                        }
+                        set detail(value) {
+                            this._detail = value;
+                        }
+
                     };
-                    constructor.prototype = new exports.MutableEvent()._initPrototypeWithEvent(event);
-                    _eventConstructorsByType[event.type] = constructor;
+                    _eventConstructorsByType[event.type] = eventSubclass;
+
+                    }
                 }
-                return new constructor()._initWithEvent(event);
+                var result = this.wrapEvent
+                    ? new eventSubclass()._initWithEvent(event)
+                    : (Object.setPrototypeOf(event,eventSubclass.prototype) && event);
+                    console.groupTimeEnd("fromEvent");
+                return result;
+
             }
         },
 

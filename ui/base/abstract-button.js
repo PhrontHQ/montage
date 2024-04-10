@@ -35,7 +35,7 @@ var AbstractButton = exports.AbstractButton = AbstractControl.specialize( /** @l
      */
     constructor: {
         value: function AbstractButton() {
-            if(this.constructor ===  AbstractButton) {
+            if(this.constructor ===  exports.AbstractButton) {
                 throw new Error("AbstractButton cannot be instantiated.");
             }
             this._pressComposer = new PressComposer();

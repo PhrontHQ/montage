@@ -36,7 +36,7 @@ var AbstractToggleButton = exports.AbstractToggleButton = AbstractControl.specia
      */
     constructor: {
         value: function () {
-            if(this.constructor === AbstractToggleButton) {
+            if(this.constructor === exports.AbstractToggleButton) {
                 throw new Error("AbstractToggleButton cannot be instantiated.");
             }
 

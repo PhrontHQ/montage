@@ -1,4 +1,5 @@
-var B = require("bluebird");
+// var B = require("bluebird");
+var B = Promise;
 var Bproto = B.prototype;
 
 //deferredPrototype is Object.prototype, and that creates a mess
@@ -185,7 +186,7 @@ Bproto.delay = function(ms) {
     });
 };
 
-var b = B.fulfilled();
+var b = B.resolve();
 function thrower(e){
     process.nextTick(function(){
         throw e;
@@ -211,7 +212,11 @@ Q.progress = function(a, b) {
     return B.cast(a).progress(b);
 };
 Q.thenResolve = function(a, b) {
-    return B.cast(a).thenReturn(b);
+    return B.cast(a)
+    .then(() => {
+        return b;
+    });
+    // .thenReturn(b);
 };
 Q.thenReject = function(a, b) {
     return B.cast(a).thenThrow(b);
@@ -445,7 +450,9 @@ resetUnhandledRejections();
 /*Directly copypasted from Q end */
 
 
-
-B.onPossiblyUnhandledRejection(function(reason, promise){
-    trackRejection(promise, reason);
-});
+/*
+    Bluebird specific, deprecating
+*/
+// B.onPossiblyUnhandledRejection(function(reason, promise){
+//     trackRejection(promise, reason);
+// });

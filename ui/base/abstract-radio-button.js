@@ -26,7 +26,7 @@ var AbstractRadioButton = exports.AbstractRadioButton = AbstractControl.speciali
 
     constructor: {
         value: function AbstractRadioButton() {
-            if(this.constructor === AbstractRadioButton) {
+            if(this.constructor === exports.AbstractRadioButton) {
                 throw new Error("AbstractRadioButton cannot be instantiated.");
             }
         }

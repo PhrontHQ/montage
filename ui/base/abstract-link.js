@@ -23,7 +23,7 @@ var AbstractLink = exports.AbstractLink = AbstractControl.specialize(
 
     constructor: {
         value: function AbstractLink() {
-            if(this.constructor ===  AbstractLink) {
+            if(this.constructor ===  exports.AbstractLink) {
                 throw new Error("AbstractLink cannot be instantiated.");
             }
 

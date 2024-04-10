@@ -331,8 +331,7 @@ var DocumentResources = Montage.specialize({
                     req.send();
                     req.listener = resolve;
                 })
-                .bind(this)
-                .then(function loadHandler(event) {
+                .then((event) => {
                     this.setResourcePreloaded(url);
                     event.target.removeEventListener("load", event.target.listener);
                     event.target.removeEventListener("error", event.target.listener);

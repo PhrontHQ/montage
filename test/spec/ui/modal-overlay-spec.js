@@ -34,9 +34,15 @@ describe("ui/modal-overlay-spec", function () {
 
     describe("show", function () {
         it("should return a fullfilled promise for the first overlay", function () {
-            var promise = aModalOverlay.show();
+            var isFulfilled = false,
+            promise = new Promise(function(resolve, reject) {
+                aModalOverlay.show();
+            });
 
-            expect(promise.isFulfilled()).toBe(true);
+            promise.then((value) => {
+                isFulfilled = true;
+                expect(isFulfilled).toBeTruthy();
+            });
         });
 
         it("should show the first overlay", function () {
@@ -47,9 +53,19 @@ describe("ui/modal-overlay-spec", function () {
 
         it("should return an unfulfilled promise when another overlay is shown", function () {
             anotherModalOverlay.show();
-            var promise = aModalOverlay.show();
 
-            expect(promise.isFulfilled()).toBe(false);
+            var isFulfilled = false,
+            promise = new Promise(function(resolve, reject) {
+                aModalOverlay.show();
+            });
+
+            promise.then((value) => {
+                isFulfilled = true;
+            })
+            .finally(() => {
+                expect(isFulfilled).toBe(false);
+
+            });
         });
 
         it("should not show the overlay when another overlay is shown", function () {

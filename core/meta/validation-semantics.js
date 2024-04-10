@@ -108,6 +108,6 @@ for (var operator in Semantics.operators) {
 
 for (var evaluator in Semantics.evaluators) {
     if (Semantics.evaluators.hasOwnProperty(evaluator)) {
-        PropertyValidationSemantics.evaluators[evaluator] = Semantics.evaluators[evaluator];   
+        PropertyValidationSemantics.evaluators[evaluator] = Semantics.evaluators[evaluator];
     }
 }

@@ -27,6 +27,8 @@ describe("An Expression Data Mapping", function() {
         categoryModuleReference,
         categoryObjectDescriptor,
         categoryPropertyDescriptor,
+        categoryMapping,
+        categorySchema,
         categoryService,
         countryConverter,
         countryMapping,
@@ -85,6 +87,7 @@ describe("An Expression Data Mapping", function() {
 
     DataService.mainService = undefined;
     mainService = new DataService();
+    mainService.supportsDataOperation = false;
     mainService.NAME = "Movies";
     movieService = new RawDataService();
     movieModuleReference = new ModuleReference().initWithIdAndRequire("spec/data/logic/model/movie", require);
@@ -109,6 +112,11 @@ describe("An Expression Data Mapping", function() {
     categoryPropertyDescriptor = new PropertyDescriptor().initWithNameObjectDescriptorAndCardinality("category", movieObjectDescriptor, 1);
     categoryPropertyDescriptor.valueDescriptor = categoryObjectDescriptor;
     movieObjectDescriptor.addPropertyDescriptor(categoryPropertyDescriptor);
+    categorySchemaModuleReference = new ModuleReference().initWithIdAndRequire("spec/data/schema/logic/category", require);
+    categorySchema = new ModuleObjectDescriptor().initWithModuleAndExportName(categorySchemaModuleReference, "CategorySchema");
+    categoryMapping = new ExpressionDataMapping().initWithServiceObjectDescriptorAndSchema(categoryService, categoryObjectDescriptor, categorySchema);
+    categoryMapping.rawDataPrimaryKeys = ["id"];
+
 
 
     countryService = new CountryService();
@@ -241,8 +249,8 @@ describe("An Expression Data Mapping", function() {
     });
 
     it("can create the correct number of mapping rules", function () {
-        expect(movieMapping.objectMappingRules.size).toBe(8);
-        expect(movieMapping.rawDataMappingRules.size).toBe(7);
+        expect(Object.keys(movieMapping.objectMappingRules).length).toBe(8);
+        expect(Object.keys(movieMapping.rawDataMappingRules).length).toBe(7);
     });
 
     it("can inherit rawDataPrimaryKeys", function () {
@@ -368,6 +376,9 @@ describe("An Expression Data Mapping", function() {
             data = {};
         category.name = "Action";
         category.id = 1;
+
+        mainService.recordDataIdentifierForObject(categoryService.dataIdentifierForTypePrimaryKey(categoryObjectDescriptor, category.id), category)
+
         movie.title = "Star Wars";
         movie.budget = 14000000.00;
         movie.isFeatured = true;

@@ -106,20 +106,20 @@ describe("test/core/set-spec", function () {
     });
 
     it("should compute unions", function () {
-        expect(new Set([1, 2, 3]).union([2, 3, 4]).sorted()).toEqual([1, 2, 3, 4]);
-        expect(new Set([1, 2, 3]).union([2, 3, 4]).equals([1, 2, 3, 4])).toBe(true);
+        expect(new Set([1, 2, 3]).union(Set.from([2, 3, 4])).sorted()).toEqual([1, 2, 3, 4]);
+        expect(new Set([1, 2, 3]).union(Set.from([2, 3, 4])).equals([1, 2, 3, 4])).toBe(true);
     });
 
     it("should compute intersections", function () {
-        expect(new Set([1, 2, 3]).intersection([2, 3, 4]).sorted()).toEqual([2, 3]);
+        expect(new Set([1, 2, 3]).intersection(Set.from([2, 3, 4])).sorted()).toEqual([2, 3]);
     });
 
     it("should compute differences", function () {
-        expect(new Set([1, 2, 3]).difference([2, 3, 4]).sorted()).toEqual([1]);
+        expect(new Set([1, 2, 3]).difference(Set.from([2, 3, 4])).sorted()).toEqual([1]);
     });
 
     it("should compute symmetric differences", function () {
-        expect(new Set([1, 2, 3]).symmetricDifference([2, 3, 4]).sorted()).toEqual([1, 4]);
+        expect(new Set([1, 2, 3]).symmetricDifference(Set.from([2, 3, 4])).sorted()).toEqual([1, 4]);
     });
 
     it("should dispatch range change on clear", function () {

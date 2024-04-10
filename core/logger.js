@@ -76,9 +76,9 @@ var Logger = exports.Logger = Montage.specialize(/** @lends Logger# */ {
     constructor: {
         value: function Logger() {
 
-            // Set Function.noop on construcot 
+            // Set Function.noop on construcot
             // to avoid issue with Object.create
-            this.debug = Function.noop; 
+            this.debug = Function.noop;
             this.error = Function.noop;
 
             addColorProperty(this);

@@ -18,7 +18,7 @@ var AbstractTextField = exports.AbstractTextField = AbstractControl.specialize(/
      */
     constructor: {
         value: function AbstractTextField() {
-            if(this.constructor === AbstractTextField) {
+            if(this.constructor === exports.AbstractTextField) {
                 throw new Error("AbstractTextField cannot be instantiated.");
             }
 
@@ -165,7 +165,7 @@ var AbstractTextField = exports.AbstractTextField = AbstractControl.specialize(/
         value: function () {
             var displayValue = this.value,
                 typeOfDisplayValue,
-                
+
                 // FIXME: the cursor position should be also check in the new textField control
                 start = this.element.selectionStart,
                 end = this.element.selectionEnd;
@@ -189,7 +189,7 @@ var AbstractTextField = exports.AbstractTextField = AbstractControl.specialize(/
                 // restore the previous cursor position.
                 // TODO: contenteditable?
                 this.element.setSelectionRange(start, end);
-            }   
+            }
 
             if (this._placeholder) {
                 this.element.setAttribute("placeholder", this._placeholder);
@@ -235,7 +235,7 @@ var AbstractTextField = exports.AbstractTextField = AbstractControl.specialize(/
         value: function () {
 
             var displayedValue, value;
-            
+
             value = displayedValue = this.element.value;
 
             if (this.converter) {

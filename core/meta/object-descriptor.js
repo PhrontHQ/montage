@@ -1322,7 +1322,7 @@ var ObjectDescriptor = exports.ObjectDescriptor = Target.specialize( /** @lends 
                         length;
 
                     if ((length = keys.length)) {
-                        var promisesHandler = function (defaultUserInterfaceDescriptor, userInterfaceDescriptorModule) {
+                        var promisesHandler = function ([defaultUserInterfaceDescriptor, userInterfaceDescriptorModule]) {
                                 return Object.assign(
                                     {},
                                     defaultUserInterfaceDescriptor,
@@ -1345,7 +1345,7 @@ var ObjectDescriptor = exports.ObjectDescriptor = Target.specialize( /** @lends 
                                         this.userInterfaceDescriptorModules[key].require.async(
                                             this.userInterfaceDescriptorModules[key].id
                                         )
-                                    ]).spread(promisesHandler)
+                                    ]).then(promisesHandler)
                                 });
                             }
                         }

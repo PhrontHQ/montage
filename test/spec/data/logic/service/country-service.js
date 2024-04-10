@@ -2,6 +2,9 @@ var RawDataService = require("montage/data/service/raw-data-service").RawDataSer
     CountryNames = ["USA"];
 
 exports.CountryService = RawDataService.specialize(/** @lends CategoryService.prototype */ {
+    supportsDataOperation: {
+        value: false
+    },
 
     fetchRawData: {
         value: function (stream) {

@@ -5,7 +5,9 @@ var MockDOM = require("mocks/dom");
 AbstractImage.prototype.hasTemplate = false;
 
 var src1 = "data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
-    imageURL = "http://montagestudio.com/assets/images/montagejs/logo.png";
+    baseURL = `${module.location.split("montage")[0]}montage/assets/images/`,
+    imageFileName = "Mod-dark.svg",
+    imageURL = `${baseURL}${imageFileName}`;
 
 describe("test/base/abstract-image-spec", function () {
     describe("creation", function () {
@@ -120,13 +122,13 @@ describe("test/base/abstract-image-spec", function () {
         });
 
         it("should draw the rebased relative url if the _ownerDocumentPart is set after src", function () {
-            var src = "logo.png";
+            var src = imageFileName;
 
             anImage.src = src;
             anImage._ownerDocumentPart = {
                 template: {
                     getBaseUrl: function () {
-                        return "http://montagestudio.com/assets/images/montagejs/";
+                        return baseURL;
                     }
                 }
             };
@@ -137,12 +139,12 @@ describe("test/base/abstract-image-spec", function () {
         });
 
         it("should draw the rebased relative url if the src is set after _ownerDocumentPart", function () {
-            var src = "logo.png";
+            var src = imageFileName;
 
              anImage._ownerDocumentPart = {
                 template: {
                     getBaseUrl: function () {
-                        return "http://montagestudio.com/assets/images/montagejs/";
+                        return baseURL;
                     }
                 }
             };
@@ -154,12 +156,12 @@ describe("test/base/abstract-image-spec", function () {
         });
 
         it("should draw the rebased relative url if the emptyImageSrc is set after _ownerDocumentPart", function () {
-            var src = "logo.png";
+            var src = imageFileName;
 
              anImage._ownerDocumentPart = {
                 template: {
                     getBaseUrl: function () {
-                        return "http://montagestudio.com/assets/images/montagejs/";
+                        return baseURL;
                     }
                 }
             };
@@ -267,7 +269,7 @@ describe("test/base/abstract-image-spec", function () {
         });
 
         it("should not rebase relative urls when owner document is not available", function () {
-            var src = "logo.png",
+            var src = imageFileName,
                 rebasedSrc;
 
             anImage._ownerDocumentPart = null;
@@ -278,7 +280,7 @@ describe("test/base/abstract-image-spec", function () {
         });
 
         it("should not rebase relative urls when base url is not available", function () {
-            var src = "logo.png",
+            var src = imageFileName,
                 rebasedSrc;
 
             anImage._ownerDocumentPart = {
@@ -295,13 +297,13 @@ describe("test/base/abstract-image-spec", function () {
         });
 
         it("should rebase relative urls when base url is not available", function () {
-            var src = "logo.png",
+            var src = imageFileName,
                 rebasedSrc;
 
             anImage._ownerDocumentPart = {
                 template: {
                     getBaseUrl: function () {
-                        return "http://montagestudio.com/assets/images/montagejs/";
+                        return baseURL;
                     }
                 }
             };
@@ -312,13 +314,13 @@ describe("test/base/abstract-image-spec", function () {
         });
 
         it("should rebase relative urls as soon as owner template is available", function () {
-            var src = "logo.png";
+            var src = imageFileName;
 
             anImage.src = src;
             anImage._ownerDocumentPart = {
                 template: {
                     getBaseUrl: function () {
-                        return "http://montagestudio.com/assets/images/montagejs/";
+                        return baseURL;
                     }
                 }
             };
@@ -326,13 +328,13 @@ describe("test/base/abstract-image-spec", function () {
         });
 
         it("should not change the src to the rebased src", function () {
-            var src = "logo.png";
+            var src = imageFileName;
 
             anImage.src = src;
             anImage._ownerDocumentPart = {
                 template: {
                     getBaseUrl: function () {
-                        return "http://montagestudio.com/assets/images/montagejs/";
+                        return baseURL;
                     }
                 }
             };

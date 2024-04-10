@@ -120,7 +120,7 @@ function describeSet(Set, sorted) {
     });
 
     it("should compute intersections", function () {
-        expect(Set.from([1, 2, 3]).intersection([2, 3, 4]).sorted()).toEqual([2, 3]);
+        expect(Set.from([1, 2, 3]).intersection(Set.from([2, 3, 4])).sorted()).toEqual([2, 3]);
     });
 
     it("should compute differences", function () {

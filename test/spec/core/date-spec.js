@@ -34,7 +34,7 @@ describe("core/date-spec", function () {
 
     it("should parse basic local time", function () {
         var sourceString = "2010-07-20T15:00:00";
-        var actual = Date.parse( sourceString );
+        var actual = new Date(Date.parse( sourceString ));
         var expected = new Date(2010, 7-1 , 20, 15, 0, 0, 0);
         //Error message: "incorrect conversion of: '" + sourceString + "'" ;
         expect(actual.toString()).toBe(expected.toString());
@@ -43,7 +43,7 @@ describe("core/date-spec", function () {
 
     it("should parse basic local time with zone", function () {
         var sourceString = "2010-07-20T15:00:00+08:00";
-        var actual = Date.parse( sourceString );
+        var actual = new Date( Date.parse( sourceString ));
         var expected = new Date();
         expected.setUTCFullYear(2010);
         expected.setUTCMonth(7 - 1);
@@ -58,7 +58,7 @@ describe("core/date-spec", function () {
 
     it("should parse abbreviate zone with no colon", function () {
         var sourceString = "2010-07-20T15:00:00+0800";
-        var actual = Date.parse( sourceString );
+        var actual = new Date(Date.parse( sourceString ));
         var expected = new Date();
         expected.setUTCFullYear(2010);
         expected.setUTCMonth(7 - 1);
@@ -73,7 +73,7 @@ describe("core/date-spec", function () {
 
     it("should parse abbreviate zone only hours", function () {
         var sourceString = "2010-07-20T15:00:00+08";
-        var actual = Date.parse( sourceString );
+        var actual = new Date(Date.parse( sourceString ));
         var expected = new Date();
         expected.setUTCFullYear(2010);
         expected.setUTCMonth(7 - 1);
@@ -178,7 +178,7 @@ describe("core/date-spec", function () {
 
     it("should parse local time optional minutes", function () {
         var sourceString = "2010-07-20T15";
-        var actual = Date.parse( sourceString );
+        var actual = new Date(Date.parse( sourceString ));
         var expected = new Date(2010, 7-1 , 20, 15, 0, 0, 0);
         //Error message: "incorrect conversion of: '" + sourceString + "'" );
         expect(actual.toUTCString()).toBe(expected.toUTCString());
@@ -186,7 +186,7 @@ describe("core/date-spec", function () {
 
     it("should parse local time optional seconds", function () {
         var sourceString = "2010-07-20T1530";
-        var actual = Date.parse( sourceString );
+        var actual = new Date(Date.parse( sourceString ));
         var expected = new Date(2010, 7-1 , 20, 15, 30, 0, 0);
         //Error message: "incorrect conversion of: '" + sourceString + "'" ;
         expect(actual.toUTCString()).toBe(expected.toUTCString());

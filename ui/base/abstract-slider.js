@@ -24,7 +24,7 @@ var AbstractSlider = exports.AbstractSlider = AbstractControl.specialize( /** @l
      */
     constructor: {
         value: function AbstractSlider() {
-            if (this.constructor === AbstractSlider) {
+            if (this.constructor === exports.AbstractSlider) {
                 throw new Error("AbstractSlider cannot be instantiated.");
             }
 

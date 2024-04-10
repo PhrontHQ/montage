@@ -24,14 +24,16 @@ var Montage = require("../../core").Montage,
     ObjectKeys = Object.keys,
     ObjectCreate = Object.create,
     PromiseIs = Promise.is,
-    DateParseRFC3339 = Date.parseRFC3339,
-    stringMatchRFC3339 = Date.stringMatchRFC3339,
     isArray = Array.isArray;
 
 
 
 require("../../shim/string");
 require("../../../core/extras/date");
+
+const DateParseRFC3339 = Date.parseRFC3339;
+const stringMatchRFC3339 = Date.stringMatchRFC3339;
+
 
 var PROXY_ELEMENT_MAP = new WeakMap();
 var DATA_ATTRIBUTES_MAP = new Map();

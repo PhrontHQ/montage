@@ -28,7 +28,7 @@ var AbstractSelect = exports.AbstractSelect = AbstractControl.specialize( /** @l
      */
     constructor: {
         value: function AbstractSelect() {
-            if(this.constructor === AbstractSelect) {
+            if(this.constructor === exports.AbstractSelect) {
                 throw new Error("AbstractSelect cannot be instantiated.");
             }
 

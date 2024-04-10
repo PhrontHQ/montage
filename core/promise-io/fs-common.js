@@ -145,7 +145,7 @@ exports.update = function (exports, workingDirectory) {
                 self.open(target, {flags: "wb", mode: mode})
             ]);
         })
-        .spread(function (reader, writer) {
+        .then(function ([reader, writer]) {
             return Q.when(reader.forEach(function (block) {
                 return writer.write(block);
             }), function () {

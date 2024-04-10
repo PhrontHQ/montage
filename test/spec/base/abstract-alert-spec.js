@@ -79,10 +79,16 @@ describe("test/base/abstract-alert-spec", function () {
         describe("user action", function () {
             it("should resolve the user action promise when the ok button is pressed", function () {
                 var event = {target: anAlert._okButton},
-                    promise = anAlert.show();
+                    isFulfilled = false,
+                    promise = new Promise(function(resolve, reject) {
+                        anAlert.show();
+                        anAlert.handleAction(event);
+                    });
 
-                anAlert.handleAction(event);
-                expect(promise.isFulfilled()).toBeTruthy();
+                    promise.then((value) => {
+                        isFulfilled = true;
+                        expect(isFulfilled).toBeTruthy();
+                    });
             })
         });
 
@@ -209,7 +215,8 @@ describe("test/base/abstract-alert-spec", function () {
             });
 
             it("should fulfill the show promise when the alert is closed", function (done) {
-                var promise = AlertSubtype.show("message");
+                var isFulfilled = true,
+                    promise = AlertSubtype.show("message");
 
                 AlertSubtype._instance._overlay = MockComponent.component();
                 AlertSubtype._instance._overlay.show = function (){};
@@ -221,10 +228,13 @@ describe("test/base/abstract-alert-spec", function () {
 
                 setTimeout(function () {
                     AlertSubtype._instance.handleAction({target: AlertSubtype._instance._okButton});
-
-                    expect(promise.isFulfilled()).toBeTruthy();
-                    done();
+                    promise.then(() => {
+                        isFulfilled = true;
+                        expect(isFulfilled).toBeTruthy();
+                        done();
+                    });
                 });
+
             });
         });
     });

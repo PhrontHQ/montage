@@ -14,7 +14,7 @@ var AbstractTextArea = exports.AbstractTextArea = Component.specialize(
 
     constructor: {
         value: function AbstractTextArea() {
-            if(this.constructor === AbstractTextArea) {
+            if(this.constructor === exports.AbstractTextArea) {
                 throw new Error("AbstractTextArea cannot be instantiated.");
             }
 

@@ -70,3 +70,10 @@ Object.defineProperty(Function, "by", {
     configurable: true
 });
 
+Object.defineProperty(Function.prototype, "isClass", {
+    get: function () {
+        return this.toString().startsWith("class");
+    },
+    configurable: true
+});
+

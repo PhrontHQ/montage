@@ -16,7 +16,7 @@ var AbstractNumberField = exports.AbstractNumberField = AbstractControl.speciali
 
     constructor: {
         value: function AbstractNumberField() {
-            if (this.constructor === AbstractNumberField) {
+            if (this.constructor === exports.AbstractNumberField) {
                 throw new Error("AbstractNumberField cannot be instantiated.");
             }
 

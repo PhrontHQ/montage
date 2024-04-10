@@ -147,7 +147,7 @@ exports.MontageWindow = Montage.specialize( /** @lends MontageWindow.prototype #
                             }
                         } else {
                             theWindow.focused = false;
-                        }   
+                        }
                     }
                 }
             } else {

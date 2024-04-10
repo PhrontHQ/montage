@@ -212,6 +212,7 @@ if(globalThis.browser) {
                             exports = {},
                             module = {};
 
+                        module.exports = exports;
                         resultFunction(function require(){}, exports, module, global);
 
                         if (callback) {
@@ -395,11 +396,9 @@ if(globalThis.browser) {
             var pending = {
                 "require": montageLocation+"core/mr/require.js",
                 "require/browser": montageLocation+"core/mr/browser.js",
-                //"promise": montageLocation+"node_modules/bluebird/js/browser/bluebird.min.js"
                 "promise": (params.montageLocation === (global.location.origin+"/"))
-                            ? montageLocation+"node_modules/bluebird/js/browser/bluebird.min.js" //montage in test
-                            : montageLocation+"../bluebird/js/browser/bluebird.min.js" //anything else
-                // "shim-string": "core/shim/string.js" // needed for the `endsWith` function.
+                ? montageLocation+"core/promise.js" //montage in test
+                : montageLocation+"core/promise.js" //anything else
             };
 
             // miniature module system
@@ -465,14 +464,16 @@ if(globalThis.browser) {
                 loadModuleScript(pending.promise, function (error, exports) {
                     delete pending.promise;
 
-                    var bluebirdPromise = exports;
+                    var exportedPromise = typeof exports === "function"
+                        ? exports
+                        : exports.Promise;
                     //global.bootstrap cleans itself from global once all known are loaded. "bluebird" is not known, so needs to do it first
                     global.bootstrap("bluebird", function (require, exports) {
-                        return bluebirdPromise;
+                        return exportedPromise;
                         //return global.Promise;
                     });
                     global.bootstrap("promise", function (require, exports) {
-                        return bluebirdPromise;
+                        return exportedPromise;
                         //return global.Promise;
                     });
 
@@ -908,7 +909,8 @@ if(globalThis.browser) {
             return void 0;
         }
 
-        function makeCustomElementConstructor(superConstructor) {
+
+        window.makeCustomElementConstructor = function makeCustomElementConstructor(superConstructor) {
             var constructor = function () {
                 return Reflect.construct(
                     HTMLElement, [], constructor
@@ -996,8 +998,9 @@ if(globalThis.browser) {
                 var self = this,
                     component = this.instantiateComponent();
 
+                this._instance = component;
                 return this.findParentComponent().then(function (parentComponent) {
-                    self._instance = component;
+                    //self._instance = component;
                     parentComponent.addChildComponent(component);
                     component._canDrawOutsideDocument = true;
                     component.needsDraw = true;
@@ -1024,6 +1027,10 @@ if(globalThis.browser) {
             return Promise.resolve(candidate) || this.getRootComponent();
         };
 
+        MontageElement.prototype._deserializedFromTemplate = function (owner, label, documentPart) {
+            this._instance._deserializedFromTemplate(owner, label, documentPart);
+        }
+
         MontageElement.prototype.getRootComponent = function () {
             if (!MontageElement.rootComponentPromise) {
                 MontageElement.rootComponentPromise = this.require.async("montage/ui/component")
@@ -1044,6 +1051,7 @@ if(globalThis.browser) {
 
         MontageElement.prototype.bootstrapComponent = function (component) {
             var shadowRoot = this.attachShadow({ mode: 'open' }),
+                self = this,
                 mainEnterDocument = component.enterDocument,
                 mainTemplateDidLoad = component.templateDidLoad,
                 proxyElement = this.findProxyForElement(this);
@@ -1051,7 +1059,6 @@ if(globalThis.browser) {
             if (proxyElement) {
                 var observedAttributes = this.observedAttributes,
                     observedAttribute,
-                    self = this,
                     length;
 
                 if (observedAttributes && (length = observedAttributes.length)) {
@@ -1232,7 +1239,7 @@ if(globalThis.browser) {
                     window.addEventListener("message", messageCallback);
                 });
 
-                applicationRequirePromise = trigger.spread(function (location, injections) {
+                applicationRequirePromise = trigger.then(function ([location, injections]) {
                     var promise = Require.loadPackage({
                         location: location,
                         hash: applicationHash

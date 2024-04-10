@@ -11,22 +11,23 @@ var Component = require("ui/component").Component,
     @class module:montage/ui/control.Control
     @extends module:montage/ui/component.Component
  */
-var Control = exports.Control = Component.specialize(/** @lends module:montage/ui/control.Control# */ {
+var Control = exports.Control = class Control extends Component {/** @lends module:montage/ui/control.Control# */
+    constructor() {
+        super();
+        this.defineBindings({
+            // classList management
+            "classList.has('montage--disabled')": {
+                "<-": "disabled"
+            },
+            "classList.has('montage--active')": {
+                "<-": "active"
+            }
+        });
+    }
+}
 
-    constructor: {
-        value: function Control () {
-            this.defineBindings({
-                // classList management
-                "classList.has('montage--disabled')": {
-                    "<-": "disabled"
-                },
-                "classList.has('montage--active')": {
-                    "<-": "active"
-                }
-            });
-        }
-    },
-
+Control.addClassProperties(
+{
     /**
      * Dispatched when the button is activated through a mouse click, finger
      * tap, or when focused and the spacebar is pressed.

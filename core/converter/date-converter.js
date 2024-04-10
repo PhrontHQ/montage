@@ -2395,19 +2395,17 @@ var Montage = require("../core").Montage,
      * var d1 = Date.parse("7/1 10pm");
      */
     $D.parse = function (s) {
-        var r = null;
-        if (!s) {
-            return null;
+        var r = this._parse(s);
+        if(isNaN(r)) {
+            try {
+                r = $D.Grammar.start.call({}, s.replace(/^\s*(\S*(\s+\S+)*)\s*$/, "$1"));
+            } catch (e) {
+                return null;
+            }
+            return ((r[1].length === 0) ? r[0].valueOf() : NaN);
+        } else {
+            return r;
         }
-        if (s instanceof Date) {
-            return s;
-        }
-        try {
-            r = $D.Grammar.start.call({}, s.replace(/^\s*(\S*(\s+\S+)*)\s*$/, "$1"));
-        } catch (e) {
-            return null;
-        }
-        return ((r[1].length === 0) ? r[0] : null);
     };
 
     $D.getParseFunction = function (fx) {

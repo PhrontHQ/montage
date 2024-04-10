@@ -122,10 +122,8 @@ var Text = Montage.specialize({
     del: {
         value: function (isSlow) {
             var self = this;
-            var promise = Promise.resolve();
-            if(isSlow) {
-                promise.delay(20);
-            }
+            var promise = isSlow ? Promise.delay(20) : Promise.resolve();
+
             promise = promise.then(function () {
                 var c = self.text.charAt(self.text.length - 1);
                 self.text = self.text.substring(0, self.text.length - 1);

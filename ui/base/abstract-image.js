@@ -21,7 +21,7 @@ exports.AbstractImage = Component.specialize( /** @lends AbstractImage# */ {
 
     constructor: {
         value: function AbstractImage() {
-            if(this.constructor === AbstractImage) {
+            if(this.constructor === exports.AbstractImage) {
                 throw new Error("AbstractImage cannot be instantiated.");
             }
 

@@ -17,7 +17,7 @@ var AbstractVideo = exports.AbstractVideo = Component.specialize(/** @lends Abst
      */
     constructor: {
         value: function AbstractVideo() {
-            if (this.constructor === AbstractVideo) {
+            if (this.constructor === exports.AbstractVideo) {
                 throw new Error("AbstractVideo cannot be instantiated.");
             }
         }

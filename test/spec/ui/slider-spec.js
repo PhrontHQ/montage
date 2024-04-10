@@ -6,7 +6,7 @@ var MockEvent = require("mocks/event");
 describe("test/ui/slider-spec", function () {
     describe("creation", function () {
         it("can be instantiated as a subtype", function () {
-            var SliderSubtype = Slider.specialize( {});
+            var SliderSubtype = class SliderSubtype extends Slider {};
             var aSliderSubtype = null;
             expect(function () {
                 aSliderSubtype = new SliderSubtype();
@@ -15,7 +15,7 @@ describe("test/ui/slider-spec", function () {
         });
     });
     describe("properties", function () {
-        var SpecializedSlider = Slider.specialize( {}),
+        var SpecializedSlider = class SpecializedSlider extends Slider {},
             aSlider;
         beforeEach(function () {
             aSlider = new SpecializedSlider();

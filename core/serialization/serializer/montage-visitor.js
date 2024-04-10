@@ -20,7 +20,7 @@ var MontageVisitor = Montage.specialize({
         value: function (builder, labeler, require, units) {
             this.builder = builder;
             this.labeler = labeler;
-            this._objectsSerialization = Object.create(null);
+            this._objectsSerialization = new Map();
             this._require = require;
             this._units = units;
             this._elements = [];
@@ -32,7 +32,7 @@ var MontageVisitor = Montage.specialize({
     cleanup: {
         value: function() {
             this._elements = [];
-            this._objectsSerialization = Object.create(null);
+            this._objectsSerialization =  new Map();
         }
     },
 
@@ -327,7 +327,9 @@ var MontageVisitor = Montage.specialize({
                 wasLoadedFromMJSON = objectInfo.module.endsWith(".mjson"),
                 isInstance = objectInfo.isInstance,
                 locationId = (isInstance && wasLoadedFromMJSON)
-                    ? (objectInfo.require.config.name+"/"+objectInfo.module)
+                    ? this._require.config.name === objectInfo.require.config.name
+                        ? objectInfo.module
+                        :(objectInfo.require.config.name+"/"+objectInfo.module)
                     : this.getObjectLocationId(object, objectInfo),
                 locationIdBuilderObject = this.builder.createString(locationId),
                 type = (isInstance && !wasLoadedFromMJSON) ? "prototype" : "object";
@@ -376,7 +378,7 @@ var MontageVisitor = Montage.specialize({
                 objectInfo = Montage.getInfoForObject(object);
             }
 
-            if(!objectInfo.require.isMainPackage() && objectInfo.packageName !== "montage") {
+            if(!objectInfo.require.isMainPackage() && objectInfo.packageName !== "montage" && !moduleId.startsWith(objectInfo.packageName)) {
                 var _moduleId = objectInfo.packageName;
                 _moduleId += "/";
                 moduleId = (_moduleId += moduleId);
@@ -574,19 +576,19 @@ var MontageVisitor = Montage.specialize({
 
     setObjectSerialization: {
         value: function(object, serialization) {
-            this._objectsSerialization[Object.hash(object)] = serialization;
+            this._objectsSerialization.set(object, serialization);
         }
     },
 
     getObjectSerialization: {
         value: function(object) {
-            return this._objectsSerialization[Object.hash(object)];
+            return this._objectsSerialization.get(object);
         }
     },
 
     isObjectSerialized: {
         value: function(object) {
-            return Object.hash(object) in this._objectsSerialization;
+            return this._objectsSerialization.has(object);
         }
     },
 

@@ -21,7 +21,7 @@ exports.URLSearchParamIdentityService = URLSearchParamIdentityService = Identity
 
     constructor: {
         value: function URLSearchParamIdentityService() {
-            IdentityService.call(this);
+            this.super();
 
             return this;
         }

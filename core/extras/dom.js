@@ -224,9 +224,12 @@ if (typeof DOMTokenList !== "undefined") {
 
     if (typeof DOMTokenListPrototype.has === 'undefined') {
         Object.defineProperty(DOMTokenListPrototype, 'has', {
-            value: function (key) {
-                return this.contains(key);
-            }
+            value: DOMTokenListPrototype.contains
+        });
+    }
+    if (typeof DOMTokenListPrototype.delete === 'undefined') {
+        Object.defineProperty(DOMTokenListPrototype, 'delete', {
+            value: DOMTokenListPrototype.remove
         });
     }
 }

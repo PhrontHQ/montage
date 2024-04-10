@@ -282,7 +282,7 @@ function _stringMatchRFC3339(dString, isString) {
     // if ((isString !== true || (typeof dString != 'string')) && !dString.endsWith("Z")) return;
     // return dString.match(_stringMatchRFC3339.parseRFC3339_RegExp);
 
-    if ((isString || typeof dString === 'string') && dString.endsWith("Z")) {
+    if ((isString || typeof dString === 'string') && (dString.endsWith("Z") || dString.endsWith("z"))) {
         return dString.match(_stringMatchRFC3339.parseRFC3339_RegExp);
     }
 

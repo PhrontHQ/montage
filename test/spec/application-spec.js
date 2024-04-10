@@ -68,7 +68,7 @@ TestPageLoader.queueTest("application-test", {src: "spec/application-test/applic
                 testWindow = testPage.iframe.contentWindow;
             });
             it("should be added to exports", function (done) {
-                
+
                 testWindow.mr.async("montage/core/application")
                     .then(function (exports) {
                         expect(exports.application).toBeDefined();
@@ -78,8 +78,9 @@ TestPageLoader.queueTest("application-test", {src: "spec/application-test/applic
 
             describe("delegate", function () {
                 it("should have willFinishLoading method called", function (done) {
-                    testWindow.mr.async("montage/core/application").get("application")
-                        .then(function (testApplication) {
+                    testWindow.mr.async("montage/core/application")
+                        .then(function (exports) {
+                            const testApplication = exports.application;
                             expect(testApplication.delegate.willFinishLoadingCalled).toBeTruthy();
                             done();
                         })

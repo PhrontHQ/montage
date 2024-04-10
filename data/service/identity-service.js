@@ -14,7 +14,7 @@ exports.IdentityService = IdentityService = RawDataService.specialize( /** @lend
 
     constructor: {
         value: function IdentityService() {
-            RawDataService.call(this);
+            this.super();
             /*
                 This is done in DataService's constructor as well,
                 needs to decide where is best, but not do it twice.
