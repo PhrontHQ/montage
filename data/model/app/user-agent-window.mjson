@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "montage/core/meta/module-object-descriptor",
+        "prototype": "../../core/meta/module-object-descriptor",
         "values": {
             "name": "UserAgentWindow",
             "propertyDescriptors": [
@@ -23,14 +23,14 @@
         "object": "../data-object.mjson"
     },
     "name": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "name",
             "valueType": "string"
         }
     },
     "durationTimeRange": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "durationTimeRange",
             "valueType": "date",
@@ -39,10 +39,10 @@
         }
     },
     "range_descriptor": {
-        "object": "montage/core/range.mjson"
+        "object": "../../core/range.mjson"
     },
     "positionTimeLog": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "positionTimeLog",
             "cardinality": -1,

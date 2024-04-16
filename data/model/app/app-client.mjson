@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "montage/core/meta/module-object-descriptor",
+        "prototype": "../../core/meta/module-object-descriptor",
         "values": {
             "name": "AppClient",
             "propertyDescriptors": [
@@ -25,14 +25,14 @@
         "object": "../data-object.mjson"
     },
     "name": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "name",
             "valueType": "string"
         }
     },
     "applicationProperty": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "application",
             "cardinality": 1,
@@ -47,14 +47,14 @@
     },
 
     "identifier": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "identifier",
             "valueType": "string"
         }
     },
     "credentials": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "credentials",
             "valueType": "string",
@@ -62,7 +62,7 @@
         }
     },
     "userPool": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "userPool",
             "cardinality": 1,
@@ -75,7 +75,7 @@
         "object": "./user-pool.mjson"
     },
     "cognitoUserPoolClient": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "cognitoUserPoolClient",
             "cardinality": 1,

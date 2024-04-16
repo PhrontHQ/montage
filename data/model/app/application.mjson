@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "montage/core/meta/module-object-descriptor",
+        "prototype": "../../../core/meta/module-object-descriptor",
         "values": {
             "name": "Application",
             "propertyDescriptors": [
@@ -23,14 +23,14 @@
         "object": "../data-object.mjson"
     },
     "name": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "name",
             "valueType": "string"
         }
     },
     "appClients": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "appClients",
             "cardinality": -1,
@@ -43,7 +43,7 @@
         "object": "./app-client.mjson"
     },
     "controllingOrganization": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "controllingOrganization",
             "cardinality": 1,
@@ -57,7 +57,7 @@
         "object": "../organization.mjson"
     },
     "webSocketSessions": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "webSocketSessions",
             "cardinality": -1,

@@ -1,6 +1,6 @@
-var Target = require("montage/core/target").Target,
-DataService = require("montage/data/service/data-service").DataService,
-DataEvent = require("montage/data/model/data-event").DataEvent;
+var Target = require("../../core/target").Target,
+DataService = require("../service/data-service").DataService,
+DataEvent = require("./data-event").DataEvent;
 
 /**
  * @class DataObject
