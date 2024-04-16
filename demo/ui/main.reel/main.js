@@ -1,5 +1,5 @@
 /**
- * @module "ui/main.reel"
+ * @module "ui/main.mod"
  */
 var Component = require("montage/ui/component").Component,
     data = require('core/data');

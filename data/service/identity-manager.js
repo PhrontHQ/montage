@@ -106,7 +106,7 @@ IdentityManager = Montage.specialize( /** @lends AuthorizationService.prototype 
      */
 
     authenticationManagerPanelModule: {
-        value: "ui/authentication-manager-panel.reel"
+        value: "ui/authentication-manager-panel.mod"
     },
 
     _managerPanel: {

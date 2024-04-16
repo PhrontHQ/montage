@@ -1,6 +1,6 @@
 /*global describe, it, expect */
 var Montage = require("montage").Montage;
-var Slider = require("montage/ui/slider.reel").Slider;
+var Slider = require("montage/ui/slider.mod").Slider;
 var MockEvent = require("mocks/event");
 
 describe("test/ui/slider-spec", function () {

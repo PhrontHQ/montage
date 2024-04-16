@@ -338,9 +338,9 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
     surrenderPointer: {
         value: function (pointer, component) {
             var shouldSurrender = this.callDelegateMethod(
-                "shouldComposerSurrenderPointerToComponent", 
-                this, 
-                pointer, 
+                "shouldComposerSurrenderPointerToComponent",
+                this,
+                pointer,
                 component
             );
 
@@ -741,7 +741,7 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
 
             var wheelEventName = typeof window.onwheel !== "undefined" || typeof window.WheelEvent !== "undefined" ?
                 "wheel" : "mousewheel";
-            
+
             if (this.shawdowRoot) {
                 this.shawdowRoot.addEventListener(wheelEventName, this, true);
                 this.shawdowRoot.addEventListener("scroll", this, true);
@@ -791,7 +791,7 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
                     // no mouse events are fired
                     // http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#initiate-the-drag-and-drop-operation
                     this._element.removeEventListener("dragstart", this, false);
-                    
+
 
                 } else {
                     if (this.shawdowRoot) {
@@ -808,7 +808,7 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
 
             var wheelEventName = typeof window.onwheel !== "undefined" || typeof window.WheelEvent !== "undefined" ?
                 "wheel" : "mousewheel";
-            
+
             if (this.shawdowRoot) {
                 this.shawdowRoot.removeEventListener(wheelEventName, this, true);
                 this.shawdowRoot.removeEventListener("scroll", this, true);
@@ -894,7 +894,7 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
                     // Knowing that, the simulated mouse events are not dispatched by the event manager, but they are still
                     // walking the dom. An issue could happen here when the positioning of elements is changing (z-index)
                     // after the press event has been raised, which could result to giving the focus to a wrong element.
-                    // @example: @see press-composer.info
+                    // @example: @see press-composer.mod/teach
                     //@todo: should be deprecated when browsers will support PointerEvents.
                     var dispatchSafePressCallBack = function (mouseDownEvent) {
                         if (touchEndTargetElement === mouseDownEvent.target ||

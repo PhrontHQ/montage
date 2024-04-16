@@ -201,7 +201,7 @@ Require.NodeLoader = function NodeLoader(config) {
 };
 
 Require.makeLoader = function makeLoader(config) {
-    return Require.ReelLoader(config,
+    return Require.ModLoader(config,
         Require.MappingsLoader(
             config,
             Require.LocationLoader(

@@ -26,7 +26,7 @@
         "object": "ui/component.mjson"
     },
     "text_reference": {
-        "object": "ui/text.reel/text.mjson"
+        "object": "ui/text.mod/text.mjson"
     },
     "root": {
         "prototype": "core/meta/module-object-descriptor",
@@ -56,11 +56,11 @@
             },
             "propertyValidationRules": {},
             "objectDescriptorModule": {
-                "%": "ui/label.reel/label.mjson"
+                "%": "ui/label.mod/label.mjson"
             },
             "exportName": "Label",
             "module": {
-                "%": "ui/label.reel"
+                "%": "ui/label.mod"
             }
         }
     }

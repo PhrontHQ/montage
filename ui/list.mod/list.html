@@ -9,12 +9,12 @@
                 "values": {
                     "element": {"#": "list"},
                     "selection": {"<->": "@repetition.selection"},
-                    "montageListItemModule": { "%": "../list-item.reel"}
-                } 
+                    "montageListItemModule": { "%": "../list-item.mod"}
+                }
             },
 
             "repetition": {
-                "prototype": "../repetition.reel",
+                "prototype": "../repetition.mod",
                 "values": {
                     "element": {"#": "repetition"},
                     "isSelectionEnabled": {"<-": "@owner.isSelectionEnabled"},
@@ -26,9 +26,9 @@
             ":iteration": {
                "alias": "@repetition:iteration"
             },
-            
+
             "placeholder": {
-                "prototype": "../placeholder.reel",
+                "prototype": "../placeholder.mod",
                 "values": {
                     "element": {"#": "placeholder"},
                     "data": {"<-": "@repetition:iteration.object"},
@@ -42,7 +42,7 @@
                     "component.active": {"<-": "@repetition:iteration.active"},
                     "component.classList.has('ListItem')": {"<-": "true"}
                 }
-            }          
+            }
         }
     </script>
 </head>

@@ -313,7 +313,7 @@ describe("meta/object-descriptor-spec", function () {
             });
 
             it("has the correct module id for the parent", function (done) {
-                var ComponentObjectDescriptorTest1 = require("spec/meta/component-object-descriptor-test/component-object-descriptor-test-1.reel").ComponentObjectDescriptorTest1;
+                var ComponentObjectDescriptorTest1 = require("spec/meta/component-object-descriptor-test/component-object-descriptor-test-1.mod").ComponentObjectDescriptorTest1;
                 ObjectDescriptor.createDefaultObjectDescriptorForObject(ComponentObjectDescriptorTest1).then(function (objectDescriptor) {
                     var id = objectDescriptor.parent.objectDescriptorInstanceModule.resolve(require);
                     expect(id === "montage/ui/component.mjson" || id === "montage/ui/component.mjson").toBeTruthy();
@@ -476,7 +476,7 @@ describe("meta/object-descriptor-spec", function () {
                     return objectDescriptor.userInterfaceDescriptor.then(function (userInterfaceDescriptor) {
                         expect(userInterfaceDescriptor).toBeTruthy();
                         expect(userInterfaceDescriptor.descriptionExpression).toBe("department");
-                        expect(userInterfaceDescriptor.inspectorComponentModule.id).toBe("ui/inspectors/employee.reel");
+                        expect(userInterfaceDescriptor.inspectorComponentModule.id).toBe("ui/inspectors/employee.mod");
 
                         return customer.constructor.objectDescriptor.then(function (objectDescriptor) {
                             return objectDescriptor.userInterfaceDescriptor.then(function (userInterfaceDescriptor) {

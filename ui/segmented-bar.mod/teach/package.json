@@ -1,0 +1,10 @@
+{
+	"name": "teach-segmented-bar-mod",
+	"private": true,
+    "dependencies": {
+        "montage": "*"
+    },
+    "mappings": {
+        "montage": "../../../"
+    }
+}

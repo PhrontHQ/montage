@@ -3,10 +3,10 @@
         "prototype": "core/meta/user-interface-descriptor",
         "values": {
             "inspectorComponentModule": {
-                "%": "test/mocks/data/inspectors/department.reel"
+                "%": "test/mocks/data/inspectors/department.mod"
             },
             "creatorInspectorComponentModule": {
-                "%": "test/mocks/data/inspectors/department.reel"
+                "%": "test/mocks/data/inspectors/department.mod"
             },
             "iconExpression": "thumbnail",
             "collectionNameExpression": "'Departments'",

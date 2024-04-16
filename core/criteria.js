@@ -239,7 +239,7 @@ var Criteria = exports.Criteria = Montage.specialize({
                         currentSyntax;
 
                     /*
-                        It's called components because that was the initial reason this was created, serialization was first used in .reels, for component templates.
+                        It's called components because that was the initial reason this was created, serialization was first used in .mods, for component templates.
                     */
                     this._setScopeComponents(scopeComponents);
                     //Alias get to the method name that frb complile-evaluator expects:
@@ -315,7 +315,7 @@ var Criteria = exports.Criteria = Montage.specialize({
     _setScopeComponents: {
         value: function(components /* Map */) {
             /*
-                It's called components because that was the initial reason this was created, serialization was first used in .reels, for component templates.
+                It's called components because that was the initial reason this was created, serialization was first used in .mods, for component templates.
             */
             this._scope.components = components;
             //Alias get to the method name that frb complile-evaluator expects:

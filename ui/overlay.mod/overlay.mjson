@@ -74,11 +74,11 @@
                 ]
             },
             "objectDescriptorModule": {
-                "%": "ui/overlay.reel/overlay.mjson"
+                "%": "ui/overlay.mod/overlay.mjson"
             },
             "exportName": "Overlay",
             "module": {
-                "%": "ui/overlay.reel"
+                "%": "ui/overlay.mod"
             }
         }
     }

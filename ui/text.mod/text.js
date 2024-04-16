@@ -1,7 +1,7 @@
 /*global require, exports, console, MontageElement */
 
 /**
- * @module "montage/ui/text.reel"
+ * @module "montage/ui/text.mod"
  */
 var Component = require("../component").Component;
 

@@ -2,7 +2,7 @@
 "use strict";
 
 /**
- * @module "montage/ui/segmented-bar.reel"
+ * @module "montage/ui/segmented-bar.mod"
  * @requires montage/ui/base/abstract-button
  * @requires montage/core/range-controller
  * @requires montage/core/tree-controller

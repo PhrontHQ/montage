@@ -14,7 +14,7 @@ require.loadPackage(parentWindow.require.location)
 
     return require.async("montage/ui/component")
     .then(function (/*exports*/) {
-        return require.async("montage/ui/loader.reel")
+        return require.async("montage/ui/loader.mod")
         .then(function (exports) {
             var mainComponent = exports.Loader.create();
             mainComponent.mainModule = module;

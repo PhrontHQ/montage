@@ -1,20 +1,20 @@
 /**
-    @module "montage/ui/native/textarea.reel"
+    @module "montage/ui/native/textarea.mod"
 */
 
 var TextInput = require("ui/text-input").TextInput;
 
 /**
  * Wraps the a &lt;textarea> element with binding support for the element's standard attributes. Uses an ArrayController instance to manage the element's contents and selection.
-   @class module:"montage/ui/native/textarea.reel".Textarea
+   @class module:"montage/ui/native/textarea.mod".Textarea
    @extends module:montage/ui/text-input.TextInput
  */
 
-var TextArea = exports.TextArea = TextInput.specialize(/** @lends module:"montage/ui/native/textarea.reel".Textarea# */ {
+var TextArea = exports.TextArea = TextInput.specialize(/** @lends module:"montage/ui/native/textarea.mod".Textarea# */ {
     hasTemplate: {value: false }
 });
 
-TextArea.addAttributes( /** @lends module:"montage/ui/native/textarea.reel".Textarea# */ {
+TextArea.addAttributes( /** @lends module:"montage/ui/native/textarea.mod".Textarea# */ {
 
 /**
     The maximum number of characters per line of text to display.

@@ -1,0 +1,8 @@
+{
+    "owner": {
+        "prototype": "reel/template/externalserialization.mod[ExternalSerialization]",
+        "values": {
+            "element": {"#": "main"}
+        }
+    }
+}

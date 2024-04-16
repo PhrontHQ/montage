@@ -1,7 +1,7 @@
 /*global require, exports, console, MontageElement */
 
 /**
-    @module "montage/ui/native/input-range.reel"
+    @module "montage/ui/native/input-range.mod"
 */
 
 var Control = require("ui/control").Control,
@@ -12,7 +12,7 @@ var Control = require("ui/control").Control,
 
 /**
  * Wraps the a &lt;input type="range"> element with binding support for the element's standard attributes.
-   @class module:"montage/ui/native/input-range.reel".InputRange
+   @class module:"montage/ui/native/input-range.mod".InputRange
    @extends module:montage/ui/text-input.TextInput
  */
 var Slider = exports.Slider = class Slider extends Control {
@@ -844,7 +844,7 @@ Should introduce a validate method
 
 });
 
-Slider.addAttributes( /** @lends module:"montage/ui/native/input-range.reel".InputRange# */ {
+Slider.addAttributes( /** @lends module:"montage/ui/native/input-range.mod".InputRange# */ {
 /**
     The maximum value displayed but the input control.
     @type {number}

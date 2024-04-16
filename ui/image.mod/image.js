@@ -1,5 +1,5 @@
 /**
-    @module "montage/ui/native/image.reel"
+    @module "montage/ui/native/image.mod"
     @requires montage/ui/component
     @requires montage/ui/native-control
 */
@@ -7,14 +7,14 @@ var Component = require("ui/component").Component;
 
 /**
  * Wraps the a &lt;img> element with binding support for its standard attributes.
-   @class module:"montage/ui/native/image.reel".Image
+   @class module:"montage/ui/native/image.mod".Image
    @extends module:montage/ui/control.Control
  */
 exports.Image = Component.specialize({
     hasTemplate: {value: true }
 });
 
-exports.Image.addAttributes(/** @lends module:"montage/ui/native/image.reel".Image */{
+exports.Image.addAttributes(/** @lends module:"montage/ui/native/image.mod".Image */{
 
 /**
     A text description to display in place of the image.

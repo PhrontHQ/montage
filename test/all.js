@@ -107,8 +107,8 @@ module.exports = require("montage/testing/run").run(require, [
     {name: "spec/ui/segmented-bar/segmented-bar-spec", node: false, karma: false},
     {name: "spec/ui/flow-spec", node: false},
     {name: "spec/ui/component-spec", node: false},
-    // Reel
-    {name: "spec/reel/template-spec", node: false, karma: true},
+    // Mod
+    {name: "spec/mod/template-spec", node: false, karma: true},
     // UI - repetition
     {name: "spec/ui/repetition-spec", node: false, karma: false},
     {name: "spec/ui/repetition-selection-spec", node: false, karma: false},

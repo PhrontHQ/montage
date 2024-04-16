@@ -8,11 +8,11 @@ var Control = require("ui/control").Control,
     The base class for all text-based input components. You typically won't create instances of this prototype.
     @class module:montage/ui/text-input.TextInput
     @extends module:montage/ui/component.Component
-    @see {module:"montage/ui/input-date.reel".DateInput}
-    @see module:"montage/ui/input-text.reel".InputText
-    @see module:"montage/ui/input-number.reel".InputNumber
-    @see module:"montage/ui/input-range.reel".RangeInput
-    @see module:"montage/ui/textarea.reel".TextArea
+    @see {module:"montage/ui/input-date.mod".DateInput}
+    @see module:"montage/ui/input-text.mod".InputText
+    @see module:"montage/ui/input-number.mod".InputNumber
+    @see module:"montage/ui/input-range.mod".RangeInput
+    @see module:"montage/ui/textarea.mod".TextArea
 
 */
 
@@ -22,8 +22,10 @@ To-DO: Move value logic with converter to Control
 
 
 */
+var TextInput = exports.TextInput = class TextInput extends Control {/** @lends module:montage/ui/text-input.TextInput# */
+}
 
-var TextInput = exports.TextInput =  Control.specialize(/** @lends module:montage/ui/text-input.TextInput# */ {
+TextInput.addClassProperties({
     select: {
         value: function() {
             this._element.select();

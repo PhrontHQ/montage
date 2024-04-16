@@ -1,7 +1,7 @@
 /*global require, exports, window*/
 
 /**
- * @module montage/ui/base/abstract-slider.reel
+ * @module montage/ui/base/abstract-slider.mod
  * @requires montage/ui/component
  * @requires montage/ui/native-control
  * @requires montage/composer/press-composer

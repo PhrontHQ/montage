@@ -63,11 +63,11 @@
                 ]
             },
             "objectDescriptorModule": {
-                "%": "ui/substitution.reel/substitution.mjson"
+                "%": "ui/substitution.mod/substitution.mjson"
             },
             "exportName": "Substitution",
             "module": {
-                "%": "ui/substitution.reel"
+                "%": "ui/substitution.mod"
             }
         }
     }

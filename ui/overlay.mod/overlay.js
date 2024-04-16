@@ -1,7 +1,7 @@
 /*global require, exports, console, MontageElement */
 
 /**
- * @module "ui/overlay.reel"
+ * @module "ui/overlay.mod"
  */
 var Component = require("../component").Component,
     KeyComposer = require("../../composer/key-composer").KeyComposer,

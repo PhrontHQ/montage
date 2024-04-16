@@ -1,7 +1,7 @@
 /**
- * @module "montage/ui/substitution.reel"
+ * @module "montage/ui/substitution.mod"
  */
-var Slot = require("../slot.reel").Slot,
+var Slot = require("../slot.mod").Slot,
     Promise = require("../../core/promise").Promise,
     logger = require("../../core/logger").logger("substitution");
 

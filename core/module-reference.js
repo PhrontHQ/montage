@@ -81,7 +81,7 @@ exports.ModuleReference = class ModuleReference extends Montage {
      * ref.resolve(applicationRequire); // => "montage/core/uuid"
      *
      * @example
-     * var ref = new ModuleReference().initWithIdAndRequire("ui/main.reel", applicationRequire);
+     * var ref = new ModuleReference().initWithIdAndRequire("ui/main.mod", applicationRequire);
      * ref.resolve(montageRequire); // => Error
      * // because there is no module id such that montageRequire(id) can
      * // return the module from inside your application
@@ -146,7 +146,7 @@ exports.ModuleReference = class ModuleReference extends Montage {
 //      * ref.resolve(applicationRequire); // => "montage/core/uuid"
 //      *
 //      * @example
-//      * var ref = new ModuleReference().initWithIdAndRequire("ui/main.reel", applicationRequire);
+//      * var ref = new ModuleReference().initWithIdAndRequire("ui/main.mod", applicationRequire);
 //      * ref.resolve(montageRequire); // => Error
 //      * // because there is no module id such that montageRequire(id) can
 //      * // return the module from inside your application

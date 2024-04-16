@@ -817,13 +817,13 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
 
                         if we replace $ which so far has been a value, by the type qualified symbol, it would becomes:
                         "$type.respondentQuestionnaireIds.has(id)", {
-                            "type":"data/main.datareel/model/event"
+                            "type":"data/main.mod/model/event"
                         }
 
                     Adding what we do for readExpression:
                     Type to fetch is RespondentQuestionnaire
                         "$type.respondentQuestionnaireIds.has(id) && id == $id", {
-                            "type":"data/main.datareel/model/event",
+                            "type":"data/main.mod/model/event",
                             "id": object.dataIdentifier.primaryKey
                         }
 

@@ -6,7 +6,7 @@
             "nameExpression": "lastname + ' ' + firstname",
             "descriptionExpression": "city",
             "collectionItemComponentModule": {
-                "%": "test/mocks/data/customer-item.reel"
+                "%": "test/mocks/data/customer-item.mod"
             }
         }
     }

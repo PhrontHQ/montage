@@ -1,5 +1,5 @@
 /**
- * @module ui/tree-list.reel
+ * @module ui/tree-list.mod
  * @requires montage/ui/component
  */
 var Component = require("../component").Component,

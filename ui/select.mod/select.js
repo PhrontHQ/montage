@@ -1,5 +1,5 @@
 /**
-    @module "montage/ui/native/select.reel"
+    @module "montage/ui/native/select.mod"
 */
 
 var Bindings = require("core/core").Bindings,
@@ -11,7 +11,7 @@ var Bindings = require("core/core").Bindings,
     Wraps the a &lt;select&gt; element with binding support for the element's
     standard attributes. Uses an ArrayController instance to manage the
     element's contents and selection.
-    @class module:"montage/ui/native/select.reel".Select
+    @class module:"montage/ui/native/select.mod".Select
     @extends module:montage/ui/component.Component
     @summary
     If the &lt;select&gt; markup contains <option> is provided in the markup
@@ -21,13 +21,13 @@ var Bindings = require("core/core").Bindings,
     in the markup are overwritten by the values from the
     <code>contentController</code> when they are available.
  */
-var Select = exports.Select =  Control.specialize(/** @lends module:"montage/ui/native/select.reel".Select */ {
+var Select = exports.Select =  Control.specialize(/** @lends module:"montage/ui/native/select.mod".Select */ {
 
     _fromInput: {value: null},
     _synching: {value: null},
     //_internalSet: {value: null},
     hasTemplate: {value: false },
-    
+
     _selectedIndexes: {
         value: null
     },
@@ -496,7 +496,7 @@ var Select = exports.Select =  Control.specialize(/** @lends module:"montage/ui/
 
 //http://www.w3.org/TR/html5/the-button-element.html#the-select-element
 
-Select.addAttributes( /** @lends module:"montage/ui/native/select.reel".Select */ {
+Select.addAttributes( /** @lends module:"montage/ui/native/select.mod".Select */ {
 /**
     Specifies whether the element should be focused as soon as the page is loaded.
     @type {boolean}

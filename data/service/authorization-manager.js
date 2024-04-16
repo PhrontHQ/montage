@@ -4,7 +4,7 @@ var Montage = require("../../core/core").Montage,
     Set = require("../../core/collections/set"),
     application = require("../../core/application").application,
     AuthorizationPolicy = require("./authorization-policy").AuthorizationPolicy,
-    MANAGER_PANEL_MODULE = "ui/authorization-manager-panel.reel";
+    MANAGER_PANEL_MODULE = "ui/authorization-manager-panel.mod";
 
 
 /**

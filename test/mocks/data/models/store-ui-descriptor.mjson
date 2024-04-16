@@ -3,7 +3,7 @@
         "prototype": "core/meta/user-interface-descriptor",
         "values": {
             "iconComponentModule": {
-                "%": "test/mocks/data/icons/store.reel"
+                "%": "test/mocks/data/icons/store.mod"
             },
             "collectionNameExpression": "'Stores'",
             "nameExpression": "name",

@@ -1,5 +1,5 @@
 /**
- * @module "ui/segmented-bar.reel/segment.reel"
+ * @module "ui/segmented-bar.mod/segment.mod"
  * @requires montage/ui/component
  */
 var Component = require("ui/component").Component;

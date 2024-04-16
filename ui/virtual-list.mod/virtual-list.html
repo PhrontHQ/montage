@@ -9,21 +9,21 @@
                     "element": {"#": "virtual-list"},
                     "flow": {"@": "flow"},
                     "selection": {"<->": "@flow.selection"},
-                    "montageListItemModule": { "%": "../list-item.reel"},
+                    "montageListItemModule": { "%": "../list-item.mod"},
                     "_scrollBars": {"@": "scrollbars"},
                     "_scroll": {"<->": "@flow.scroll"}
                 }
             },
 
             "scrollbars": {
-                "prototype": "../scroller.reel/scroll-bars.reel",
+                "prototype": "../scroller.mod/scroll-bars.mod",
                 "values": {
                     "element": {"#": "scrollbars"}
                 }
             },
 
             "flow": {
-                "prototype": "../flow.reel",
+                "prototype": "../flow.mod",
                 "values": {
                     "element": {"#": "flow"},
                     "paths": [{
@@ -59,7 +59,7 @@
             },
 
             "placeholder": {
-                "prototype": "../placeholder.reel",
+                "prototype": "../placeholder.mod",
                 "values": {
                     "element": {"#": "placeholder"},
                     "data": {"<-": "@flow:iteration.object"},
@@ -73,7 +73,7 @@
                     "component.active": {"<-": "@flow:iteration.active"},
                     "component.classList.has('ListItem')": {"<-": "true"}
                 }
-            }          
+            }
         }
     </script>
 </head>

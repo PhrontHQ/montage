@@ -114,11 +114,11 @@
                 ]
             },
             "objectDescriptorModule": {
-                "%": "ui/repetition.reel/repetition.mjson"
+                "%": "ui/repetition.mod/repetition.mjson"
             },
             "exportName": "Repetition",
             "module": {
-                "%": "ui/repetition.reel"
+                "%": "ui/repetition.mod"
             }
         }
     }

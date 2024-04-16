@@ -1,5 +1,5 @@
 /**
-    @module "montage/ui/native/input-date.reel"
+    @module "montage/ui/native/input-date.mod"
     @requires montage/core/core
     @requires montage/ui/component
     @requires montage/ui/text-input
@@ -9,7 +9,7 @@ var TextInput = require("ui/text-input").TextInput,
 
 /**
   	Wraps an &lt;input type="date"> element as a component.
-    @class module:"montage/ui/native/input-date.reel".InputDate
+    @class module:"montage/ui/native/input-date.mod".InputDate
     @extends module:montage/ui/text-input.TextInput
  */
 var DateField = exports.DateField = TextInput.specialize({
@@ -23,7 +23,7 @@ var DateField = exports.DateField = TextInput.specialize({
 
 });
 
-DateField.addAttributes( /** @lends module:"montage/ui/native/input-date.reel".InputDate# */{
+DateField.addAttributes( /** @lends module:"montage/ui/native/input-date.mod".InputDate# */{
 
 /**
 	The upper bound for the element’s value represented in the "full-date" format, (for example, 2001-05-24).

@@ -1,5 +1,5 @@
 /**
- * @module "montage/ui/loader.reel"
+ * @module "montage/ui/loader.mod"
  */
 var ComponentModule = require("../component"),
     Component = ComponentModule.Component,
@@ -352,7 +352,7 @@ exports.Loader = Component.specialize( /** @lends Loader.prototype # */ {
                 return self._mainLoadedCallback(exports);
             })
             .catch((error) => {
-                console.log("Please rename main.reel to main.mod")
+                console.log("Please rename main.mod to main.mod")
                 return global.require.async(self.legacyMainModule)
                 .then(function (exports) {
                     if (!(self.mainName in exports)) {

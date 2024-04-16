@@ -1,5 +1,5 @@
 /**
- * @module "montage/ui/succession.reel"
+ * @module "montage/ui/succession.mod"
  */
 var Component = require("ui/component").Component;
 

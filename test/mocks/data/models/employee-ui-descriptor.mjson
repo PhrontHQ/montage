@@ -3,13 +3,13 @@
         "prototype": "core/meta/user-interface-descriptor",
         "values": {
             "inspectorComponentModule": {
-                "%": "test/mocks/data/inspectors/employee.reel"
+                "%": "test/mocks/data/inspectors/employee.mod"
             },
             "creatorInspectorComponentModule": {
-                "%": "test/mocks/data/creators/employee.reel"
+                "%": "test/mocks/data/creators/employee.mod"
             },
             "collectionInspectorComponentModule": {
-                "%": "ui/list.reel"
+                "%": "ui/list.mod"
             },
             "collectionNameExpression": "'Employees'",
             "nameExpression": "lastname + ' ' + firstname",

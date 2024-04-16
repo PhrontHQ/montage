@@ -195,11 +195,11 @@
             },
             "propertyValidationRules": {},
             "objectDescriptorModule": {
-                "%": "ui/flow.reel/flow.mjson"
+                "%": "ui/flow.mod/flow.mjson"
             },
             "exportName": "Flow",
             "module": {
-                "%": "ui/flow.reel"
+                "%": "ui/flow.mod"
             }
         }
     }

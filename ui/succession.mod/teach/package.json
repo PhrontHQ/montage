@@ -1,0 +1,10 @@
+{
+    "name": "teach-succession-mod",
+    "private": true,
+    "dependencies": {
+        "montage": "*"
+    },
+    "mappings": {
+        "montage": "../../../"
+    }
+}

@@ -1,6 +1,6 @@
 /*global require,exports,describe,it,expect */
 var Montage = require("montage").Montage,
-    ModalOverlay = require("montage/ui/modal-overlay.reel").ModalOverlay,
+    ModalOverlay = require("montage/ui/modal-overlay.mod").ModalOverlay,
     Promise = require("montage/core/promise").Promise,
     MockDOM = require("mocks/dom"),
     defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;

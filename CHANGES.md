@@ -8,11 +8,11 @@
 - Minor NodeJS fix
 
 ### v17.0.3
-- Fix Mop support 
+- Fix Mop support
 
 ### v17.0.2
  - Fix Mop-integration support
- 
+
 ### v17.0.1
 
   - Upgrade tests stack
@@ -23,7 +23,7 @@
     - Migrate Phantom.js tests runner to Karma (npm run test:karma)
   - jshint and other minors fix.
   - implement initial support for NodeJS
-  
+
 ### v17.0.0
 
 - Other minor fixes
@@ -51,13 +51,13 @@
     - Deprecates the property enabled within Control, disabled should be used
     - Removes deprecated enabled usage in Control and the PressComposer
     - Keeps cursor position within a text input when using a converter
- 
+
 
 ### v16.0.2
 
-- Addresses a regression around live edit and rootComponent 
+- Addresses a regression around live edit and rootComponent
 
-- Adds promise property to Button along with "montage--pending" matching CSS state. 
+- Adds promise property to Button along with "montage--pending" matching CSS state.
 Useful to handle actions that triggers asynchronous work, now Button when set promise will become
 unresponsive until promise resolves.
 
@@ -76,7 +76,7 @@ unresponsive until promise resolves.
 
 ### v16.0.1
 
-- Addresses a bug in Mopped Apps caused by special handling of WeakMap shimming in montage.js. The goal was to avoid to require the module that contains the shim in collections at all. We'll re-visit that optimization later and apply it to Map and Set as well. 
+- Addresses a bug in Mopped Apps caused by special handling of WeakMap shimming in montage.js. The goal was to avoid to require the module that contains the shim in collections at all. We'll re-visit that optimization later and apply it to Map and Set as well.
 
 - Fixes an infinite loop in localizer in IE11 when key and values are both undefined
 
@@ -86,25 +86,25 @@ unresponsive until promise resolves.
 A big, long due and tested release that brings many bug fixes and performance optimizations through montage, collections and frb, as well as some new features and components. Load time has also improved significantly.
 
 -  **Improvements to Event Management**
-  
+
     Besides performance improvements, composers improved significantly in stability, support for PointerEvents was added, composers' interactions and nesting was improved as well. Work was donne to suppress "emulated" mouse events on touch within the framework.
 
 -  **Succession**
-   
-    A new control-flow component in the vein of repetition, substitution, condition, that helps build linear, hierarchical user interfaces. Samples in .info
+
+    A new control-flow component in the vein of repetition, substitution, condition, that helps build linear, hierarchical user interfaces. Samples in .mod/teach
 
 -  **Adds ImageGallery component and sample**
 
 -  **Improves support for IE10 and IE11**
 
 -  **Replaces Q-based Prommises with Bluebird-based Promises**
-  
+
 -  **Improvements to Loader and adds a new Montage Studio loader**
 
 -  **Improvements to Localizer**
 
 -  **Experimental: Component Build-in/out**
-    
+
     This feature is not final yet and API may change. It allows the ability to address in CSS the moment when a Component enter and exit the document.
 
 ### v0.15.2
@@ -235,7 +235,7 @@ A big, long due and tested release that brings many bug fixes and performance op
 
 -  **Montage**
 
-   Add .info loader
+   Add loader.mod/teach
 
 -  **Collections**
 
@@ -530,7 +530,7 @@ A big, long due and tested release that brings many bug fixes and performance op
 
 -  **Flow**
 
-   Added a `hasElasticScrolling` property to flow.reel which allows the space between individual tiles to stretch as
+   Added a `hasElasticScrolling` property to flow.mod which allows the space between individual tiles to stretch as
    they are dragged.
 
 ### v0.13.12
@@ -819,15 +819,15 @@ A big, long due and tested release that brings many bug fixes and performance op
     The contents of the montage/ui directory have been split between the ui directories of the core montage framework and the [digit](https://github.com/montagejs/digit), [matte](https://github.com/montagejs/matte), and [native](https://github.com/montagejs/native) template packages.
     The montage/ui directory now contains the following directories:
     -   base (contains abstract components, described below)
-    -   condition.reel
-    -   flow.reel
-    -   loader.reel
-    -   [overlay.reel](http://montagejs.org/docs/overlay-component.html)
-    -   repetition.reel
-    -   slot.reel
-    -   [substitution.reel](http://montagejs.org/docs/substitution-component
+    -   condition.mod
+    -   flow.mod
+    -   loader.mod
+    -   [overlay.mod](http://montagejs.org/docs/overlay-component.html)
+    -   repetition.mod
+    -   slot.mod
+    -   [substitution.mod](http://montagejs.org/docs/substitution-component
     .html)
-    -   text.reel (replaces dynamic-text.reel)
+    -   text.mod (replaces dynamic-text.mod)
     -   [component.js](#Component_v0130)
 
 
@@ -1132,12 +1132,12 @@ A big, long due and tested release that brings many bug fixes and performance op
 -   **Serialization changes**
     -   Specifying types and references
         1.  Changed the way we specify an object by merging the module id and the name into only one string using
-            `"<module>[<name>]"` (e.g.: `"montage/ui/button.reel[Button]"`). When the name matches the last part of the module
+            `"<module>[<name>]"` (e.g.: `"montage/ui/button.mod[Button]"`). When the name matches the last part of the module
             id then it's automatically inferred and there's no need to provide it. The last part of the module id is considered
             to be the last path component (e.g.: `"event-name"` in `"montage/event/event-name"`) transformed to CamelCase with
-            dashes stripped (e.g.: `"EventName"`). When the last path component ends with `".reel"` then the component is
-            considered without its `".reel"` suffix (e.g: `"RadioButton"` for `"montage/ui/radio-button.reel"`). Under these new
-            rules we reach the following equivalence: `"montage/ui/button.reel[Button]" === "montage/ui/button.reel"`.
+            dashes stripped (e.g.: `"EventName"`). When the last path component ends with `".mod"` then the component is
+            considered without its `".mod"` suffix (e.g: `"RadioButton"` for `"montage/ui/radio-button.mod"`). Under these new
+            rules we reach the following equivalence: `"montage/ui/button.mod[Button]" === "montage/ui/button.mod"`.
         2.  The possibility to point to an object instead of just being able to declare an instance of a specific prototype.
             We were using the pair `module/name` to declare an instance of that prototype, with this new change only one
             property is needed -- `prototype` -- using the rules defined in 1). If, instead of a new object, we just want to
@@ -1148,7 +1148,7 @@ A big, long due and tested release that brings many bug fixes and performance op
                 ```javascript
                 {
                     "label": {
-                        "module": "montage/ui/button.reel",
+                        "module": "montage/ui/button.mod",
                         "name": "Button",
                         "properties": {...}
                     }
@@ -1158,7 +1158,7 @@ A big, long due and tested release that brings many bug fixes and performance op
                 ```javascript
                 {
                     "label": {
-                        "prototype": "montage/ui/button.reel",
+                        "prototype": "montage/ui/button.mod",
                         "properties": {...}
                     }
                 }
@@ -1235,7 +1235,7 @@ A big, long due and tested release that brings many bug fixes and performance op
         the package instead of ``lib``.  This can be altered from its
         default with the ``directories.lib`` property in
         ``package.json``.
-    -   require("x.reel") now loads require("x.reel/x.js").
+    -   require("x.mod") now loads require("x.mod/x.js").
     -   Removed the run-time ``mappings`` configuration for module
         loading.  Use ``mappings`` in ``package.json`` instead.
     -   require("my-package/my-module") no longer maps to
@@ -1268,12 +1268,12 @@ A big, long due and tested release that brings many bug fixes and performance op
         ``deserializeWithInstancesAndDocument``.
 -   Some names have changed to distinguish reels from templates.  A
     reel is a directory that encapsulates all parts of a reusable
-    component.  The name only exists as the ``.reel`` extension for
+    component.  The name only exists as the ``.mod`` extension for
     such directories.  A template is an HTML file for a reel.
-    -   Renamed ``hasReel`` to ``hasTemplate``.
+    -   Renamed ``hasMod`` to ``hasTemplate``.
     -   Renamed ``reelDidLoad`` to ``templateDidLoad``
-    -   Renamed ``deserializedFromReel`` to ``deserializedFromTemplate``
-    -   Renamed ``loadReel`` to ``loadTemplate``
+    -   Renamed ``deserializedFromMod`` to ``deserializedFromTemplate``
+    -   Renamed ``loadMod`` to ``loadTemplate``
     -   Renamed ``reelWithModuleId`` to ``templateWithModuleId``
     -   Renamed ``reelWithComponent`` to ``templateWithComponent``
 -   Components must be styled with CSS classes instead of element

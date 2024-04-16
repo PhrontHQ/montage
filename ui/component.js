@@ -2189,7 +2189,7 @@ Component.addClassProperties(
                 dotIndex = ( dotIndex < slashIndex ? moduleId.length : dotIndex );
 
                 var objectDescriptorModuleId;
-                if ((dotIndex < moduleId.length) && ( ((dotExtension = moduleId.slice(dotIndex, moduleId.length)) === ".mod")) || (dotExtension === ".reel")) {
+                if ((dotIndex < moduleId.length) && ( ((dotExtension = moduleId.slice(dotIndex, moduleId.length)) === ".mod")) || (dotExtension === ".mod")) {
                     // We are in a reel
                     objectDescriptorModuleId = moduleId + "/" + moduleId.slice(slashIndex, dotIndex) + ".mjson";
                 } else {

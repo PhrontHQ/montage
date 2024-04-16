@@ -1,5 +1,5 @@
 /**
- * @module ui/alert.reel
+ * @module ui/alert.mod
  */
 var AbstractAlert = require("./abstract-alert").AbstractAlert,
     Promise = require("../../core/promise").Promise;

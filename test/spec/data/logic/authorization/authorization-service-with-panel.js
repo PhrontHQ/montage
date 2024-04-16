@@ -28,7 +28,7 @@ exports.AuthorizationServiceWithPanel = DataService.specialize( /** @lends Autho
             this.didLogOut = true;
         }
     },
-    
+
     authorize: {
         value: function () {
             // return Promise.resolve(this.authorization);
@@ -38,7 +38,7 @@ exports.AuthorizationServiceWithPanel = DataService.specialize( /** @lends Autho
 
 
     authorizationPanel: {
-        value: "spec/data/ui/authorization/authorization-panel.reel"
+        value: "spec/data/ui/authorization/authorization-panel.mod"
     }
 
 });

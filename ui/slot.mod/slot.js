@@ -1,5 +1,5 @@
 /**
-	@module "montage/ui/slot.reel"
+	@module "montage/ui/slot.mod"
     @requires montage/ui/component
 */
 var Component = require("../component").Component;

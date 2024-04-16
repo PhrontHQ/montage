@@ -1,5 +1,5 @@
 /**
- * @module "montage/ui/condition.reel"
+ * @module "montage/ui/condition.mod"
  */
 var Component = require("../component").Component,
     logger = require("../../core/logger").logger("condition");

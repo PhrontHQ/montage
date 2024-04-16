@@ -53,11 +53,11 @@
                 ]
             },
             "objectDescriptorModule": {
-                "%": "ui/condition.reel/condition.mjson"
+                "%": "ui/condition.mod/condition.mjson"
             },
             "exportName": "Condition",
             "module": {
-                "%": "ui/condition.reel"
+                "%": "ui/condition.mod"
             }
         }
     }

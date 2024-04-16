@@ -248,7 +248,7 @@ MontageBoot.TemplateLoader = function (config, load) {
                     }
                 }, function (error) {
                     // not a problem
-                    // montage/ui/loader.reel/loader.html": Error: ENOENT: no such file or directory
+                    // montage/ui/loader.mod/loader.html": Error: ENOENT: no such file or directory
                     console.log(error.message);
                 });
             });

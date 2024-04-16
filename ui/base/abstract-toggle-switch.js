@@ -1,7 +1,7 @@
 /*global require, exports*/
 
 /**
- * @module montage/ui/base/abstract-toggle-switch.reel
+ * @module montage/ui/base/abstract-toggle-switch.mod
  * @requires montage/composer/press-composer
 */
 var AbstractControl = require("./abstract-control").AbstractControl,

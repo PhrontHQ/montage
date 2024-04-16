@@ -1592,10 +1592,10 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
      *
      * @example "event/event-manager" has a default objectName of EventManager.
      *
-     * When the last path component ends with ".reel" it is removed before
+     * When the last path component ends with ".mod" it is removed before
      * creating the default objectName.
      *
-     * @example "matte/ui/input-range.reel" has a default objectName of
+     * @example "matte/ui/input-range.mod" has a default objectName of
      *          InputRange.
      *
      * @returns {moduleId, objectName}

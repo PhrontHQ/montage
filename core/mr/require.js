@@ -1901,7 +1901,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
         _modExpression = /([^\/]+)\.mod$/,
         _mod = "mod",
         _dotMod = ".mod";
-    Require.ReelLoader = function ReelLoader(config, load) {
+    Require.ModLoader = function ModLoader(config, load) {
         var reelExpression = _reelExpression,
             dotREEL = _dotREEL,
             REEL = _REEL,

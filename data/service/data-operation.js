@@ -806,7 +806,7 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
      * Or go more for a serialization-like approach:
      * {
      *         "root": {
-     *             "prototype": "package/data/main.datareel/model/custom-type",
+     *             "prototype": "package/data/main.mod/model/custom-type",
      *            "values": {
      *               "foo": "Bleh",
      *               "toMany": [
@@ -834,7 +834,7 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
      * What if we used 2 new different operators on top of <-, <->, =, as in:?
      * {
      *      "root": {
-     *             "prototype": "package/data/main.datareel/model/custom-type",
+     *             "prototype": "package/data/main.mod/model/custom-type",
      *            "values": {
      *               "foo": {"=":"Bleh"},
      *               "toManyProperty": {

@@ -1,7 +1,7 @@
 /*global require, exports, console, MontageElement */
 
 /**
- * @module "montage/ui/flow.reel"
+ * @module "montage/ui/flow.mod"
  */
 var Component = require("../component").Component,
     observeProperty = require("core/frb/observers").observeProperty,

@@ -1,7 +1,7 @@
 /**
- * @module ui/montage-studio-loader.reel
+ * @module ui/montage-studio-loader.mod
  */
-var Loader = require("../loader.reel").Loader;
+var Loader = require("../loader.mod").Loader;
 
 // Constants
 var OFF_CLASS_NAME = "off",

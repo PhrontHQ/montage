@@ -5,12 +5,12 @@
  @requires montage/core/logger
  */
 var Montage = require("montage").Montage;
-var Condition = require("montage/ui/condition.reel").Condition;
-var Loader = require("montage/ui/loader.reel").Loader;
-var Repetition = require("montage/ui/repetition.reel").Repetition;
-var Slot = require("montage/ui/slot.reel").Slot;
-var Substitution = require("montage/ui/substitution.reel").Substitution;
-var Text = require("montage/ui/text.reel").Text;
+var Condition = require("montage/ui/condition.mod").Condition;
+var Loader = require("montage/ui/loader.mod").Loader;
+var Repetition = require("montage/ui/repetition.mod").Repetition;
+var Slot = require("montage/ui/slot.mod").Slot;
+var Substitution = require("montage/ui/substitution.mod").Substitution;
+var Text = require("montage/ui/text.mod").Text;
 
 var ObjectDescriptor = require("montage/core/meta/object-descriptor").ObjectDescriptor;
 

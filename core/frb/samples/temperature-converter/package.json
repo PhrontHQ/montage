@@ -1,5 +1,5 @@
 {
-    "name": "temperature-converter.reel",
+    "name": "temperature-converter-mod",
     "version": "0.0.0",
     "dependencies": {
         "frb": "*"

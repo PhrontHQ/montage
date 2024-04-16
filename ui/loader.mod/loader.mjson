@@ -166,11 +166,11 @@
                 ]
             },
             "objectDescriptorModule": {
-                "%": "ui/loader.reel/loader.mjson"
+                "%": "ui/loader.mod/loader.mjson"
             },
             "exportName": "Loader",
             "module": {
-                "%": "ui/loader.reel"
+                "%": "ui/loader.mod"
             }
         }
     }

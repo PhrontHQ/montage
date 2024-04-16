@@ -22,7 +22,7 @@
             },
 
             "repetition": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "montage/ui/repetition.mod",
                 "values": {
                     "element": {"#": "repetition"},
                     "isSelectionEnabled": true,
@@ -31,7 +31,7 @@
             },
 
             "name": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "montage/ui/text.mod",
                 "values": {
                     "element": {"#": "name"},
                     "value": {"<-": "@repetition:iteration.object"}
@@ -39,7 +39,7 @@
             },
 
             "selectedName": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "montage/ui/text.mod",
                 "values": {
                     "element": {"#": "selectedName"},
                     "value": {"<->": "@repetition.contentController.selection.0"}

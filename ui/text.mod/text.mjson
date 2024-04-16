@@ -58,11 +58,11 @@
             },
             "propertyValidationRules": {},
             "objectDescriptorModule": {
-                "%": "ui/text.reel/text.mjson"
+                "%": "ui/text.mod/text.mjson"
             },
             "exportName": "Text",
             "module": {
-                "%": "ui/text.reel"
+                "%": "ui/text.mod"
             }
         }
     }

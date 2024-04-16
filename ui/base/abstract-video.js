@@ -1,7 +1,7 @@
 /*global require, exports*/
 
 /**
- * @module montage/ui/base/abstract-video.reel
+ * @module montage/ui/base/abstract-video.mod
  */
 var Component = require("../component").Component,
     MediaController = require("../../core/media-controller").MediaController;

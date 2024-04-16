@@ -1,5 +1,5 @@
 /**
- * @module ./rotation-composer.reel
+ * @module ./rotation-composer.mod
  * @requires montage/composer/composer
  */
 var Composer = require("./composer").Composer,

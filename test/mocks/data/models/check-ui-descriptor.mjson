@@ -6,7 +6,7 @@
             "descriptionExpression": "description",
             "valueExpression": "value",
             "listItemToggleComponentModule": {
-                "%": "test/mocks/data/icons/check.reel"
+                "%": "test/mocks/data/icons/check.mod"
             }
         }
     }

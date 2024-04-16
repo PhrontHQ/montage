@@ -1,5 +1,5 @@
 /**
-	@module "matte/ui/list.reel"
+	@module "matte/ui/list.mod"
     @requires montage/core/core
     @requires montage/ui/component
 */
@@ -8,10 +8,10 @@ var Montage = require("montage").Montage,
     observeProperty = require("montage/core/frb/observers").observeProperty;
 
 /**
- @class module:"matte/ui/list.reel".List
+ @class module:"matte/ui/list.mod".List
  @extends module:montage/ui/component.Component
  */
-var List = exports.List = Component.specialize(/** @lends module:"matte/ui/list.reel".List# */ {
+var List = exports.List = Component.specialize(/** @lends module:"matte/ui/list.mod".List# */ {
     /**
       Description TODO
       @private

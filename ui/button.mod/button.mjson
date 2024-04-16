@@ -210,11 +210,11 @@
             },
             "propertyValidationRules": {},
             "objectDescriptorModule": {
-                "%": "ui/button.reel/button.mjson"
+                "%": "ui/button.mod/button.mjson"
             },
             "exportName": "Button",
             "module": {
-                "%": "ui/button.reel"
+                "%": "ui/button.mod"
             }
         }
     }

@@ -112,7 +112,7 @@ var CascadingListItem = exports.CascadingListItem = Component.specialize({
                         } else {
                             componentModule = UIDescriptor.inspectorComponentModule;
                         }
-                        
+
                         componentModule = this.callDelegateMethod(
                             "cascadingListWillUseInspectorComponentModuleForObjectAtColumnIndex",
                             context.cascadingList,
@@ -173,8 +173,8 @@ var CascadingListItem = exports.CascadingListItem = Component.specialize({
 }, {
     defaultCollectionModule: {
         value: {
-            id: '../../list.reel',
+            id: '../../list.mod',
             require: require
         }
-    }    
+    }
 });

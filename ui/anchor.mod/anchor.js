@@ -1,10 +1,10 @@
 /**
-    @module "native/ui/anchor.reel"
+    @module "native/ui/anchor.mod"
 */
 var Control = require("ui/control").Control;
 /**
   The Anchor component wraps a native <code>&lt;a&gt;</code> element and exposes its standard attributes as bindable properties.
-  @class module:"ui/anchor.reel".Anchor
+  @class module:"ui/anchor.mod".Anchor
   @extends module:ui/control.Control
 
 */
@@ -19,7 +19,7 @@ Anchor.addClassProperties({
 
 });
 
-Anchor.addAttributes( /** @lends module:"native/ui/anchor.reel".Anchor# */ {
+Anchor.addAttributes( /** @lends module:"native/ui/anchor.mod".Anchor# */ {
 
 /**
     The text displayed by the link.

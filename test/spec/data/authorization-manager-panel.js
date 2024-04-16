@@ -1,7 +1,7 @@
 var AuthorizationManager = require("montage/data/service/authorization-manager").AuthorizationManager,
     defaultAuthorizationManager = require("montage/data/service/authorization-manager").defaultAuthorizationManager,
-    AuthorizationManagerPanel = require("montage/ui/authorization-manager-panel.reel").AuthorizationManagerPanel,
-    AuthorizationPanel = require("spec/data/ui/authorization/authorization-panel.reel").AuthorizationPanel,
+    AuthorizationManagerPanel = require("montage/ui/authorization-manager-panel.mod").AuthorizationManagerPanel,
+    AuthorizationPanel = require("spec/data/ui/authorization/authorization-panel.mod").AuthorizationPanel,
     Authorization = require("spec/data/logic/authorization/authorization").Authorization;
 
 
@@ -19,7 +19,7 @@ describe("An AuthorizationManagerPanel", function () {
     it ("can authorize with panel", function (done) {
         var panel = new AuthorizationPanel(),
             promise = managerPanel.authorizeWithPanel(panel);
-        
+
         expect(managerPanel.panels.indexOf(panel) !== -1).toBe(true);
         expect(managerPanel._authorizationPromiseByPanel.has(panel)).toBe(true);
         promise.then(function (value) {
@@ -36,7 +36,7 @@ describe("An AuthorizationManagerPanel", function () {
             promise = managerPanel.authorizeWithPanel(panel),
             isError = true;
 
-        
+
         expect(managerPanel.panels.indexOf(panel) !== -1).toBe(true);
         expect(managerPanel._authorizationPromiseByPanel.has(panel)).toBe(true);
         promise.then(function (value) {

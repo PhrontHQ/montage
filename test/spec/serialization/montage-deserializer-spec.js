@@ -639,10 +639,10 @@ describe("serialization/montage-deserializer-spec", function () {
             });
         });
 
-        it("should deserialize using prototype: module-name.reel", function (done) {
+        it("should deserialize using prototype: module-name.mod", function (done) {
             var serialization = {
                     "root": {
-                        "prototype": "spec/serialization/module-name.reel",
+                        "prototype": "spec/serialization/module-name.mod",
                         "values": {
                             "number": 42,
                             "string": "a string"
@@ -654,7 +654,7 @@ describe("serialization/montage-deserializer-spec", function () {
             deserializer.init(serializationString, require);
             deserializer.deserializeObject().then(function (root) {
                 var info = Montage.getInfoForObject(root);
-                expect(info.moduleId).toBe("spec/serialization/module-name.reel");
+                expect(info.moduleId).toBe("spec/serialization/module-name.mod");
                 expect(info.objectName).toBe("ModuleName");
                 expect(info.isInstance).toBe(true);
             }).catch(function(reason) {
@@ -1266,7 +1266,7 @@ describe("serialization/montage-deserializer-spec", function () {
             deserializer2 = new Deserializer(),
             serialization = {
                 root: {
-                    prototype: "ui/main.reel"
+                    prototype: "ui/main.mod"
                 }
             },
             serializationString = JSON.stringify(serialization);

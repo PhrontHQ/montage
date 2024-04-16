@@ -8,8 +8,8 @@
             "values": {
                 "element": {"#": "owner"},
                 "_valuePlaceholderComponent": {"@": "placeholderValue"},
-                "_montageIconComponentModule": {"%": "../image.reel"},
-                "_montageToogleComponentModule": {"%": "../toggle.reel"},
+                "_montageIconComponentModule": {"%": "../image.mod"},
+                "_montageToogleComponentModule": {"%": "../toggle.mod"},
                 "classList.has('has-value')": {"<-": "@owner.__value.defined()"},
                 "classList.has('active')": {"<-": "@owner.active"},
                 "classList.has('selected')": {"<-": "@owner.selected"},
@@ -19,7 +19,7 @@
         },
 
         "placeholder": {
-            "prototype": "../placeholder.reel",
+            "prototype": "../placeholder.mod",
             "values": {
                 "element": {"#": "icon"},
                 "componentModule": {"<-": "@owner._montageIconComponentModule.id == @owner._iconComponentModule.id && !@owner._iconSrc ? null : @owner._iconComponentModule"},
@@ -28,7 +28,7 @@
         },
 
         "label": {
-            "prototype": "../text.reel",
+            "prototype": "../text.mod",
             "values": {
                 "element": {"#": "label"},
                 "value": {"<-": "@owner._label"}
@@ -36,7 +36,7 @@
         },
 
         "description": {
-            "prototype": "../text.reel",
+            "prototype": "../text.mod",
             "values": {
                 "element": {"#": "description"},
                 "value": {"<-": "@owner._description"},
@@ -45,7 +45,7 @@
         },
 
         "placeholderValue": {
-            "prototype": "../placeholder.reel",
+            "prototype": "../placeholder.mod",
             "values": {
                 "element": {"#": "value"},
                 "componentModule": {"<-": "@owner.__value.defined() ? @owner._toggleComponentModule : null"},

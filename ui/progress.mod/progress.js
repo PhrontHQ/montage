@@ -1,12 +1,12 @@
 /**
-    @module "montage/ui/native/progress.reel"
+    @module "montage/ui/native/progress.mod"
 */
 
 var Control = require("ui/control").Control;
 
 /**
   The Progress component wraps a native <code>&lt;progress></code> element and exposes its standard attributes as bindable properties.
-  @class module:"montage/ui/native/progress.reel".Progress
+  @class module:"montage/ui/native/progress.mod".Progress
   @extends module:montage/ui/control.Control
 
 */
@@ -14,7 +14,7 @@ var Progress = exports.Progress =  Control.specialize({
     hasTemplate: {value: false }
 });
 
-Progress.addAttributes( /** @lends module:"montage/ui/native/progress.reel".Progress# */{
+Progress.addAttributes( /** @lends module:"montage/ui/native/progress.mod".Progress# */{
 
 /**
     The value of the id attribute of the form with which to associate the component's element.

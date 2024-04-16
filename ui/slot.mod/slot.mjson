@@ -48,11 +48,11 @@
                 ]
             },
             "objectDescriptorModule": {
-                "%": "ui/slot.reel/slot.mjson"
+                "%": "ui/slot.mod/slot.mjson"
             },
             "exportName": "Slot",
             "module": {
-                "%": "ui/slot.reel"
+                "%": "ui/slot.mod"
             }
         }
     }

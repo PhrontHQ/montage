@@ -1,15 +1,15 @@
 /**
-    @module "montage/ui/number-field.reel"
+    @module "montage/ui/number-field.mod"
     @requires montage/ui/text-input
 */
 
 var TextInput = require("ui/text-input").TextInput,
     RangeEnforcer = require("core/converter/range-enforcer").RangeEnforcer;
-    
+
 
 /**
  * Wraps the a &lt;input type="number"> element with binding support for the element's standard attributes.
-   @class module:"montage/ui/number-field.reel".NumberField
+   @class module:"montage/ui/number-field.mod".NumberField
    @extends module:montage/ui/text-input.TextInput
  */
 var NumberField = exports.NumberField = TextInput.specialize({
@@ -26,7 +26,7 @@ var NumberField = exports.NumberField = TextInput.specialize({
     hasTemplate: {value: false }
 });
 
-NumberField.addAttributes(/** @lends module:"montage/ui/number-field.reel".NumberField */{
+NumberField.addAttributes(/** @lends module:"montage/ui/number-field.mod".NumberField */{
 
 /**
     The maximum value displayed but the number control.

@@ -1,4 +1,4 @@
-var List = require("../list.reel").List;
+var List = require("../list.mod").List;
 
 exports.VirtualList = List.specialize({
 
@@ -15,7 +15,7 @@ exports.VirtualList = List.specialize({
                     self.flow.didDraw = oldDidDraw;
                 }
             };
-            
+
             // initialize scroll bars
             this._scrollBars.opacity = 0;
         }
@@ -54,7 +54,7 @@ exports.VirtualList = List.specialize({
             );
         }
     },
-    
+
     handleResize: {
         value: function () {
             this.needsDraw = true;
@@ -185,7 +185,7 @@ exports.VirtualList = List.specialize({
                 if ((this._rowHeight = this._measureRowHeight()) === 0) {
                     return;
                 }
-                
+
                 this._width = this._measureWidth();
                 this._height = this._measureHeight();
                 this.flow.linearScrollingVector = this._calculateLinearScrollingVector(
