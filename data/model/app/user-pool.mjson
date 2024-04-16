@@ -1,12 +1,11 @@
 {
     "root": {
-        "prototype": "../../core/meta/module-object-descriptor",
+        "prototype": "../../../core/meta/module-object-descriptor",
         "values": {
             "name": "UserPool",
             "propertyDescriptors": [
                 {"@": "name"},
                 {"@": "appClients"},
-                {"@": "cognitoUserPool"},
                 {"@": "servedOrganizations"}
 
             ],
@@ -24,14 +23,14 @@
         "object": "../data-object.mjson"
     },
     "name": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "name",
             "valueType": "string"
         }
     },
     "appClients": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "appClients",
             "cardinality": -1,
@@ -43,20 +42,8 @@
     "AppClientDescriptor": {
         "object": "./app-client.mjson"
     },
-    "cognitoUserPool": {
-        "prototype": "../../core/meta/property-descriptor",
-        "values": {
-            "name": "cognitoUserPool",
-            "cardinality": 1,
-            "valueType": "object",
-            "valueDescriptor": {"@": "CognitoUserPoolDescriptor"}
-       }
-    },
-    "CognitoUserPoolDescriptor": {
-        "object": "../aws/cognito/user-pool.mjson"
-    },
     "servedOrganizations": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "servedOrganizations",
             "cardinality": -1,
