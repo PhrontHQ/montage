@@ -1,9 +1,9 @@
 {
     "converter_descriptor": {
-        "object": "montage/core/converter/converter.mjson"
+        "object": "../../core/converter/converter.mjson"
     },
     "root": {
-        "prototype": "montage/core/meta/module-object-descriptor",
+        "prototype": "../../core/meta/module-object-descriptor",
         "values": {
             "name": "RFC3339UTCRangeStringToRangeConverter",
             "customPrototype": false,
