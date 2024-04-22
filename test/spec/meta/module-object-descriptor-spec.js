@@ -8,14 +8,14 @@ describe("meta/module-object-descriptor-spec", function () {
 
     var objectDescriptorSerialization = {
         "objectDescriptor_one_a": {
-            "prototype": "montage/core/meta/property-descriptor",
+            "prototype": "../../core/meta/property-descriptor",
             "values": {
                 "name": "a",
                 "objectDescriptor": {"@": "root"}
             }
         },
         "root": {
-            "prototype": "montage/core/meta/module-object-descriptor",
+            "prototype": "../../core/meta/module-object-descriptor",
             "values": {
                 "name": "One",
                 "propertyDescriptors": [
@@ -29,14 +29,14 @@ describe("meta/module-object-descriptor-spec", function () {
 
     var objectDescriptorSerialization = {
         "One_a": {
-            "prototype": "montage/core/meta/property-descriptor",
+            "prototype": "../../core/meta/property-descriptor",
             "values": {
                 "name": "a",
                 "objectDescriptor": {"@": "root"}
             }
         },
         "root": {
-            "prototype": "montage/core/meta/module-object-descriptor",
+            "prototype": "../../core/meta/module-object-descriptor",
             "values": {
                 "name": "One",
                 "propertyDescriptors": [

@@ -1,6 +1,6 @@
 {
     "objectDescriptor_childcontroller_purchaseList": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "purchaseList",
             "objectDescriptor": {

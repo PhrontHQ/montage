@@ -1,15 +1,15 @@
 // if(global && typeof global.XMLHttpRequest === undefined) {
 //     global.XMLHttpRequest = (require) ('xhr2');
 // }
-var Target = require("montage/core/target").Target,
+var Target = require("../../core/target").Target,
 
-MontageSerializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer,
-Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+MontageSerializer = require("../../core/serialization/serializer/montage-serializer").MontageSerializer,
+Deserializer = require("../../core/serialization/deserializer/montage-deserializer").MontageDeserializer,
 // mainService = (require) ("data/main.mod/main.mjson").montageObject,
 //phrontService = mainService.childServices[0],
-DataOperation = require("montage/data/service/data-operation").DataOperation,
-defaultEventManager = require("montage/core/event/event-manager").defaultEventManager,
-currentEnvironment = require("montage/core/environment").currentEnvironment,
+DataOperation = require("../../data/service/data-operation").DataOperation,
+defaultEventManager = require("../../core/event/event-manager").defaultEventManager,
+currentEnvironment = require("../../core/environment").currentEnvironment,
 sizeof = require('object-sizeof');
 
 exports.OperationCoordinator = Target.specialize(/** @lends OperationCoordinator.prototype */ {

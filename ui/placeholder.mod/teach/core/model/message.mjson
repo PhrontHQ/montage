@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "montage/core/meta/module-object-descriptor",
+        "prototype": "../../core/meta/module-object-descriptor",
         "values": {
             "name": "Message",
             "exportName": "Message",
@@ -23,7 +23,7 @@
     },
 
     "id": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "id",
             "valueType": "number"
@@ -31,7 +31,7 @@
     },
 
     "value": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "value",
             "valueType": "string"

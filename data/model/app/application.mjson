@@ -1,0 +1,44 @@
+{
+    "root": {
+        "prototype": "../../core/meta/module-object-descriptor",
+        "values": {
+            "name": "Application",
+            "propertyDescriptors": [
+                {"@": "name"},
+                {"@": "webSocketSessions"}
+            ],
+            "objectDescriptorModule": {
+                "%": "./application.mjson"
+            },
+            "exportName": "Application",
+            "module": {
+                "%": "./application"
+            },
+            "parent":{"@": "DataObjectDescriptor"}
+        }
+    },
+    "DataObjectDescriptor": {
+        "object": "../data-object.mjson"
+    },
+    "name": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "name",
+            "valueType": "string"
+        }
+    },
+    "webSocketSessions": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "webSocketSessions",
+            "cardinality": -1,
+            "valueType": "object",
+            "valueDescriptor": {"@": "WebSocketSessionsDescriptor"},
+            "inversePropertyName": "app"
+       }
+    },
+    "WebSocketSessionsDescriptor": {
+        "object": "./web-socket-session.mjson"
+    }
+
+}

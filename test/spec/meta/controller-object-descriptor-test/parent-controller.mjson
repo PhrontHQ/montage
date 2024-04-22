@@ -1,6 +1,6 @@
 {
     "objectDescriptor_parentcontroller_customerList": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "customerList",
             "objectDescriptor": {
@@ -16,7 +16,7 @@
         }
     },
     "objectDescriptor_parentcontroller_customerSelectionList": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "customerSelectionList",
             "objectDescriptor": {
@@ -32,7 +32,7 @@
         }
     },
     "root": {
-        "prototype": "montage/core/meta/module-object-descriptor",
+        "prototype": "../../core/meta/module-object-descriptor",
         "values": {
             "name": "ParentController",
             "customPrototype": false,

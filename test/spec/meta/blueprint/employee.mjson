@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "montage/core/meta/module-object-descriptor",
+        "prototype": "../../core/meta/module-object-descriptor",
         "values": {
             "name": "Employee",
             "exportName": "Employee",
@@ -24,7 +24,7 @@
     },
 
     "firstname": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "firstname",
             "valueType": "string"
@@ -32,7 +32,7 @@
     },
 
     "lastname": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "lastname",
             "valueType": "string"
@@ -40,7 +40,7 @@
     },
 
     "department": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "department",
             "valueType": "string"
