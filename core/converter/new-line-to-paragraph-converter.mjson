@@ -1,9 +1,9 @@
 {
     "converter_descriptor": {
-        "object": "core/converter/converter.mjson"
+        "object": "../converter/converter.mjson"
     },
     "root": {
-        "prototype": "core/meta/module-object-descriptor",
+        "prototype": "../meta/module-object-descriptor",
         "values": {
             "name": "NewLineToParagraphConverter",
             "customPrototype": false,
@@ -14,11 +14,11 @@
             "propertyDescriptorGroups": {},
             "propertyValidationRules": {},
             "objectDescriptorModule": {
-                "%": "core/converter/new-line-to-paragraph-converter.mjson"
+                "%": "./new-line-to-paragraph-converter.mjson"
             },
             "exportName": "NewLineToParagraphConverter",
             "module": {
-                "%": "core/converter/new-line-to-paragraph-converter"
+                "%": "./new-line-to-paragraph-converter"
             }
         }
     }
