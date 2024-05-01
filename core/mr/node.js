@@ -6,9 +6,11 @@
 */
 /*jshint node:true */
 const Require = require("./require"),
+    //Promise = require("../promise").Promise,
     Promise = require("bluebird"),
-    PromiseResolve = Promise.resolve,
-    PromiseReject = Promise.reject,
+
+    // PromiseResolve = Promise.resolve,
+    // PromiseReject = Promise.reject,
     NodeModule = require("module"),
     FS = require("fs"),
     URL = require("fast-url-parser"),
@@ -64,7 +66,7 @@ var jsIndexPrefix = '/index.js',
 Require.read = function read(location, module) {
 
     try {
-        return PromiseResolve(FS.readFileSync(location, utf8));
+        return Promise.resolve(FS.readFileSync(location, utf8));
     } catch (error) {
 
         if (
@@ -80,12 +82,12 @@ Require.read = function read(location, module) {
                 //We found a folder/index.js, we need to update the module to reflect that somehow
                 module.location = location;
                 module.redirect = `${module.id}/index`;
-                return PromiseResolve(text);
+                return Promise.resolve(text);
             } catch (error) {
-                return PromiseReject(error);
+                return Promise.reject(error);
             }
         } else {
-            return PromiseReject(error);
+            return Promise.reject(error);
         }
     }
 };
