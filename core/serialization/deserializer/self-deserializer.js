@@ -42,6 +42,12 @@ var SelfDeserializer = Montage.specialize( {
         }
     },
 
+    hasProperty: {
+        value: function (name) {
+            return Object.hasOwn(this._objectDescriptorValues, name);
+        }
+    },
+
     getType: {
         value: function () {
             if ("prototype" in this._objectDescriptor) {
