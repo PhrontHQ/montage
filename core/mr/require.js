@@ -34,7 +34,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
         // Worker
         } else {
             bootstrap("require", function (require, exports) {
-                var Promise = require("promise").Promise;
+                var Promise = require("../promise").Promise;
                 var URL = require("mini-url");
                 definition(exports, Promise, URL);
             });
@@ -44,7 +44,8 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
     } else if (typeof process !== "undefined") {
         // the parens trick the heuristic scanner for static dependencies, so
         // they are not pre-loaded by the asynchronous browser loader
-        var Promise = (require)("bluebird");
+        //var Promise = (require)("bluebird");
+        var Promise = require("../promise").Promise;
         var URL = (require)("fast-url-parser");
         definition(exports, Promise, URL);
         (require)("./node");
@@ -1921,7 +1922,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                     module.extension = REEL;
                     return module;
                 }
-            } else if (id.endsWith(_dotMod)) {
+            } else if (id.endsWith(dotMod)) {
                 module.redirect = `${id}/${modExpression.exec(id)[1]}`;
                 // module.redirect = id;
                 // module.redirect += SLASH;
