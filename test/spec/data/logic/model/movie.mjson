@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "../../core/meta/module-object-descriptor",
+        "prototype": "montage/core/meta/module-object-descriptor",
         "properties": {
             "name": "Movie",
             "propertyDescriptors": [
@@ -25,7 +25,7 @@
     },
 
     "category": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "montage/core/meta/property-descriptor",
         "properties": {
             "name": "category",
             "valueDescriptor": {"@": "category_descriptor"}
@@ -33,7 +33,7 @@
     },
 
     "isFeatured": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "montage/core/meta/property-descriptor",
         "properties": {
             "name": "isFeatured",
             "valueType": "boolean"
@@ -45,7 +45,7 @@
     },
 
     "plotSummary": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "montage/core/meta/property-descriptor",
         "properties": {
             "name": "plotSummary",
             "valueDescriptor": {"@": "plotSummary_descriptor"}
@@ -53,7 +53,7 @@
     },
 
     "releaseDate": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "montage/core/meta/property-descriptor",
         "properties": {
             "name": "releaseDate",
             "valueType": "date"
@@ -61,7 +61,7 @@
     },
 
     "title": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "montage/core/meta/property-descriptor",
         "properties": {
             "name": "title",
             "valueType": "string"

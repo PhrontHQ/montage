@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "../../core/meta/module-object-descriptor",
+        "prototype": "montage/core/meta/module-object-descriptor",
         "properties": {
             "name": "PlotSummary",
             "propertyDescriptors": [
@@ -22,7 +22,7 @@
     },
 
     "movie": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "montage/core/meta/property-descriptor",
         "properties": {
             "name": "movie",
             "valueDescriptor": {"@": "movie"}
@@ -30,7 +30,7 @@
     },
 
     "summary": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "montage/core/meta/property-descriptor",
         "properties": {
             "name": "summary",
             "valueType": "string"
