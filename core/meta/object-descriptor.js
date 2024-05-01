@@ -20,23 +20,37 @@ var Defaults = {
  * @class ObjectDescriptor
  * @extends Target
  */
-var ObjectDescriptor = exports.ObjectDescriptor = Target.specialize( /** @lends ObjectDescriptor.prototype # */ {
+
+var ObjectDescriptor = exports.ObjectDescriptor = class ObjectDescriptor extends Target {/** @lends ObjectDescriptor */
+    constructor() {
+        super();
+        // this._eventDescriptors = [];
+        this._ownPropertyDescriptors = [];
+
+        this._propertyDescriptorGroups = {};
+        this._eventPropertyDescriptorsTable = new Map();
+        this.defineBinding("eventDescriptors", {"<-": "_eventDescriptors.concat(parent.eventDescriptors)"});
+        this.defineBinding("localizablePropertyNames", {"<-": "localizablePropertyDescriptors.name"});
+    }
+}
+
+ObjectDescriptor.addClassProperties({
 
     FileExtension: {
         value: ".mjson"
     },
 
-    constructor: {
-        value: function ObjectDescriptor() {
-            // this._eventDescriptors = [];
-            this._ownPropertyDescriptors = [];
+    // constructor: {
+    //     value: function ObjectDescriptor() {
+    //         // this._eventDescriptors = [];
+    //         this._ownPropertyDescriptors = [];
 
-            this._propertyDescriptorGroups = {};
-            this._eventPropertyDescriptorsTable = new Map();
-            this.defineBinding("eventDescriptors", {"<-": "_eventDescriptors.concat(parent.eventDescriptors)"});
-            this.defineBinding("localizablePropertyNames", {"<-": "localizablePropertyDescriptors.name"});
-        }
-    },
+    //         this._propertyDescriptorGroups = {};
+    //         this._eventPropertyDescriptorsTable = new Map();
+    //         this.defineBinding("eventDescriptors", {"<-": "_eventDescriptors.concat(parent.eventDescriptors)"});
+    //         this.defineBinding("localizablePropertyNames", {"<-": "localizablePropertyDescriptors.name"});
+    //     }
+    // },
 
     /**
      * @function
