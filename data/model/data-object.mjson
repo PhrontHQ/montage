@@ -27,7 +27,8 @@
         "values": {
             "name": "originId",
             "valueType": "string",
-            "isSearchable": true
+            "isSearchable": true,
+            "description": "The primaryKey from a different system a Data Object maay have come from originally"
         }
     },
 
@@ -65,7 +66,8 @@
         "values": {
             "name": "creationDate",
             "valueDescriptor": {"@": "DateDescriptor"},
-            "mandatory": true
+            "mandatory": true,
+            "description": "The time a data object was created"
         }
     },
     "modificationDate": {
