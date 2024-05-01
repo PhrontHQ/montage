@@ -292,8 +292,12 @@ var MontageContext = Montage.specialize({
 
     getElementById: {
         value: function (id) {
-            return this._element.querySelector(this._ELEMENT_ID_SELECTOR_PREFIX + id + this._ELEMENT_ID_SELECTOR_SUFFIX);
-        }
+            //Adds support for legacy data-montage-id selector
+            return this._element.querySelector(`*[data-mod-id="${id}"], *[data-montage-id="${id}"]`);
+            // return this._element.querySelector(`*[data-mod-id="${id}"]`)
+            //|| this._element.querySelector(`*[data-montage-id="${id}"]`)
+            // || this._element.querySelector(this._ELEMENT_ID_SELECTOR_PREFIX + id + this._ELEMENT_ID_SELECTOR_SUFFIX);
+    }
     },
 
     getBindingsToDeserialize: {
