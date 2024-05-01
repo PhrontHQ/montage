@@ -688,7 +688,7 @@ exports.WebSocketDataOperationService = WebSocketDataOperationService = RawDataS
 
                  var operationDataKBSize = sizeof(serializedOperation) / 1024;
 
-                 console.debug("----> send "+operationDataKBSize+" KB operation "+serializedOperation);
+                //  console.debug("----> send "+operationDataKBSize+" KB operation "+serializedOperation);
 
                 // if(operation.type === "batch") {
                 //     var deserializer = new Deserializer();
