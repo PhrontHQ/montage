@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "../core/meta/module-object-descriptor",
+        "prototype": "../../core/meta/module-object-descriptor",
         "values": {
             "name": "LogEntry",
             "propertyDescriptors": [
@@ -21,7 +21,7 @@
         "object": "./log-entry"
     },
     "time": {
-        "prototype": "../core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "time",
             "cardinality": 1,
@@ -30,11 +30,11 @@
        }
     },
     "DateDescriptor": {
-        "object": "../core/date.mjson"
+        "object": "../../core/date.mjson"
     },
 
     "value": {
-        "prototype": "../core/meta/property-descriptor",
+        "prototype": "../../core/meta/property-descriptor",
         "values": {
             "name": "value",
             "cardinality": 1,
