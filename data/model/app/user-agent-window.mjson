@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "../../core/meta/module-object-descriptor",
+        "prototype": "../../../core/meta/module-object-descriptor",
         "values": {
             "name": "UserAgentWindow",
             "propertyDescriptors": [
@@ -10,7 +10,7 @@
 
             ],
             "objectDescriptorModule": {
-                "%": "./user-pool.mjson"
+                "%": "./user-agent-window.mjson"
             },
             "exportName": "UserAgentWindow",
             "module": {
@@ -23,14 +23,14 @@
         "object": "../data-object.mjson"
     },
     "name": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "name",
             "valueType": "string"
         }
     },
     "durationTimeRange": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "durationTimeRange",
             "valueType": "date",
@@ -39,36 +39,36 @@
         }
     },
     "range_descriptor": {
-        "object": "../../core/range.mjson"
+        "object": "../../../core/range.mjson"
     },
     "positionTimeLog": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "positionTimeLog",
             "cardinality": -1,
             "valueType": "object",
             "valueDescriptor": {"@": "LogEntryDescriptor"},
-            "description": The history of a UserAgentWindow's position over time. Only relevant on PC devices"
+            "description": "The history of a UserAgentWindow's position over time. Only relevant on PC devices"
        }
     },
     "sizeTimeLog": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "sizeTimeLog",
             "cardinality": -1,
             "valueType": "object",
             "valueDescriptor": {"@": "LogEntryDescriptor"},
-            "description": The history of a UserAgentWindow's size over time. Only relevant on PC devices"
+            "description": "The history of a UserAgentWindow's size over time. Only relevant on PC devices"
        }
     },
     "screenTimeLog": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "screenTimeLog",
             "cardinality": -1,
             "valueType": "object",
             "valueDescriptor": {"@": "LogEntryDescriptor"},
-            "description": The history of the screen a UserAgentWindow is on over time. Only relevant on PC devices"
+            "description": "The history of the screen a UserAgentWindow is on over time. Only relevant on PC devices"
        }
     },
     "LogEntryDescriptor": {

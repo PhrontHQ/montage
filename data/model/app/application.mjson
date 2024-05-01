@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "../../core/meta/module-object-descriptor",
+        "prototype": "../../../core/meta/module-object-descriptor",
         "values": {
             "name": "Application",
             "propertyDescriptors": [
@@ -21,14 +21,14 @@
         "object": "../data-object.mjson"
     },
     "name": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "name",
             "valueType": "string"
         }
     },
     "webSocketSessions": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "../../../core/meta/property-descriptor",
         "values": {
             "name": "webSocketSessions",
             "cardinality": -1,

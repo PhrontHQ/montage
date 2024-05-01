@@ -2,7 +2,7 @@
     @module phront/data/main.mod/model/app/web-socket-session
 */
 
-var Montage = require("../../core/core").Montage;
+var Montage = require("../../../core/core").Montage;
 
 /**
  * @class WebSocketSessionConnection
