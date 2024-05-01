@@ -75,7 +75,7 @@ exports.deprecateMethod = function deprecate(scope, deprecatedFunction, name, al
     var deprecationWrapper = function () {
         // stackTraceLimit = 3 // deprecationWarning + deprecate + caller of the deprecated method
         if (once) {
-            exports.deprecationWarningOnce(name, alternative, 3);
+            exports.deprecationWarningOnce(name, alternative, 6);
         } else {
             deprecationWarning(name, alternative, 3);
         }
