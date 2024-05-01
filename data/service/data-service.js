@@ -1226,8 +1226,23 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
      * The [model]{@link ObjectModel} that this service supports.  If the model is
      * defined the service supports all the object descriptors contained within the model.
      */
-    model: {
+    _model: {
         value: undefined
+    },
+
+    model: {
+        get: function() {
+            return this._model;
+        },
+        set: function(value) {
+            if(value !== this._model) {
+                var childServiceTypes = this._childServiceTypes;
+                //TODO Remove correctly the types of the model going away: handling of events, etc...
+                this._model = value;
+                childServiceTypes.push.apply(childServiceTypes, this._model.objectDescriptors);
+            }
+
+        }
     },
 
     /**
