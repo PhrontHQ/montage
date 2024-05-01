@@ -83,6 +83,8 @@ var DateToDateInputStringConverter = exports.DateToDateInputStringConverter = Co
      */
     revert: {
         value: function(v) {
+            if(!v) return null;
+
             var vParts = v.split("-");
             return new Date(vParts[0], vParts[1]-1, vParts[2]);
         }
