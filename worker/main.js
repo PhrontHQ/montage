@@ -47,9 +47,12 @@ if(process.env.PROFILE_START) {
 
 
 /*
-    workaround for the fact that mr doesn't find crypto which is a built-in module, needs to fix that for good.
+    workaround in node 18 for the fact that mr doesn't find crypto which is a built-in module, needs to fix that for good.
+
+    Causes an exception node 20.
 */
-global.crypto = require('crypto');
+//global.crypto = require('crypto');
+
 const   Montage = require('montage/montage'),
         PATH = require("path"),
         processPath = PATH.join(module.parent.path, "."),
@@ -111,7 +114,7 @@ if(!useMr) {
         FIXME!!!
         WARNING, when debugging locally with links, we end up with the same module loaded twice, causing errors, with filenames like:
 
-            /Users/benoit/Sites/marchant/plum/plumming-data-worker/node_modules/phront/node_modules/montage/core/target.js
+            /Users/benoit/Sites/marchant/plum/plumming-data-worker/node_modules/business-data.mod/node_modules/montage/core/target.js
             and
             /Users/benoit/Sites/marchant/plum/plumming-data-worker/node_modules/montage/core/target.js
 
@@ -173,7 +176,7 @@ if(!useMr) {
     })
     .then(function (mr) {
         //Inject current file:
-        var currentMrModule = mr.inject("phront/worker/main", exports),
+        var currentMrModule = mr.inject("montage/worker/main", exports),
             computedModuleId = `${PATH.relative(module.path, mainModule.path)}/main.mjson`;
         /*
             For reducing code packaged and deployed, we need a valid moduleId for the main project's main.json file.
