@@ -1,6 +1,7 @@
-var Target = require("../../core/target").Target,
-DataService = require("../service/data-service").DataService,
-DataEvent = require("./data-event").DataEvent;
+const   Montage = require("../../core/core").Montage,
+        Target = require("../../core/target").Target,
+        DataService = require("../service/data-service").DataService,
+        DataEvent = require("./data-event").DataEvent;
 
 /**
  * @class DataObject
@@ -18,29 +19,74 @@ DataEvent = require("./data-event").DataEvent;
     We could then later build a UI to do the same visually.
 */
 
+exports.DataObject = class DataObject extends Target {
 
-exports.DataObject = Target.specialize(/** @lends DataObject.prototype */ {
-    constructor: {
-        value: function Object() {
-            this.super();
-            return this;
-        }
-    },
-    originId: {
-        value: undefined
-    },
+    static {
 
-    creationDate: {
-        value: undefined
-    },
-    modificationDate: {
-        value: undefined
-    },
-    publicationDate: {
-        value: undefined
+        Montage.defineProperties(this.prototype, {
+            /**
+             * The primaryKey from a different system a Data Object maay have come from originally
+             *
+             * @property {Object}
+             * @default null
+             */
+            originId: { value: undefined},
+
+            /**
+             * The time a data object was created
+             *
+             * @property {Date}
+             * @default undefined
+             */
+            creationDate: { value: undefined},
+
+            // /**
+            //  * The identity of the user who created a data object.
+            //  * WOULD BE BETTER HANDLED AS PART OD HAVING A LOG THAT RECORDS OVER TIME
+            //  *
+            //  * @property {Identity}
+            //  * @default undefined
+            //  */
+            // creationIdentity: { value: undefined},
+
+
+            /**
+             * The last time a data object was modified
+             * WOULD BE BETTER HANDLED AS PART OD HAVING A LOG THAT RECORDS OVER TIME
+             *
+             * @property {Date}
+             * @default undefined
+             */
+            modificationDate: { value: undefined},
+
+            // /**
+            //  * The identity of the user who last modified a data object. This would be better as
+            //  * WOULD BE BETTER HANDLED AS PART OD HAVING A LOG THAT RECORDS OVER TIME
+            //  *
+            //  * @property {Identity}
+            //  * @default undefined
+            //  */
+            // modificationIdentity: { value: undefined},
+
+            /**
+             * The last time a data object was published, as in getting "live"
+             * WOULD BE BETTER HANDLED AS PART OD HAVING A LOG THAT RECORDS OVER TIME
+             *
+             * @property {Date}
+             * @default undefined
+             */
+            publicationDate: { value: undefined},
+
+            // /**
+            //  * The identity of the user who last published a data object, as in getting getting "live"
+            //  * WOULD BE BETTER HANDLED AS PART OD HAVING A LOG THAT RECORDS OVER TIME
+            //  *
+            //  * @property {Date}
+            //  * @default undefined
+            //  */
+            // publicationIdentity: { value: undefined}
+        });
     }
-
-},{
 
     /*
         This class methods are polymorphic, which poses a problem.
@@ -59,23 +105,18 @@ exports.DataObject = Target.specialize(/** @lends DataObject.prototype */ {
      * @param {DataEvent} event the first event triggering the prepareToHandleDataEvents
      */
 
-    prepareToHandleDataEvents: {
-        value: function (event) {
-            event.dataService.objectDescriptorForType(this).addEventListener(DataEvent.create,this,false);
-        }
-    },
-    handleCreate: {
-        value: function (event) {
-            // if(event.dataObject instanceof this) {
-                event.dataObject.creationDate = event.dataObject.modificationDate = new Date();
-            // }
-        }
-    },
-    handleUpdate: {
-        value: function (event) {
-            event.dataObject.modificationDate = new Date();
-        }
+    static prepareToHandleDataEvents (event) {
+        event.dataService.objectDescriptorForType(this).addEventListener(DataEvent.create,this,false);
     }
 
+    static handleCreate(event) {
+        // if(event.dataObject instanceof this) {
+            event.dataObject.creationDate = event.dataObject.modificationDate = new Date();
+        // }
+    }
 
-});
+    static handleUpdate(event) {
+        event.dataObject.modificationDate = new Date();
+    }
+
+}
