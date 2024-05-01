@@ -48,6 +48,7 @@ var Defaults = {
     valueObjectPrototypeName: "",
     valueObjectModuleId: "",
     valueDescriptor: void 0,
+    targetBlueprint: void 0,
     keyDescriptor: void 0,
     enumValues: [],
     defaultValue: void 0,
