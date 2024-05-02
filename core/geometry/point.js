@@ -1,6 +1,6 @@
 /**
- * @module montage/core/geometry/point
- * @requires montage/core/core
+ * @module mod/core/geometry/point
+ * @requires mod/core/core
  */
 var Montage = require("../core").Montage;
 
@@ -108,7 +108,7 @@ var webkitImplementation = function () {
     Point.convertPointFromNodeToPage = function (element, point) {
         if (!element || typeof element.x !== "undefined") {
             return null;
-        }   
+        }
         if(point) {
             _webKitPoint.x = point.x;
             _webKitPoint.y = point.y;
@@ -166,7 +166,7 @@ var shimImplementation = function () {
 };
 
 if (
-    typeof WebKitPoint !== "undefined" && 
+    typeof WebKitPoint !== "undefined" &&
         typeof webkitConvertPointFromNodeToPage !== "undefined"
 ) {
     _webKitPoint = new WebKitPoint(0,0);

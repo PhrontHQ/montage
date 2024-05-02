@@ -1,5 +1,5 @@
 /**
- * @module montage/data/service/data-access-policy-rule
+ * @module mod/data/service/data-access-policy-rule
  */
 
 var Montage = require("../../core/core").Montage;

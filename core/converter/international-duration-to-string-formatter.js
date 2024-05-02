@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/international-duration-to-string-formatter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/international-duration-to-string-formatter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
     Montage = require("../core").Montage,

@@ -1,7 +1,7 @@
 /**
- * @module montage/core/converter/date-converter
- * @requires montage/core/core
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/date-converter
+ * @requires mod/core/core
+ * @requires mod/core/converter/converter
  */
 var Montage = require("../core").Montage,
     Converter = require("./converter").Converter,

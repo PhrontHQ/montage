@@ -1,15 +1,15 @@
 /*global require, exports */
 
 /**
-    @module montage/ui/check-control
+    @module mod/ui/check-control
 */
 var Control = require("ui/control").Control,
     PressComposer = require("composer/press-composer").PressComposer;
 
 /**
     The base class for the Checkbox component. You will not typically create this class directly but instead use the Checkbox component.
-    @class module:montage/ui/check-input.CheckControl
-    @extends module:montage/ui/control.Control
+    @class module:mod/ui/check-input.CheckControl
+    @extends module:mod/ui/control.Control
 */
 exports.CheckControl =  Control.specialize({
     constructor: {
@@ -166,7 +166,7 @@ exports.CheckControl =  Control.specialize({
     }
 });
 
-exports.CheckControl.addAttributes( /** @lends module:"montage/ui/native/check-control".InputCheckbox# */ {
+exports.CheckControl.addAttributes( /** @lends module:"mod/ui/native/check-control".InputCheckbox# */ {
 
 
 /**

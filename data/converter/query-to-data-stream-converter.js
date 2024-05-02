@@ -1,5 +1,5 @@
 /**
- * @module montage/data/converter/query-to-data-stream-converter
+ * @module mod/data/converter/query-to-data-stream-converter
  */
 
 var Converter = require("../../core/converter/converter").Converter,

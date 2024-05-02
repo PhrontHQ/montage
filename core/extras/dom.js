@@ -1,8 +1,8 @@
 /*global Node, Element*/
 
 /**
- * @module montage/core/dom
- * @requires montage/core/geometry/point
+ * @module mod/core/dom
+ * @requires mod/core/geometry/point
 */
 
 

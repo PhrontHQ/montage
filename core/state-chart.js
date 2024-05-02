@@ -1,5 +1,5 @@
 /**
- * @module montage/core/state-chart
+ * @module mod/core/state-chart
  * @requires montage
  */
 var Montage = require("./core").Montage;
@@ -396,7 +396,7 @@ var StateChart = exports.StateChart = Montage.specialize(/** @lends StateChart# 
             var substateName;
             for (substateName in state.substates) {
                 if (state.substates.hasOwnProperty(substateName)) {
-                    this._prepareState(state.substates[substateName]);   
+                    this._prepareState(state.substates[substateName]);
                 }
             }
         }

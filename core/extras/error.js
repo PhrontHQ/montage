@@ -1,7 +1,7 @@
     /**
         Defines extensions to intrinsic `Error`.
         @see {external:Error}
-        @module montage/core/extras/error
+        @module mod/core/extras/error
     */
 
     exports.Error = Error;

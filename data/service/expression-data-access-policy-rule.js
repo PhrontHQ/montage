@@ -1,5 +1,5 @@
 /**
- * @module montage/data/service/expression-data-access-policy-rule
+ * @module mod/data/service/expression-data-access-policy-rule
  */
 
 var DataAccessPolicyRule = require("./data-access-policy-rule").DataAccessPolicyRule,

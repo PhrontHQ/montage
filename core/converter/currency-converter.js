@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/currency-converter
- * @requires montage/core/converter/number-converter
+ * @module mod/core/converter/currency-converter
+ * @requires mod/core/converter/number-converter
  */
 var NumberConverter = require("./number-converter").NumberConverter;
 

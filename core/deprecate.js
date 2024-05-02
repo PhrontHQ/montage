@@ -9,7 +9,7 @@ function generateDeprecatedKey(name, alternative) {
 }
 
 /**
- * @module montage/core/deprecate
+ * @module mod/core/deprecate
  */
 
 /**

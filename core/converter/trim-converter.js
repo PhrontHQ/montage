@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/trim-converter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/trim-converter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
     deprecate = require("../deprecate"),

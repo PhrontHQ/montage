@@ -1,7 +1,7 @@
 /**
- * @module montage/core/geometry/cubic-bezier
- * @requires montage/core/core
- * @requires montage/core/geometry/point
+ * @module mod/core/geometry/cubic-bezier
+ * @requires mod/core/core
+ * @requires mod/core/geometry/point
  */
 var Montage = require("../core").Montage;
 var Point = require("./point").Point;

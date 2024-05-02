@@ -1,7 +1,7 @@
 /*global require, exports*/
 
 /**
- * @module montage/ui/base/abstract-image.mod
+ * @module mod/ui/base/abstract-image.mod
  */
 var Component = require("../component").Component,
     Url = require("../../core/mini-url"),

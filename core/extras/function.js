@@ -1,7 +1,7 @@
 /**
  * Defines extensions to intrinsic `Function` object.
  * @see {external:Function}
- * @module montage/core/extras/function
+ * @module mod/core/extras/function
  */
 
 /**

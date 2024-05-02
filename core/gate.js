@@ -1,8 +1,8 @@
 
 /**
- * @module montage/core/gate
- * @requires montage/core/core
- * @requires montage/core/logger
+ * @module mod/core/gate
+ * @requires mod/core/core
+ * @requires mod/core/logger
  */
 var Montage = require("./core").Montage,
     logger = require("./logger").logger("gate"),

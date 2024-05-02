@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/lower-case-converter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/lower-case-converter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
     deprecate = require("../deprecate"),

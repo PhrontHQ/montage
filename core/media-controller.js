@@ -1,8 +1,8 @@
 /**
- * @module montage/ui/controller/media-controller
- * @requires montage/core/core
- * @requires montage/ui/component
- * @requires montage/core/logger
+ * @module mod/ui/controller/media-controller
+ * @requires mod/core/core
+ * @requires mod/ui/component
+ * @requires mod/core/logger
  */
 var Target = require("./target").Target,
     core = require("./core"),

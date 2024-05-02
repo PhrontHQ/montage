@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/camel-case-converter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/camel-case-converter
+ * @requires mod/core/converter/converter
  * borrowed from https://github.com/angus-c/just/blob/master/packages/string-camel-case/index.js (MIT)
  */
 var Converter = require("./converter").Converter,

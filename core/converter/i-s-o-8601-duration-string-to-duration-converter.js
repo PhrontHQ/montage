@@ -1,6 +1,6 @@
 /**
  * @module data/main.mod/converter/i-s-o-8601-duration-string-to-duration-converter
- * @requires montage/core/converter/converter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
     Duration = require("../duration").Duration;

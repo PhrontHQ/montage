@@ -1,5 +1,5 @@
 /**
- @module montage/core/event/mutable-event
+ @module mod/core/event/mutable-event
  @requires montage
  */
 var Montage = require("../core").Montage;

@@ -1,6 +1,6 @@
 /**
  * @module data/main.mod/converter/i-s-o-8601-duration-range-string-to-duration-range-converter
- * @requires montage/core/converter/converter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
     Range = require("../range").Range,

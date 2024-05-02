@@ -1,9 +1,9 @@
  /*global require, exports*/
 
 /**
- * @module montage/ui/base/abstract-button
- * @requires montage/ui/base/abstract-control
- * @requires montage/composer/press-composer
+ * @module mod/ui/base/abstract-button
+ * @requires mod/ui/base/abstract-control
+ * @requires mod/composer/press-composer
  */
 var AbstractControl = require("./abstract-control").AbstractControl,
     PressComposer = require("../../composer/press-composer").PressComposer;

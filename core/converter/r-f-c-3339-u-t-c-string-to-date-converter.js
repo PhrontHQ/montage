@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/r-f-c-3339-u-t-c-string-to-date-converter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/r-f-c-3339-u-t-c-string-to-date-converter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
     deprecate = require("../extras/date"),

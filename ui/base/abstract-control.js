@@ -1,8 +1,8 @@
 /*global require, exports, document, Error*/
 
 /**
- * @module montage/ui/base/abstract-control
- * @requires montage/ui/component
+ * @module mod/ui/base/abstract-control
+ * @requires mod/ui/component
  * @requires collections/map
  */
 var Component = require("../component").Component,

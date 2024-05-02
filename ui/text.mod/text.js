@@ -1,7 +1,7 @@
 /*global require, exports, console, MontageElement */
 
 /**
- * @module "montage/ui/text.mod"
+ * @module "mod/ui/text.mod"
  */
 var Component = require("../component").Component;
 
@@ -13,11 +13,11 @@ var Component = require("../component").Component;
  * The text component replaces the inner DOM of its element with a TextNode and
  * it renders the [value]{@link Text#value} string in it.
  *
- * @class module:montage/ui/text.Text
- * @extends module:montage/ui/component.Component
+ * @class module:mod/ui/text.Text
+ * @extends module:mod/ui/component.Component
  * @classdesc A component that displays a string of plain text.
  */
-var MontageText = exports.Text = Component.specialize( /**  @lends module:montage/ui/text.Text# */ {
+var MontageText = exports.Text = Component.specialize( /**  @lends module:mod/ui/text.Text# */ {
 
     hasTemplate: {
         value: false

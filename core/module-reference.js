@@ -1,6 +1,6 @@
 /**
- * @module montage/core/module-reference
- * @requires montage/core/core
+ * @module mod/core/module-reference
+ * @requires mod/core/core
  */
 var Montage = require("./core").Montage;
 
@@ -78,7 +78,7 @@ exports.ModuleReference = class ModuleReference extends Montage {
      *
      * @example
      * var ref = new ModuleReference().initWithIdAndRequire("core/uuid", montageRequire);
-     * ref.resolve(applicationRequire); // => "montage/core/uuid"
+     * ref.resolve(applicationRequire); // => "mod/core/uuid"
      *
      * @example
      * var ref = new ModuleReference().initWithIdAndRequire("ui/main.mod", applicationRequire);
@@ -143,7 +143,7 @@ exports.ModuleReference = class ModuleReference extends Montage {
 //      *
 //      * @example
 //      * var ref = new ModuleReference().initWithIdAndRequire("core/uuid", montageRequire);
-//      * ref.resolve(applicationRequire); // => "montage/core/uuid"
+//      * ref.resolve(applicationRequire); // => "mod/core/uuid"
 //      *
 //      * @example
 //      * var ref = new ModuleReference().initWithIdAndRequire("ui/main.mod", applicationRequire);

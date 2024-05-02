@@ -1,5 +1,5 @@
 /**
- * @module montage/data/service/u-r-l-search-param-identity-service
+ * @module mod/data/service/u-r-l-search-param-identity-service
  */
 
 var DataService = require("data/service/data-service").DataService,

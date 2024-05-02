@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/new-line-to-br-converter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/new-line-to-br-converter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
     deprecate = require("../deprecate"),
@@ -9,7 +9,7 @@ var Converter = require("./converter").Converter,
 
 /**
  * Replaces all new line characters with a HTML &lt;br&gt;
- * @memberof module:montage/core/converter#
+ * @memberof module:mod/core/converter#
  * @function
  * @param {string} str The string to format.
  * @returns {string} The formatted string.

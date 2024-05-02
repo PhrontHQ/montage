@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/international-date-to-string-formatter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/international-date-to-string-formatter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
     Locale = require("../locale").Locale;

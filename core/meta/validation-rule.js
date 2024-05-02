@@ -1,6 +1,6 @@
 /**
- * @module montage/core/meta/validation-rule
- * @requires montage/core/core
+ * @module mod/core/meta/validation-rule
+ * @requires mod/core/core
  * @requires core/exception
  * @requires core/promise
  * @requires core/logger

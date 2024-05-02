@@ -8,7 +8,7 @@ module.exports = Object;
     Based in part on extras from Motorola Mobility’s Montage
     Copyright (c) 2012, Motorola Mobility LLC. All Rights Reserved.
     3-Clause BSD License
-    https://github.com/motorola-mobility/montage/blob/master/LICENSE.md
+    https://github.com/motorola-mobility/mod/blob/master/LICENSE.md
 */
 
 /**

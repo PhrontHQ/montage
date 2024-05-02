@@ -1,6 +1,6 @@
 // Consider proposal at https://rniwa.com/editing/undomanager.html
 /**
- @module montage/core/undo-manager
+ @module mod/core/undo-manager
  */
 
 var Montage = require("./core").Montage,

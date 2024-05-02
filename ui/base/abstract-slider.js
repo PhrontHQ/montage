@@ -1,10 +1,10 @@
 /*global require, exports, window*/
 
 /**
- * @module montage/ui/base/abstract-slider.mod
- * @requires montage/ui/component
- * @requires montage/ui/native-control
- * @requires montage/composer/press-composer
+ * @module mod/ui/base/abstract-slider.mod
+ * @requires mod/ui/component
+ * @requires mod/ui/native-control
+ * @requires mod/composer/press-composer
  */
 
 var AbstractControl = require("./abstract-control").AbstractControl,

@@ -2,8 +2,8 @@
  * Provides common conversion, validation, and formatting functions for
  * different types of values.
  *
- * @module montage/core/converter/converter
- * @requires montage/core/core
+ * @module mod/core/converter/converter
+ * @requires mod/core/core
  */
 var MontageModule = require("../core"),
     Montage = MontageModule.Montage,
@@ -23,7 +23,7 @@ var FUNCTION_CLASS = '[object Function]',
 var _toString = Object.prototype.toString;
 
 /**
- * @exports module:montage/core/converter#isNumber
+ * @exports module:mod/core/converter#isNumber
  * @function
  * @private
  */
@@ -34,7 +34,7 @@ exports.isNumber = isNumber;
 
 
 /**
- * @exports module:montage/core/converter#isDef
+ * @exports module:mod/core/converter#isDef
  * @function
  * @private
  */

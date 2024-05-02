@@ -2,10 +2,10 @@
 "use strict";
 
 /**
- * @module "montage/ui/segmented-bar.mod"
- * @requires montage/ui/base/abstract-button
- * @requires montage/core/range-controller
- * @requires montage/core/tree-controller
+ * @module "mod/ui/segmented-bar.mod"
+ * @requires mod/ui/base/abstract-button
+ * @requires mod/core/range-controller
+ * @requires mod/core/tree-controller
  */
 var AbstractButton = require("ui/base/abstract-button").AbstractButton,
     RangeController = require("core/range-controller").RangeController,

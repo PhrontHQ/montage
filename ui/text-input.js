@@ -1,18 +1,18 @@
 /**
-    @module montage/ui/text-input
+    @module mod/ui/text-input
 */
 var Control = require("ui/control").Control,
     deprecate = require("core/deprecate");
 
 /**
     The base class for all text-based input components. You typically won't create instances of this prototype.
-    @class module:montage/ui/text-input.TextInput
-    @extends module:montage/ui/component.Component
-    @see {module:"montage/ui/input-date.mod".DateInput}
-    @see module:"montage/ui/input-text.mod".InputText
-    @see module:"montage/ui/input-number.mod".InputNumber
-    @see module:"montage/ui/input-range.mod".RangeInput
-    @see module:"montage/ui/textarea.mod".TextArea
+    @class module:mod/ui/text-input.TextInput
+    @extends module:mod/ui/component.Component
+    @see {module:"mod/ui/input-date.mod".DateInput}
+    @see module:"mod/ui/input-text.mod".InputText
+    @see module:"mod/ui/input-number.mod".InputNumber
+    @see module:"mod/ui/input-range.mod".RangeInput
+    @see module:"mod/ui/textarea.mod".TextArea
 
 */
 
@@ -22,7 +22,7 @@ To-DO: Move value logic with converter to Control
 
 
 */
-var TextInput = exports.TextInput = class TextInput extends Control {/** @lends module:montage/ui/text-input.TextInput# */
+var TextInput = exports.TextInput = class TextInput extends Control {/** @lends module:mod/ui/text-input.TextInput# */
 }
 
 TextInput.addClassProperties({

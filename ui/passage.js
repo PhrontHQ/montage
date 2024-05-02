@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module montage/ui/passage
+ * @module mod/ui/passage
  */
 var Montage = require("core/core").Montage;
 

@@ -1,6 +1,6 @@
 /**
- * @module montage/core/object-controller
- * @requires montage/core/core
+ * @module mod/core/object-controller
+ * @requires mod/core/core
  */
 
 var core = require("./core"),

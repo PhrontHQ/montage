@@ -1,7 +1,7 @@
 /**
  * Defines extensions to the intrinsic `String` object.
  * @see {external:String}
- * @module montage/core/extras/string
+ * @module mod/core/extras/string
  */
 
 /**

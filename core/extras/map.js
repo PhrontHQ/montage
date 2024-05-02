@@ -1,7 +1,7 @@
     /**
         Defines extensions to intrinsic `Map`.
         @see {external:Map}
-        @module montage/core/extras/map
+        @module mod/core/extras/map
     */
 
     /**

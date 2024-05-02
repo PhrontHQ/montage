@@ -1,5 +1,5 @@
 /**
- * @module "montage/ui/repetition.mod"
+ * @module "mod/ui/repetition.mod"
  */
 var Montage = require("../../core/core").Montage;
 var Component = require("../component").Component;

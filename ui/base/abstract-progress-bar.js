@@ -20,7 +20,7 @@ var AbstractProgressBar = exports.AbstractProgressBar = AbstractControl.speciali
 });
 
 
-AbstractProgressBar.addAttributes( /** @lends module:montage/base/ui/abstract-progress-bar.AbstractProgressBar# */ {
+AbstractProgressBar.addAttributes( /** @lends module:mod/base/ui/abstract-progress-bar.AbstractProgressBar# */ {
 
     /**
      The current value displayed but the progress control.

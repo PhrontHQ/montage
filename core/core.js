@@ -1,5 +1,5 @@
 /**
- * @module montage/core/core
+ * @module mod/core/core
  */
 
  /**

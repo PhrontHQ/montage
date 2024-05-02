@@ -4,7 +4,7 @@ var Range = require("../range").Range;
 /**
 *  Defines extensions to intrinsic `Date` object.
  *
-*  @module montage/core/extras/date
+*  @module mod/core/extras/date
 *  @see {external:Date}
 */
 

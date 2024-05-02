@@ -1,6 +1,6 @@
 /**
- * @module montage/composer/composer
- * @requires montage/core/target
+ * @module mod/composer/composer
+ * @requires mod/core/target
  */
 var Target = require("../core/target").Target,
     defaultEventManager = require("../core/event/event-manager").defaultEventManager;

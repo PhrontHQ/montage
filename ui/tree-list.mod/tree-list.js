@@ -1,6 +1,6 @@
 /**
  * @module ui/tree-list.mod
- * @requires montage/ui/component
+ * @requires mod/ui/component
  */
 var Component = require("../component").Component,
     TreeNode = require("../../core/tree-controller").TreeNode,

@@ -1,15 +1,15 @@
 /*global Element, console */
 /**
- * @module montage/ui/component
+ * @module mod/ui/component
  * @requires montage
- * @requires montage/core/target
- * @requires montage/core/template
- * @requires montage/core/document-resources
- * @requires montage/core/gate
- * @requires montage/core/promise
- * @requires montage/core/logger
- * @requires montage/core/event/event-manager
- * @requires montage/core/serialization/alias
+ * @requires mod/core/target
+ * @requires mod/core/template
+ * @requires mod/core/document-resources
+ * @requires mod/core/gate
+ * @requires mod/core/promise
+ * @requires mod/core/logger
+ * @requires mod/core/event/event-manager
+ * @requires mod/core/serialization/alias
  * @requires collections/set
  */
 var Montage = require("../core/core").Montage,
@@ -5128,7 +5128,7 @@ rootComponent.identifier = "rootComponent";
 
 //https://github.com/kangax/html-minifier/issues/63
 //http://www.w3.org/TR/html-markup/global-attributes.html
-Component.addAttributes( /** @lends module:montage/ui/control.Control# */ {
+Component.addAttributes( /** @lends module:mod/ui/control.Control# */ {
 
 /**
     Specifies the shortcut key(s) that gives focuses to or activates the element.

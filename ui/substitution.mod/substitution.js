@@ -1,5 +1,5 @@
 /**
- * @module "montage/ui/substitution.mod"
+ * @module "mod/ui/substitution.mod"
  */
 var Slot = require("../slot.mod").Slot,
     Promise = require("../../core/promise").Promise,

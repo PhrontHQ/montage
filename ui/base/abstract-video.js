@@ -1,7 +1,7 @@
 /*global require, exports*/
 
 /**
- * @module montage/ui/base/abstract-video.mod
+ * @module mod/ui/base/abstract-video.mod
  */
 var Component = require("../component").Component,
     MediaController = require("../../core/media-controller").MediaController;
@@ -46,7 +46,7 @@ var AbstractVideo = exports.AbstractVideo = Component.specialize(/** @lends Abst
 
     /**
      * The MediaController instance used by the video component.
-     * @type {module:montage/core/media-controller.MediaController}
+     * @type {module:mod/core/media-controller.MediaController}
      * @default null
      */
     videoController: {

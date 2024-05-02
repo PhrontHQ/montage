@@ -7,11 +7,11 @@
  */
 
 /**
- * @module montage/core/event/event-manager
- * @requires montage/core/core
- * @requires montage/core/event/mutable-event
- * @requires montage/core/serialization
- * @requires montage/core/event/action-event-listener
+ * @module mod/core/event/event-manager
+ * @requires mod/core/core
+ * @requires mod/core/event/mutable-event
+ * @requires mod/core/serialization
+ * @requires mod/core/event/action-event-listener
  */
 
 var Montage = require("../core").Montage,

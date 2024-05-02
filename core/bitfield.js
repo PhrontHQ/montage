@@ -1,8 +1,8 @@
 /**
  * Defines the BitField class, that compactly stores multiple values as a short
  * series of bits.
- * @module montage/core/bitfield
- * @requires montage/core/core
+ * @module mod/core/bitfield
+ * @requires mod/core/core
  */
 
 var Montage = require("./core").Montage;
@@ -47,7 +47,7 @@ var BitField = exports.BitField = Montage.specialize( /** @lends BitField */ {
             this.reset();
             for (fieldName in propertyDescriptor) {
                 if (propertyDescriptor.hasOwnProperty(fieldName)) {
-                    this.addField(fieldName, propertyDescriptor[fieldName].value);   
+                    this.addField(fieldName, propertyDescriptor[fieldName].value);
                 }
             }
             return this;

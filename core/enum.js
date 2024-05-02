@@ -1,7 +1,7 @@
 /**
- * @module montage/core/enum
- * @requires montage/core/core
- * @requires montage/core/logger
+ * @module mod/core/enum
+ * @requires mod/core/core
+ * @requires mod/core/logger
  */
 var Montage = require("./core").Montage,
     logger = require("./logger").logger("enum");

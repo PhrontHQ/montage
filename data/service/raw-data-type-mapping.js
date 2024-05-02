@@ -1,5 +1,5 @@
 /**
-    @module montage/data/service/raw-data-type-mapping
+    @module mod/data/service/raw-data-type-mapping
 */
 
 

@@ -1,6 +1,6 @@
 /**
  * @module monatage/core/converter/i-s-o-date-string-to-date-converter
- * @requires montage/core/converter/i-s-o-8601-date-string-to-date-component-values-callback-converter
+ * @requires mod/core/converter/i-s-o-8601-date-string-to-date-component-values-callback-converter
  */
 var ISO8601DateStringToDateComponentValuesCallbackConverter = require("./i-s-o-8601-date-string-to-date-component-values-callback-converter").ISO8601DateStringToDateComponentValuesCallbackConverter,
     singleton;

@@ -1,13 +1,13 @@
     /*global require,exports */
 
 /**
- * @module montage/core/localizer
- * @requires montage/core/core
- * @requires montage/core/logger
- * @requires montage/core/deserializer
- * @requires montage/core/promise
- * @requires montage/core/messageformat
- * @requires montage/core/messageformat-locale
+ * @module mod/core/localizer
+ * @requires mod/core/core
+ * @requires mod/core/logger
+ * @requires mod/core/deserializer
+ * @requires mod/core/promise
+ * @requires mod/core/messageformat
+ * @requires mod/core/messageformat-locale
  */
 var core = require("./core"),
     Montage = core.Montage,

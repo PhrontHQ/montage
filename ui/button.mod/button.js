@@ -1,7 +1,7 @@
  /*global require, exports*/
 
 /**
-    @module "montage/ui/native/button.mod"
+    @module "mod/ui/native/button.mod"
 */
 var Control = require("ui/control").Control,
     KeyComposer = require("composer/key-composer").KeyComposer,
@@ -11,8 +11,8 @@ var Control = require("ui/control").Control,
 
 /**
     Wraps a native <code>&lt;button></code> or <code>&lt;input[type="button"]></code> HTML element. The element's standard attributes are exposed as bindable properties.
-    @class module:"montage/ui/native/button.mod".Button
-    @extends module:montage/ui/control.Control
+    @class module:"mod/ui/native/button.mod".Button
+    @extends module:mod/ui/control.Control
     @fires action
     @fires hold
     @example
@@ -26,7 +26,7 @@ b1.addEventListener("action", function(event) {
 <caption>Serialized example</caption>
 {
     "aButton": {
-        "prototype": "montage/ui/native/button.mod",
+        "prototype": "mod/ui/native/button.mod",
         "values": {
             "element": {"#": "btnElement"}
         },
@@ -43,7 +43,7 @@ b1.addEventListener("action", function(event) {
 }
 &lt;button data-montage-id="btnElement"></button>
 */
-var Button = exports.Button = class Button extends Control { /** @lends module:"montage/ui/native/button.mod".Button# */
+var Button = exports.Button = class Button extends Control { /** @lends module:"mod/ui/native/button.mod".Button# */
 }
 
 Button.addClassProperties( {
@@ -53,7 +53,7 @@ Button.addClassProperties( {
         or when focused and the spacebar is pressed.
 
         @event action
-        @memberof module:"montage/ui/native/button.mod".Button
+        @memberof module:"mod/ui/native/button.mod".Button
         @param {Event} event
     */
 
@@ -62,7 +62,7 @@ Button.addClassProperties( {
         {@link holdThreshold}.
 
         @event hold
-        @memberof module:"montage/ui/native/button.mod".Button
+        @memberof module:"mod/ui/native/button.mod".Button
         @param {Event} event
     */
 
@@ -421,7 +421,7 @@ Button.addClassProperties( {
 
 });
 
-Button.addAttributes( /** @lends module:"montage/ui/native/button.mod".Button# */{
+Button.addAttributes( /** @lends module:"mod/ui/native/button.mod".Button# */{
 
 /**
     The URL to which the form data will be sumbitted.

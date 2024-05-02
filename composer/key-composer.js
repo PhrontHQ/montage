@@ -1,7 +1,7 @@
 /**
- * @module montage/composer/key-composer
- * @requires montage/core/core
- * @requires montage/composer/composer
+ * @module mod/composer/key-composer
+ * @requires mod/core/core
+ * @requires mod/composer/composer
  */
 var Montage = require("../core/core").Montage,
     Composer = require("./composer").Composer,

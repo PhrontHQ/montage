@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/ModuleIdToObjectConverter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/ModuleIdToObjectConverter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("../../core/converter/converter").Converter,
     TimeZone = require("../../core/date/time-zone").TimeZone,

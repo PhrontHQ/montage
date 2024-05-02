@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/collection-iteration-converter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/collection-iteration-converter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
     Promise = require("../promise").Promise;

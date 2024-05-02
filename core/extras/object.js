@@ -1,7 +1,7 @@
 /**
     Defines extensions to intrinsic `Object`.
     @see {external:Object}
-    @module montage/core/extras/object
+    @module mod/core/extras/object
 */
 
 /**

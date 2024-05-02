@@ -1,9 +1,9 @@
 /*global require,exports */
 /**
- * @module montage/composer/translate-composer
- * @requires montage/core/core
- * @requires montage/composer/composer
- * @requires montage/core/event/event-manager
+ * @module mod/composer/translate-composer
+ * @requires mod/core/core
+ * @requires mod/composer/composer
+ * @requires mod/core/event/event-manager
  */
 var Composer = require("./composer").Composer,
     defaultEventManager = require("../core/event/event-manager").defaultEventManager;
@@ -519,8 +519,8 @@ var TranslateComposer = exports.TranslateComposer = Composer.specialize(/** @len
         value: function () {
             if (window.PointerEvent) {
                 this._element.addEventListener("pointerdown", this, true);
-                // Quick Fix: Should be removed when the eventmanger 
-                // will handle the options parameter of the 
+                // Quick Fix: Should be removed when the eventmanger
+                // will handle the options parameter of the
                 // addEventListener function.
                 this._element.style.touchAction = 'none';
 
@@ -647,7 +647,7 @@ var TranslateComposer = exports.TranslateComposer = Composer.specialize(/** @len
     captureMousemove: {
         value: function (event) {
             if (this.enabled) {
-                this._handleMove(event, event, this._MOUSE_POINTER);                
+                this._handleMove(event, event, this._MOUSE_POINTER);
             }
 
         }
@@ -950,7 +950,7 @@ var TranslateComposer = exports.TranslateComposer = Composer.specialize(/** @len
                 isNegativeDeltaX,
                 deltaX,
                 deltaY;
-            
+
             if (event.type === "wheel" || event.type === "mousewheel") {
                 if (this._axis !== "vertical") {
                     deltaX = ((event.wheelDeltaX || -event.deltaX || 0) * 20) / 120;
@@ -1135,7 +1135,7 @@ var TranslateComposer = exports.TranslateComposer = Composer.specialize(/** @len
                 document.removeEventListener("MSPointerMove", this, true);
                 document.removeEventListener("MSPointerUp", this, false);
                 document.removeEventListener("MSPointerCancel", this, false);
-               
+
                 if (this.shouldCancelOnSroll) {
                     document.removeEventListener("scroll", this, true);
                 }

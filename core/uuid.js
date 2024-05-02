@@ -4,7 +4,7 @@
  </notice> */
 
 /**
- * @module montage/core/uuid
+ * @module mod/core/uuid
 */
 
 

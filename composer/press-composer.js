@@ -1,10 +1,10 @@
 /*global require, exports*/
 
 /**
- * @module montage/composer/press-composer
- * @requires montage/core/core
- * @requires montage/composer/composer
- * @requires montage/core/event/mutable-event
+ * @module mod/composer/press-composer
+ * @requires mod/core/core
+ * @requires mod/composer/composer
+ * @requires mod/core/event/mutable-event
  */
 var Montage = require("../core/core").Montage,
     Composer = require("./composer").Composer,

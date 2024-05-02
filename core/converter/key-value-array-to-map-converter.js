@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/key-value-array-to-map-converter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/key-value-array-to-map-converter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
     Promise = require("../../core/promise").Promise;

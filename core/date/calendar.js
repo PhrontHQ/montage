@@ -16,8 +16,8 @@ var Montage = require("../core").Montage,
 
     Calendar objects encapsulate information about systems of reckoning time in which the beginning, length, and divisions of a year are defined. They provide information about the calendar and support for calendrical computations such as determining the range of a given calendrical unit and adding units to a given absolute time.
 
-    @class module:montage/core/date/calendar.Calendar
-    @extends module:montage/core/core.Montage
+    @class module:mod/core/date/calendar.Calendar
+    @extends module:mod/core/core.Montage
  */
 
 //Reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Locale/calendar

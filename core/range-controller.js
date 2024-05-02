@@ -1,5 +1,5 @@
 /**
- * @module montage/core/range-controller
+ * @module mod/core/range-controller
  */
 var core = require("./core"),
     Montage = core.Montage,

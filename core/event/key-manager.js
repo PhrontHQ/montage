@@ -1,6 +1,6 @@
 /**
- * @module montage/core/event/key-manager
- * @requires montage/core/core
+ * @module mod/core/event/key-manager
+ * @requires mod/core/core
  */
 
 var Montage = require("../core").Montage,
@@ -412,14 +412,14 @@ var KeyManager = exports.KeyManager = Montage.specialize(/** @lends KeyManager# 
             if (this._operaMac) {
                 for (code in OPERAMAC_KEYNAMES_TO_KEYCODES) {
                     if (OPERAMAC_KEYNAMES_TO_KEYCODES.hasOwnProperty(code)) {
-                        KEYNAMES_TO_KEYCODES[code] = OPERAMAC_KEYNAMES_TO_KEYCODES[code];   
+                        KEYNAMES_TO_KEYCODES[code] = OPERAMAC_KEYNAMES_TO_KEYCODES[code];
                     }
                 }
             }
             if (this._firefox) {
                 for (code in FIREFOX_KEYNAMES_TO_KEYCODES) {
                     if (FIREFOX_KEYNAMES_TO_KEYCODES.hasOwnProperty(code)) {
-                        KEYNAMES_TO_KEYCODES[code] = FIREFOX_KEYNAMES_TO_KEYCODES[code];   
+                        KEYNAMES_TO_KEYCODES[code] = FIREFOX_KEYNAMES_TO_KEYCODES[code];
                     }
                 }
             }
@@ -434,7 +434,7 @@ var KeyManager = exports.KeyManager = Montage.specialize(/** @lends KeyManager# 
                     if (KEYCODES_TO_KEYNAMES[code] === undefined) {
                         // If we have more than one name for a keycode, use only the first one
                         KEYCODES_TO_KEYNAMES[code] = keyName;
-                    }   
+                    }
                 }
             }
 
@@ -811,14 +811,14 @@ var KeyManager = exports.KeyManager = Montage.specialize(/** @lends KeyManager# 
                             keyComposer._longPressTimeout = null;
                             keyComposer.dispatchEvent(longPressEvent);
                             delete thisRef._longPressKeys[keyComposer.uuid];
-                        }, this._longPressThreshold);   
+                        }, this._longPressThreshold);
                         /* jshint loopfunc:false */
 
                         // Let's remember any longKeyPress key waiting for timeout
                         this._longPressKeys[keyComposer.uuid] = keyComposer;
                     }
                 }
-                
+
                 keyComposerEvent = MutableEvent.fromEvent(event);
                 keyComposerEvent.type = eventType;
                 keyComposerEvent.activeElement = event.target;

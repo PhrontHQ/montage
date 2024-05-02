@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/snake-case-converter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/snake-case-converter
+ * @requires mod/core/converter/converter
  *
  * adapted from
  * https://github.com/angus-c/just/blob/master/packages/string-snake-case/index.js

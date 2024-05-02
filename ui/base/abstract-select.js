@@ -1,7 +1,7 @@
 /*global require, exports*/
 
 /**
- * @module montage/ui/base/abstract-select.mod
+ * @module mod/ui/base/abstract-select.mod
  */
 var AbstractControl = require("./abstract-control").AbstractControl,
     PressComposer = require("../../composer/press-composer").PressComposer,

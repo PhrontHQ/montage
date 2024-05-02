@@ -1,5 +1,5 @@
 /**
-    @module montage/ui/control
+    @module mod/ui/control
 */
 
 var Component = require("ui/component").Component,
@@ -8,10 +8,10 @@ var Component = require("ui/component").Component,
 
 /**
     Base component for all native components, such as RadioButton and Checkbox.
-    @class module:montage/ui/control.Control
-    @extends module:montage/ui/component.Component
+    @class module:mod/ui/control.Control
+    @extends module:mod/ui/component.Component
  */
-var Control = exports.Control = class Control extends Component {/** @lends module:montage/ui/control.Control# */
+var Control = exports.Control = class Control extends Component {/** @lends module:mod/ui/control.Control# */
     constructor() {
         super();
         this.defineBindings({
@@ -366,7 +366,7 @@ Control.addClassProperties(
         A reference to a Converter object whose <code>revert()</code> function is invoked when a new value is assigned to the TextInput object's <code>value</code> property. The revert() function attempts to transform the newly assigned value into a "typed" data property. For instance, a DateInput component could assign a DateConverter object to this property to convert a user-supplied date string into a standard date format.
         @type {Converter}
         @default null
-        @see {@link module:montage/core/converter.Converter}
+        @see {@link module:mod/core/converter.Converter}
     */
     converter:{
         value: null
@@ -442,7 +442,7 @@ Control.addClassProperties(
         @type {}
         @default false
         * @returns {boolean}
-        @see {@link module:montage/core/converter.Converter}
+        @see {@link module:mod/core/converter.Converter}
     */
     isContinuous: {
         value: false
@@ -451,7 +451,7 @@ Control.addClassProperties(
 });
 
 //http://www.w3.org/TR/html5/elements.html#global-attributes
-Control.addAttributes( /** @lends module:montage/ui/control.Control# */ {
+Control.addAttributes( /** @lends module:mod/ui/control.Control# */ {
     /**
         Specifies if the control should receive focus when the document loads. Because Montage components are loaded asynchronously after the document has loaded, setting this property has no effect on the element's focus state.
         @type {boolean}

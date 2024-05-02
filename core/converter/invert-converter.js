@@ -1,9 +1,9 @@
 /**
- * @module montage/core/converter/invert-converter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/invert-converter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
-    deprecate = require("../deprecate"),    
+    deprecate = require("../deprecate"),
     shouldMuteWarning = false,
     singleton;
 
@@ -14,7 +14,7 @@ var Converter = require("./converter").Converter,
  * @extends Converter
  */
 var InvertConverter = exports.InvertConverter = Converter.specialize({
-    
+
     constructor: {
         value: function () {
             if (this.constructor === InvertConverter) {

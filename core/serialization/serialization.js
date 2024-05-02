@@ -1,6 +1,6 @@
 /**
- * @module montage/serialization/serialization
- * @requires montage/core
+ * @module mod/serialization/serialization
+ * @requires mod/core
  */
 
 var Montage = require("../core").Montage,

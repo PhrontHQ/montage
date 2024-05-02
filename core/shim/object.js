@@ -1,7 +1,7 @@
 /**
  * Defines standardized shims for the intrinsic `Object`.
  * @see {external:Object}
- * @module montage/core/shim/object
+ * @module mod/core/shim/object
  */
 
 /**
