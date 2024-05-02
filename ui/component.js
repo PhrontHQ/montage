@@ -765,7 +765,7 @@ Component.addClassProperties(
             var element = this._element;
 
             if (element) {
-                return element.getAttribute("data-montage-id");
+                return element.getAttribute("data-mod-id") || element.getAttribute("data-montage-id");
             }
         }
     },
@@ -2393,7 +2393,7 @@ Component.addClassProperties(
                 if (_montage_le_flag && attributeName === ATTR_LE_COMPONENT) {
                     //jshint +W106
                     value = attribute.nodeValue;
-                } else if (attributeName === "id" || attributeName === "data-montage-id") {
+                } else if (attributeName === "id" || attributeName === "data-mod-id" || attributeName === "data-montage-id") {
                     value = attribute.nodeValue;
                 } else {
                     templateAttributeValue = template.getAttribute(attributeName) || "";

@@ -17,11 +17,11 @@ var Montage = require("./core").Montage,
  */
 var Template = Montage.specialize( /** @lends Template# */ {
     _SERIALIZATION_SCRIPT_TYPE: {value: "text/montage-serialization"},
-    _ELEMENT_ID_ATTRIBUTE: {value: "data-montage-id"},
+    _ELEMENT_ID_ATTRIBUTE: {value: "data-mod-id"},
     __ELEMENT_ID_ATTRIBUTE_SELECTOR: {value: undefined},
     _ELEMENT_ID_ATTRIBUTE_SELECTOR: {
         get: function() {
-            return this.__ELEMENT_ID_ATTRIBUTE_SELECTOR || (this.__ELEMENT_ID_ATTRIBUTE_SELECTOR = "*[" + this._ELEMENT_ID_ATTRIBUTE + "]");
+            return this.__ELEMENT_ID_ATTRIBUTE_SELECTOR || (this.__ELEMENT_ID_ATTRIBUTE_SELECTOR = `*[${this._ELEMENT_ID_ATTRIBUTE}], *[data-montage-id]`);
         }
     },
 
@@ -1255,7 +1255,7 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
     getElementId: {
         value: function (element) {
-            return element.getAttribute ? element.getAttribute(this._ELEMENT_ID_ATTRIBUTE) : undefined;
+            return element.getAttribute ? (element.getAttribute(this._ELEMENT_ID_ATTRIBUTE) || element.getAttribute("data-montage-id")) : undefined;
         }
     },
 
@@ -1326,7 +1326,8 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
     getElementById: {
         value: function (elementId) {
-            return this.document.querySelector("*[" + this._ELEMENT_ID_ATTRIBUTE + "='" + elementId + "']");
+            return this.document.querySelector(`*[data-mod-id="${elementId}"], *[data-montage-id="${elementId}"]`);
+            // return this.document.querySelector("*[" + this._ELEMENT_ID_ATTRIBUTE + "='" + elementId + "']");
         }
     },
 
