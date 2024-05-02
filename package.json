@@ -1,11 +1,11 @@
 {
-    "name": "montage",
-    "version": "19.0.0",
-    "description": "Build your next application with a browser based platform that really gets the web.",
+    "name": "mod",
+    "version": "24.0.0",
+    "description": "mod native-web, native-like apps your own.",
     "license": "BSD-3-Clause",
     "repository": {
         "type": "git",
-        "url": "https://github.com/montagejs/montage.git"
+        "url": "https://github.com/PhrontHQ/mod.git"
     },
     "main": "montage",
     "engines": {
