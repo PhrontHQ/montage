@@ -107,9 +107,6 @@ exports.Target = class Target extends Montage {
             nextTarget: {value: null, serializable: false}
         });
 
-        console.log( Object.getOwnPropertyDescriptor(this.prototype, "eventManager"));
-
-
     }
 
 
