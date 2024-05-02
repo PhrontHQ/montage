@@ -180,11 +180,11 @@ function collectHtmlDependencies(dom, dependencies) {
     visit(dom, function (element) {
         if (DomUtils.isTag(element)) {
             if (element.name === "script") {
-                if (getAttribute(element, "type") === "text/montage-serialization") {
+                if (getAttribute(element, "type") === "text/mod-serialization" || getAttribute(element, "type") === "text/montage-serialization") {
                     collectSerializationDependencies(JSON.parse(getText(element)), dependencies);
                 }
             } else if (element.name === "link") {
-                if (getAttribute(element, "type") === "text/montage-serialization") {
+                if (getAttribute(element, "type") === "text/mod-serialization" || getAttribute(element, "type") === "text/montage-serialization") {
                     dependencies.push(getAttribute(element, "href"));
                 }
             }

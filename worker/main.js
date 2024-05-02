@@ -53,7 +53,7 @@ if(process.env.PROFILE_START) {
 */
 //global.crypto = require('crypto');
 
-const   Montage = require('montage/montage'),
+const   Montage = require('mod/montage'),
         PATH = require("path"),
         processPath = PATH.join(module.parent.path, "."),
         useMr = true;
@@ -69,9 +69,9 @@ if(!useMr) {
 
     const Module = require("module");
     const fs = require("fs");
-    const createModuleMetadata = require("montage/core/mr/require").createModuleMetadata;
+    const createModuleMetadata = require("mod/core/mr/require").createModuleMetadata;
 
-    const MontageDeserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
+    const MontageDeserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
     Montage.MontageDeserializer = MontageDeserializer;
 
     const node_createRequire = (require) ('module').createRequire;
@@ -176,7 +176,7 @@ if(!useMr) {
     })
     .then(function (mr) {
         //Inject current file:
-        var currentMrModule = mr.inject("montage/worker/main", exports),
+        var currentMrModule = mr.inject("mod/worker/main", exports),
             computedModuleId = `${PATH.relative(module.path, mainModule.path)}/main.mjson`;
         /*
             For reducing code packaged and deployed, we need a valid moduleId for the main project's main.json file.

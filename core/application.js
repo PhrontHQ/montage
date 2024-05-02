@@ -483,7 +483,7 @@ Montage.defineProperties(exports.Application.prototype,
                 }
             }
 
-            global.require.loadPackage({name: "montage"}).then(function (require) {
+            global.require.loadPackage({name: "mod"}).then(function (require) {
                 var newWindow = window.open(require.location + "window-loader/index.html", "_blank", stringParamaters);
                 newWindow.loadInfo = loadInfo;
             });

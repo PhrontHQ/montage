@@ -783,7 +783,7 @@ if(globalThis.browser) {
         Template;
 
     exports.Compiler = function (config, compile) {
-        if(!exports.config && config.name === "montage") {
+        if(!exports.config && config.name === "mod") {
             exports.config = config;
         }
         return function(module) {
