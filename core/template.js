@@ -16,7 +16,9 @@ var Montage = require("./core").Montage,
  * @extends Montage
  */
 var Template = Montage.specialize( /** @lends Template# */ {
-    _SERIALIZATION_SCRIPT_TYPE: {value: "text/montage-serialization"},
+    _OLD_SERIALIZATION_SCRIPT_TYPE: {value: "text/montage-serialization"},
+    _SERIALIZATION_SCRIPT_TYPE: {value: "text/mod-serialization"},
+    _SERIALIZATION_SCRIPT_TYPE_SELECTOR: {value: "script[type='text/mod-serialization'], script[type='text/montage-serialization']"},
     _ELEMENT_ID_ATTRIBUTE: {value: "data-mod-id"},
     __ELEMENT_ID_ATTRIBUTE_SELECTOR: {value: undefined},
     _ELEMENT_ID_ATTRIBUTE_SELECTOR: {
@@ -789,8 +791,7 @@ var Template = Montage.specialize( /** @lends Template# */ {
      */
     getInlineObjectsString: {
         value: function (doc) {
-            var selector = "script[type='" + this._SERIALIZATION_SCRIPT_TYPE + "']",
-                script = doc.querySelector(selector);
+            var script = doc.querySelector(this._SERIALIZATION_SCRIPT_TYPE_SELECTOR);
 
             if (script) {
                 return script.textContent;
