@@ -1,5 +1,5 @@
 /*global navigator*/
-var Montage = require("montage").Montage;
+var Montage = require("core/core").Montage;
 
 var regExAppleWebKit = new RegExp(/AppleWebKit\/([\d.]+)/);
 
