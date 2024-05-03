@@ -1,10 +1,11 @@
 {
-    "name": "montage-tests",
+    "name": "mod-tests",
     "version": "0.0.0",
     "mappings": {
+        "mod": "../",
         "montage": "../",
         "ical.js": "../node_modules/ical.js",
-        "montage-testing": "../testing",
+        "mod-testing": "../testing",
         "package-a": {
             "name": "package-a",
             "location": "package-a"
