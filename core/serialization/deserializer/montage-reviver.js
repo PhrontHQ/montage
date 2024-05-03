@@ -328,33 +328,39 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
                     targetObject = ObjectCreate(null), self = this,
                     datasetAttribute, propertyNames;
 
-                if (Proxy.prototype) { // The native Proxy has no prototype property.
-                    // Workaround for Proxy polyfill https://github.com/GoogleChrome/proxy-polyfill
-                    // the properties of a proxy must be known at creation time.
-                    // TODO: remove when we drop the support of IE11.
-                    if (montageObjectDesc.values) {
-                        propertyNames = ObjectKeys(montageObjectDesc.values);
-                    } else { // deprecated
-                        propertyNames = ObjectKeys(montageObjectDesc.properties)
-                            .concat(ObjectKeys(montageObjectDesc.bindings));
-                    }
+                /*
+                    This relied on "proxy-polyfill": "~0.1.7", dependency.
+                    As We're targeting modern browsers that have the native implementation
+                    We don't need to worry about this block bellow.
 
-                    datasetAttributes = datasetAttributes.concat(
-                        propertyNames.filter(function (propertyName) {
-                            return propertyName.startsWith("dataset.");
-                        })
-                    );
+                */
+                // if (Proxy.prototype) { // The native Proxy has no prototype property.
+                //     // Workaround for Proxy polyfill https://github.com/GoogleChrome/proxy-polyfill
+                //     // the properties of a proxy must be known at creation time.
+                //     // TODO: remove when we drop the support of IE11.
+                //     if (montageObjectDesc.values) {
+                //         propertyNames = ObjectKeys(montageObjectDesc.values);
+                //     } else { // deprecated
+                //         propertyNames = ObjectKeys(montageObjectDesc.properties)
+                //             .concat(ObjectKeys(montageObjectDesc.bindings));
+                //     }
 
-                    for (var i = 0, length = datasetAttributes.length; i < length; i++) {
-                        datasetAttribute = datasetAttributes[i];
-                        if (originalDataset[datasetAttribute]) {
-                            targetObject[datasetAttribute] =
-                                originalDataset[datasetAttribute];
-                        } else {
-                            targetObject[datasetAttribute.replace(/^dataset\./, '')] = void 0;
-                        }
-                    }
-                }
+                //     datasetAttributes = datasetAttributes.concat(
+                //         propertyNames.filter(function (propertyName) {
+                //             return propertyName.startsWith("dataset.");
+                //         })
+                //     );
+
+                //     for (var i = 0, length = datasetAttributes.length; i < length; i++) {
+                //         datasetAttribute = datasetAttributes[i];
+                //         if (originalDataset[datasetAttribute]) {
+                //             targetObject[datasetAttribute] =
+                //                 originalDataset[datasetAttribute];
+                //         } else {
+                //             targetObject[datasetAttribute.replace(/^dataset\./, '')] = void 0;
+                //         }
+                //     }
+                // }
 
                 Object.defineProperty(element, "dataset", {
                     value: new Proxy(targetObject, {
