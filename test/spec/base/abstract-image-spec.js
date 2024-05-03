@@ -1,13 +1,13 @@
-var Montage = require("montage").Montage;
-var AbstractImage = require("montage/ui/base/abstract-image").AbstractImage;
+var Montage = require("mod/core/core").Montage;
+var AbstractImage = require("mod/ui/base/abstract-image").AbstractImage;
 var MockDOM = require("mocks/dom");
 
 AbstractImage.prototype.hasTemplate = false;
 
 var src1 = "data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==",
-    baseURL = `${module.location.split("montage")[0]}montage/assets/images/`,
     imageFileName = "Mod-dark.svg",
-    imageURL = `${baseURL}${imageFileName}`;
+    //window.location.pathname is assumed to be ".../test/run.html"
+    imageURL = `${window.location.origin}${window.location.pathname}/../../assets/images/${imageFileName}`;
 
 describe("test/base/abstract-image-spec", function () {
     describe("creation", function () {
