@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="drop.css">
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "owner": {
             "values": {
@@ -12,7 +12,7 @@
         },
 
         "repetition": {
-            "prototype": "montage/ui/repetition.mod",
+            "prototype": "mod/ui/repetition.mod",
             "values": {
                 "element": {"#": "repetition"},
                 "content":  {"<-": "@owner.data"}
@@ -32,10 +32,10 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="owner" class="Drop">
+    <div data-mod-id="owner" class="Drop">
         <div data-param="placeholder" class="drop-placeholder"></div>
-        <div data-montage-id="repetition" class="flex row list">
-            <div data-montage-id="square"></div>
+        <div data-mod-id="repetition" class="flex row list">
+            <div data-mod-id="square"></div>
         </div>
     </div>
 </body>

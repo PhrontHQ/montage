@@ -317,7 +317,7 @@ var DragManager = exports.DragManager = Montage.specialize({
      */
     _sanitizeDraggedImage: {
         value: function (draggedImage) {
-            draggedImage.classList.add("montage-dragged-image");
+            draggedImage.classList.add("mod-dragged-image");
             draggedImage.style.visibility = "hidden";
             draggedImage.style.position = "absolute";
             draggedImage.style.pointerEvents = "none";
@@ -1165,7 +1165,7 @@ var DragManager = exports.DragManager = Montage.specialize({
                         placeholderElement.style.height = height;
                         placeholderElement.style.boxSizing = "border-box";
                         placeholderElement.classList.add(
-                            'montage-drag-placeholder'
+                            'mod-drag-placeholder'
                         );
 
                         draggableElement.parentNode.insertBefore(

@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="drop-file.css">
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "owner": {
             "values": {
@@ -12,7 +12,7 @@
         },
 
         "text": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "text"},
                 "value": {"<-": "@owner.fileName"}
@@ -22,9 +22,9 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="owner" class="DropFile Drop">
+    <div data-mod-id="owner" class="DropFile Drop">
         <div data-param="placeholder" class="drop-placeholder"></div>
-        <div data-montage-id="text"></div>
+        <div data-mod-id="text"></div>
     </div>
 </body>
 </html>

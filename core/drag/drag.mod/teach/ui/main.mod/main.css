@@ -74,12 +74,12 @@ h4 {
     margin-left: 8px;
 }
 
-.samples .montage-drag-placeholder {
+.samples .mod-drag-placeholder {
     border: 2px dashed #9b59b6;
 }
 
 .scrollable {
-    margin-top: 20px; 
+    margin-top: 20px;
     overflow: auto;
     width: 200px;
     height: 200px;

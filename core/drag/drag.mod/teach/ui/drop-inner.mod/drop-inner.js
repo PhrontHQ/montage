@@ -1,7 +1,7 @@
 /**
  * @module ui/drop-inner.mod
  */
-var Component = require("montage/ui/component").Component;
+var Component = require("mod/ui/component").Component;
 
 /**
  * @class DropInner

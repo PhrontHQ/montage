@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="main.css">
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
         {
             "owner": {
                 "values": {
@@ -11,21 +11,21 @@
             },
 
             "enableVisiblePlaceholder": {
-                "prototype": "montage/ui/checkbox.mod",
+                "prototype": "mod/ui/checkbox.mod",
                 "values": {
                     "element": {"#": "enableVisiblePlaceholder"}
                 }
             },
 
             "enableMoveOperation": {
-                "prototype": "montage/ui/checkbox.mod",
+                "prototype": "mod/ui/checkbox.mod",
                 "values": {
                     "element": {"#": "enableMoveOperation"}
                 }
             },
 
             "switchDraggedImage": {
-                "prototype": "montage/ui/checkbox.mod",
+                "prototype": "mod/ui/checkbox.mod",
                 "values": {
                     "element": {"#": "switchDraggedImage"}
                 }
@@ -55,7 +55,7 @@
             },
 
             "repetition": {
-                "prototype": "montage/ui/repetition.mod",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "repetition"},
                     "content":  {"<-": "@owner.data"}
@@ -123,7 +123,7 @@
             },
 
             "customDrag": {
-                "prototype": "montage/ui/component",
+                "prototype": "mod/ui/component",
                 "values": {
                     "element": {"#": "customDrag"},
                     "hasTemplate": false,
@@ -135,64 +135,64 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="main" class="Main">
+    <div data-mod-id="main" class="Main">
         <header>Teach Drag & Drop Mod</header>
 
         <div class="options">
             <h4>Options: </h4>
             <p>
                 <span>Enable Visible Placeholder</span>
-                <input type="checkbox" data-montage-id="enableVisiblePlaceholder" />
+                <input type="checkbox" data-mod-id="enableVisiblePlaceholder" />
             </p>
             <p>
                 <span>Enable Move operation</span>
-                <input type="checkbox" data-montage-id="enableMoveOperation" />
+                <input type="checkbox" data-mod-id="enableMoveOperation" />
             </p>
 
             <p>
                 <span>Switch Dragged Image</span>
-                <input type="checkbox" data-montage-id="switchDraggedImage" />
+                <input type="checkbox" data-mod-id="switchDraggedImage" />
             </p>
         </div>
 
         <div class="samples">
             <h4>Simple drag</h4>
-            <div data-montage-id="square1"></div>
+            <div data-mod-id="square1"></div>
             <div class="scrollable">
                 <div class="scrollable-inner"></div>
             </div>
 
             <h4>Drag within a container</h4>
-            <div data-montage-id="container1" class="container Drop">
-                <div data-montage-id="square2"></div>
+            <div data-mod-id="container1" class="container Drop">
+                <div data-mod-id="square2"></div>
             </div>
 
             <h4>Drag&Drop</h4>
-            <div data-montage-id="repetition" class="squares flex flex-row list">
-                <div data-montage-id="square3"></div>
+            <div data-mod-id="repetition" class="squares flex flex-row list">
+                <div data-mod-id="square3"></div>
             </div>
             <div class="flex flex-row list">
-                <div data-montage-id="drop">
+                <div data-mod-id="drop">
                     <div data-arg="placeholder">Drop Here</div>
                 </div>
-                <div data-montage-id="drop2">
+                <div data-mod-id="drop2">
                     <div data-arg="placeholder">Drop not allowed</div>
                 </div>
             </div>
 
             <h4>inner Dropzone</h4>
-            <div data-montage-id="square4"></div>
-            <div data-montage-id="drop3">
-                <div data-montage-id="drop4"></div>
+            <div data-mod-id="square4"></div>
+            <div data-mod-id="drop3">
+                <div data-mod-id="drop4"></div>
             </div>
 
             <h4>Drop file</h4>
-            <div data-montage-id="drop5">
+            <div data-mod-id="drop5">
                 <div data-arg="placeholder">Drop File Here</div>
             </div>
 
             <h4>Custom Drag</h4>
-            <div data-montage-id="customDrag" class="CustomDrag"></div>
+            <div data-mod-id="customDrag" class="CustomDrag"></div>
 
         </div>
     </div>
