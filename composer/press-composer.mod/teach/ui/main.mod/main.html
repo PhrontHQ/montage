@@ -13,7 +13,7 @@
         },
 
         "cases": {
-            "prototype": "montage/ui/repetition.mod",
+            "prototype": "mod/ui/repetition.mod",
             "values": {
                 "element": {"#": "cases"},
                 "isSelectionEnabled": true,
@@ -22,7 +22,7 @@
         },
 
         "case": {
-            "prototype": "montage/ui/component",
+            "prototype": "mod/ui/component",
             "values": {
                 "element": {"#": "case"},
                 "hasTemplate": false,
@@ -31,7 +31,7 @@
         },
 
         "caseLabel": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "case-label"},
                 "value": {"<-": "@cases:iteration.object.label"}
@@ -39,7 +39,7 @@
         },
 
         "casesSubstitution": {
-            "prototype": "montage/ui/substitution.mod",
+            "prototype": "mod/ui/substitution.mod",
             "values": {
                 "element": {"#": "cases-substitution"},
                 "switchValue": {"<-": "@cases.selection.0.arg"}
@@ -91,7 +91,7 @@
         },
 
         "regularListNumberLabel": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "regular-list-number-label"},
                 "value": {"<-": "@regularList:iteration.object"}
@@ -107,7 +107,7 @@
         },
 
         "innerPressListButton": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "inner-press-list-number-label"},
                 "label": {"<-": "@innerPressList:iteration.object"}
@@ -122,7 +122,7 @@
         },
 
         "captions": {
-            "prototype": "montage/ui/repetition.mod",
+            "prototype": "mod/ui/repetition.mod",
             "values": {
                 "element": {"#": "captions"},
                 "isSelectionEnabled": true,

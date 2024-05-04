@@ -13,7 +13,7 @@
         },
 
         "showOverlay": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "show-overlay-button"},
                 "label": "Show Overlay"
@@ -21,14 +21,14 @@
         },
 
         "textField": {
-            "prototype": "montage/ui/text-field.mod",
+            "prototype": "mod/ui/text-field.mod",
             "values": {
                 "element": {"#": "text-field"}
             }
         },
 
         "overlay": {
-            "prototype": "montage/ui/overlay.mod",
+            "prototype": "mod/ui/overlay.mod",
             "values": {
                 "element": {"#": "overlay"},
                 "position" : {
@@ -39,7 +39,7 @@
         },
 
         "dismissOverlay": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "dismiss-overlay-button"},
                 "label": "Hide Overlay"
@@ -51,7 +51,7 @@
 <body>
     <div data-montage-id="owner" class="PressComposerLayers">
         <button data-montage-id="show-overlay-button">Show Overlay</button>
-        <input data-montage-id="text-field" type="text" />
+        <input data-montage-id="text-field" type="text" value="some text"/>
 
         <div data-montage-id="overlay" class="PressComposerLayers-Overlay">
             <button data-montage-id="dismiss-overlay-button">Show Overlay</button>

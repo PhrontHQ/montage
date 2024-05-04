@@ -1,7 +1,7 @@
 /**
  * @module ui/press-composer-layers.mod
  */
-var Component = require("montage/ui/component").Component;
+var Component = require("mod/ui/component").Component;
 
 /**
  * @class PressComposerLayers

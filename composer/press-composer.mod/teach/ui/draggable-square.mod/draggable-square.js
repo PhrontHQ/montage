@@ -2,8 +2,8 @@
 /**
  * @module ui/draggable-square.mod
  */
-var Component = require("montage/ui/component").Component,
-    TranslateComposer = require("montage/composer/translate-composer").TranslateComposer;
+var Component = require("mod/ui/component").Component,
+    TranslateComposer = require("mod/composer/translate-composer").TranslateComposer;
 
 /**
  * @class DraggableSquare
