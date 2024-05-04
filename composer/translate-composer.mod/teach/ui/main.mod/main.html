@@ -4,7 +4,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <link rel="stylesheet" type="text/css" href="main.css">
 
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "owner": {
             "values": {
@@ -13,7 +13,7 @@
         },
 
         "cases": {
-            "prototype": "montage/ui/repetition.mod",
+            "prototype": "mod/ui/repetition.mod",
             "values": {
                 "element": {"#": "cases"},
                 "isSelectionEnabled": true,
@@ -22,7 +22,7 @@
         },
 
         "case": {
-            "prototype": "montage/ui/component",
+            "prototype": "mod/ui/component",
             "values": {
                 "element": {"#": "case"},
                 "hasTemplate": false,
@@ -31,7 +31,7 @@
         },
 
         "caseLabel": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "case-label"},
                 "value": {"<-": "@cases:iteration.object.label"}
@@ -39,7 +39,7 @@
         },
 
         "casesSubstitution": {
-            "prototype": "montage/ui/substitution.mod",
+            "prototype": "mod/ui/substitution.mod",
             "values": {
                 "element": {"#": "cases-substitution"},
                 "switchValue": {"<-": "@cases.selection.0.arg"}
@@ -68,7 +68,7 @@
         },
 
         "captions": {
-            "prototype": "montage/ui/repetition.mod",
+            "prototype": "mod/ui/repetition.mod",
             "values": {
                 "element": {"#": "captions"},
                 "isSelectionEnabled": true,
@@ -87,29 +87,29 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="main" class="TranslateComposer">
-        <nav data-montage-id="cases" class="TranslateComposer-cases">
-            <div data-montage-id="case" class="TranslateComposer-case">
-                <div data-montage-id="case-label" class="TranslateComposerCase-label"></div>
+    <div data-mod-id="main" class="TranslateComposer">
+        <nav data-mod-id="cases" class="TranslateComposer-cases">
+            <div data-mod-id="case" class="TranslateComposer-case">
+                <div data-mod-id="case-label" class="TranslateComposerCase-label"></div>
             </div>
         </nav>
 
-        <div data-montage-id="cases-substitution" class="TranslateComposer-substitution">
+        <div data-mod-id="cases-substitution" class="TranslateComposer-substitution">
             <div data-arg="drag-box">
-                <div data-montage-id="drag-box-axis"></div>
-                <div data-montage-id="drag-box"></div>
+                <div data-mod-id="drag-box-axis"></div>
+                <div data-mod-id="drag-box"></div>
             </div>
 
             <div data-arg="nested-drag-box">
-                <div data-montage-id="nested-drag-box-axis"></div>
-                <div data-montage-id="outer-drag-box" class="OuterDragBox">
-                    <div data-montage-id="inner-drag-box"></div>
+                <div data-mod-id="nested-drag-box-axis"></div>
+                <div data-mod-id="outer-drag-box" class="OuterDragBox">
+                    <div data-mod-id="inner-drag-box"></div>
                 </div>
             </div>
         </div>
         <footer>
-            <div data-montage-id="captions" class="Captions">
-                <div data-montage-id="caption" class="Caption"></div>
+            <div data-mod-id="captions" class="Captions">
+                <div data-mod-id="caption" class="Caption"></div>
             </div>
         </footer>
     </div>

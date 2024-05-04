@@ -2,9 +2,9 @@
     "name": "teach-translate-composer-mod",
     "version": "0.0.1",
     "dependencies": {
-        "montage": "*"
+        "mod": "*"
     },
     "mappings": {
-        "montage": "../../../"
+        "mod": "../../../"
     }
 }
