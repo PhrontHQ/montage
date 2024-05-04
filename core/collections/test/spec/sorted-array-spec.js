@@ -1,5 +1,5 @@
 
-var SortedArray = require("montage/core/collections/sorted-array");
+var SortedArray = require("mod/core/collections/sorted-array");
 var describeCollection = require("./collection");
 var describeDeque = require("./deque");
 var describeOrder = require("./order");

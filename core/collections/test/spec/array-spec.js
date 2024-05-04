@@ -1,6 +1,6 @@
-require("montage/core/collections/shim");
-require("montage/core/collections/listen/array-changes");
-var GenericCollection = require("montage/core/collections/generic-collection");
+require("mod/core/collections/shim");
+require("mod/core/collections/listen/array-changes");
+var GenericCollection = require("mod/core/collections/generic-collection");
 var describeDeque = require("./deque");
 var describeCollection = require("./collection");
 var describeOrder = require("./order");

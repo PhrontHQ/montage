@@ -52,8 +52,8 @@ https://github.com/unicode-cldr/cldr-core/blob/master/availableLocales.json
     - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/getCanonicalLocales
 
 
-    @class module:montage/core/date/locale.Locale
-    @extends module:montage/core/core.Montage
+    @class module:mod/core/date/locale.Locale
+    @extends module:mod/core/core.Montage
  */
 
 

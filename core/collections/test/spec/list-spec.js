@@ -1,5 +1,5 @@
 
-var List = require("montage/core/collections/list");
+var List = require("mod/core/collections/list");
 var describeDeque = require("./deque");
 var describeCollection = require("./collection");
 var describeRangeChanges = require("./listen/range-changes");

@@ -4,12 +4,12 @@
     Based in part on extras from Motorola Mobility’s Montage
     Copyright (c) 2012, Motorola Mobility LLC. All Rights Reserved.
     3-Clause BSD License
-    https://github.com/motorola-mobility/montage/blob/master/LICENSE.md
+    https://github.com/motorola-mobility/mod/blob/master/LICENSE.md
 */
 
-require("montage/core/collections/shim");
-var Dict = require("montage/core/collections/dict");
-var Set = require("montage/core/collections/set");
+require("mod/core/collections/shim");
+var Dict = require("mod/core/collections/dict");
+var Set = require("mod/core/collections/set");
 
 describe("ObjectShim-spec", function () {
 

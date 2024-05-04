@@ -2,11 +2,11 @@
     Based in part on observable arrays from Motorola Mobility’s Montage
     Copyright (c) 2012, Motorola Mobility LLC. All Rights Reserved.
     3-Clause BSD License
-    https://github.com/motorola-mobility/montage/blob/master/LICENSE.md
+    https://github.com/motorola-mobility/mod/blob/master/LICENSE.md
 */
 
-require("montage/core/collections/shim");
-var PropertyChanges = require("montage/core/collections/listen/property-changes");
+require("mod/core/collections/shim");
+var PropertyChanges = require("mod/core/collections/listen/property-changes");
 
 describe("PropertyChanges", function () {
 

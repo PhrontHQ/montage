@@ -18,12 +18,12 @@
         "postinstall": "npm link ./.."
     },
     "mappings": {
-        "montage": "../../..",
-        "montage-testing": "../../../testing",
+        "mod": "../../..",
+        "mod-testing": "../../../testing",
         "collections": "../"
     },
     "dependencies": {
-        "montage": "file:../../.."
+        "mod": "file:../../.."
     },
     "private": true
 }

@@ -1,5 +1,5 @@
 
-require("montage/core/collections/shim-regexp");
+require("mod/core/collections/shim-regexp");
 
 describe("RegExp-spec", function () {
     describe("escape", function () {

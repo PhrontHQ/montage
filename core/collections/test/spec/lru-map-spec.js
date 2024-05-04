@@ -1,5 +1,5 @@
 
-var LruMap = require("montage/core/collections/lru-map");
+var LruMap = require("mod/core/collections/lru-map");
 var describeDict = require("./dict");
 var describeMap = require("./map");
 var describeToJson = require("./to-json");

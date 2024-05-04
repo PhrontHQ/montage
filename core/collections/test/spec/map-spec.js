@@ -1,6 +1,6 @@
 // TODO test insertion order
 
-var Map = require("montage/core/collections/map");
+var Map = require("mod/core/collections/map");
 var describeDict = require("./dict");
 var describeMap = require("./map");
 var describeMapChanges = require("./listen/map-changes");

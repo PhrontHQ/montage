@@ -1,6 +1,6 @@
 /**
- * @module montage/core/logger
- * @requires montage/core/core
+ * @module mod/core/logger
+ * @requires mod/core/core
  */
 var console = require('./extras/console').console;
 var Montage = require("./core").Montage;
@@ -286,7 +286,7 @@ var Logger = exports.Logger = Montage.specialize(/** @lends Logger# */ {
 });
 
 /**
- * @function module:montage/core/logger#logger
+ * @function module:mod/core/logger#logger
  */
 exports.logger = function (loggerName, onStateChange, dontStoreState) {
     var logger;

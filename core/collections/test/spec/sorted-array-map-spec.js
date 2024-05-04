@@ -1,5 +1,5 @@
 
-var SortedArrayMap = require("montage/core/collections/sorted-array-map");
+var SortedArrayMap = require("mod/core/collections/sorted-array-map");
 var describeDict = require("./dict");
 var describeMap = require("./map");
 var describeMapChanges = require("./listen/map-changes");

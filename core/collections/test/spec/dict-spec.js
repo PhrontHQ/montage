@@ -1,5 +1,5 @@
 
-var Dict = require("montage/core/collections/dict");
+var Dict = require("mod/core/collections/dict");
 var describeDict = require("./dict");
 var describeToJson = require("./to-json");
 

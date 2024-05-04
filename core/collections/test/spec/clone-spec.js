@@ -1,6 +1,6 @@
 
-var Set = require("montage/core/collections/set");
-var Map = require("montage/core/collections/map");
+var Set = require("mod/core/collections/set");
+var Map = require("mod/core/collections/map");
 
 describe("Clone-spec", function () {
 

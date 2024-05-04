@@ -1,5 +1,5 @@
 
-var Iterator = require("montage/core/collections/iterator");
+var Iterator = require("mod/core/collections/iterator");
 
 module.exports = describeSet;
 function describeSet(Set, sorted) {

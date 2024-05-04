@@ -1,8 +1,8 @@
 "use strict";
 
-var Set = require("montage/core/collections/fast-set");
-var Iterator = require("montage/core/collections/iterator");
-var TreeLog = require("montage/core/collections/tree-log");
+var Set = require("mod/core/collections/fast-set");
+var Iterator = require("mod/core/collections/iterator");
+var TreeLog = require("mod/core/collections/tree-log");
 
 var describeCollection = require("./collection");
 var describeSet = require("./set");

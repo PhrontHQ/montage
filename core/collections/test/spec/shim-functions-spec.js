@@ -1,6 +1,6 @@
 
-require("montage/core/collections/shim-object");
-require("montage/core/collections/shim-function");
+require("mod/core/collections/shim-object");
+require("mod/core/collections/shim-function");
 
 describe("FunctionShim-spec", function () {
 
