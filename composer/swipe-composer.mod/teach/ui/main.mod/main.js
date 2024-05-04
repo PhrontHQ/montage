@@ -1,5 +1,5 @@
-var Component = require("montage/ui/component").Component,
-    SwipeComposer = require("montage/composer/swipe-composer").SwipeComposer;
+var Component = require("mod/ui/component").Component,
+    SwipeComposer = require("mod/composer/swipe-composer").SwipeComposer;
 
 exports.Main = Component.specialize({
 
