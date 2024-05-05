@@ -161,10 +161,10 @@ exports.Succession = Component.specialize(/** @lends Succession.prototype */{
                 isClear = isChangeVisible && !length;
             // Set appropriate classes and update the succession if necessary.
             if (isChangeVisible) {
-                this.classList[isPush ? "add" : "remove"]("montage-Succession--push");
-                this.classList[isPop ? "add" : "remove"]("montage-Succession--pop");
-                this.classList[isReplace ? "add" : "remove"]("montage-Succession--replace");
-                this.classList[isClear ? "add" : "remove"]("montage-Succession--clear");
+                this.classList[isPush ? "add" : "remove"]("mod-Succession--push");
+                this.classList[isPop ? "add" : "remove"]("mod-Succession--pop");
+                this.classList[isReplace ? "add" : "remove"]("mod-Succession--replace");
+                this.classList[isClear ? "add" : "remove"]("mod-Succession--clear");
                 this._prepareForBuild(this.content);
                 this.dispatchBeforeOwnPropertyChange("content", this.content);
                 this._updateDomContentWith(this.content);
@@ -221,10 +221,10 @@ exports.Succession = Component.specialize(/** @lends Succession.prototype */{
             if (this.needsCssClassCleanup) {
                 this.needsCssClassCleanup = false;
                 this.classList.deleteEach([
-                    "montage-Succession--push",
-                    "montage-Succession--pop",
-                    "montage-Succession--replace",
-                    "montage-Succession--clear"
+                    "mod-Succession--push",
+                    "mod-Succession--pop",
+                    "mod-Succession--replace",
+                    "mod-Succession--clear"
                 ]);
             }
         }

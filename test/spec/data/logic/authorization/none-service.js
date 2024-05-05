@@ -1,5 +1,5 @@
-var RawDataService = require("montage/data/service/raw-data-service").RawDataService,
-    AuthorizationPolicy = require("montage/data/service/authorization-policy").AuthorizationPolicy;
+var RawDataService = require("mod/data/service/raw-data-service").RawDataService,
+    AuthorizationPolicy = require("mod/data/service/authorization-policy").AuthorizationPolicy;
 
 exports.NoneService = RawDataService.specialize(/** @lends NoneService.prototype */ {
 

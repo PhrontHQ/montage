@@ -1,9 +1,9 @@
 /*global require,exports,describe,it,expect */
-var Montage = require("montage").Montage,
-    ModalOverlay = require("montage/ui/modal-overlay.mod").ModalOverlay,
-    Promise = require("montage/core/promise").Promise,
+var Montage = require("mod/core/core").Montage,
+    ModalOverlay = require("mod/ui/modal-overlay.mod").ModalOverlay,
+    Promise = require("mod/core/promise").Promise,
     MockDOM = require("mocks/dom"),
-    defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
+    defaultEventManager = require("mod/core/event/event-manager").defaultEventManager;
 
 describe("ui/modal-overlay-spec", function () {
     var aModalOverlay,
@@ -147,7 +147,7 @@ describe("ui/modal-overlay-spec", function () {
             aModalOverlay.willDraw();
             aModalOverlay.draw();
 
-            expect(aModalOverlay.modalMaskElement.classList.contains("montage-ModalOverlay-modalMask--visible")).toBe(true);
+            expect(aModalOverlay.modalMaskElement.classList.contains("ModalOverlay-mod-modalMask--visible")).toBe(true);
         });
 
         it("should hide the modal mask", function () {
@@ -155,7 +155,7 @@ describe("ui/modal-overlay-spec", function () {
 
             aModalOverlay.draw();
 
-            expect(aModalOverlay.modalMaskElement.classList.contains("montage-ModalOverlay-modalMask--visible")).toBe(false);
+            expect(aModalOverlay.modalMaskElement.classList.contains("ModalOverlay-mod-modalMask--visible")).toBe(false);
         });
     });
 });

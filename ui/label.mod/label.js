@@ -1,5 +1,5 @@
 /**
- * @module "montage/ui/label.mod"
+ * @module "mod/ui/label.mod"
  */
 var TextComponent = require("../text.mod/text").Text,
     PressComposer = require("../../composer/press-composer").PressComposer;

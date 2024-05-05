@@ -1,5 +1,5 @@
-var Component = require("montage/ui/component").Component,
-    Promise = require('montage/core/promise').Promise;
+var Component = require("mod/ui/component").Component,
+    Promise = require('mod/core/promise').Promise;
 
 exports.Main = Component.specialize(/** @lends Main# */{
 
@@ -24,7 +24,7 @@ exports.Main = Component.specialize(/** @lends Main# */{
             var self = this;
 
             this.message = "Promise is pending resolution";
-        
+
             this.promiseButton.promise = new Promise(function(resolve){
                 setTimeout(function(){
                     resolve();

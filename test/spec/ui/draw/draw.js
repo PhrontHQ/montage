@@ -28,11 +28,11 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component,
-    _root = require("montage/ui/component")._root,
-    logger = require("montage/core/logger").logger("Draw");
-var TestController = require("montage-testing/test-controller").TestController;
+var Montage = require("mod/core/core").Montage,
+    Component = require("mod/ui/component").Component,
+    _root = require("mod/ui/component")._root,
+    logger = require("mod/core/logger").logger("Draw");
+var TestController = require("mod-testing/test-controller").TestController;
 
 var FirstDrawListenerComponent = Component.specialize( {
    handleFirstDraw: {

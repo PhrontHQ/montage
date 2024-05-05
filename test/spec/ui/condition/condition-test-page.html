@@ -33,34 +33,34 @@ POSSIBILITY OF SUCH DAMAGE.
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <script type="text/javascript" src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">{
+    <script type="text/mod-serialization">{
 
         "test": {
             "prototype": "spec/ui/condition/test"
         },
         "conditionHide": {
-            "prototype": "montage/ui/condition.mod",
+            "prototype": "mod/ui/condition.mod",
             "values": {
                 "element": {"#": "hideMe"},
                 "condition": {"<->": "@test.hideValue"}
             }
         },
         "conditionRemove": {
-            "prototype": "montage/ui/condition.mod",
+            "prototype": "mod/ui/condition.mod",
             "values": {
                 "element": {"#": "removeContent"},
                 "condition": {"<->": "@test.removeValue"}
             }
         },
         "conditionTrue": {
-            "prototype": "montage/ui/condition.mod",
+            "prototype": "mod/ui/condition.mod",
             "values": {
                 "element": {"#": "conditionTrue"},
                 "condition": true
             }
         },
         "application": {
-            "prototype": "montage/core/application",
+            "prototype": "mod/core/application",
             "values": {
                 "delegate" : {"@": "test"}
             }
@@ -71,8 +71,8 @@ POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
 
-    <div data-montage-id="hideMe" class="fetchHide"><span>Hello</span></div>
-    <div data-montage-id="removeContent" class="fetchRemove"><span>Foo</span></div>
-    <div data-montage-id="conditionTrue"><span>Bar</span></div>
+    <div data-mod-id="hideMe" class="fetchHide"><span>Hello</span></div>
+    <div data-mod-id="removeContent" class="fetchRemove"><span>Foo</span></div>
+    <div data-mod-id="conditionTrue"><span>Bar</span></div>
 </body>
 </html>

@@ -1,17 +1,17 @@
-var ExpressionDataMapping = require("montage/data/service/expression-data-mapping").ExpressionDataMapping,
+var ExpressionDataMapping = require("mod/data/service/expression-data-mapping").ExpressionDataMapping,
     CategoryService = require("spec/data/logic/service/category-service").CategoryService,
     CountryService = require("spec/data/logic/service/country-service").CountryService,
-    DataService = require("montage/data/service/data-service").DataService,
-    DateConverter = require("montage/core/converter/date-converter").DateConverter,
-    ModuleObjectDescriptor = require("montage/core/meta/module-object-descriptor").ModuleObjectDescriptor,
-    ModuleReference = require("montage/core/module-reference").ModuleReference,
+    DataService = require("mod/data/service/data-service").DataService,
+    DateConverter = require("mod/core/converter/date-converter").DateConverter,
+    ModuleObjectDescriptor = require("mod/core/meta/module-object-descriptor").ModuleObjectDescriptor,
+    ModuleReference = require("mod/core/module-reference").ModuleReference,
     PlotSummaryService = require("spec/data/logic/service/plot-summary-service").PlotSummaryService,
     PropService = require("spec/data/logic/service/prop-service").PropService,
-    Promise = require("montage/core/promise").Promise,
-    PropertyDescriptor = require("montage/core/meta/property-descriptor").PropertyDescriptor,
-    RawDataService = require("montage/data/service/raw-data-service").RawDataService,
-    RawDataTypeMapping = require("montage/data/service/raw-data-type-mapping").RawDataTypeMapping,
-    RawForeignValueToObjectConverter = require("montage/data/converter/raw-foreign-value-to-object-converter").RawForeignValueToObjectConverter;
+    Promise = require("mod/core/promise").Promise,
+    PropertyDescriptor = require("mod/core/meta/property-descriptor").PropertyDescriptor,
+    RawDataService = require("mod/data/service/raw-data-service").RawDataService,
+    RawDataTypeMapping = require("mod/data/service/raw-data-type-mapping").RawDataTypeMapping,
+    RawForeignValueToObjectConverter = require("mod/data/converter/raw-foreign-value-to-object-converter").RawForeignValueToObjectConverter;
 
 
 var Movie = require("spec/data/logic/model/movie").Movie,

@@ -1,6 +1,6 @@
-var RawDataTypeMapping = require("montage/data/service/raw-data-type-mapping").RawDataTypeMapping,
-    ObjectDescriptor = require("montage/core/meta/object-descriptor").ObjectDescriptor,
-    Criteria = require("montage/core/criteria").Criteria,
+var RawDataTypeMapping = require("mod/data/service/raw-data-type-mapping").RawDataTypeMapping,
+    ObjectDescriptor = require("mod/core/meta/object-descriptor").ObjectDescriptor,
+    Criteria = require("mod/core/criteria").Criteria,
     serialization = require("./logic/service/raw-data-type-mapping-spec.mjson");
 
 describe("A RawDataTypeMapping", function() {
@@ -49,7 +49,7 @@ describe("A RawDataTypeMapping", function() {
         expect(object.mappings[1].type.name).toBe("Type 2");
         expect(object.mappings[1].criteria.expression).toBe("type == $paramType");
         expect(object.mappings[1].criteria.parameters.paramType).toBe("FOO_TYPE");
-        
+
 
         expect(object.mappings[2].type.name).toBe("Type 3");
         expect(object.mappings[2].criteria.expression).toBe("type == $paramType");

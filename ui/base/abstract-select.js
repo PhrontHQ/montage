@@ -51,10 +51,10 @@ var AbstractSelect = exports.AbstractSelect = AbstractControl.specialize( /** @l
                     "<-": "allowsMultipleSelection"
                 },
                 // classList management
-                "classList.has('montage--disabled')": {
+                "classList.has('mod--disabled')": {
                     "<-": "!enabled"
                 },
-                "classList.has('montage--active')": {
+                "classList.has('mod--active')": {
                     "<-": "active"
                 }
             });
@@ -70,7 +70,7 @@ var AbstractSelect = exports.AbstractSelect = AbstractControl.specialize( /** @l
 
     /**
      * Enables or disables the Select from user input. When this property is
-     * set to `false`, the "montage--disabled" CSS style is applied to the
+     * set to `false`, the "mod--disabled" CSS style is applied to the
      * select's DOM element during the next draw cycle. When set to `true` the
      * "disabled" CSS class is removed from the element's class list.
      * @type {boolean}

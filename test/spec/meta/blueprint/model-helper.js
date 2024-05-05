@@ -1,7 +1,7 @@
 /* <copyright>
 </copyright> */
-var Montage = require("montage").Montage;
-var Model = require("montage/core/meta/model").Model;
+var Montage = require("mod/core/core").Montage;
+var Model = require("mod/core/meta/model").Model;
 
 exports.companyModel = function () {
     return exports.ModelHelper.companyModel();

@@ -1,27 +1,27 @@
 "use strict";
 /**
- @module montage/data/object-descriptor-spec.js
- @requires montage/core/core
- @requires montage/core/logger
+ @module mod/data/object-descriptor-spec.js
+ @requires mod/core/core
+ @requires mod/core/logger
  */
-var Montage = require("montage").Montage;
-var ObjectDescriptor = require("montage/core/meta/object-descriptor").ObjectDescriptor;
-var Model = require("montage/core/meta/model").Model;
-var PropertyDescriptor = require("montage/core/meta/property-descriptor").PropertyDescriptor;
-var Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer;
-var Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
+var Montage = require("mod/core/core").Montage;
+var ObjectDescriptor = require("mod/core/meta/object-descriptor").ObjectDescriptor;
+var Model = require("mod/core/meta/model").Model;
+var PropertyDescriptor = require("mod/core/meta/property-descriptor").PropertyDescriptor;
+var Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer;
+var Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
 var ModelHelper = require("./blueprint/model-helper").ModelHelper;
 var Person = require("./blueprint/person").Person;
 var Company = require("./blueprint/company").Company;
 var Employee = require("./blueprint/employee").Employee;
 var Customer = require("./blueprint/customer").Customer;
-var logger = require("montage/core/logger").logger("./object-descriptor-spec.js");
+var logger = require("mod/core/logger").logger("./object-descriptor-spec.js");
 
 // Require to deserialize
 // TODO add proper deps to montage modules
-require('montage/core/meta/object-descriptor');
-require('montage/core/meta/property-descriptor');
-require('montage/core/meta/module-object-descriptor');
+require('mod/core/meta/object-descriptor');
+require('mod/core/meta/property-descriptor');
+require('mod/core/meta/module-object-descriptor');
 
 describe("meta/object-descriptor-spec", function () {
     describe("Model", function () {
@@ -316,7 +316,7 @@ describe("meta/object-descriptor-spec", function () {
                 var ComponentObjectDescriptorTest1 = require("spec/meta/component-object-descriptor-test/component-object-descriptor-test-1.mod").ComponentObjectDescriptorTest1;
                 ObjectDescriptor.createDefaultObjectDescriptorForObject(ComponentObjectDescriptorTest1).then(function (objectDescriptor) {
                     var id = objectDescriptor.parent.objectDescriptorInstanceModule.resolve(require);
-                    expect(id === "montage/ui/component.mjson" || id === "montage/ui/component.mjson").toBeTruthy();
+                    expect(id === "mod/ui/component.mjson" || id === "mod/ui/component.mjson").toBeTruthy();
                 }, function (err) {
                     fail(err);
                 }).finally(function () {
@@ -374,7 +374,7 @@ describe("meta/object-descriptor-spec", function () {
         });
 
         describe("events", function () {
-            var EventDescriptor = require("montage/core/meta/event-descriptor").EventDescriptor;
+            var EventDescriptor = require("mod/core/meta/event-descriptor").EventDescriptor;
 
             var objectDescriptor;
             beforeEach(function () {

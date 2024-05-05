@@ -3,11 +3,11 @@
 /**
  * @see https://developer.mozilla.org/en/DOM/HTMLIFrameElement
  */
-var Montage = require("montage").Montage;
-var Point = require("montage/core/geometry/point").Point;
-var ActionEventListener = require("montage/core/event/action-event-listener").ActionEventListener;
-var MutableEvent = require("montage/core/event/mutable-event").MutableEvent;
-var Promise = require("montage/core/promise").Promise;
+var Montage = require("mod/core/core").Montage;
+var Point = require("mod/core/geometry/point").Point;
+var ActionEventListener = require("mod/core/event/action-event-listener").ActionEventListener;
+var MutableEvent = require("mod/core/event/mutable-event").MutableEvent;
+var Promise = require("mod/core/promise").Promise;
 var defaultEventManager;
 
 if (!console.group) {
@@ -115,7 +115,7 @@ var TestPageLoader = exports.TestPageLoader = Montage.specialize( {
 
                 self.global.montageWillLoad = function() {
                     var firstDraw = true;
-                    self.require.async("montage/ui/component").then(function (COMPONENT) {
+                    self.require.async("mod/ui/component").then(function (COMPONENT) {
                         var root = COMPONENT.__root__;
                         self.rootComponent = root;
                         // override the default drawIfNeeded behaviour
@@ -127,8 +127,8 @@ var TestPageLoader = exports.TestPageLoader = Montage.specialize( {
                                 if(firstDraw) {
                                     self.loaded = true;
                                     // assign the application delegate to test so that the convenience methods work
-                                    if (! self.global.test && self.require("montage/core/application").application) {
-                                        self.global.test = self.require("montage/core/application").application.delegate;
+                                    if (! self.global.test && self.require("mod/core/application").application) {
+                                        self.global.test = self.require("mod/core/application").application.delegate;
                                     }
                                     if (typeof testCallback === "function") {
                                         if (test.firstDraw) {
@@ -175,7 +175,7 @@ var TestPageLoader = exports.TestPageLoader = Montage.specialize( {
 
                         defaultEventManager = null;
 
-                        return self.require.async("montage/core/event/event-manager").then(function (exports) {
+                        return self.require.async("mod/core/event/event-manager").then(function (exports) {
                             defaultEventManager = exports.defaultEventManager;
                         });
 
@@ -571,7 +571,7 @@ var TestPageLoader = exports.TestPageLoader = Montage.specialize( {
 
             if (dispatchThroughEventManager) {
                 fakeEvent = this._createFakeEvent(simulatedEvent, eventInfo);
-                eventManager = this.require("montage/ui/component").__root__.eventManager;
+                eventManager = this.require("mod/ui/component").__root__.eventManager;
                 eventManager.handleEvent(fakeEvent);
             } else {
                 eventInfo.target.dispatchEvent(simulatedEvent);

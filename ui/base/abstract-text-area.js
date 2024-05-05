@@ -2,7 +2,7 @@
 var Component = require("../component").Component,
     deprecate = require('../../core/deprecate');
 
-var CLASS_PREFIX = "montage-TextArea";
+var CLASS_PREFIX = "mod-TextArea";
 
 /**
  * @class AbstractTextArea
@@ -20,7 +20,7 @@ var AbstractTextArea = exports.AbstractTextArea = Component.specialize(
 
             this.defineBindings({
                 // classList management
-                "classList.has('montage--disabled')": {
+                "classList.has('mod--disabled')": {
                     "<-": "!enabled"
                 }
             });

@@ -1,4 +1,4 @@
-.montage-ImageGalleryItem {
+.mod-ImageGalleryItem {
     position: absolute;
     top: 0;
     left: 0;
@@ -9,6 +9,6 @@
     background-position: center center;
 }
 
-.montage-ImageGalleryItem-loaderImage {
+.mod-ImageGalleryItem-loaderImage {
     display: none;
 }

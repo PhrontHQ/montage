@@ -1,4 +1,4 @@
-var Authorization = require("montage/data/service/authorization").Authorization;
+var Authorization = require("mod/data/service/authorization").Authorization;
 
 exports.Authorization = Authorization.specialize(/** @lends Authorization.prototype */ {
 
@@ -11,5 +11,5 @@ exports.Authorization = Authorization.specialize(/** @lends Authorization.protot
             this.didLogOut = true;
         }
     }
-    
+
 });

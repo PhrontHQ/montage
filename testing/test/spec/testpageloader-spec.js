@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
+var Montage = require("mod/core/core").Montage,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
 
 TestPageLoader.queueTest("application/as-application", {src: "spec/application/as-application.html"}, function (testPage) {
     describe("application-spec", function () {

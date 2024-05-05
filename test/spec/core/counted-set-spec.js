@@ -1,5 +1,5 @@
 
-var CountedSet = require("montage/core/counted-set").CountedSet;
+var CountedSet = require("mod/core/counted-set").CountedSet;
 
 describe("test/core/counted-set-spec", function () {
 

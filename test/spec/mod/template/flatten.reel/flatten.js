@@ -30,9 +30,9 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 exports = typeof exports !== "undefined" ? exports : {};
 
-var Montage = require("montage").Montage;
-var Component = require("montage/ui/component").Component;
-var Template = require("montage/core/template").Template;
+var Montage = require("mod/core/core").Montage;
+var Component = require("mod/ui/component").Component;
+var Template = require("mod/core/template").Template;
 
 var Flatten = exports.Flatten = Component.specialize( {
     hasTemplate: {

@@ -1,4 +1,4 @@
-.montage-TreeList {
+.mod-TreeList {
     box-sizing: border-box;
     position: relative;
     display: -ms-flexbox;
@@ -11,7 +11,7 @@
     */
 }
 
-.montage-TreeList-wrapper {
+.mod-TreeList-wrapper {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     position: relative;
@@ -21,12 +21,12 @@
     flex: 1;
 }
 
-.montage-TreeList-repetition {
+.mod-TreeList-repetition {
     -ms-flex: 1;
     flex: 1;
 }
 
-.montage-TreeList-nodeWrapper {
+.mod-TreeList-nodeWrapper {
     position: absolute;
     top: 0;
     left: 0;
@@ -35,7 +35,7 @@
     box-sizing: border-box;
 }
 
-.montage-TreeList-nodeWrapper.willDrop::before {
+.mod-TreeList-nodeWrapper.willDrop::before {
     box-sizing: border-box;
     content: "";
     position: absolute;
@@ -47,7 +47,7 @@
     opacity: 0.5;
 }
 
-.montage-TreeList-nodeWrapper.willDrop::after {
+.mod-TreeList-nodeWrapper.willDrop::after {
     box-sizing: border-box;
     content: "";
     position: absolute;
@@ -56,11 +56,11 @@
     left: 0;
     right: 0;
     background: transparent;
-    border: 2px solid currentColor; 
+    border: 2px solid currentColor;
 }
 
-.montage-TreeList-placeholder,
-.montage-TreeList-ghostImage {
+.mod-TreeList-placeholder,
+.mod-TreeList-ghostImage {
     box-sizing: border-box;
     position: absolute;
     top: 0;
@@ -70,16 +70,16 @@
     opacity: 0;
 }
 
-.montage-TreeList-placeholder {
+.mod-TreeList-placeholder {
     border-radius: 2px;
     z-index: 2;
 }
 
-.montage-TreeList.over .montage-TreeList-placeholder {
+.mod-TreeList.over .mod-TreeList-placeholder {
     border: 2px solid;
 }
 
-.montage-TreeList-ghostImage {
+.mod-TreeList-ghostImage {
     z-index: 999999;
     margin: 0px !important;
 }

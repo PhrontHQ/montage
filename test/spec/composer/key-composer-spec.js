@@ -1,7 +1,7 @@
 /*global require,exports,describe,it,expect,waits,runs */
-var Montage = require("montage").Montage;
-var TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
-var KeyComposer = require("montage/composer/key-composer").KeyComposer;
+var Montage = require("mod/core/core").Montage;
+var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
+var KeyComposer = require("mod/composer/key-composer").KeyComposer;
 
 TestPageLoader.queueTest("key-composer-test/key-composer-test", function (testPage) {
     var test,
@@ -110,7 +110,7 @@ TestPageLoader.queueTest("key-composer-test/key-composer-test", function (testPa
                         listener2 = testPage.addListener(test.key_composer1, null, "longKeyPress"),
                         listener3 = testPage.addListener(test.key_composer1, null, "keyRelease");
 
-                    testPage.global.require("montage/core/event/event-manager").defaultEventManager.activeTarget = test.example;
+                    testPage.global.require("mod/core/event/event-manager").defaultEventManager.activeTarget = test.example;
 
                     testPage.keyEvent({target: testPage.document.defaultView, modifiers: command, charCode: 0, keyCode: "J".charCodeAt(0)}, "keydown");
                     setTimeout(function (){

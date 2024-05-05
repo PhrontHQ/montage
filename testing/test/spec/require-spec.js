@@ -11,22 +11,22 @@ describe("require-spec", function () {
 
   //
   it("load core module", function () {
-    var montageRequire = require("montage/core/core");
+    var montageRequire = require("mod/core/core");
     expect(typeof montageRequire.Montage).toEqual("function");
   });
 
   it("load alias module", function () {
-    var montageRequire = require("montage");
+    var montageRequire = require("mod");
     expect(typeof montageRequire.Montage).toEqual("function");
   });
 
   it("load inject module", function () {
-    var URL = require("montage/core/mini-url");
+    var URL = require("mod/core/mini-url");
     expect(typeof URL.resolve).toEqual("function");
   });
 
   it("load test-controller module", function () {
-    var TestController = require('montage-testing/test-controller').TestController;
+    var TestController = require('mod-testing/test-controller').TestController;
     expect(typeof TestController).toEqual("function");
   });
 

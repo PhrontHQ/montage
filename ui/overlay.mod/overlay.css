@@ -1,7 +1,9 @@
-.mod-Overlay {
+.overlay-mod,
+.montage-Overlay {
     position: absolute;
     z-index: 9999;
 }
 
-.mod-Overlay--visible {
+.overlay-mod--visible,
+.montage-Overlay--visible  {
 }

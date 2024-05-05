@@ -1,6 +1,6 @@
 // "use strict"; // TODO: causes q to throw, will reinstate when q is replaced by bluebird
 
-var TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
+var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
 
 TestPageLoader.queueTest("drag-test", function (testPage) {
     describe("core/drag/drag-spec", function () {
@@ -24,14 +24,14 @@ TestPageLoader.queueTest("drag-test", function (testPage) {
                     expect(dragComponent.dragManager._draggables.indexOf(dragComponent) > -1).toEqual(true);
                 });
 
-                it("shoud have the class name `montage-draggable`", function () {
-                    expect(dragComponent.classList.has("montage-draggable")).toEqual(true);
+                it("shoud have the class name `mod-draggable`", function () {
+                    expect(dragComponent.classList.has("mod-draggable")).toEqual(true);
                 });
 
                 it("shoud be unregistered when leaving the component tree", function () {
                     dragComponent._exitDocument();
                     expect(dragComponent.dragManager._draggables.indexOf(dragComponent) === -1).toEqual(true);
-                    expect(dragComponent.classList.has("montage-draggable")).toEqual(false);
+                    expect(dragComponent.classList.has("mod-draggable")).toEqual(false);
                 });
             });
 
@@ -41,17 +41,17 @@ TestPageLoader.queueTest("drag-test", function (testPage) {
                     expect(dropComponent.dragManager._droppables.indexOf(dropComponent) > -1).toEqual(true);
                 });
 
-                it("shoud have the class name `montage-droppable`", function () {
-                    expect(dropComponent.classList.has("montage-droppable")).toEqual(true);
+                it("shoud have the class name `mod-droppable`", function () {
+                    expect(dropComponent.classList.has("mod-droppable")).toEqual(true);
                 });
 
                 it("shoud be unregistered when leaving the component tree", function () {
                     dropComponent._exitDocument();
                     expect(dropComponent.dragManager._droppables.indexOf(dropComponent) === -1).toEqual(true);
-                    expect(dropComponent.classList.has("montage-droppable")).toEqual(false);
+                    expect(dropComponent.classList.has("mod-droppable")).toEqual(false);
                 });
             });
-            
+
         });
     });
 });

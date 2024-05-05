@@ -1,4 +1,4 @@
-var SnapshotService = require("montage/data/service/snapshot-service").SnapshotService;
+var SnapshotService = require("mod/data/service/snapshot-service").SnapshotService;
 
 
 describe("A Snapshot Service", function () {

@@ -617,15 +617,15 @@ Montage.defineProperties(exports.Application.prototype,
                     switch (type) {
                         case "alert":
                             zIndex = 19004;
-                            className = "montage-alert";
+                            className = "mod-alert";
                             break;
                         case "confirm":
                             zIndex = 19003;
-                            className = "montage-confirm";
+                            className = "mod-confirm";
                             break;
                         case "notify":
                             zIndex = 19002;
-                            className = "montage-notify";
+                            className = "mod-notify";
                             break;
                     }
                 } else {

@@ -1,6 +1,6 @@
 /*global describe, it, expect */
-var Montage = require("montage").Montage;
-var Slider = require("montage/ui/slider.mod").Slider;
+var Montage = require("mod/core/core").Montage;
+var Slider = require("mod/ui/slider.mod").Slider;
 var MockEvent = require("mocks/event");
 
 describe("test/ui/slider-spec", function () {
@@ -88,12 +88,12 @@ describe("test/ui/slider-spec", function () {
             });
             it("should add active class when set to true", function () {
                 aSlider.active = true;
-                expect(aSlider.classList.contains("montage--active")).toBeTruthy();
+                expect(aSlider.classList.contains("mod--active")).toBeTruthy();
             });
             it("should remove active class when set to false", function () {
                 aSlider.active = true;
                 aSlider.active = false;
-                expect(aSlider.classList.contains("montage--active")).toBeFalsy();
+                expect(aSlider.classList.contains("mod--active")).toBeFalsy();
             });
         });
         describe("step", function () {

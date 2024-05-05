@@ -1,5 +1,5 @@
-var Component = require("montage/ui/component").Component,
-    Promise = require('montage/core/promise');
+var Component = require("mod/ui/component").Component,
+    Promise = require('mod/core/promise');
 
 exports.Main = Component.specialize(/** @lends Main# */{
 
@@ -201,5 +201,5 @@ exports.Main = Component.specialize(/** @lends Main# */{
             return !dropNode.locked;
         }
     }
-  
+
 });

@@ -1,11 +1,11 @@
-[![Build Status](https://travis-ci.org/montagejs/montage-testing.svg?branch=master)](http://travis-ci.org/montagejs/montage-testing)
+[![Build Status](https://travis-ci.org/montagejs/mod-testing.svg?branch=master)](http://travis-ci.org/montagejs/mod-testing)
 
 Montage Testing
 ===============================
 
 MontageJS uses some pure unit tests that are straightforward [Jasmine specs][1].
 
- To install the test code, run `npm install` in your project folder. This installs the [montage-testing][2] package, which adds some useful utilities for writing jasmine tests. You will need the file run-tests.html.
+ To install the test code, run `npm install` in your project folder. This installs the [mod-testing][2] package, which adds some useful utilities for writing jasmine tests. You will need the file run-tests.html.
 
  For an example of how we implement unit testing, see the [digit][3] repository:
 
@@ -19,7 +19,7 @@ MontageJS uses some pure unit tests that are straightforward [Jasmine specs][1].
  We also test some components by [mocking their dependencies][6].
 
  [1]: https://github.com/montagejs/montage/blob/master/test/all.js "Jasmine specs"
- [2]: https://github.com/montagejs/montage-testing "montage-testing"
+ [2]: https://github.com/montagejs/mod-testing "mod-testing"
  [3]: https://github.com/montagejs/digit "digit"
  [4]: https://github.com/montagejs/digit/blob/master/test/run.html "run-tests"
  [5]: https://github.com/montagejs/digit/tree/master/test "test/all.js"
@@ -28,7 +28,7 @@ MontageJS uses some pure unit tests that are straightforward [Jasmine specs][1].
 ## Maintenance
 
 Tests are in the `test` directory. Use `npm test` to run the tests in
-NodeJS or open `test/run.html` in a browser. 
+NodeJS or open `test/run.html` in a browser.
 
 To run the tests in your browser, simply use `npm run test:jasmine`.
 

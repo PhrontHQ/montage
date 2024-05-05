@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="main.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
 
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "owner": {
             "values": {
@@ -15,27 +15,27 @@
             }
         },
         "rangeController": {
-            "prototype": "montage/core/range-controller",
+            "prototype": "mod/core/range-controller",
             "values": {
                 "content": {"<-": "@owner.data"}
             }
         },
         "treeController": {
-            "prototype": "montage/core/tree-controller",
+            "prototype": "mod/core/tree-controller",
             "values": {
                 "childrenPath": "regions",
                 "data": {"<-": "@owner.tree"}
             }
         },
         "text": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "text"},
                 "value": {"<-": "@owner.currentSegment"}
             }
         },
         "segmentedBar1": {
-            "prototype": "montage/ui/segmented-bar.mod",
+            "prototype": "mod/ui/segmented-bar.mod",
             "values": {
                 "element": {"#": "segmentedBar1"},
                 "data": {"<-": "@owner.data"}
@@ -48,7 +48,7 @@
             ]
         },
         "segment1": {
-            "prototype": "montage/ui/segment.mod",
+            "prototype": "mod/ui/segment.mod",
             "values": {
                 "element": {"#": "segment1"},
                 "label": {"<-": "@segmentedBar1:segment.object.region"},
@@ -56,7 +56,7 @@
             }
         },
         "segmentedBar2": {
-            "prototype": "montage/ui/segmented-bar.mod",
+            "prototype": "mod/ui/segmented-bar.mod",
             "values": {
                 "element": {"#": "segmentedBar2"},
                 "dataController": {"@": "rangeController"},
@@ -70,7 +70,7 @@
             ]
         },
         "segment2": {
-            "prototype": "montage/ui/segment.mod",
+            "prototype": "mod/ui/segment.mod",
             "values": {
                 "element": {"#": "segment2"},
                 "label": {"<-": "@segmentedBar2:segment.object.region"},
@@ -78,7 +78,7 @@
             }
         },
         "segmentedBar3": {
-            "prototype": "montage/ui/segmented-bar.mod",
+            "prototype": "mod/ui/segmented-bar.mod",
             "values": {
                 "element": {"#": "segmentedBar3"},
                 "dataController": {"@": "treeController"}
@@ -91,7 +91,7 @@
             ]
         },
         "segment3": {
-            "prototype": "montage/ui/segment.mod",
+            "prototype": "mod/ui/segment.mod",
             "values": {
                 "element": {"#": "segment3"},
                 "label": {"<-": "@segmentedBar3:segment.object.content.region"},
@@ -99,7 +99,7 @@
             }
         },
         "segmentedBar4": {
-            "prototype": "montage/ui/segmented-bar.mod",
+            "prototype": "mod/ui/segmented-bar.mod",
             "values": {
                 "element": {"#": "segmentedBar4"},
                 "dataController": {"@": "rangeController"},
@@ -113,7 +113,7 @@
             ]
         },
         "segment4": {
-            "prototype": "montage/ui/segment.mod",
+            "prototype": "mod/ui/segment.mod",
             "values": {
                 "element": {"#": "segment4"},
                 "label": {"<-": "@segmentedBar4:segment.object.region"},
@@ -124,39 +124,39 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="main" class="Main">
+    <div data-mod-id="main" class="Main">
         <h1>Data from event listener</h1>
         ActionEvent is fired upon press even when data didn't change; please open console to see log of events being fired.
-        <pre data-montage-id="text"></pre>
+        <pre data-mod-id="text"></pre>
 
         <h1>Desktop - data array</h1>
         <div class="desktop">
-            <div data-montage-id="segmentedBar1">
-                <div data-montage-id="segment1"></div>
+            <div data-mod-id="segmentedBar1">
+                <div data-mod-id="segment1"></div>
             </div>
         </div>
         <br/>
 
         <h1>Desktop - RangeController + bootstrap, enabled=false</h1>
         <div class="desktop">
-            <div data-montage-id="segmentedBar2" class="progress">
-                <div data-montage-id="segment2" class="progress-bar progress-bar-striped"></div>
+            <div data-mod-id="segmentedBar2" class="progress">
+                <div data-mod-id="segment2" class="progress-bar progress-bar-striped"></div>
             </div>
         </div>
         <br/>
 
         <h1>Desktop - TreeController</h1>
         <div class="desktop">
-            <div data-montage-id="segmentedBar3">
-                <div data-montage-id="segment3"></div>
+            <div data-mod-id="segmentedBar3">
+                <div data-mod-id="segment3"></div>
             </div>
         </div>
         <br/>
 
         <h1>Phone-portrait, orientation = vertical</h1>
         <div class="phone-portrait">
-            <div data-montage-id="segmentedBar4">
-                <div data-montage-id="segment4"></div>
+            <div data-mod-id="segmentedBar4">
+                <div data-mod-id="segment4"></div>
             </div>
         </div>
     </div>

@@ -1,20 +1,20 @@
 /* <copyright>
  </copyright> */
 /**
- @requires montage/core/core
- @requires montage/core/logger
+ @requires mod/core/core
+ @requires mod/core/logger
  */
-var Montage = require("montage").Montage;
-var Condition = require("montage/ui/condition.mod").Condition;
-var Loader = require("montage/ui/loader.mod").Loader;
-var Repetition = require("montage/ui/repetition.mod").Repetition;
-var Slot = require("montage/ui/slot.mod").Slot;
-var Substitution = require("montage/ui/substitution.mod").Substitution;
-var Text = require("montage/ui/text.mod").Text;
+var Montage = require("mod/core/core").Montage;
+var Condition = require("mod/ui/condition.mod").Condition;
+var Loader = require("mod/ui/loader.mod").Loader;
+var Repetition = require("mod/ui/repetition.mod").Repetition;
+var Slot = require("mod/ui/slot.mod").Slot;
+var Substitution = require("mod/ui/substitution.mod").Substitution;
+var Text = require("mod/ui/text.mod").Text;
 
-var ObjectDescriptor = require("montage/core/meta/object-descriptor").ObjectDescriptor;
+var ObjectDescriptor = require("mod/core/meta/object-descriptor").ObjectDescriptor;
 
-var Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer;
+var Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer;
 
 describe("meta/build-in-component-object-descriptor-spec", function () {
 

@@ -36,7 +36,7 @@ Here's how to create a new ui test:
 The spec file queues up  the ui test and executes the assertions when the page under test (`mytest.html`) is loaded.
 
 ```javascript
-var TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
+var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
 
 TestPageLoader.queueTest("mytest", function (testPage) {
     describe("test/ui/mytest-spec", function () {

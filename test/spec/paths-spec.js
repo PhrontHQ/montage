@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage;
-var Map = require("montage/core/collections/map");
+var Montage = require("mod/core/core").Montage;
+var Map = require("mod/core/collections/map");
 
 describe("expressions-spec", function () {
 

@@ -1,16 +1,16 @@
 /**
- * @module "montage/ui/loader.mod"
+ * @module "mod/ui/loader.mod"
  */
 var ComponentModule = require("../component"),
     Component = ComponentModule.Component,
     RootComponent = ComponentModule.__root__,
     logger = require("../../core/logger").logger("loader"),
     defaultEventManager = require("../../core/event/event-manager").defaultEventManager,
-    MONTAGE_LOADER_ELEMENT_ID = "montage-app-loader",
-    BOOTSTRAPPING_CLASS_NAME = "montage-app-bootstrapping",
-    LOADING_CLASS_NAME = "montage-app-loading",
-    FIRST_LOADING_CLASS_NAME = "montage-app-first-load",
-    LOADED_CLASS_NAME = "montage-app-loaded";
+    MOD_LOADER_ELEMENT_ID = "mod-app-loader",
+    BOOTSTRAPPING_CLASS_NAME = "mod-app-bootstrapping",
+    LOADING_CLASS_NAME = "mod-app-loading",
+    FIRST_LOADING_CLASS_NAME = "mod-app-first-load",
+    LOADED_CLASS_NAME = "mod-app-loaded";
 
 /**
  * @const
@@ -307,7 +307,7 @@ exports.Loader = Component.specialize( /** @lends Loader.prototype # */ {
             this._waitForLoadingIndicatorIfNeeded();
 
             var i,
-                loaderElement = document.getElementById(MONTAGE_LOADER_ELEMENT_ID), // ???
+                loaderElement = document.getElementById(MOD_LOADER_ELEMENT_ID), // ???
                 children,
                 iChild,
                 iComponent;

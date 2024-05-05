@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="main.css">
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
         {
             "owner": {
                 "values": {
@@ -11,14 +11,14 @@
             },
 
             "custom": {
-                "prototype": "montage/ui/anchor.mod",
+                "prototype": "mod/ui/anchor.mod",
                 "values": {
                     "element": {"#": "anchor-custom"}
                 }
             },
 
             "native": {
-                "prototype": "montage/ui/anchor.mod",
+                "prototype": "mod/ui/anchor.mod",
                 "values": {
                     "element": {"#": "anchor-native"}
                 }
@@ -28,13 +28,13 @@
 
 </head>
 <body>
-    <div data-montage-id="main" class="Main">
+    <div data-mod-id="main" class="Main">
         <header>Teach Anchor Mod</header>
         <section class="anchors">
-            <span data-montage-id="anchor-custom" class="anchor custom">test</span>
+            <span data-mod-id="anchor-custom" class="anchor custom">test</span>
 
-            <a href="#" data-montage-id="anchor-native" class="anchor native">test</a>
-            <span data-montage-id="text"></span>
+            <a href="#" data-mod-id="anchor-native" class="anchor native">test</a>
+            <span data-mod-id="text"></span>
         </section>
     </div>
 </body>

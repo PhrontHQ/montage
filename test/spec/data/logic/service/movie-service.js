@@ -1,4 +1,4 @@
-var RawDataService = require("montage/data/service/raw-data-service").RawDataService,
+var RawDataService = require("mod/data/service/raw-data-service").RawDataService,
     CategoryNames = ["Action"];
 
 exports.MovieService = RawDataService.specialize(/** @lends MovieService.prototype */ {

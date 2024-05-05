@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    MediaController = require("montage/core/media-controller").MediaController,
+var Montage = require("mod/core/core").Montage,
+    MediaController = require("mod/core/media-controller").MediaController,
     MockDOM = require("mocks/dom"),
     MockEvent = require("mocks/event");
 

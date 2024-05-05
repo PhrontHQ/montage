@@ -1,16 +1,16 @@
 /**
-    @module "montage/ui/native/input-date.mod"
-    @requires montage/core/core
-    @requires montage/ui/component
-    @requires montage/ui/text-input
+    @module "mod/ui/native/input-date.mod"
+    @requires mod/core/core
+    @requires mod/ui/component
+    @requires mod/ui/text-input
 */
 var TextInput = require("ui/text-input").TextInput,
     dateToDateInputStringConverter = require("../../../core/converter/date-to-date-input-string-converter").singleton;
 
 /**
   	Wraps an &lt;input type="date"> element as a component.
-    @class module:"montage/ui/native/input-date.mod".InputDate
-    @extends module:montage/ui/text-input.TextInput
+    @class module:"mod/ui/native/input-date.mod".InputDate
+    @extends module:mod/ui/text-input.TextInput
  */
 var DateField = exports.DateField = TextInput.specialize({
     hasTemplate: {value: true },
@@ -23,7 +23,7 @@ var DateField = exports.DateField = TextInput.specialize({
 
 });
 
-DateField.addAttributes( /** @lends module:"montage/ui/native/input-date.mod".InputDate# */{
+DateField.addAttributes( /** @lends module:"mod/ui/native/input-date.mod".InputDate# */{
 
 /**
 	The upper bound for the element’s value represented in the "full-date" format, (for example, 2001-05-24).

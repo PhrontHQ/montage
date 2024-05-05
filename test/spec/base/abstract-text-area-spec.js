@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    AbstractTextArea = require("montage/ui/base/abstract-text-area").AbstractTextArea,
+var Montage = require("mod/core/core").Montage,
+    AbstractTextArea = require("mod/ui/base/abstract-text-area").AbstractTextArea,
     MockDOM = require("mocks/dom");
 
 describe("test/base/abstract-text-area-spec", function () {
@@ -67,7 +67,7 @@ describe("test/base/abstract-text-area-spec", function () {
             it("should add the corresponding class name to classList when enabled is false", function () {
                 aTextArea.enabled = false;
 
-                expect(aTextArea.classList.contains("montage--disabled")).toBe(true);
+                expect(aTextArea.classList.contains("mod--disabled")).toBe(true);
             });
         });
     });

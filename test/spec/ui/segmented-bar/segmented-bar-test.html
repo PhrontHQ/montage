@@ -3,26 +3,26 @@
 <head>
     <title>SegmentedBar</title>
     <script type="text/javascript" src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "test": {
             "prototype": "spec/ui/segmented-bar/segmented-bar-test"
         },
         "rangeController": {
-            "prototype": "montage/core/range-controller",
+            "prototype": "mod/core/range-controller",
             "values": {
                 "content": {"<-": "@test.data"}
             }
         },
         "treeController": {
-            "prototype": "montage/core/tree-controller",
+            "prototype": "mod/core/tree-controller",
             "values": {
                 "childrenPath": "regions",
                 "content": {"<-": "@test.tree"}
             }
         },
         "segmentedBar1": {
-            "prototype": "montage/ui/segmented-bar.mod",
+            "prototype": "mod/ui/segmented-bar.mod",
             "values": {
                 "element": {"#": "segmentedBar1"},
                 "data": {"<-": "@test.data"}
@@ -35,7 +35,7 @@
             ]
         },
         "segment1": {
-            "prototype": "montage/ui/segment.mod",
+            "prototype": "mod/ui/segment.mod",
             "values": {
                 "element": {"#": "segment1"},
                 "label": {"<-": "@segmentedBar1:segment.object.region"},
@@ -43,7 +43,7 @@
             }
         },
         "segmentedBar2": {
-            "prototype": "montage/ui/segmented-bar.mod",
+            "prototype": "mod/ui/segmented-bar.mod",
             "values": {
                 "element": {"#": "segmentedBar2"},
                 "dataController": {"@": "rangeController"},
@@ -57,7 +57,7 @@
             ]
         },
         "segment2": {
-            "prototype": "montage/ui/segment.mod",
+            "prototype": "mod/ui/segment.mod",
             "values": {
                 "element": {"#": "segment2"},
                 "label": {"<-": "@segmentedBar2:segment.object.region"},
@@ -65,7 +65,7 @@
             }
         },
         "segmentedBar3": {
-            "prototype": "montage/ui/segmented-bar.mod",
+            "prototype": "mod/ui/segmented-bar.mod",
             "values": {
                 "element": {"#": "segmentedBar3"},
                 "dataController": {"@": "treeController"}
@@ -78,7 +78,7 @@
             ]
         },
         "segment3": {
-            "prototype": "montage/ui/segment.mod",
+            "prototype": "mod/ui/segment.mod",
             "values": {
                 "element": {"#": "segment3"},
                 "label": {"<-": "@segmentedBar3:segment.object.content.region"},
@@ -86,7 +86,7 @@
             }
         },
         "segmentedBar4": {
-            "prototype": "montage/ui/segmented-bar.mod",
+            "prototype": "mod/ui/segmented-bar.mod",
             "values": {
                 "element": {"#": "segmentedBar4"},
                 "dataController": {"@": "rangeController"},
@@ -100,7 +100,7 @@
             ]
         },
         "segment4": {
-            "prototype": "montage/ui/segment.mod",
+            "prototype": "mod/ui/segment.mod",
             "values": {
                 "element": {"#": "segment4"},
                 "label": {"<-": "@segmentedBar4:segment.object.region"},
@@ -112,22 +112,22 @@
 </head>
 <body>
     <div style="width: 960px; height: 30px;">
-        <div data-montage-id="segmentedBar1" id="segmentedBar1">
-            <div data-montage-id="segment1"></div>
+        <div data-mod-id="segmentedBar1" id="segmentedBar1">
+            <div data-mod-id="segment1"></div>
         </div>
     </div>
 
-    <div data-montage-id="segmentedBar2" id="segmentedBar2">
-        <div data-montage-id="segment2"></div>
+    <div data-mod-id="segmentedBar2" id="segmentedBar2">
+        <div data-mod-id="segment2"></div>
     </div>
 
-    <div data-montage-id="segmentedBar3" id="segmentedBar3">
-        <div data-montage-id="segment3"></div>
+    <div data-mod-id="segmentedBar3" id="segmentedBar3">
+        <div data-mod-id="segment3"></div>
     </div>
 
     <div style="width: 30px; height: 960px;">
-        <div data-montage-id="segmentedBar4" id="segmentedBar4">
-            <div data-montage-id="segment4"></div>
+        <div data-mod-id="segmentedBar4" id="segmentedBar4">
+            <div data-mod-id="segment4"></div>
         </div>
     </div>
 </body>

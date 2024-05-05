@@ -1,22 +1,22 @@
 {
-  "name": "montage-testing",
+  "name": "mod-testing",
   "version": "0.5.1",
   "description": "Package to enable jasmine test using the testacular runner in Montage projects",
   "license": "BSD-3-Clause",
   "author": "Montage Studio, inc. (http://montagestudio.com/)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/montagejs/montage-testing.git"
+    "url": "https://github.com/montagejs/mod-testing.git"
   },
   "dependencies": {
     "jasmine-console-reporter": "^1.2.7",
     "jasmine-core": "^2.5.2",
     "js-beautify": "^1.6.11",
-    "montage": "^17.0.7"
+    "mod": "^17.0.7"
   },
   "main": "run",
   "mappings": {
-    "montage-testing": "./"
+    "mod-testing": "./"
   },
   "production": true,
   "devDependencies": {

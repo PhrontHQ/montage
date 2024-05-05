@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="hello-world2.css">
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
         {
             "owner": {
                 "values": {
@@ -11,7 +11,7 @@
             },
 
             "message": {
-                "prototype": "montage/ui/text.mod",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "message"},
                     "value": {"<-": "(@owner.data.defined() && @owner.userInterfaceDescriptor.defined() ? @owner.data.path(@owner.userInterfaceDescriptor.nameExpression) : 'Hello') + ' Montage!'"}
@@ -22,8 +22,8 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="owner">
-        <div data-montage-id="message" class="message hello-world-2"></div>
+    <div data-mod-id="owner">
+        <div data-mod-id="message" class="message hello-world-2"></div>
     </div>
 </body>
 </html>

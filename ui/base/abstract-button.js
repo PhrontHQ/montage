@@ -43,16 +43,16 @@ var AbstractButton = exports.AbstractButton = AbstractControl.specialize( /** @l
             this._pressComposer.defineBinding("longPressThreshold ", {"<-": "holdThreshold", source: this});
 
             //classList management
-            this.defineBinding("classList.has('montage--disabled')", {"<-": "!enabled"});
-            this.defineBinding("classList.has('montage--active')", {"<-": "active"});
+            this.defineBinding("classList.has('mod--disabled')", {"<-": "!enabled"});
+            this.defineBinding("classList.has('mod--active')", {"<-": "active"});
         }
     },
 
     /**
      * Enables or disables the Button from user input. When this property is
-     * set to `false`, the "montage--disabled" CSS style is applied to the
+     * set to `false`, the "mod--disabled" CSS style is applied to the
      * button's DOM element during the next draw cycle. When set to `true` the
-     * "montage--disabled" CSS class is removed from the element's class
+     * "mod--disabled" CSS class is removed from the element's class
      * list.
      * @property {boolean} value
      */
@@ -301,7 +301,7 @@ var AbstractButton = exports.AbstractButton = AbstractControl.specialize( /** @l
                     }
                 }
 
-                //this.classList.add("montage-Button");
+                //this.classList.add("mod-Button");
                 this.element.setAttribute("role", "button");
                 this.element.addEventListener("keyup", this, false);
             }

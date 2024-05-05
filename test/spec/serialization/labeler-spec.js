@@ -1,4 +1,4 @@
-var Labeler = require("montage/core/serialization/serializer/montage-labeler").MontageLabeler;
+var Labeler = require("mod/core/serialization/serializer/montage-labeler").MontageLabeler;
 
 describe("labeler", function() {
 

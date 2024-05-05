@@ -4,22 +4,22 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Flow</title>
     <script type="text/javascript" src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
         {
             "application": {
-                "prototype": "montage/core/application",
+                "prototype": "mod/core/application",
                 "values": {
                     "delegate": {"@": "flow"}
                 }
             },
             "flow": {
-                "prototype": "montage/ui/flow.mod",
+                "prototype": "mod/ui/flow.mod",
                 "values": {
                     "element": {"#": "flow"}
                 }
             },
             "text": {
-                "prototype": "montage/ui/text.mod",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "text"},
                     "value": "foo",
@@ -32,8 +32,8 @@
 
 </head>
 <body>
-    <div data-montage-id="flow" class="flow" style="position: relative; width: 500px; height: 500px;">
-        <div data-montage-id="text" style="position: absolute; overflow: hidden"></div>
+    <div data-mod-id="flow" class="flow" style="position: relative; width: 500px; height: 500px;">
+        <div data-mod-id="text" style="position: absolute; overflow: hidden"></div>
     </div>
 </body>
 </html>

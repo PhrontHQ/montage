@@ -28,9 +28,9 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage,
-    Bindings = require("montage/core/core").Bindings,
-    Converter = require("montage/core/converter/converter").Converter;
+var Montage = require("mod/core/core").Montage,
+    Bindings = require("mod/core/core").Bindings,
+    Converter = require("mod/core/converter/converter").Converter;
 
 var TestConverter = Converter.specialize( {
 

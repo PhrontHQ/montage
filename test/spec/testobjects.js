@@ -30,8 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 exports = typeof exports !== "undefined" ? exports : {};
 
-var Montage = require("montage").Montage,
-    Uuid = require("montage/core/uuid").Uuid;
+var Montage = require("mod/core/core").Montage,
+    Uuid = require("mod/core/uuid").Uuid;
 
 var TestObject = (function () {
     var instances = [];

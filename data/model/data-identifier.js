@@ -24,9 +24,9 @@ var Montage = require("../../core/core").Montage;
  *
  * Note, a dataService's identifier is by default it's moduleId.
  *
- * "montage-data://[this.dataService.identifier]/[this.dataService.connectionDescriptor.name]/[this.objectDescriptor.name]/[this.primaryKey]
+ * "mod-data://[this.dataService.identifier]/[this.dataService.connectionDescriptor.name]/[this.objectDescriptor.name]/[this.primaryKey]
  *
- * "montage-data://twitter-service/production/user/14DS9ZT459EF44305UI
+ * "mod-data://twitter-service/production/user/14DS9ZT459EF44305UI
 
  * @class
  * @extends external:Montage
@@ -123,7 +123,7 @@ exports.DataIdentifier = Montage.specialize(/** @lends DataIdentifier.prototype 
     url: {
         get: function () {
             if(!this._url) {
-                var _url = "montage-data://";
+                var _url = "mod-data://";
                 _url += this.dataService.identifier;
                 _url += "/";
                 _url += this.dataService.connection

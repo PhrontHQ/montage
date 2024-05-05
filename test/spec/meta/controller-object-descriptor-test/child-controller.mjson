@@ -19,7 +19,7 @@
         "object": "spec/meta/controller-object-descriptor-test/parent-controller.mjson"
     },
     "root": {
-        "prototype": "montage/core/meta/module-objectDescriptor",
+        "prototype": "mod/core/meta/module-objectDescriptor",
         "values": {
             "name": "ChildController",
             "customPrototype": false,

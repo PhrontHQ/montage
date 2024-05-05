@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="main.css">
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
         {
             "owner": {
                 "values": {
@@ -10,7 +10,7 @@
                 }
             },
             "treeList": {
-                "prototype": "montage/ui/tree-list.mod",
+                "prototype": "mod/ui/tree-list.mod",
                 "values": {
                     "element": {"#": "treeList"},
                     "isRootExpanded": true,
@@ -21,13 +21,13 @@
                 }
             },
             "treeController": {
-                "prototype": "montage/core/tree-controller",
+                "prototype": "mod/core/tree-controller",
                 "values": {
                     "data": {"<-": "@owner.root"}
                 }
             },
             "treeListItem": {
-                "prototype": "montage/ui/text.mod",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "treeListItem"},
                     "node": {"<-": "@treeList:iteration.object"},
@@ -37,7 +37,7 @@
             },
 
             "expand": {
-                "prototype": "montage/ui/checkbox.mod",
+                "prototype": "mod/ui/checkbox.mod",
                 "values": {
                     "element": {"#": "expand"},
                     "checked": {"<->": "@treeList:iteration.object.isExpanded"},
@@ -46,7 +46,7 @@
             },
 
             "debugDraggingNode": {
-                "prototype": "montage/ui/text.mod",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "debugDraggingNode"},
                     "value": {"<-": "@treeList._draggingTreeNode.data.filename"}
@@ -54,7 +54,7 @@
             },
 
             "debugOverNode": {
-                "prototype": "montage/ui/text.mod",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "debugOverNode"},
                     "value": {"<-": "@treeList._treeNodeOver.data.filename"}
@@ -62,7 +62,7 @@
             },
 
             "debugDropNode": {
-                "prototype": "montage/ui/text.mod",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "debugDropNode"},
                     "value": {"<-": "@treeList._treeNodeWillAcceptDrop.data.filename"}
@@ -70,7 +70,7 @@
             },
 
             "debugPlaceholderPosition": {
-                "prototype": "montage/ui/text.mod",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "debugPlaceholderPosition"},
                     "value": {"<-": "@treeList._placerholderPosition == 0 ? 'before' : @treeList._placerholderPosition == 1 ? 'after' : ''"}
@@ -78,7 +78,7 @@
             },
 
             "isSortable": {
-                "prototype": "montage/ui/checkbox.mod",
+                "prototype": "mod/ui/checkbox.mod",
                 "values": {
                     "element": {"#": "isSortable"},
                     "checked": {"<->": "!!@treeList.isSortable"}
@@ -86,7 +86,7 @@
             },
 
             "isRootVisible": {
-                "prototype": "montage/ui/checkbox.mod",
+                "prototype": "mod/ui/checkbox.mod",
                 "values": {
                     "element": {"#": "isRootVisible"},
                     "checked": {"<->": "!!@treeList.isRootVisible"}
@@ -94,7 +94,7 @@
             },
 
             "lastActionReport": {
-                "prototype": "montage/ui/text.mod",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "lastActionReport"},
                     "value": {"<-": "@owner.lastActionReport"}
@@ -104,7 +104,7 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="main" class="Main">
+    <div data-mod-id="main" class="Main">
         <header>Teach TreeList Mod</header>
         <section class="containers">
             <div class="options-container container">
@@ -113,11 +113,11 @@
                 </h5>
                 <p>
                     <label>Is Sortable: </label>
-                    <input type="checkbox" data-montage-id="isSortable" />
+                    <input type="checkbox" data-mod-id="isSortable" />
                 </p>
                 <p>
                     <label>Is Root Visible: </label>
-                    <input type="checkbox" data-montage-id="isRootVisible" />
+                    <input type="checkbox" data-mod-id="isRootVisible" />
                 </p>
             </div>
             <div class="tree-list-container container">
@@ -125,10 +125,10 @@
                     <span>Tree</span>
                 </h5>
                 <div class="tree-list-wrapper">
-                    <div data-montage-id="treeList" class="tree-list">
+                    <div data-mod-id="treeList" class="tree-list">
                         <div class="tree-list-row">
-                            <input type="checkbox" data-montage-id="expand" class="expand" />
-                            <span data-montage-id="treeListItem"></span>
+                            <input type="checkbox" data-mod-id="expand" class="expand" />
+                            <span data-mod-id="treeListItem"></span>
                         </div>
                     </div>
                 </div>
@@ -139,23 +139,23 @@
                 </h5>
                 <p>
                     <span>Dragging Node: </span>
-                    <span data-montage-id="debugDraggingNode" class="debug-value"></span>
+                    <span data-mod-id="debugDraggingNode" class="debug-value"></span>
                 </p>
                 <p>
                     <span>Over Node: </span>
-                    <span data-montage-id="debugOverNode" class="debug-value"></span>
+                    <span data-mod-id="debugOverNode" class="debug-value"></span>
                 </p>
                 <p>
                     <span>Placeholder Position: </span>
-                    <span data-montage-id="debugPlaceholderPosition" class="debug-value"></span>
+                    <span data-mod-id="debugPlaceholderPosition" class="debug-value"></span>
                 </p>
                 <p>
                     <span>Drop Node: </span>
-                    <span data-montage-id="debugDropNode" class="debug-value"></span>
+                    <span data-mod-id="debugDropNode" class="debug-value"></span>
                 </p>
                 <p>
                     <span>Last Action Report: </span>
-                    <pre data-montage-id="lastActionReport" class="debug-value"></pre>
+                    <pre data-mod-id="lastActionReport" class="debug-value"></pre>
                 </p>
             </div>
         </section>

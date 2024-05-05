@@ -30,8 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 var querySelector = function (e){return document.querySelector(e);}
 
-var Montage = require("montage").Montage;
-var Component = require("montage/ui/component").Component;
+var Montage = require("mod/core/core").Montage;
+var Component = require("mod/ui/component").Component;
 
 var TemplateTest = exports.TemplateTest = Montage.specialize( {
     loadComponents: {value: function () {

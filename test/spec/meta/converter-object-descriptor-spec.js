@@ -1,20 +1,20 @@
 /* <copyright>
  </copyright> */
 /**
- @module montage/data/object-desciptor-spec.js
- @requires montage/core/core
- @requires montage/core/logger
+ @module mod/data/object-desciptor-spec.js
+ @requires mod/core/core
+ @requires mod/core/logger
  */
-var Montage = require("montage").Montage;
-var Converter = require("montage/core/converter/converter").Converter;
-var UpperCaseConverter = require("montage/core/converter/upper-case-converter").UpperCaseConverter;
-var LowerCaseConverter = require("montage/core/converter/lower-case-converter").LowerCaseConverter;
-var InvertConverter = require("montage/core/converter/invert-converter").InvertConverter;
-var TrimConverter = require("montage/core/converter/trim-converter").TrimConverter;
-var NumberConverter = require("montage/core/converter/number-converter").NumberConverter;
-var BytesConverter = require("montage/core/converter/bytes-converter").BytesConverter;
-var DateConverter = require("montage/core/converter/date-converter").DateConverter;
-var CurrencyConverter = require("montage/core/converter/currency-converter").CurrencyConverter;
+var Montage = require("mod/core/core").Montage;
+var Converter = require("mod/core/converter/converter").Converter;
+var UpperCaseConverter = require("mod/core/converter/upper-case-converter").UpperCaseConverter;
+var LowerCaseConverter = require("mod/core/converter/lower-case-converter").LowerCaseConverter;
+var InvertConverter = require("mod/core/converter/invert-converter").InvertConverter;
+var TrimConverter = require("mod/core/converter/trim-converter").TrimConverter;
+var NumberConverter = require("mod/core/converter/number-converter").NumberConverter;
+var BytesConverter = require("mod/core/converter/bytes-converter").BytesConverter;
+var DateConverter = require("mod/core/converter/date-converter").DateConverter;
+var CurrencyConverter = require("mod/core/converter/currency-converter").CurrencyConverter;
 
 describe("meta/converter-object-desciptor-spec", function () {
     var converter,

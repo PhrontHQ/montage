@@ -60,7 +60,7 @@
   },
   "mappings": {
     "mr": "../mr",
-    "montage-testing": "../../testing",
+    "mod-testing": "../../testing",
     "frb": "core/frb"
 },
   "scripts": {

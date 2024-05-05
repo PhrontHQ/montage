@@ -52,12 +52,12 @@ header {
 
 /* States --------------------- */
 
-.radio.custom.montage--active,
-.radio.custom.montage-RadioButton--checked {
+.radio.custom.mod--active,
+.radio.custom.mod-RadioButton--checked {
     background-color: currentColor;
 }
 
-.radio.custom.montage--disabled {
+.radio.custom.mod--disabled {
     opacity: .5;
     border-style: dashed;
     pointer-events: none;
@@ -69,11 +69,11 @@ header {
     fill: transparent;
 }
 
-.radio.custom.montage-RadioButton--checked .radioCustomIcon {
+.radio.custom.mod-RadioButton--checked .radioCustomIcon {
     fill: inherit;
 }
 
-.radio.custom.montage--active .radioCustomIcon {
+.radio.custom.mod--active .radioCustomIcon {
     fill: transparent;
 }
 
@@ -90,8 +90,8 @@ header {
     box-shadow: inset 0 1px 1px hsla(0,0%,100%,.8), inset 0 -1px 1px hsla(0,0%,0%,.04), 0 1px 0 hsla(0,0%,100%,.6);
 }
 
-.radio.custom.montage--active,
-.radio.custom.montage-RadioButton--checked {
+.radio.custom.mod--active,
+.radio.custom.mod-RadioButton--checked {
     border-color: hsla(0,0%,70%,1);
     background-image: -webkit-linear-gradient(top, hsl(0,0%,90%), hsl(0,0%,86%) );
     background-image: -moz-linear-gradient(top, hsl(0,0%,90%), hsl(0,0%,86%) );

@@ -1,6 +1,6 @@
-var Montage = require("montage").Montage;
-var AbstractSelect = require("montage/ui/base/abstract-select").AbstractSelect;
-var RangeController = require("montage/core/range-controller").RangeController;
+var Montage = require("mod/core/core").Montage;
+var AbstractSelect = require("mod/ui/base/abstract-select").AbstractSelect;
+var RangeController = require("mod/core/range-controller").RangeController;
 var MockDOM = require("mocks/dom");
 
 AbstractSelect.prototype.hasTemplate = false;
@@ -52,7 +52,7 @@ describe("test/base/abstract-select-spec", function () {
 
             it("should add the corresponding class name to classList when enabled is false", function () {
                 aSelect.enabled = false;
-                expect(aSelect.classList.contains("montage--disabled")).toBe(true);
+                expect(aSelect.classList.contains("mod--disabled")).toBe(true);
             });
         });
 

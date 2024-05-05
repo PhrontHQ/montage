@@ -12,9 +12,9 @@ require.loadPackage(parentWindow.require.location)
     // Fixe me: transition to .mr only
     window.require = window.mr = require;
 
-    return require.async("montage/ui/component")
+    return require.async("mod/ui/component")
     .then(function (/*exports*/) {
-        return require.async("montage/ui/loader.mod")
+        return require.async("mod/ui/loader.mod")
         .then(function (exports) {
             var mainComponent = exports.Loader.create();
             mainComponent.mainModule = module;

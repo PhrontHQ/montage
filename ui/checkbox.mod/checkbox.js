@@ -1,14 +1,14 @@
 /**
-    @module "montage/ui/native/checkbox.mod"
-    @requires montage/core/core
-    @requires montage/ui/check-control
+    @module "mod/ui/native/checkbox.mod"
+    @requires mod/core/core
+    @requires mod/ui/check-control
 */
 var CheckControl = require("ui/check-control").CheckControl;
 
 /**
 
-    @class module:"montage/ui/native/checkbox.mod".Checkbox
-    @extends module:montage/ui/check-control.CheckControl
+    @class module:"mod/ui/native/checkbox.mod".Checkbox
+    @extends module:mod/ui/check-control.CheckControl
 */
 var Checkbox = exports.Checkbox = CheckControl.specialize({
     enterDocument: {

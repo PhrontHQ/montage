@@ -2,7 +2,7 @@
 var AbstractControl = require("./abstract-control").AbstractControl,
     KeyComposer = require("../../composer/key-composer").KeyComposer;
 
-var CLASS_PREFIX = "montage-NumberField";
+var CLASS_PREFIX = "mod-NumberField";
 
 /**
  * @class AbstractNumberField
@@ -21,7 +21,7 @@ var AbstractNumberField = exports.AbstractNumberField = AbstractControl.speciali
             }
 
             this._propertyNamesUsed = {};
-            this.defineBinding( "classList.has('montage--disabled')", { "<-": "!enabled" });
+            this.defineBinding( "classList.has('mod--disabled')", { "<-": "!enabled" });
         }
     },
 

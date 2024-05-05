@@ -147,7 +147,7 @@ var SegmentedBar = exports.SegmentedBar = AbstractButton.specialize( /** @lends 
     _setComponentDataFromEvent: {
         value: function (event) {
             // User may click on Segment or its label
-            var component = event.targetElement.className === "montage-Segment" ?
+            var component = event.targetElement.className === "segment-mod" ?
                 event.targetElement.component : event.targetElement.parentElement.component;
 
             // Inherited AbstractControl.detail is a Collections.js Dict
@@ -235,5 +235,5 @@ var SegmentedBar = exports.SegmentedBar = AbstractButton.specialize( /** @lends 
 });
 
 if (window.MontageElement) {
-    MontageElement.define("montage-segmented-bar", SegmentedBar);
+    MontageElement.define("segmented-bar-mod", SegmentedBar);
 }

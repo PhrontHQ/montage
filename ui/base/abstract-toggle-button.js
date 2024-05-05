@@ -52,17 +52,17 @@ var AbstractToggleButton = exports.AbstractToggleButton = AbstractControl.specia
             this._keyComposer.keys = "space";
             this.addComposer(this._keyComposer);
 
-            this.classList.add("montage-ToggleButton");
+            this.classList.add("mod-ToggleButton");
 
             this.defineBindings({
                 // classList management
-                "classList.has('montage--disabled')": {
+                "classList.has('mod--disabled')": {
                     "<-": "!enabled"
                 },
-                "classList.has('montage--active')": {
+                "classList.has('mod--active')": {
                     "<-": "active"
                 },
-                "classList.has('montage-ToggleButton--pressed')": {
+                "classList.has('mod-ToggleButton--pressed')": {
                     "<-": "pressed"
                 }
             });
@@ -71,9 +71,9 @@ var AbstractToggleButton = exports.AbstractToggleButton = AbstractControl.specia
 
     /**
      * Enables or disables the Button from user input. When this property is
-     * set to `false`, the "montage--disabled" CSS style is applied to the
+     * set to `false`, the "mod--disabled" CSS style is applied to the
      * button's DOM element during the next draw cycle. When set to `true` the
-     * "montage--disabled" CSS class is removed from the element's class list.
+     * "mod--disabled" CSS class is removed from the element's class list.
      * @type {boolean}
      */
     enabled: {

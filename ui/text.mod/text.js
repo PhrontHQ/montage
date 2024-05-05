@@ -86,7 +86,7 @@ var MontageText = exports.Text = Component.specialize( /**  @lends module:mod/ui
                     this._valueNode = document.createTextNode("");
                     range.insertNode(this._valueNode);
                 }
-                this.element.classList.add("montage-Text");
+                this.element.classList.add("text-mod");
             }
         }
     },
@@ -109,7 +109,7 @@ var MontageText = exports.Text = Component.specialize( /**  @lends module:mod/ui
 });
 
 if (window.MontageElement) {
-    MontageElement.define("montage-text", MontageText, {
+    MontageElement.define("text-mod", MontageText, {
         observedAttributes: ['value']
     });
 }

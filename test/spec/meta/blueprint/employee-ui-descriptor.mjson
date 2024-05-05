@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "montage/core/meta/user-interface-descriptor",
+        "prototype": "mod/core/meta/user-interface-descriptor",
         "values": {
             "inspectorComponentModule": {
                 "%": "ui/inspectors/employee.mod"
@@ -9,7 +9,7 @@
                 "%": "ui/inspectors/employee.mod"
             },
             "collectionInspectorComponentModule": {
-                "%": "montage/ui/list.mod"
+                "%": "mod/ui/list.mod"
             },
             "iconComponentModule": {
                 "%": "ui/icons/customer.mod"

@@ -1,4 +1,4 @@
-require("montage/core/extras/date");
+require("mod/core/extras/date");
 
 describe("core/date-spec", function () {
 

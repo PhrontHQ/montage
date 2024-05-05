@@ -1,5 +1,6 @@
 /* autoprefixer > 1%, last 2 versions, Firefox ESR, Opera 12.1 */
 
+.segment-mod,
 .montage-Segment {
     /* to vertical align text labels */
     display: -webkit-box;

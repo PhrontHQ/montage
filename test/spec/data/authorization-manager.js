@@ -1,4 +1,4 @@
-var AuthorizationManager = require("montage/data/service/authorization-manager").AuthorizationManager,
+var AuthorizationManager = require("mod/data/service/authorization-manager").AuthorizationManager,
     Authorization = require("spec/data/logic/authorization/authorization").Authorization,
     AuthorizationService = require("spec/data/logic/authorization/authorization-service").AuthorizationService,
     AuthorizationServiceB = require("spec/data/logic/authorization/authorization-service-b").AuthorizationServiceB,
@@ -6,7 +6,7 @@ var AuthorizationManager = require("montage/data/service/authorization-manager")
     OnDemandService = require("spec/data/logic/authorization/on-demand-service").OnDemandService,
     OnFirstFetchService = require("spec/data/logic/authorization/on-first-fetch-service").OnFirstFetchService,
     UpFrontService = require("spec/data/logic/authorization/up-front-service").UpFrontService,
-    Map = require("montage/core/collections/map");
+    Map = require("mod/core/collections/map");
 
 
 describe("An Authorization Manager", function () {

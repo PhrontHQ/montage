@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "montage/core/core[Montage]",
+        "prototype": "mod/core/core[Montage]",
         "values": {
             "name": "RootDescriptor",
             "mappings": [
@@ -12,7 +12,7 @@
     },
 
     "mapping1": {
-        "prototype": "montage/data/service/raw-data-type-mapping",
+        "prototype": "mod/data/service/raw-data-type-mapping",
         "properties": {
             "type": {"@": "type1"},
             "expression": "type == 'FOO_TYPE'"
@@ -20,14 +20,14 @@
     },
 
     "type1": {
-        "prototype": "montage/core/meta/object-descriptor",
+        "prototype": "mod/core/meta/object-descriptor",
         "properties": {
             "name": "Type 1"
         }
     },
 
     "mapping2": {
-        "prototype": "montage/data/service/raw-data-type-mapping",
+        "prototype": "mod/data/service/raw-data-type-mapping",
         "properties": {
             "type": {"@": "type2"},
             "criteria": {
@@ -40,14 +40,14 @@
     },
 
     "type2": {
-        "prototype": "montage/core/meta/object-descriptor",
+        "prototype": "mod/core/meta/object-descriptor",
         "properties": {
             "name": "Type 2"
         }
     },
 
     "mapping3": {
-        "prototype": "montage/data/service/raw-data-type-mapping",
+        "prototype": "mod/data/service/raw-data-type-mapping",
         "properties": {
             "type": {"@": "type3"},
             "criteria": {"@": "mapping3Criteria"}
@@ -55,7 +55,7 @@
     },
 
     "mapping3Criteria": {
-        "prototype": "montage/core/criteria",
+        "prototype": "mod/core/criteria",
         "properties": {
             "expression": "type == $paramType",
             "parameters": {
@@ -65,7 +65,7 @@
     },
 
     "type3": {
-        "prototype": "montage/core/meta/object-descriptor",
+        "prototype": "mod/core/meta/object-descriptor",
         "properties": {
             "name": "Type 3"
         }

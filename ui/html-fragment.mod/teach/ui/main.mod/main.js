@@ -1,4 +1,4 @@
-var Component = require("montage/ui/component").Component;
+var Component = require("mod/ui/component").Component;
 
 exports.Main = Component.specialize({
 
@@ -10,7 +10,7 @@ exports.Main = Component.specialize({
     },
 
     htmlFragmentWillUseValueForNodeAttribute: {
-        value: function (htmlFragment, value, node, attributeName) {            
+        value: function (htmlFragment, value, node, attributeName) {
             if (htmlFragment === this._fragment8 && attributeName === 'data-name') {
                 return 'Bob [Delgate method]';
             }

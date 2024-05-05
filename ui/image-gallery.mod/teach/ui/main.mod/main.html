@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" type="text/css" href="main.css">
 
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "owner": {
             "values": {
@@ -16,14 +16,14 @@
             }
         },
         "index": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "index"},
                 "value": {"<-": "'Image ' + (@gallery.currentImageIndex + 1) + ' of ' + @gallery.images.length"}
             }
         },
         "gallery": {
-            "prototype": "montage/ui/image-gallery.mod",
+            "prototype": "mod/ui/image-gallery.mod",
             "values": {
                 "element": {"#": "gallery"}
             }
@@ -43,13 +43,13 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="owner" class="Main">
-        <div data-montage-id="gallery" class="Main-gallery"></div>
-        <div data-montage-id="index" class="Main-index"></div>
+    <div data-mod-id="owner" class="Main">
+        <div data-mod-id="gallery" class="Main-gallery"></div>
+        <div data-mod-id="index" class="Main-index"></div>
         <div class="Main-origin">Courtesy National Gallery of Art, Washington</div>
-        <div data-montage-id="slider" class="Main-slider">
-            <div data-montage-id="sliderTrack" class="Main-sliderTrack"></div>
-            <div data-montage-id="sliderKnob" class="Main-sliderKnob"></div>
+        <div data-mod-id="slider" class="Main-slider">
+            <div data-mod-id="sliderTrack" class="Main-sliderTrack"></div>
+            <div data-mod-id="sliderKnob" class="Main-sliderKnob"></div>
         </div>
     </div>
 </body>

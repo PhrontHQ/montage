@@ -1,5 +1,5 @@
-var Interpreter = require("montage/core/serialization/deserializer/montage-interpreter").MontageInterpreter,
-    Reviver = require("montage/core/serialization/deserializer/montage-reviver").MontageReviver;
+var Interpreter = require("mod/core/serialization/deserializer/montage-interpreter").MontageInterpreter,
+    Reviver = require("mod/core/serialization/deserializer/montage-reviver").MontageReviver;
 
 
 describe("interpreter", function() {
@@ -331,7 +331,7 @@ describe("interpreter", function() {
                 expect(objects.main.object).toBe(objects.object);
             }).finally(function () {
                 done();
-            }); 
+            });
         });
 
         it("should deserialize an object reference in an array", function(done) {

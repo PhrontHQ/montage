@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    AbstractTextField = require("montage/ui/base/abstract-text-field").AbstractTextField,
+var Montage = require("mod/core/core").Montage,
+    AbstractTextField = require("mod/ui/base/abstract-text-field").AbstractTextField,
     MockDOM = require("mocks/dom");
 
 describe("test/base/abstract-text-field-spec", function () {
@@ -95,7 +95,7 @@ describe("test/base/abstract-text-field-spec", function () {
             it("should add the corresponding class name to classList when enabled is false", function () {
                 aTextField.enabled = false;
 
-                expect(aTextField.classList.contains("montage--disabled")).toBe(true);
+                expect(aTextField.classList.contains("mod--disabled")).toBe(true);
             });
         });
     });

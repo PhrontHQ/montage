@@ -6,7 +6,7 @@
 var Overlay = require("../overlay.mod").Overlay,
     Promise = require("../../core/promise").Promise;
 
-var CLASS_PREFIX = "montage-ModalOverlay";
+var CLASS_PREFIX = "modalOverlay-mod";
 
 /**
  * @class ModalOverlay
@@ -138,5 +138,5 @@ var ModalOverlay = exports.ModalOverlay = Overlay.specialize(/** @lends ModalOve
 });
 
 if (window.MontageElement) {
-    MontageElement.define("montage-modal-overlay", ModalOverlay);
+    MontageElement.define("modal-overlay-mod", ModalOverlay);
 }

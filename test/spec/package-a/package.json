@@ -1,7 +1,7 @@
 {
     "name": "package-a",
     "mappings": {
-        "montage": "../../../",
+        "mod": "../../../",
         "package-b": "../package-b"
     }
 }

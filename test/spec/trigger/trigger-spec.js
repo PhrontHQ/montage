@@ -1,7 +1,7 @@
 /*global require,exports,describe,it,expect */
-var Montage = require("montage").Montage;
-var Promise = require("montage/core/promise").Promise;
-var TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
+var Montage = require("mod/core/core").Montage;
+var Promise = require("mod/core/promise").Promise;
+var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
 
 var options = TestPageLoader.options("trigger-test", {timeoutLength: 10000}, function () {console.log("trigger-test callback");});
 describe("trigger-test", function () {

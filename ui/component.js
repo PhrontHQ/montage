@@ -676,10 +676,10 @@ Component.addClassProperties(
      * each element that represents an argument.
      *
      * ```html
-     * <div data-montage-id="component">
+     * <div data-mod-id="component">
      *     <h1 data-arg="title"></h1>
      *     <div data-arg="content">
-     *         <span data-montage-id="text"></span>
+     *         <span data-mod-id="text"></span>
      *     <div>
      * </div>
      * ```
@@ -765,7 +765,7 @@ Component.addClassProperties(
             var element = this._element;
 
             if (element) {
-                return element.getAttribute("data-mod-id") || element.getAttribute("data-montage-id");
+                return element.getAttribute("data-mod-id") || element.getAttribute("data-mod-id");
             }
         }
     },
@@ -3254,7 +3254,7 @@ Component.addClassProperties(
     registerDraggable: {
         value: function () {
             this.dragManager.registerDraggable(this);
-            this.classList.add("montage-draggable");
+            this.classList.add("mod-draggable");
         }
     },
 
@@ -3264,7 +3264,7 @@ Component.addClassProperties(
     unregisterDraggable: {
         value: function () {
             this.dragManager.unregisterDraggable(this);
-            this.classList.remove("montage-draggable");
+            this.classList.remove("mod-draggable");
         }
     },
 
@@ -3277,7 +3277,7 @@ Component.addClassProperties(
     registerDroppable: {
         value: function () {
             this.dragManager.registerDroppable(this);
-            this.classList.add("montage-droppable");
+            this.classList.add("mod-droppable");
         }
     },
 
@@ -3287,7 +3287,7 @@ Component.addClassProperties(
     unregisterDroppable: {
         value: function () {
             this.dragManager.unregisterDroppable(this);
-            this.classList.remove("montage-droppable");
+            this.classList.remove("mod-droppable");
         }
     },
 

@@ -1,4 +1,4 @@
-var DataProvider = require("montage/data/service/data-provider").DataProvider;
+var DataProvider = require("mod/data/service/data-provider").DataProvider;
 
 describe("A DataProvider", function() {
 

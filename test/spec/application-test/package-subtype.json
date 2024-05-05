@@ -2,8 +2,8 @@
     "name": "test",
     "mappings": {
         "specs": "../",
-        "montage": "../../../",
-        "montage-testing": "../../../testing"
+        "mod": "../../../",
+        "mod-testing": "../../../testing"
     },
     "applicationPrototype":"application-test[MyApp]"
 }

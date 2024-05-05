@@ -1,4 +1,4 @@
-var PropertyDescriptor = require("montage/data/model/property-descriptor").PropertyDescriptor;
+var PropertyDescriptor = require("mod/data/model/property-descriptor").PropertyDescriptor;
 
 describe("A PropertyDescriptor", function() {
 

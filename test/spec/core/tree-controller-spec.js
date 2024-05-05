@@ -1,4 +1,4 @@
-var TreeController = require("montage/core/tree-controller").TreeController;
+var TreeController = require("mod/core/tree-controller").TreeController;
 
 describe("tree-controller-spec", function () {
 

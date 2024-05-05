@@ -39,7 +39,7 @@ exports.Slot = Component.specialize( /** @lends Slot.prototype # */ {
     enterDocument:{
         value:function (firstTime) {
             if (firstTime) {
-                this.element.classList.add("montage-Slot");
+                this.element.classList.add("slot-mod");
             }
         }
     },

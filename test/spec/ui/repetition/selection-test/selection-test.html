@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>SelectionTest</title>
     <script type="text/javascript" src="../../../../../montage.js" data-package="../../../../"></script>
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
         {
             "test": {
                 "prototype": "spec/ui/repetition/selection-test/selection-test",
@@ -15,14 +15,14 @@
             },
 
             "nameController": {
-                "prototype": "montage/core/range-controller",
+                "prototype": "mod/core/range-controller",
                 "values": {
                     "content": {"<-": "@test.content"}
                 }
             },
 
             "repetition": {
-                "prototype": "montage/ui/repetition.mod",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "repetition"},
                     "isSelectionEnabled": true,
@@ -31,7 +31,7 @@
             },
 
             "name": {
-                "prototype": "montage/ui/text.mod",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "name"},
                     "value": {"<-": "@repetition:iteration.object"}
@@ -39,7 +39,7 @@
             },
 
             "selectedName": {
-                "prototype": "montage/ui/text.mod",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "selectedName"},
                     "value": {"<->": "@repetition.contentController.selection.0"}
@@ -47,7 +47,7 @@
             },
 
             "clearSelectionButton": {
-                "prototype": "montage/ui/component",
+                "prototype": "mod/ui/component",
                 "values": {
                     "hasTemplate": false,
                     "element": {"#": "clearSelectionButton"}
@@ -55,7 +55,7 @@
             },
 
             "clearSelectionPressComposer": {
-                "prototype": "montage/composer/press-composer",
+                "prototype": "mod/composer/press-composer",
                 "values": {
                     "identifier": "clearSelectionButton",
                     "component": {"@": "clearSelectionButton"}
@@ -69,7 +69,7 @@
             },
 
             "selectIndex0Button": {
-                "prototype": "montage/ui/component",
+                "prototype": "mod/ui/component",
                 "values": {
                     "hasTemplate": false,
                     "element": {"#": "selectIndex0Button"}
@@ -77,7 +77,7 @@
             },
 
             "selectIndex0PressComposer": {
-                "prototype": "montage/composer/press-composer",
+                "prototype": "mod/composer/press-composer",
                 "values": {
                     "identifier": "selectIndex0Button",
                     "component": {"@": "selectIndex0Button"}
@@ -91,7 +91,7 @@
             },
 
             "selectIndex2Button": {
-                "prototype": "montage/ui/component",
+                "prototype": "mod/ui/component",
                 "values": {
                     "hasTemplate": false,
                     "element": {"#": "selectIndex2Button"}
@@ -99,7 +99,7 @@
             },
 
             "selectIndex2PressComposer": {
-                "prototype": "montage/composer/press-composer",
+                "prototype": "mod/composer/press-composer",
                 "values": {
                     "identifier": "selectIndex2Button",
                     "component": {"@": "selectIndex2Button"}
@@ -113,7 +113,7 @@
             },
 
             "selectIndex4Button": {
-                "prototype": "montage/ui/component",
+                "prototype": "mod/ui/component",
                 "values": {
                     "hasTemplate": false,
                     "element": {"#": "selectIndex4Button"}
@@ -121,7 +121,7 @@
             },
 
             "selectIndex4PressComposer": {
-                "prototype": "montage/composer/press-composer",
+                "prototype": "mod/composer/press-composer",
                 "values": {
                     "identifier": "selectIndex4Button",
                     "component": {"@": "selectIndex4Button"}
@@ -135,7 +135,7 @@
             },
 
             "addAndSelectButton": {
-                "prototype": "montage/ui/component",
+                "prototype": "mod/ui/component",
                 "values": {
                     "hasTemplate": false,
                     "element": {"#": "addAndSelectButton"}
@@ -143,7 +143,7 @@
             },
 
             "addAndSelectPressComposer": {
-                "prototype": "montage/composer/press-composer",
+                "prototype": "mod/composer/press-composer",
                 "values": {
                     "identifier": "addAndSelectButton",
                     "component": {"@": "addAndSelectButton"}
@@ -176,19 +176,19 @@
 <body>
     <h1>Repetition Selection Test</h1>
 
-    <ul data-montage-id="repetition">
-        <li data-montage-id="name"></li>
+    <ul data-mod-id="repetition">
+        <li data-mod-id="name"></li>
     </ul>
 
     <p>Changing the selection through the user interface above should be reflected in the controller and reflected here:</p>
-    SelectedName: <span data-montage-id="selectedName"></span>
+    SelectedName: <span data-mod-id="selectedName"></span>
 
     <p>Changing the selection in the controller directly should be reflected in all of the UI above</p>
-    <button data-montage-id="clearSelectionButton">Clear Selection</button>
-    <button data-montage-id="selectIndex0Button">Select Index 0</button>
-    <button data-montage-id="selectIndex2Button">Select Index 2</button>
-    <button data-montage-id="selectIndex4Button">Select Index 4</button>
-    <button data-montage-id="addAndSelectButton">Add and Select</button>
+    <button data-mod-id="clearSelectionButton">Clear Selection</button>
+    <button data-mod-id="selectIndex0Button">Select Index 0</button>
+    <button data-mod-id="selectIndex2Button">Select Index 2</button>
+    <button data-mod-id="selectIndex4Button">Select Index 4</button>
+    <button data-mod-id="addAndSelectButton">Add and Select</button>
 </body>
 </html>
 

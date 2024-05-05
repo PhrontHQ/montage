@@ -28,15 +28,15 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage,
-    Target = require("montage/core/target").Target,
-    ActionEventListener = require("montage/core/event/action-event-listener").ActionEventListener,
-    Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer,
-    Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader,
-    EventInfo = require("montage-testing/testpageloader").EventInfo,
-    MontageReviver = require("montage/core/serialization/deserializer/montage-reviver").MontageReviver,
-    UUID = require("montage/core/uuid");
+var Montage = require("mod/core/core").Montage,
+    Target = require("mod/core/target").Target,
+    ActionEventListener = require("mod/core/event/action-event-listener").ActionEventListener,
+    Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer,
+    Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader,
+    EventInfo = require("mod-testing/testpageloader").EventInfo,
+    MontageReviver = require("mod/core/serialization/deserializer/montage-reviver").MontageReviver,
+    UUID = require("mod/core/uuid");
 
 var global = typeof global !== "undefined" ? global : window;
 
@@ -52,7 +52,7 @@ TestPageLoader.queueTest("eventmanagertest/eventmanagertest", function (testPage
 
         beforeEach(function () {
             var testWindow = testPage.iframe.contentWindow;
-            eventManager = testWindow.mr("montage/core/application").application.eventManager;
+            eventManager = testWindow.mr("mod/core/application").application.eventManager;
 
             testDocument = testPage.iframe.contentDocument;
 

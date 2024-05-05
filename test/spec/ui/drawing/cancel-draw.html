@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <script type="text/javascript" src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "test": {
             "prototype": "spec/ui/drawing/test",
@@ -50,19 +50,19 @@ POSSIBILITY OF SUCH DAMAGE.
             }
         },
         "slider1": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "value": 2
             }
         },
         "slot1": {
-            "prototype": "montage/ui/slot.mod",
+            "prototype": "mod/ui/slot.mod",
             "values": {
                 "element": {"#": "slot-test"}
             }
         },
         "application": {
-            "prototype": "montage/core/application",
+            "prototype": "mod/core/application",
             "values": {
                 "delegate": {"@": "test"}
             }
@@ -72,6 +72,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
 </head>
 <body>
-    <div data-montage-id="slot-test"></div>
+    <div data-mod-id="slot-test"></div>
 </body>
 </html>

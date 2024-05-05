@@ -1,6 +1,6 @@
 /*global describe, it, expect, beforeEach, afterEach */
-var Montage = require("montage").Montage,
-    AbstractNumberField = require("montage/ui/base/abstract-number-field").AbstractNumberField,
+var Montage = require("mod/core/core").Montage,
+    AbstractNumberField = require("mod/ui/base/abstract-number-field").AbstractNumberField,
     MockDOM = require("mocks/dom"),
     MockComponent = require("mocks/component"),
     MockEvent = require("mocks/event");

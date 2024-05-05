@@ -1,11 +1,11 @@
-var RawDataService = require("montage/data/service/raw-data-service").RawDataService,
-    Criteria = require("montage/core/criteria").Criteria,
-    DataMapping = require("montage/data/service/data-mapping").DataMapping,
-    DataService = require("montage/data/service/data-service").DataService,
-    DataStream = require("montage/data/service/data-stream").DataStream,
-    DataObjectDescriptor = require("montage/data/model/data-object-descriptor").DataObjectDescriptor,
-    ObjectDescriptor = require("montage/core/meta/object-descriptor").ObjectDescriptor,
-    RawDataTypeMapping = require("montage/data/service/raw-data-type-mapping").RawDataTypeMapping;
+var RawDataService = require("mod/data/service/raw-data-service").RawDataService,
+    Criteria = require("mod/core/criteria").Criteria,
+    DataMapping = require("mod/data/service/data-mapping").DataMapping,
+    DataService = require("mod/data/service/data-service").DataService,
+    DataStream = require("mod/data/service/data-stream").DataStream,
+    DataObjectDescriptor = require("mod/data/model/data-object-descriptor").DataObjectDescriptor,
+    ObjectDescriptor = require("mod/core/meta/object-descriptor").ObjectDescriptor,
+    RawDataTypeMapping = require("mod/data/service/raw-data-type-mapping").RawDataTypeMapping;
 
 describe("A RawDataService", function() {
 
@@ -337,8 +337,8 @@ describe("A RawDataService", function() {
 
     //         subDescriptorB.parent = parentDescriptor;
     //         subDescriptorA.parent = parentDescriptor;
-        
-        
+
+
     //     service._registerRawDataTypeMappings([mappingA, mappingB]);
     //     expect(service._descriptorForParentAndRawData(parentDescriptor, rawA)).toBe(subDescriptorA);
     //     expect(service._descriptorForParentAndRawData(parentDescriptor, rawB)).toBe(subDescriptorB);
@@ -395,8 +395,8 @@ describe("A RawDataService", function() {
             childB.parent = parentB;
             grandChild.parent = childB;
 
-        
-        
+
+
         service._registerRawDataTypeMappings(allMappings);
         expect(service._descriptorForParentAndRawData(root, rawA)).toBe(parentA);
         expect(service._descriptorForParentAndRawData(root, rawChildA)).toBe(childA);

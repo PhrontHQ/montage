@@ -2,9 +2,9 @@
 Copyright (c) 2013, António Afonso
 All Rights Reserved.
 </copyright> */
-var Montage = require("montage").Montage,
-    SerializationInspector = require("montage/core/serialization/serialization").SerializationInspector,
-    Serialization = require("montage/core/serialization/serialization").Serialization;
+var Montage = require("mod/core/core").Montage,
+    SerializationInspector = require("mod/core/serialization/serialization").SerializationInspector,
+    Serialization = require("mod/core/serialization/serialization").Serialization;
 
 describe("reel/serialization/serialization-inspector-spec", function () {
     var inspector;
@@ -222,7 +222,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should visit a montage object", function () {
             var object = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "identifier": "text"
                         }
@@ -253,7 +253,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should visit bindings", function () {
             var object = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "bindings": {
                             "value": {"<-": "path"}
                         }
@@ -275,7 +275,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should visit a binding", function () {
             var object = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "value": {"<-": "path"}
                         }
@@ -297,7 +297,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should visit a binding reference", function () {
             var object = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "value": {"<-": "@object"}
                         }
@@ -319,7 +319,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should visit complex binding references", function () {
             var object = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "value": {"<-": "@objects.filter{@owner.selected}"}
                         }
@@ -345,7 +345,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should visit a binding converter", function () {
             var serialization = new Serialization().initWithObject({
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "value": {
                                 "<-": "@object",
@@ -369,7 +369,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should visit localizations", function () {
             var object = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "localizations": {
                             "value": {"key": "hello"}
                         }
@@ -391,7 +391,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should visit a localization", function () {
             var object = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "localizations": {
                             "value": {"key": "hello"}
                         }
@@ -414,7 +414,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should visit localization references", function () {
             var object = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "localizations": {
                             "value": {
                                 "key": {"<-": "@owner.value"}
@@ -688,12 +688,12 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should modify a label of a montage object", function () {
             var serialization = new Serialization().initWithObject({
                     "object1": {
-                        "prototype": "montage/ui/text.mod"
+                        "prototype": "mod/ui/text.mod"
                     }
                 }),
                 expectedSerialization = {
                     "object": {
-                        "prototype": "montage/ui/text.mod"
+                        "prototype": "mod/ui/text.mod"
                     }
                 },
                 visitor,
@@ -718,7 +718,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should modify binding references", function () {
             var serialization = new Serialization().initWithObject({
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "value": {"<-": "@object"}
                         }
@@ -726,7 +726,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
                 }),
                 expectedSerialization = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "value": {"<-": "@array"}
                         }
@@ -752,7 +752,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should modify complex binding references", function () {
             var serialization = new Serialization().initWithObject({
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "value": {"<-": "@objects.filter{@owner.selected}"}
                         }
@@ -760,7 +760,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
                 }),
                 expectedSerialization = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "value": {"<-": "@objects2.filter{@owner2.selected}"}
                         }
@@ -790,7 +790,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should modify a binding converter label", function () {
             var serialization = new Serialization().initWithObject({
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "value": {
                                 "<-": "@object",
@@ -801,7 +801,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
                 }),
                 expectedSerialization = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "value": {
                                 "<-": "@object",
@@ -832,7 +832,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
         it("should modify a localization reference", function () {
             var serialization = new Serialization().initWithObject({
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "localizations": {
                             "value": {
                                 "key": {"<-": "@owner.value"}
@@ -842,7 +842,7 @@ describe("reel/serialization/serialization-inspector-spec", function () {
                 }),
                 expectedSerialization = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "localizations": {
                             "value": {
                                 "key": {"<-": "@foo.value"}

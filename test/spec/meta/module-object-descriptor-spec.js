@@ -1,8 +1,8 @@
-var ModuleObjectDescriptor = require("montage/core/meta/module-object-descriptor").ModuleObjectDescriptor;
-var ModuleReference = require("montage/core/module-reference").ModuleReference;
+var ModuleObjectDescriptor = require("mod/core/meta/module-object-descriptor").ModuleObjectDescriptor;
+var ModuleReference = require("mod/core/module-reference").ModuleReference;
 
-var Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer;
-var Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
+var Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer;
+var Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
 
 describe("meta/module-object-descriptor-spec", function () {
 

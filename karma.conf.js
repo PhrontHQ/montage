@@ -92,7 +92,7 @@ module.exports = function(config) {
             included: false
         },
         {
-            pattern: 'node_modules/**(jshint|bluebird|mr|montage-testing)/**/*',
+            pattern: 'node_modules/**(jshint|bluebird|mr|mod-testing)/**/*',
             included: false
         }
     ],

@@ -127,11 +127,11 @@ input[type=checkbox][checked=checked].expand::before {
     margin-left: 12px;
 }
 
-.montage-TreeList-ghostImage {
+.mod-TreeList-ghostImage {
     color: #2C82C9;
 }
 
-.montage-TreeList-ghostImage input[type=checkbox], 
-.montage-TreeList-ghostImage input[type=checkbox]::before {
+.mod-TreeList-ghostImage input[type=checkbox],
+.mod-TreeList-ghostImage input[type=checkbox]::before {
     display: none;
 }

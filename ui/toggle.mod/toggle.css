@@ -1,4 +1,4 @@
-.montage-toggle {
+.mod-toggle {
     position: relative;
     display: inline-block;
     box-sizing: border-box;
@@ -21,7 +21,7 @@
 
 /* Thumb --------------------- */
 
-.montage-toggle-thumb {
+.mod-toggle-thumb {
     position: absolute;
     box-sizing: border-box;
     display: inline-block;
@@ -45,16 +45,16 @@
 
 /* States --------------------- */
 
-.montage-toggle.montage--checked {
+.mod-toggle.montage--checked {
     background-color: #32db64;
     border-color: transparent;
 }
 
-.montage-toggle[disabled] {
+.mod-toggle[disabled] {
     opacity: .5;
 }
 
-.montage-toggle.montage--checked .montage-toggle-thumb {
+.mod-toggle.montage--checked .mod-toggle-thumb {
     -webkit-transform: translate3d(70%,0,0);
             transform: translate3d(70%,0,0);
 }

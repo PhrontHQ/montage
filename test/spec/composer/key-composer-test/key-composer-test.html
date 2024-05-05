@@ -34,10 +34,10 @@ POSSIBILITY OF SUCH DAMAGE.
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Key Composer Test</title>
     <script type="text/javascript" src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
 {
     "key_composer1": {
-        "prototype": "montage/composer/key-composer",
+        "prototype": "mod/composer/key-composer",
         "values": {
             "keys": "command+j",
             "identifier": "j",
@@ -45,7 +45,7 @@ POSSIBILITY OF SUCH DAMAGE.
         }
     },
     "key_composer2": {
-        "prototype": "montage/composer/key-composer",
+        "prototype": "mod/composer/key-composer",
         "values": {
             "keys": "shift+control+k",
             "identifier": "k",
@@ -63,14 +63,14 @@ POSSIBILITY OF SUCH DAMAGE.
         ]
     },
     "example": {
-        "prototype": "montage/ui/text.mod",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "example"},
             "value": "hi"
         }
     },
     "example2": {
-        "prototype": "montage/ui/text.mod",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "example2"},
             "value": "hi again"
@@ -87,7 +87,7 @@ POSSIBILITY OF SUCH DAMAGE.
         }
     },
     "application": {
-        "prototype": "montage/core/application",
+        "prototype": "mod/core/application",
         "values": {
             "delegate": {"@": "test"}
         }
@@ -108,7 +108,7 @@ POSSIBILITY OF SUCH DAMAGE.
 <body>
     <h1>Key Composer test</h1>
 
-    <div data-montage-id="example" class="example" tabIndex=-1></div>
-    <div data-montage-id="example2" class="example"></div>
+    <div data-mod-id="example" class="example" tabIndex=-1></div>
+    <div data-mod-id="example2" class="example"></div>
 </body>
 </html>

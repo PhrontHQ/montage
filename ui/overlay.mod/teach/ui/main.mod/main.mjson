@@ -8,7 +8,7 @@
     },
 
     "openOverlayButton": {
-        "prototype": "montage/ui/button.mod",
+        "prototype": "mod/ui/button.mod",
         "values": {
             "element": {"#": "fillOutFormButton"},
             "label": "Open Overlay Label"
@@ -22,7 +22,7 @@
     },
 
     "closeButton": {
-        "prototype": "montage/ui/button.mod",
+        "prototype": "mod/ui/button.mod",
         "values": {
             "element": {"#": "closeButton"}
         },
@@ -35,7 +35,7 @@
     },
 
     "overlay": {
-        "prototype": "montage/ui/overlay.mod",
+        "prototype": "mod/ui/overlay.mod",
         "values": {
             "element": {"#": "overlay"},
             "delegate": {"@": "owner"},

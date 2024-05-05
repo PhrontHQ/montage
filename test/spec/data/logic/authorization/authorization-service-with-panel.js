@@ -1,6 +1,6 @@
-var DataService = require("montage/data/service/data-service").DataService,
+var DataService = require("mod/data/service/data-service").DataService,
     Authorization = require("spec/data/logic/authorization/authorization").Authorization,
-    Promise = require("montage/core/promise").Promise;
+    Promise = require("mod/core/promise").Promise;
 
 
 

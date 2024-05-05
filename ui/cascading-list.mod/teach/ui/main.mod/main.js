@@ -1,6 +1,6 @@
-var Component = require("montage/ui/component").Component,
-    MockService = require('montage/test/mocks/data/services/mock-service').MockService,
-    Employee = require('montage/test/mocks/data/models/employee').Employee;
+var Component = require("mod/ui/component").Component,
+    MockService = require('mod/test/mocks/data/services/mock-service').MockService,
+    Employee = require('mod/test/mocks/data/models/employee').Employee;
 
 exports.Main = Component.specialize(/** @lends Main# */{
 
@@ -40,11 +40,11 @@ exports.Main = Component.specialize(/** @lends Main# */{
             if (!moduleId) {
                 if (component === this.cascadingList) {
                     if (object === this.root[0]) {
-                        return 'montage/test/mocks/data/models/employee.mjson';
+                        return 'mod/test/mocks/data/models/employee.mjson';
                     } else if (object === this.root[1]) {
-                        return 'montage/test/mocks/data/models/department.mjson';
+                        return 'mod/test/mocks/data/models/department.mjson';
                     } else if (object === this.root[2]) {
-                        return 'montage/test/mocks/data/models/store.mjson';
+                        return 'mod/test/mocks/data/models/store.mjson';
                     }
                 }
             }
@@ -55,11 +55,11 @@ exports.Main = Component.specialize(/** @lends Main# */{
         value: function (component, userInterfaceDescriptorModuleId, object) {
             if (component === this.cascadingList) {
                 if (object === this.root && !userInterfaceDescriptorModuleId) {
-                    return 'montage/test/mocks/data/models/organisation-ui-descriptor.mjson';
+                    return 'mod/test/mocks/data/models/organisation-ui-descriptor.mjson';
                 } else if (object === this.root[4]) {
-                    return 'montage/test/mocks/data/models/settings-ui-descriptor.mjson';
+                    return 'mod/test/mocks/data/models/settings-ui-descriptor.mjson';
                 } else if (object === this.root[3]) {
-                    return 'montage/test/mocks/data/models/customer-ui-descriptor.mjson';
+                    return 'mod/test/mocks/data/models/customer-ui-descriptor.mjson';
                 }
             }
         }
@@ -92,7 +92,7 @@ exports.Main = Component.specialize(/** @lends Main# */{
     listItemWillUseIconComponentModuleIdForObjectAtRowIndex: {
         value: function (listItem, moduleId, object, rowIndex, list) {
             if (object === this.root[1]) {
-                return 'montage/test/mocks/data/icons/department.mod';
+                return 'mod/test/mocks/data/icons/department.mod';
             }
         }
     },

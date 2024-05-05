@@ -61,7 +61,7 @@ header {
     background-color: blue;
 }
 
-.montage-Slider[aria-orientation="vertical"] .slider-thumb {
+.mod-Slider[aria-orientation="vertical"] .slider-thumb {
     position: relative;
     width: 100%;
     min-height:20px;
@@ -69,26 +69,26 @@ header {
 }
 
 
-.montage-Slider[aria-orientation="horizontal"] .montage-Slider--track {
+.mod-Slider[aria-orientation="horizontal"] .mod-Slider--track {
     height:100%;
     background-color: #777799;
     opacity: 0.5;
 }
-.montage-Slider[aria-orientation="horizontal"] .montage-Slider--track:first-child {
+.mod-Slider[aria-orientation="horizontal"] .mod-Slider--track:first-child {
   background-color: red;
   opacity: 0.5;
 }
 
-.montage-Slider[aria-orientation="horizontal"] .montage-Slider--track:last-child {
+.mod-Slider[aria-orientation="horizontal"] .mod-Slider--track:last-child {
   background-color: lime;
   opacity: 0.5;
 }
 
-.montage-Slider[aria-orientation="vertical"] .montage-Slider--track {
+.mod-Slider[aria-orientation="vertical"] .mod-Slider--track {
     width:100%;
 }
 
-.montage-Slider[aria-orientation="vertical"] .montage-Slider--thumb {
+.mod-Slider[aria-orientation="vertical"] .mod-Slider--thumb {
     width:100%;
 }
 
@@ -120,17 +120,17 @@ div.input-text {
     background-color: green;
     width: 50px;
 }
-.slider-thumb.C, .slider.D .montage-Slider--thumb {
+.slider-thumb.C, .slider.D .mod-Slider--thumb {
     background-color: blue;
     min-width:15px;
     min-height:40px;
 }
 
-.sliderWithComplexKnob .montage-Slider--track div:nth-child(2) {
+.sliderWithComplexKnob .mod-Slider--track div:nth-child(2) {
     background-color: red;
 }
 
-/*.slider.E .montage-Slider--thumb{
+/*.slider.E .mod-Slider--thumb{
     background-color: blue;
     min-width:100%;
     min-height:20px;
@@ -148,11 +148,11 @@ div.input-text {
     box-sizing: border-box;
 }
 
-.sliderWithStickyLabel:focus, .sliderWithStickyLabel .montage-Slider--thumbWrapper:focus {
+.sliderWithStickyLabel:focus, .sliderWithStickyLabel .mod-Slider--thumbWrapper:focus {
     outline: none;
 }
 
-.sliderWithStickyLabel .montage-Slider--track{
+.sliderWithStickyLabel .mod-Slider--track{
     height:3px;
     background:black;
 }

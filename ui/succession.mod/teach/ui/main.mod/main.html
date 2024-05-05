@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" href="main.css">
 
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "owner": {
             "values": {
@@ -21,7 +21,7 @@
             ]
         },
         "succession1": {
-            "prototype": "montage/ui/succession.mod",
+            "prototype": "mod/ui/succession.mod",
             "values": {
                 "element": {"#": "succession1"}
             },
@@ -43,67 +43,67 @@
             }
         },
         "push": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "push"}
             }
         },
         "pushx5": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "pushx5"}
             }
         },
         "pop": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "pop"}
             }
         },
         "popx5": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "popx5"}
             }
         },
         "contentComponent": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "contentComponent"}
             }
         },
         "contentNull": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "contentNull"}
             }
         },
         "multiOp": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "multiOp"}
             }
         },
         "toggleOverflow": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "toggleOverflow"}
             }
         },
         "setSuccessionBuildInOut": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "setSuccessionBuildInOut"}
             }
         },
         "clearSuccessionBuildInOut": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "clearSuccessionBuildInOut"}
             }
         },
         "disableSuccessionBuildInOut": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "disableSuccessionBuildInOut"}
             }
@@ -111,56 +111,56 @@
 
 
         "stack": {
-            "prototype": "montage/ui/repetition.mod",
+            "prototype": "mod/ui/repetition.mod",
             "values": {
                 "element": {"#": "stack"},
                 "content": {"<-": "@succession1.history.reversed()"}
             }
         },
         "lastBuildInComponentIdentifier": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "lastBuildInComponentIdentifier"},
                 "value": {"<-": "@owner.lastBuildInComponentIdentifier"}
             }
         },
         "lastBuildOutComponentIdentifier": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "lastBuildOutComponentIdentifier"},
                 "value": {"<-": "@owner.lastBuildOutComponentIdentifier"}
             }
         },
         "buildInOverride": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "buildInOverride"},
                 "value": {"<-": "@succession1.contentBuildInCssClass || 'none'"}
             }
         },
         "buildOutOverride": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "buildOutOverride"},
                 "value": {"<-": "@succession1.contentBuildOutCssClass || 'none'"}
             }
         },
         "displayTitle": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "displayTitle"},
                 "value": {"<-": "@stack:iteration.object.title ?? 'N/A'"}
             }
         },
         "animation": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "animation"},
                 "value": {"<-": "@stack:iteration.object.buildInCssClass + ' ' + @stack:iteration.object.buildInTransitionCssClass + ' ' + @stack:iteration.object.buildOutCssClass"}
             }
         },
         "animationOverride": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "animationOverride"},
                 "value": {"<-": "@stack:iteration.object.buildInCssClassOverride + ' ' + @stack:iteration.object.buildInTransitionCssClassOverride + ' ' + @stack:iteration.object.buildOutCssClassOverride"}
@@ -169,7 +169,7 @@
 
 
         "select": {
-            "prototype": "montage/ui/select.mod",
+            "prototype": "mod/ui/select.mod",
             "values": {
                 "element": {"#": "select"},
                 "content": [
@@ -180,13 +180,13 @@
             }
         },
         "SubstitutionMultiOp": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "SubstitutionMultiOp"}
             }
         },
         "substitution": {
-            "prototype": "montage/ui/substitution.mod",
+            "prototype": "mod/ui/substitution.mod",
             "values": {
                 "element": {"#": "substitution"},
                 "switchValue": {
@@ -209,7 +209,7 @@
 
 
         "detach": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "detach"}
             }
@@ -221,7 +221,7 @@
             }
         },
         "text": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "text"},
                 "value": "Hello World.",
@@ -232,7 +232,7 @@
         },
 
         "Slot": {
-            "prototype": "montage/ui/slot.mod",
+            "prototype": "mod/ui/slot.mod",
             "values": {
                 "element": {"#": "Slot"},
                 "content": {"@": "Bar3"},
@@ -250,14 +250,14 @@
 
 
         "Container": {
-            "prototype": "montage/ui/component[Component]",
+            "prototype": "mod/ui/component[Component]",
             "values": {
                 "element": {"#": "Container"},
                 "hasTemplate": false
             }
         },
         "innerText": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "innerText"},
                 "value": "Text Inside Empty Component"
@@ -265,13 +265,13 @@
         },
 
         "conditionToggle": {
-            "prototype": "montage/ui/button.mod",
+            "prototype": "mod/ui/button.mod",
             "values": {
                 "element": {"#": "conditionToggle"}
             }
         },
         "condition": {
-            "prototype": "montage/ui/condition.mod",
+            "prototype": "mod/ui/condition.mod",
             "values": {
                 "element": {"#": "condition"},
                 "condition": true
@@ -287,21 +287,21 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="Main" class="main">
-        <button data-montage-id="detach">Detach from Component tree</button>
+    <div data-mod-id="Main" class="main">
+        <button data-mod-id="detach">Detach from Component tree</button>
 
         <h2>Stand-alone components declared in serialization</h2>
-        <div data-montage-id="Bar2" style="position: static;"></div>
-        <h3 data-montage-id="text"></h3>
+        <div data-mod-id="Bar2" style="position: static;"></div>
+        <h3 data-mod-id="text"></h3>
 
         <h2>domContent Test w/o Slot</h2>
-        <div data-montage-id="Container" style="border: 1px blue solid; height: 50px;"></div>
-        <h3 data-montage-id="innerText"></h3>
+        <div data-mod-id="Container" style="border: 1px blue solid; height: 50px;"></div>
+        <h3 data-mod-id="innerText"></h3>
 
         <h2>Nested animating components with inner's buildIn disabled</h2>
         <div class="wrapper">
-            <div data-montage-id="Slot" class="slot wrapper">
-                <div data-montage-id="Bar3"
+            <div data-mod-id="Slot" class="slot wrapper">
+                <div data-mod-id="Bar3"
                      style="background: darkblue; width: 90%; height: 90%; opacity: 0.5; position: static;">
                 </div>
             </div>
@@ -310,46 +310,46 @@
         <h2>Inside Succession with overridden animation</h2>
         <br>
         <div>
-            <button data-montage-id="push">Push</button>
-            <button data-montage-id="pushx5">Push x5</button>
-            <button data-montage-id="pop">Pop</button>
-            <button data-montage-id="popx5">Pop x5</button>
-            <button data-montage-id="contentComponent">Set content to component</button>
-            <button data-montage-id="contentNull">Set content to null</button>
-            <button data-montage-id="multiOp">push x10 pop x5</button>
+            <button data-mod-id="push">Push</button>
+            <button data-mod-id="pushx5">Push x5</button>
+            <button data-mod-id="pop">Pop</button>
+            <button data-mod-id="popx5">Pop x5</button>
+            <button data-mod-id="contentComponent">Set content to component</button>
+            <button data-mod-id="contentNull">Set content to null</button>
+            <button data-mod-id="multiOp">push x10 pop x5</button>
         </div>
         <br/>
         <div>
-            <button data-montage-id="toggleOverflow">Toggle Container Overflow</button>
-            <button data-montage-id="setSuccessionBuildInOut">Set Succession builds to CSS animation</button>
-            <button data-montage-id="clearSuccessionBuildInOut">Clear builds (undefined)</button>
-            <button data-montage-id="disableSuccessionBuildInOut">Disable builds (null)</button>
+            <button data-mod-id="toggleOverflow">Toggle Container Overflow</button>
+            <button data-mod-id="setSuccessionBuildInOut">Set Succession builds to CSS animation</button>
+            <button data-mod-id="clearSuccessionBuildInOut">Clear builds (undefined)</button>
+            <button data-mod-id="disableSuccessionBuildInOut">Disable builds (null)</button>
         </div>
 
         <div class="wrapper">
-            <div data-montage-id="succession1" class="succession container overflow-hidden">
-                <div data-montage-id="succession1DefaultContent" data-arg="content"></div>
+            <div data-mod-id="succession1" class="succession container overflow-hidden">
+                <div data-mod-id="succession1DefaultContent" data-arg="content"></div>
             </div>
             <div class="stack">
-                Build-in Override: <code data-montage-id="buildInOverride"></code>
+                Build-in Override: <code data-mod-id="buildInOverride"></code>
                 <br/>
-                Build-out Override: <code data-montage-id="buildOutOverride"></code>
+                Build-out Override: <code data-mod-id="buildOutOverride"></code>
                 <br/>
                 Heard from event:
                 <br>
-                Last component built-in: <code data-montage-id="lastBuildInComponentIdentifier"></code>
+                Last component built-in: <code data-mod-id="lastBuildInComponentIdentifier"></code>
                 <br/>
-                Last component built-out: <code data-montage-id="lastBuildOutComponentIdentifier"></code>
+                Last component built-out: <code data-mod-id="lastBuildOutComponentIdentifier"></code>
 
                 <h3>The stack</h3>
-                <ul data-montage-id="stack">
+                <ul data-mod-id="stack">
                     <li>
                         <div>
-                            <span data-montage-id="displayTitle"></span>
+                            <span data-mod-id="displayTitle"></span>
                             <br>
-                            <span data-montage-id="animation"></span>
+                            <span data-mod-id="animation"></span>
                             <br>
-                            <span data-montage-id="animationOverride"></span>
+                            <span data-mod-id="animationOverride"></span>
                         </div>
                     </li>
                 </ul>
@@ -357,21 +357,21 @@
         </div>
 
         <h2>Inside Substitution</h2>
-        <select data-montage-id="select"></select>
-        <button data-montage-id="SubstitutionMultiOp">Switch 3 times between 2 items in 500ms</button>
+        <select data-mod-id="select"></select>
+        <button data-mod-id="SubstitutionMultiOp">Switch 3 times between 2 items in 500ms</button>
         <div class="wrapper">
-            <div data-montage-id="substitution" class="container overflow-hidden">
-                <div data-montage-id="FooForSubstitution" data-arg="Foo"></div>
-                <div data-montage-id="BarForSubstitution" data-arg="Bar"></div>
+            <div data-mod-id="substitution" class="container overflow-hidden">
+                <div data-mod-id="FooForSubstitution" data-arg="Foo"></div>
+                <div data-mod-id="BarForSubstitution" data-arg="Bar"></div>
             </div>
         </div>
 
         <h2>Condition, CSS transition, access getComputedStyle properties in willDraw</h2>
-        <button data-montage-id="conditionToggle">Toggle</button>
+        <button data-mod-id="conditionToggle">Toggle</button>
         <div class="wrapper">
             <div class="container overflow-hidden">
-                <div data-montage-id="condition">
-                    <div data-montage-id="baz"></div>
+                <div data-mod-id="condition">
+                    <div data-mod-id="baz"></div>
                 </div>
             </div>
         </div>

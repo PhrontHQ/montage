@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component;
+var Montage = require("mod/core/core").Montage,
+    Component = require("mod/ui/component").Component;
 
 exports.Main = Component.specialize( {
     templateDidLoad: {

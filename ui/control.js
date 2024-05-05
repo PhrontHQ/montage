@@ -16,10 +16,10 @@ var Control = exports.Control = class Control extends Component {/** @lends modu
         super();
         this.defineBindings({
             // classList management
-            "classList.has('montage--disabled')": {
+            "classList.has('mod--disabled')": {
                 "<-": "disabled"
             },
-            "classList.has('montage--active')": {
+            "classList.has('mod--active')": {
                 "<-": "active"
             }
         });
@@ -387,7 +387,7 @@ Control.addClassProperties(
 */
 
 /**
-    If an error is thrown by the converter object during a new value assignment, this property is set to <code>true</code>, and schedules a new draw cycle so the the UI can be updated to indicate the error state. the <code>montage--invalidText</code> CSS class is assigned to the component's DOM element during the next draw cycle.
+    If an error is thrown by the converter object during a new value assignment, this property is set to <code>true</code>, and schedules a new draw cycle so the the UI can be updated to indicate the error state. the <code>mod--invalidText</code> CSS class is assigned to the component's DOM element during the next draw cycle.
     @type {boolean}
     @default false
 */

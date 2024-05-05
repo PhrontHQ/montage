@@ -1,6 +1,6 @@
-var Montage = require("montage").Montage,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader,
-    PressComposer = require("montage/composer/press-composer").PressComposer;
+var Montage = require("mod/core/core").Montage,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader,
+    PressComposer = require("mod/composer/press-composer").PressComposer;
 
 TestPageLoader.queueTest("press-composer-test/press-composer-test", function (testPage) {
     var test;
@@ -217,7 +217,7 @@ TestPageLoader.queueTest("press-composer-test/press-composer-test", function (te
 
                         setTimeout(function () {
                             expect(listener).toHaveBeenCalled();
-                            testPage.mouseEvent({target: test.example.element}, "mouseup");                            
+                            testPage.mouseEvent({target: test.example.element}, "mouseup");
 
                             if (window.Touch) {
                                 listener = testPage.addListener(test.press_composer, null, "longPress");

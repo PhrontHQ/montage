@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    Composer = require("montage/composer/composer").Composer;
+var Montage = require("mod/core/core").Montage,
+    Composer = require("mod/composer/composer").Composer;
 
 exports.SimpleTestComposer = Composer.specialize( {
 

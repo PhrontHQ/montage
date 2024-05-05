@@ -1,6 +1,6 @@
-var ObjectDescriptor = require("montage/data/model/object-descriptor").ObjectDescriptor,
-    Montage = require("montage").Montage,
-    PropertyDescriptor = require("montage/data/model/property-descriptor").PropertyDescriptor;
+var ObjectDescriptor = require("mod/data/model/object-descriptor").ObjectDescriptor,
+    Montage = require("mod/core/core").Montage,
+    PropertyDescriptor = require("mod/data/model/property-descriptor").PropertyDescriptor;
 
 describe("An ObjectDescriptor", function() {
 

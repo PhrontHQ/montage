@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="list.css">
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "owner": {
             "values": {
@@ -11,7 +11,7 @@
         },
 
         "repetition": {
-            "prototype": "montage/ui/repetition.mod",
+            "prototype": "mod/ui/repetition.mod",
             "values": {
                 "element": {"#": "repetition"},
                 "content": {"<-": "@owner.content"},
@@ -21,7 +21,7 @@
         },
 
         "text": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "text"},
                 "value": {"<-": "@repetition:iteration.object"}
@@ -36,10 +36,10 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="owner" >
-        <div data-montage-id="repetition" class="list">
+    <div data-mod-id="owner" >
+        <div data-mod-id="repetition" class="list">
             <div data-param="*">
-                <span data-montage-id="text" class="item"></span>
+                <span data-mod-id="text" class="item"></span>
             </div>
         </div>
     </div>

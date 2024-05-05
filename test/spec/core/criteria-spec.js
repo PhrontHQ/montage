@@ -1,7 +1,7 @@
 
-var Criteria = require("montage/core/criteria").Criteria;
-var serialize = require("montage/core/serialization/serializer/montage-serializer").serialize;
-var deserialize = require("montage/core/serialization/deserializer/montage-deserializer").deserialize;
+var Criteria = require("mod/core/criteria").Criteria;
+var serialize = require("mod/core/serialization/serializer/montage-serializer").serialize;
+var deserialize = require("mod/core/serialization/deserializer/montage-deserializer").deserialize;
 
 describe("core/criteria-spec", function () {
 
@@ -73,7 +73,7 @@ describe("core/criteria-spec", function () {
         var json = JSON.parse(serialization);
         expect(json).toEqual({
             root: {
-                prototype: "montage/core/criteria",
+                prototype: "mod/core/criteria",
                 values: {
                     expression: "a.b"
                 }
@@ -84,7 +84,7 @@ describe("core/criteria-spec", function () {
     it("should deserialize", function (done) {
         var serialization = {
                 "root": {
-                    "prototype": "montage/core/criteria",
+                    "prototype": "mod/core/criteria",
                     "values": {
                         "expression": "a.b"
                     }

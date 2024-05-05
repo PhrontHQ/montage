@@ -1,10 +1,10 @@
 /**
     @module "ui/main.mod"
     @requires montage
-    @requires montage/ui/component
+    @requires mod/ui/component
 */
-var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component;
+var Montage = require("mod/core/core").Montage,
+    Component = require("mod/ui/component").Component;
 
 /**
     Description TODO

@@ -1,7 +1,7 @@
-var Montage = require("montage").Montage,
-    Set = require("montage/core/collections/set"),
-    UndoManager = require("montage/core/undo-manager").UndoManager,
-    Promise = require("montage/core/promise").Promise,
+var Montage = require("mod/core/core").Montage,
+    Set = require("mod/core/collections/set"),
+    UndoManager = require("mod/core/undo-manager").UndoManager,
+    Promise = require("mod/core/promise").Promise,
     WAITS_FOR_TIMEOUT = 2500;
 
 var Roster = Montage.specialize( {

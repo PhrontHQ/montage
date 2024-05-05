@@ -1,5 +1,5 @@
-var Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
-    Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer;
+var Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+    Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer;
 
 require("montage");
 
@@ -8,7 +8,7 @@ describe("core/extras/map", function () {
     describe("Map#deserializeSelf", function () {
 
         it("can deserialize with entries", function (done) {
-            
+
             var deserializer = new Deserializer(),
                 entries = [],
                 serialization = {
@@ -34,7 +34,7 @@ describe("core/extras/map", function () {
                 console.warn(reason);
                 fail(reason);
             });
-            
+
         });
 
         it("can deserialize with keys and values", function (done) {
@@ -66,7 +66,7 @@ describe("core/extras/map", function () {
                 fail(reason);
             });
 
-            
+
         });
 
     });
@@ -80,7 +80,7 @@ describe("core/extras/map", function () {
             serializer = new Serializer().initWithRequire(require);
             serializer.setSerializationIndentation(4);
         });
-    
+
         it("can serialize", function () {
             var map = new Map(),
                 serialization;

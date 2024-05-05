@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage;
-var Converter = require('montage/core/converter/converter').Converter;
+var Montage = require("mod/core/core").Montage;
+var Converter = require('mod/core/converter/converter').Converter;
 
 exports.TargetInfoConverter = Converter.specialize( {
 

@@ -8,7 +8,7 @@ var Control = require("ui/control").Control,
     TranslateComposer = require("../../composer/translate-composer").TranslateComposer,
     KeyComposer = require("../../composer/key-composer").KeyComposer,
     Map = require("core/collections/map"),
-    MONTAGE_SLIDER_THUMB_CLASS = "montage-Slider--thumb";
+    MONTAGE_SLIDER_THUMB_CLASS = "mod-Slider--thumb";
 
 /**
  * Wraps the a &lt;input type="range"> element with binding support for the element's standard attributes.
@@ -183,16 +183,16 @@ Slider.addClassProperties({
                         }
 
                         iThumbWrapper = ownerDocument.createElement("div");
-                        iThumbWrapper.className = "montage-Slider--thumbWrapper";
+                        iThumbWrapper.className = "mod-Slider--thumbWrapper";
 
                         iTrackElement = ownerDocument.createElement("div");
-                        iTrackElement.className = "montage-Slider--track";
+                        iTrackElement.className = "mod-Slider--track";
                         iTrackElement.setAttribute("data-montage-index",i);
 
                         iDimension = isHorizontal ? iThumbElementWithClass.offsetWidth : iThumbElementWithClass.offsetHeight;
                         //If the thumb has no size, or if it's horizontak and occupy the whole width, we're stepping in
                         if(iDimension === 0 || (isHorizontal && iDimension === spacer.offsetWidth)) {
-                            iThumbElementWithClass.classList.add("montage-Slider-thumb--default");
+                            iThumbElementWithClass.classList.add("mod-Slider-thumb--default");
                         }
 
                         iThumbElement.parentNode.removeChild(iThumbElement);
@@ -208,7 +208,7 @@ Slider.addClassProperties({
 
                     //Last track element:
                     iTrackElement = ownerDocument.createElement("div");
-                    iTrackElement.className = "montage-Slider--track";
+                    iTrackElement.className = "mod-Slider--track";
                     fragment.appendChild(iTrackElement);
                     this.trackElements.push(iTrackElement);
 
@@ -221,7 +221,7 @@ Slider.addClassProperties({
                         iDimension = isHorizontal ? iThumbElement.offsetWidth : iThumbElement.offsetHeight;
                         // //If the thumb has no size, or if it's horizontak and occupy the whole width, we're stepping in
                         // if(iDimension === 0 || (isHorizontal && iDimension === spacer.offsetWidth)) {
-                        //     iThumbElement.classList.add("montage-Slider-thumb--default");
+                        //     iThumbElement.classList.add("mod-Slider-thumb--default");
                         // }
 
                         /* marginLeft / marginTop must be the width of all previous thumbs */
@@ -738,11 +738,11 @@ Should introduce a validate method
                 this._translateComposer.axis = this.orientation;
             }
             if(this.orientation === this._VERTICAL) {
-                this.classList.add("montage-Slider--vertical");
-                this.classList.remove("montage-Slider--horizontal");
+                this.classList.add("mod-Slider--vertical");
+                this.classList.remove("mod-Slider--horizontal");
             } else {
-                this.classList.remove("montage-Slider--vertical");
-                this.classList.add("montage-Slider--horizontal");
+                this.classList.remove("mod-Slider--vertical");
+                this.classList.add("mod-Slider--horizontal");
             }
         }
     },
@@ -886,5 +886,5 @@ Slider.addAttributes( /** @lends module:"mod/ui/native/input-range.mod".InputRan
 });
 
 if (window.MontageElement) {
-    MontageElement.define("montage-slider", Slider);
+    MontageElement.define("slider-mod", Slider);
 }

@@ -24,7 +24,7 @@ var AbstractTextField = exports.AbstractTextField = AbstractControl.specialize(/
 
             this.defineBindings({
                 // classList management
-                "classList.has('montage--disabled')": {
+                "classList.has('mod--disabled')": {
                     "<-": "!enabled"
                 }
             });

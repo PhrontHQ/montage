@@ -1,5 +1,5 @@
-var Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
-    Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer;
+var Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+    Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer;
 
 require("montage");
 
@@ -8,7 +8,7 @@ describe("core/extras/weak-map", function () {
     describe("WeakMap#deserializeSelf", function () {
 
         it("can deserialize with entries", function (done) {
-            
+
             var deserializer = new Deserializer(),
                 entries = [],
                 serialization = {
@@ -34,7 +34,7 @@ describe("core/extras/weak-map", function () {
                 console.warn(reason);
                 fail(reason);
             });
-            
+
         });
 
         it("can deserialize with keys and values", function (done) {
@@ -66,7 +66,7 @@ describe("core/extras/weak-map", function () {
                 fail(reason);
             });
 
-            
+
         });
 
     });

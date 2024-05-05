@@ -2,9 +2,9 @@
 Copyright (c) 2013, António Afonso
 All Rights Reserved.
 </copyright> */
-var Montage = require("montage").Montage,
-    DocumentResources = require("montage/core/document-resources").DocumentResources,
-    Promise = require("montage/core/promise").Promise;
+var Montage = require("mod/core/core").Montage,
+    DocumentResources = require("mod/core/document-resources").DocumentResources,
+    Promise = require("mod/core/promise").Promise;
 
 function createPage(url) {
         var deferred = new Promise(function(resolve, reject) {

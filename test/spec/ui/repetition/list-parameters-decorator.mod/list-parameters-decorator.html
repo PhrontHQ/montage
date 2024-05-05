@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title></title>
-    <script type="text/montage-serialization">{
+    <script type="text/mod-serialization">{
         "owner": {
             "values": {
                 "element": {"#": "owner"}
@@ -11,7 +11,7 @@
         },
 
         "decoratorText": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "decoratorText"},
                 "value": "Texting"
@@ -26,7 +26,7 @@
         },
 
         "text": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "text"},
                 "value": {"<-": "@decoratorText.value"}
@@ -35,10 +35,10 @@
     }</script>
 </head>
 <body>
-    <div data-montage-id="owner">
-        <span data-montage-id="decoratorText"></span>
-        <div data-montage-id="listParameters">
-            <span data-montage-id="text"></span>
+    <div data-mod-id="owner">
+        <span data-mod-id="decoratorText"></span>
+        <div data-mod-id="listParameters">
+            <span data-mod-id="text"></span>
             <span data-param="*"></span>
         </div>
     </div>

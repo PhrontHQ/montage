@@ -28,14 +28,14 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component,
-    logger = require("montage/core/logger").logger("deserializer-spec"),
-    Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
-    deserialize = require("montage/core/serialization/deserializer/montage-deserializer").deserialize,
-    Alias = require("montage/core/serialization/alias").Alias,
-    Bindings = require("montage/core/frb/bindings"),
-    Promise = require("montage/core/promise").Promise,
+var Montage = require("mod/core/core").Montage,
+    Component = require("mod/ui/component").Component,
+    logger = require("mod/core/logger").logger("deserializer-spec"),
+    Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+    deserialize = require("mod/core/serialization/deserializer/montage-deserializer").deserialize,
+    Alias = require("mod/core/serialization/alias").Alias,
+    Bindings = require("mod/core/frb/bindings"),
+    Promise = require("mod/core/promise").Promise,
     objects = require("spec/serialization/testobjects-v2").objects;
 
 logger.isError = true;
@@ -515,7 +515,7 @@ describe("serialization/montage-deserializer-spec", function () {
         it("should not deserialize a montage object as a template property", function (done) {
             var serialization = {
                     ":templateProperty": {
-                        "prototype": "montage/ui/component"
+                        "prototype": "mod/ui/component"
                     }
                 },
                 serializationString = JSON.stringify(serialization);
@@ -1565,7 +1565,7 @@ describe("serialization/montage-deserializer-spec", function () {
         it("deserializes objects synchronously if all needed modules are available", function () {
             var serialization = {
                     "component": {
-                        "prototype": "montage/ui/component"
+                        "prototype": "mod/ui/component"
                     }
                 },
                 serializationString = JSON.stringify(serialization),

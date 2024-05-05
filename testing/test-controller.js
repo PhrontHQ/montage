@@ -1,4 +1,4 @@
-var Montage = require("montage/core/core").Montage;
+var Montage = require("mod/core/core").Montage;
 
 exports.TestController = Montage.specialize( {
     templateObjects: {

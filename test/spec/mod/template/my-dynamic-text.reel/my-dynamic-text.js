@@ -30,8 +30,8 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 exports = typeof exports !== "undefined" ? exports : {};
 
-var Montage = require("montage").Montage;
-var Text = require("montage/ui/text.mod").Text;
+var Montage = require("mod/core/core").Montage;
+var Text = require("mod/ui/text.mod").Text;
 
 var MyText = exports.MyText = Text.specialize( {
     didDeserializedFromTemplate: {

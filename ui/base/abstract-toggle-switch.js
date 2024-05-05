@@ -32,10 +32,10 @@ var AbstractToggleSwitch = exports.AbstractToggleSwitch = AbstractControl.specia
             this.addComposer(this._pressComposer);
 
             this.defineBindings({
-                "classList.has('montage-ToggleSwitch--checked')": {
+                "classList.has('mod-ToggleSwitch--checked')": {
                     "<-": "checked"
                 },
-                "classList.has('montage--disabled')": {
+                "classList.has('mod--disabled')": {
                     "<-": "!enabled"
                 }
             });
@@ -48,9 +48,9 @@ var AbstractToggleSwitch = exports.AbstractToggleSwitch = AbstractControl.specia
 
     /**
      * Enables or disables the toggle switch from user input. When this
-     * property is set to `false`, the "montage--disabled" CSS style is applied
+     * property is set to `false`, the "mod--disabled" CSS style is applied
      * to the button's DOM element during the next draw cycle. When set to
-     * `true` the "montage--disabled" CSS class is removed from the element's
+     * `true` the "mod--disabled" CSS class is removed from the element's
      * class list.
      * @type {boolean}
      */

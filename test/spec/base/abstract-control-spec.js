@@ -1,4 +1,4 @@
-var AbstractControl = require("montage/ui/base/abstract-control").AbstractControl;
+var AbstractControl = require("mod/ui/base/abstract-control").AbstractControl;
 
 AbstractControl.prototype.hasTemplate = false;
 

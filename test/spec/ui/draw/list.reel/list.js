@@ -1,15 +1,15 @@
 /**
 	@module "matte/ui/list.mod"
-    @requires montage/core/core
-    @requires montage/ui/component
+    @requires mod/core/core
+    @requires mod/ui/component
 */
-var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component,
-    observeProperty = require("montage/core/frb/observers").observeProperty;
+var Montage = require("mod/core/core").Montage,
+    Component = require("mod/ui/component").Component,
+    observeProperty = require("mod/core/frb/observers").observeProperty;
 
 /**
  @class module:"matte/ui/list.mod".List
- @extends module:montage/ui/component.Component
+ @extends module:mod/ui/component.Component
  */
 var List = exports.List = Component.specialize(/** @lends module:"matte/ui/list.mod".List# */ {
     /**

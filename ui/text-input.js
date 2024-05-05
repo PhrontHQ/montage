@@ -116,12 +116,12 @@ TextInput.addClassProperties({
             //}
 
             if (this.error) {
-                el.classList.add('montage--invalidText');
-                el.classList.add('montage--invalid');
+                el.classList.add('mod--invalidText');
+                el.classList.add('mod--invalid');
                 el.title = this.error.message || '';
             } else {
-                el.classList.remove("montage--invalidText");
-                el.classList.remove("montage--invalid");
+                el.classList.remove("mod--invalidText");
+                el.classList.remove("mod--invalid");
                 el.title = '';
             }
         }
@@ -217,7 +217,7 @@ TextInput.addClassProperties({
     handleInvalid: {
         enumerable: false,
         value: function(event) {
-            //To trigger a draw that will add montage--invalid/Text
+            //To trigger a draw that will add mod--invalid/Text
             this.error = true;
             this.errorMessage = this.errorMessageFromValidityState(event.target.validity);
         }

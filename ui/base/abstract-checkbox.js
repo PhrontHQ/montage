@@ -2,7 +2,7 @@
 var AbstractControl = require("./abstract-control").AbstractControl,
     PressComposer = require("../../composer/press-composer").PressComposer;
 
-var CLASS_PREFIX = "montage-Checkbox";
+var CLASS_PREFIX = "mod-Checkbox";
 
 /**
  * @class AbstractCheckbox
@@ -29,13 +29,13 @@ var AbstractCheckbox = exports.AbstractCheckbox = AbstractControl.specialize( /*
 
             this.defineBindings({
                 // classList management
-                "classList.has('montage--disabled')": {
+                "classList.has('mod--disabled')": {
                     "<-": "!enabled"
                 },
-                "classList.has('montage--active')": {
+                "classList.has('mod--active')": {
                     "<-": "active"
                 },
-                "classList.has('montage-Checkbox--checked')": {
+                "classList.has('mod-Checkbox--checked')": {
                     "<-": "checked"
                 }
             });
@@ -79,8 +79,8 @@ var AbstractCheckbox = exports.AbstractCheckbox = AbstractControl.specialize( /*
 
     /**
      * Enables or disables the checkbox from user input. When this property is set to ```false```,
-     * the "montage--disabled" CSS class is applied to the checkbox's DOM element during the next draw cycle. When set to
-     * ```true``` the "montage--disabled" CSS class is removed from the element's class list.
+     * the "mod--disabled" CSS class is applied to the checkbox's DOM element during the next draw cycle. When set to
+     * ```true``` the "mod--disabled" CSS class is removed from the element's class list.
      * @type {boolean}
      */
     enabled: {

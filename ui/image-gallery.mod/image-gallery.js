@@ -91,5 +91,5 @@ var ImageGallery = exports.ImageGallery = Component.specialize(/** @lends ImageG
 });
 
 if (window.MontageElement) {
-    MontageElement.define("montage-image-gallery", ImageGallery);
+    MontageElement.define("image-gallery-mod", ImageGallery);
 }

@@ -1,5 +1,5 @@
-var Component = require("montage/ui/component").Component,
-    Message = require("core/model/message").Message;    
+var Component = require("mod/ui/component").Component,
+    Message = require("core/model/message").Message;
 
 exports.Main = Component.specialize(/** @lends Main# */{
 
@@ -12,5 +12,5 @@ exports.Main = Component.specialize(/** @lends Main# */{
             this.message2.value = 'Holà';
         }
     }
-  
+
 });

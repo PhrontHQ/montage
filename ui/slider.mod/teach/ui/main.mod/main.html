@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="main.css">
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "owner": {
             "values": {
@@ -14,7 +14,7 @@
         },
 
         "slider": {
-            "prototype": "montage/ui/slider.mod",
+            "prototype": "mod/ui/slider.mod",
             "values": {
                 "element": {"#": "slider"},
                 "thumbElement": {"#": "sliderThumb"},
@@ -29,7 +29,7 @@
         },
 
         "sliderFieldMin": {
-            "prototype": "montage/ui/text-field.mod",
+            "prototype": "mod/ui/text-field.mod",
             "values": {
                 "element": {"#": "slider-field-min"},
                 "value": 10
@@ -37,7 +37,7 @@
         },
 
         "sliderFieldMid": {
-            "prototype": "montage/ui/text-field.mod",
+            "prototype": "mod/ui/text-field.mod",
             "values": {
                 "element": {"#": "slider-field-mid"},
                 "value": 75
@@ -45,7 +45,7 @@
         },
 
         "sliderFieldMax": {
-            "prototype": "montage/ui/text-field.mod",
+            "prototype": "mod/ui/text-field.mod",
             "values": {
                 "element": {"#": "slider-field-max"},
                 "value": 120
@@ -53,7 +53,7 @@
         },
 
         "sliderWithBareKnob": {
-            "prototype": "montage/ui/slider.mod",
+            "prototype": "mod/ui/slider.mod",
             "values": {
                 "element": {"#": "sliderWithBareKnob"},
                 "step": 15,
@@ -63,7 +63,7 @@
         },
 
         "sliderWithComplexKnob": {
-            "prototype": "montage/ui/slider.mod",
+            "prototype": "mod/ui/slider.mod",
             "values": {
                 "element": {"#": "sliderWithComplexKnob"},
                 "values": [],
@@ -74,7 +74,7 @@
         },
 
         "sliderWithStep": {
-            "prototype": "montage/ui/slider.mod",
+            "prototype": "mod/ui/slider.mod",
             "values": {
                 "element": {"#": "sliderWithStep"},
                 "step": 15,
@@ -85,14 +85,14 @@
         },
 
         "sliderWithStepField": {
-            "prototype": "montage/ui/text-field.mod",
+            "prototype": "mod/ui/text-field.mod",
             "values": {
                 "element": {"#": "sliderWithStepField"}
             }
         },
 
         "sliderWithStickyLabel": {
-            "prototype": "montage/ui/slider.mod",
+            "prototype": "mod/ui/slider.mod",
             "values": {
                 "element": {"#": "sliderWithStickyLabel"},
                 "value":1000,
@@ -102,7 +102,7 @@
         },
 
         "stickyThumbLabel": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values":{
                 "element": {"#": "stickyThumbLabel"},
                 "value": {"<-": "@sliderWithStickyLabel.value.round()"}
@@ -110,14 +110,14 @@
         },
 
         "sliderRange": {
-            "prototype": "montage/ui/slider.mod",
+            "prototype": "mod/ui/slider.mod",
             "values": {
                 "element": {"#": "slider-range"}
             }
         },
 
         "sliderRangeField": {
-            "prototype": "montage/ui/text-field.mod",
+            "prototype": "mod/ui/text-field.mod",
             "values": {
                 "element": {"#": "slider-range-field"},
                 "value": {"<->": "@sliderRange.value"}
@@ -125,7 +125,7 @@
         },
 
         "verticalSliderWithStep": {
-            "prototype": "montage/ui/slider.mod",
+            "prototype": "mod/ui/slider.mod",
             "values": {
                 "element": {"#": "verticalSliderWithStep"},
                 "orientation": "vertical",
@@ -136,7 +136,7 @@
         },
 
         "verticalSliderWithStepField": {
-            "prototype": "montage/ui/text-field.mod",
+            "prototype": "mod/ui/text-field.mod",
             "values": {
                 "element": {"#": "verticalSliderWithStepField"},
                 "value": {"<->": "@verticalSliderWithStep.value"}
@@ -144,7 +144,7 @@
         },
 
         "verticalSlider": {
-            "prototype": "montage/ui/slider.mod",
+            "prototype": "mod/ui/slider.mod",
             "values": {
                 "element": {"#": "verticalSlider"},
                 "orientation": "vertical",
@@ -155,7 +155,7 @@
         },
 
         "verticalSliderFieldMin": {
-            "prototype": "montage/ui/text-field.mod",
+            "prototype": "mod/ui/text-field.mod",
             "values": {
                 "element": {"#": "vertical-slider-field-min"},
                 "value": {"<->": "@verticalSlider.values.0"}
@@ -163,7 +163,7 @@
         },
 
         "verticalSliderFieldMid": {
-            "prototype": "montage/ui/text-field.mod",
+            "prototype": "mod/ui/text-field.mod",
             "values": {
                 "element": {"#": "vertical-slider-field-mid"},
                 "value": {"<->": "@verticalSlider.values.1"}
@@ -171,7 +171,7 @@
         },
 
         "verticalSliderFieldMax": {
-            "prototype": "montage/ui/text-field.mod",
+            "prototype": "mod/ui/text-field.mod",
             "values": {
                 "element": {"#": "vertical-slider-field-max"},
                 "value": {"<->": "@verticalSlider.values.2"}
@@ -181,79 +181,79 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="main" class="Main">
+    <div data-mod-id="main" class="Main">
         <header>Teach Slider Mod</header>
 
         <section class="sliders">
 
             <div class="slider-container">
-                <div data-montage-id="slider" class="slider A">
-                    <div data-montage-id="sliderThumb" class="slider-thumb A"></div>
-                    <div data-montage-id="sliderThumb" class="slider-thumb B"></div>
-                    <div data-montage-id="sliderThumb" class="slider-thumb C"></div>
+                <div data-mod-id="slider" class="slider A">
+                    <div data-mod-id="sliderThumb" class="slider-thumb A"></div>
+                    <div data-mod-id="sliderThumb" class="slider-thumb B"></div>
+                    <div data-mod-id="sliderThumb" class="slider-thumb C"></div>
                 </div>
                 <div class="input-text">
-                    <input type="text" data-montage-id="slider-field-min" class="input-text">
-                    <input type="text" data-montage-id="slider-field-mid" class="input-text">
-                    <input type="text" data-montage-id="slider-field-max" class="input-text">
+                    <input type="text" data-mod-id="slider-field-min" class="input-text">
+                    <input type="text" data-mod-id="slider-field-mid" class="input-text">
+                    <input type="text" data-mod-id="slider-field-max" class="input-text">
                 </div>
 
             </div>
 
 
             <div class="slider-container">
-                <div data-montage-id="sliderWithBareKnob" class="slider">
+                <div data-mod-id="sliderWithBareKnob" class="slider">
                     <div></div>
                 </div>
             </div>
 
             <div class="slider-container">
-                <div data-montage-id="sliderWithComplexKnob" class="slider sliderWithComplexKnob">
+                <div data-mod-id="sliderWithComplexKnob" class="slider sliderWithComplexKnob">
                     <div>
-                        <span class="montage-Slider--thumb">🍥</span>
+                        <span class="mod-Slider--thumb">🍥</span>
                     </div>
                     <div>
-                        <span class="montage-Slider--thumb">🍥</span>
+                        <span class="mod-Slider--thumb">🍥</span>
                     </div>
                 </div>
             </div>
 
             <div class="slider-container">
-                <div data-montage-id="sliderWithStep" class="slider D"></div>
-                <input type="text" data-montage-id="sliderWithStepField" class="input-text">
+                <div data-mod-id="sliderWithStep" class="slider D"></div>
+                <input type="text" data-mod-id="sliderWithStepField" class="input-text">
             </div>
 
             <div class="slider-container">
-                <div data-montage-id="sliderWithStickyLabel" class="sliderWithStickyLabel">
+                <div data-mod-id="sliderWithStickyLabel" class="sliderWithStickyLabel">
                     <div>
-                        <div data-montage-id="sliderThumb" class="slider-thumb A montage-Slider--thumb">
+                        <div data-mod-id="sliderThumb" class="slider-thumb A mod-Slider--thumb">
                         </div>
-                        <h5 data-montage-id="stickyThumbLabel" class="stickyThumbLabel"></h5>
+                        <h5 data-mod-id="stickyThumbLabel" class="stickyThumbLabel"></h5>
                     </div>
                 </div>
             </div>
 
             <div class="slider-container">
-                <input type="range" min="20" max="80" value="34" data-montage-id="slider-range">
-                <input type="text" data-montage-id="slider-range-field" class="input-text">
+                <input type="range" min="20" max="80" value="34" data-mod-id="slider-range">
+                <input type="text" data-mod-id="slider-range-field" class="input-text">
             </div>
 
              <div class="slider-container vertical">
-                <div data-montage-id="verticalSliderWithStep" class="slider E"></div>
-                <input type="text" data-montage-id="verticalSliderWithStepField" class="input-text">
+                <div data-mod-id="verticalSliderWithStep" class="slider E"></div>
+                <input type="text" data-mod-id="verticalSliderWithStepField" class="input-text">
             </div>
 
 
             <div class="slider-container vertical">
-                <div data-montage-id="verticalSlider" class="slider A">
-                    <div data-montage-id="sliderThumb" class="slider-thumb A"></div>
-                    <div data-montage-id="sliderThumb" class="slider-thumb B"></div>
-                    <div data-montage-id="sliderThumb" class="slider-thumb C"></div>
+                <div data-mod-id="verticalSlider" class="slider A">
+                    <div data-mod-id="sliderThumb" class="slider-thumb A"></div>
+                    <div data-mod-id="sliderThumb" class="slider-thumb B"></div>
+                    <div data-mod-id="sliderThumb" class="slider-thumb C"></div>
                 </div>
                 <div class="input-text">
-                    <input type="text" data-montage-id="vertical-slider-field-min" class="input-text">
-                    <input type="text" data-montage-id="vertical-slider-field-mid" class="input-text">
-                    <input type="text" data-montage-id="vertical-slider-field-max" class="input-text">
+                    <input type="text" data-mod-id="vertical-slider-field-min" class="input-text">
+                    <input type="text" data-mod-id="vertical-slider-field-mid" class="input-text">
+                    <input type="text" data-mod-id="vertical-slider-field-max" class="input-text">
                 </div>
 
             </div>

@@ -1,8 +1,8 @@
-var ObjectDescriptor = require("montage/core/meta/object-descriptor").ObjectDescriptor;
-var EventDescriptor = require("montage/core/meta/event-descriptor").EventDescriptor;
+var ObjectDescriptor = require("mod/core/meta/object-descriptor").ObjectDescriptor;
+var EventDescriptor = require("mod/core/meta/event-descriptor").EventDescriptor;
 
-var Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer;
-var Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
+var Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer;
+var Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
 
 describe("meta/event-descriptor-spec", function () {
 
@@ -41,7 +41,7 @@ describe("meta/event-descriptor-spec", function () {
             beforeEach(function () {
                 blueprintSerialization = {
                     "root": {
-                        "prototype": "montage/core/meta/event-blueprint",
+                        "prototype": "mod/core/meta/event-blueprint",
                         "values": {
                             "name": "event",
                             "blueprint": {"@": "blueprint_testblueprint"}
@@ -51,7 +51,7 @@ describe("meta/event-descriptor-spec", function () {
                 };
                 objectDescriptorSerialization = {
                     "root": {
-                        "prototype": "montage/core/meta/event-descriptor",
+                        "prototype": "mod/core/meta/event-descriptor",
                         "values": {
                             "name": "event",
                             "objectDescriptor": {"@": "testObjectDescriptor"}

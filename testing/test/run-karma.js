@@ -8,9 +8,9 @@ var globalEval = eval,
 
 // Bootsrap Karma
 if (global.__karma__) {
-    
+
     //jasmine.DEFAULT_TIMEOUT_INTERVAL = 100000;
-    
+
     global.__karma__.loaded = function() {
         console.log('karma loaded');
     };
@@ -29,7 +29,7 @@ if (global.__karma__) {
         if (jasmineInterface.hasOwnProperty(property)) {
            global[property] = jasmineInterface[property];
         }
-    }   
+    }
 
     // Default reporter
     jasmineEnv.addReporter(jasmineInterface.jsApiReporter);
@@ -80,10 +80,10 @@ function injectScript(src, module, callback) {
     script.addEventListener('load', function () {
     	callback(null, module);
     });
-    script.addEventListener('error', function(err) { 
+    script.addEventListener('error', function(err) {
         callback(err, module);
     });
-    script.addEventListener('abort', function(err) {    
+    script.addEventListener('abort', function(err) {
         callback(err, module);
     });
     document.head.appendChild(script);
@@ -96,7 +96,7 @@ function injectBase(href) {
 }
 
 injectBase('/base/test/');
-injectScript('../node_modules/montage/montage.js', 'all', function (err) {
+injectScript('../node_modules/mod/montage.js', 'all', function (err) {
     if (err) {
         throw err;
     }

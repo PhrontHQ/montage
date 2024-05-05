@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" href="baz.css">
 
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "owner": {
             "values": {
@@ -14,14 +14,14 @@
             }
         },
         "width": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "width"},
                 "value": {"<-": "@owner.width"}
             }
         },
         "height": {
-            "prototype": "montage/ui/text.mod",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "height"},
                 "value": {"<-": "@owner.height"}
@@ -31,11 +31,11 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="Baz" class="baz absolute">
+    <div data-mod-id="Baz" class="baz absolute">
         <h2>Width</h2>
-        <span data-montage-id="width"></span>
+        <span data-mod-id="width"></span>
         <h2>Height</h2>
-        <span data-montage-id="height"></span>
+        <span data-mod-id="height"></span>
     </div>
 </body>
 </html>

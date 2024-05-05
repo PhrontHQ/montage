@@ -1,4 +1,4 @@
-var HttpService = require("montage/data/service/http-service").HttpService,
+var HttpService = require("mod/data/service/http-service").HttpService,
     WeatherReport = require("../model/weather-report").WeatherReport;
 
 /**

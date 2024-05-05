@@ -31,7 +31,7 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> -->
 <html>
 <head>
-    <script type="text/montage-serialization">{
+    <script type="text/mod-serialization">{
 
             "textfield1": {
                 "prototype": "spec/ui/repetition/textfield.mod[TextField]",
@@ -41,7 +41,7 @@ POSSIBILITY OF SUCH DAMAGE.
                 }
             },
             "repetition1": {
-                "prototype": "montage/ui/repetition.mod",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list1"},
                     "content": {"<-": "@owner.listObjects"}
@@ -57,10 +57,10 @@ POSSIBILITY OF SUCH DAMAGE.
     }</script>
 </head>
 <body>
-    <div data-montage-id="componentrep">
+    <div data-mod-id="componentrep">
         Component Repetition
-        <ul data-montage-id="list1">
-            <li>Hello: <span data-montage-id="textfield"></span></li>
+        <ul data-mod-id="list1">
+            <li>Hello: <span data-mod-id="textfield"></span></li>
         </ul>
     </div>
 </body>

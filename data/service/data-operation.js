@@ -568,15 +568,15 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
      * that can be converted back to the primary key by a RawDataService.
      *
      * For example, a DataIdentifier:
-     * "montage-data://environment/type/#12AS7507"
+     * "mod-data://environment/type/#12AS7507"
      * "m-data://environment/type/#12AS7507"
      * "mdata://environment/type/#12AS7507"
      * "data-id://environment/type/#12AS7507"
      *
-     * "montage-data://[dataService.identifier]/[dataService.connectionDescriptor.name || default]/[objectDescriptor.name]/[primaryKey]
-     * "montage-data://[dataService.identifier]/[dataService.connectionDescriptor.name || default]/[objectDescriptor.name]/[primaryKey]
+     * "mod-data://[dataService.identifier]/[dataService.connectionDescriptor.name || default]/[objectDescriptor.name]/[primaryKey]
+     * "mod-data://[dataService.identifier]/[dataService.connectionDescriptor.name || default]/[objectDescriptor.name]/[primaryKey]
      *
-     * "identifier = $identifier", {"identifier":"montage-data://[dataService.identifier]/[dataService.connectionDescriptor.name || default]/[objectDescriptor.name]/[primaryKey]}
+     * "identifier = $identifier", {"identifier":"mod-data://[dataService.identifier]/[dataService.connectionDescriptor.name || default]/[objectDescriptor.name]/[primaryKey]}
      * "hazard_ID = #12AS7507"
      *
      * @type {Criteria}

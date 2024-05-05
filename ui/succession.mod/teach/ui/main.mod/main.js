@@ -1,10 +1,10 @@
 "use strict";
 
-var Component = require("montage/ui/component").Component,
-    Montage = require("montage/core/core").Montage,
+var Component = require("mod/ui/component").Component,
+    Montage = require("mod/core/core").Montage,
     Foo = require("ui/foo.mod").Foo,
     Bar = require("ui/bar.mod").Bar,
-    observe = require("montage/core/frb/observe");
+    observe = require("mod/core/frb/observe");
 
 exports.Main = Component.specialize({
     /**

@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    AbstractLink = require("montage/ui/base/abstract-link").AbstractLink,
+var Montage = require("mod/core/core").Montage,
+    AbstractLink = require("mod/ui/base/abstract-link").AbstractLink,
     MockDOM = require("mocks/dom");
 
 describe("test/base/abstract-link-spec", function () {
@@ -53,7 +53,7 @@ describe("test/base/abstract-link-spec", function () {
             it("should add the corresponding class name to classList when enabled is false", function () {
                 aLink.enabled = false;
 
-                expect(aLink.classList.contains("montage--disabled")).toBe(true);
+                expect(aLink.classList.contains("mod--disabled")).toBe(true);
             });
         });
 
@@ -91,7 +91,7 @@ describe("test/base/abstract-link-spec", function () {
             it("should add the corresponding class name to classList when active", function () {
                 aLink.active = true;
 
-                expect(aLink.classList.contains("montage--active")).toBe(true);
+                expect(aLink.classList.contains("mod--active")).toBe(true);
             });
         });
 

@@ -1,6 +1,6 @@
-var Component = require("montage/ui/component").Component,
-    ListItem = require("montage/ui/list-item.mod").ListItem,
-    MockService = require('montage/test/mocks/data/services/mock-service').MockService;
+var Component = require("mod/ui/component").Component,
+    ListItem = require("mod/ui/list-item.mod").ListItem,
+    MockService = require('mod/test/mocks/data/services/mock-service').MockService;
 
 exports.Main = Component.specialize(/** @lends Main# */{
 
@@ -36,9 +36,9 @@ exports.Main = Component.specialize(/** @lends Main# */{
         value: function (component, UIDescriptor, object) {
             if (component instanceof ListItem) {
                 if (object === this.settings[1] || object === this.settings[2]) {
-                    return 'montage/test/mocks/data/models/settings-ui-descriptor.mjson';
+                    return 'mod/test/mocks/data/models/settings-ui-descriptor.mjson';
                 } else if (object === this.check) {
-                    return 'montage/test/mocks/data/models/check-ui-descriptor.mjson';
+                    return 'mod/test/mocks/data/models/check-ui-descriptor.mjson';
                 }
             }
         }
@@ -67,7 +67,7 @@ exports.Main = Component.specialize(/** @lends Main# */{
     listItemWillUseIconComponentModuleIdForObjectAtRowIndex: {
         value: function (listItem, iconComponentModuleId, object, rowIndex, list) {
             if (object === this.employees[2]) {
-                return 'montage/test/mocks/data/icons/department.mod';
+                return 'mod/test/mocks/data/icons/department.mod';
             }
         }
     },
@@ -84,7 +84,7 @@ exports.Main = Component.specialize(/** @lends Main# */{
     listItemWillUseToggleComponentModuleIdForObjectAtRowIndex: {
         value: function (listItem, toogleComponentModuleId, object, rowIndex, list) {
             if (object === this.settings[1] && listItem === this.listItem38) {
-                return "montage/test/mocks/data/icons/check.mod";
+                return "mod/test/mocks/data/icons/check.mod";
             }
         }
     }

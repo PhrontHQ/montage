@@ -1,9 +1,9 @@
-var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component,
-    logger = require("montage/core/logger").logger("Simple"),
+var Montage = require("mod/core/core").Montage,
+    Component = require("mod/ui/component").Component,
+    logger = require("mod/core/logger").logger("Simple"),
     SimpleTestComposer = require("spec/composer/simple-test-composer").SimpleTestComposer,
     LazyLoadComposer = require("spec/composer/simple-test-composer").LazyLoadTestComposer;
-var TestController = require("montage-testing/test-controller").TestController;
+var TestController = require("mod-testing/test-controller").TestController;
 
 exports.Test = TestController.specialize( {
 

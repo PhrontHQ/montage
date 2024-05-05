@@ -3,9 +3,9 @@ var AbstractControl = require("./abstract-control").AbstractControl,
     PressComposer = require("../../composer/press-composer").PressComposer,
     KeyComposer = require("../../composer/key-composer").KeyComposer;
 
-var CLASS_MONTAGE_DISABLED = "montage--disabled",
-    CLASS_MONTAGE_ACTIVE = "montage--active",
-    CLASS_MONTAGE_CHECKED = "montage-RadioButton--checked";
+var CLASS_MONTAGE_DISABLED = "mod--disabled",
+    CLASS_MONTAGE_ACTIVE = "mod--active",
+    CLASS_MONTAGE_CHECKED = "mod-RadioButton--checked";
 
 /**
  * @class AbstractRadioButton

@@ -1,6 +1,6 @@
 
-var Component = require("montage/ui/component").Component;
-var Button = require("montage/ui/button.mod").Button;
+var Component = require("mod/ui/component").Component;
+var Button = require("mod/ui/button.mod").Button;
 
 var MyButton = exports.MyButton = Button.specialize({
     hasTemplate: {

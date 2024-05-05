@@ -1,5 +1,5 @@
 /*global require,exports,describe,beforeEach,it,expect,waits,waitsFor,runs,spyOn */
-var Environment = require("montage/core/environment").Environment;
+var Environment = require("mod/core/environment").Environment;
 
 
 var USER_AGENTS = {

@@ -19,13 +19,13 @@ VirtualList-flow {
     right: 0;
 }
 
-.VirtualList .montage-Flow-Repetition > div {
+.VirtualList .flow-mod-repetition > div {
     left: 50%;
     right: -50%;
     width: auto;
 }
 
-.VirtualList .montage-Flow-Repetition .ListItem {
+.VirtualList .flow-mod-repetition .ListItem {
     border: none;
     border-bottom: 1px solid #c8c7cc;
 }

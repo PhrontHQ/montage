@@ -1,4 +1,4 @@
-var RawDataService = require("montage/data/service/raw-data-service").RawDataService,
+var RawDataService = require("mod/data/service/raw-data-service").RawDataService,
     CountryNames = ["USA"];
 
 exports.CountryService = RawDataService.specialize(/** @lends CategoryService.prototype */ {

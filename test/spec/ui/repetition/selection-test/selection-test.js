@@ -1,6 +1,6 @@
-var Montage = require("montage").Montage;
-var TestController = require("montage-testing/test-controller").TestController;
-var UUID = require("montage/core/uuid");
+var Montage = require("mod/core/core").Montage;
+var TestController = require("mod-testing/test-controller").TestController;
+var UUID = require("mod/core/uuid");
 
 exports.SelectionTest = TestController.specialize( {
 

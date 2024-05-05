@@ -1,12 +1,12 @@
-var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component,
-    logger = require("montage/core/logger").logger("deserializer-spec"),
-    Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
-    deserialize = require("montage/core/serialization/deserializer/montage-deserializer").deserialize,
-    Alias = require("montage/core/serialization/alias").Alias,
-    Bindings = require("montage/core/frb/bindings"),
-    defaultEventManager = require("montage/core/event/event-manager").defaultEventManager,
-    Promise = require("montage/core/promise").Promise,
+var Montage = require("mod/core/core").Montage,
+    Component = require("mod/ui/component").Component,
+    logger = require("mod/core/logger").logger("deserializer-spec"),
+    Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+    deserialize = require("mod/core/serialization/deserializer/montage-deserializer").deserialize,
+    Alias = require("mod/core/serialization/alias").Alias,
+    Bindings = require("mod/core/frb/bindings"),
+    defaultEventManager = require("mod/core/event/event-manager").defaultEventManager,
+    Promise = require("mod/core/promise").Promise,
     objects = require("spec/serialization/testobjects-v2").objects;
 
 logger.isError = true;
@@ -29,7 +29,7 @@ describe("serialization/montage-deserializer-element-spec", function () {
                 },
                 serializationString = JSON.stringify(serialization);
 
-            rootEl.innerHTML = '<div data-montage-id="id">content</div>';
+            rootEl.innerHTML = '<div data-mod-id="id">content</div>';
             deserializer.init(
                 serializationString, require);
 
@@ -62,7 +62,7 @@ describe("serialization/montage-deserializer-element-spec", function () {
                 },
                 serializationString = JSON.stringify(serialization);
 
-            rootEl.innerHTML = '<div data-montage-id="id">content</div>';
+            rootEl.innerHTML = '<div data-mod-id="id">content</div>';
             deserializer.init(serializationString, require);
 
             deserializer.deserialize(null, rootEl).then(function (objects) {
@@ -97,7 +97,7 @@ describe("serialization/montage-deserializer-element-spec", function () {
             },
                 serializationString = JSON.stringify(serialization);
 
-            rootEl.innerHTML = '<div data-montage-id="id">content</div>';
+            rootEl.innerHTML = '<div data-mod-id="id">content</div>';
             deserializer.init(serializationString, require);
 
             deserializer.deserialize(null, rootEl).then(function (objects) {
@@ -123,7 +123,7 @@ describe("serialization/montage-deserializer-element-spec", function () {
             },
                 serializationString = JSON.stringify(serialization);
 
-            rootEl.innerHTML = '<div data-montage-id="id">content</div>';
+            rootEl.innerHTML = '<div data-mod-id="id">content</div>';
             deserializer.init(serializationString, require);
 
             deserializer.deserialize(null, rootEl).then(function (objects) {
@@ -149,7 +149,7 @@ describe("serialization/montage-deserializer-element-spec", function () {
             },
                 serializationString = JSON.stringify(serialization);
 
-            rootEl.innerHTML = '<div data-montage-id="id">content</div>';
+            rootEl.innerHTML = '<div data-mod-id="id">content</div>';
             deserializer.init(serializationString, require);
 
             deserializer.deserialize(null, rootEl).then(function (objects) {
@@ -205,7 +205,7 @@ describe("serialization/montage-deserializer-element-spec", function () {
 
                 document.defaultView.customElements.define('hello-element', constructor);
 
-                rootEl.innerHTML = '<hello-element data-montage-id="id"></hello-element>';
+                rootEl.innerHTML = '<hello-element data-mod-id="id"></hello-element>';
                 deserializer.init(serializationString, require);
 
                 deserializer.deserialize(null, rootEl).then(function (objects) {
@@ -228,9 +228,9 @@ describe("serialization/montage-deserializer-element-spec", function () {
     xdescribe("Object Element Deserialization", function () {
         var rootEl = document.createElement("div");
 
-        it("should deserialize an element reference through data-montage-id over id", function () {
+        it("should deserialize an element reference through data-mod-id over id", function () {
            rootEl.innerHTML = '<div id="id">content1</div>' +
-                            '<div data-montage-id="id">content2</div>';
+                            '<div data-mod-id="id">content2</div>';
 
            deserializer.init({
                rootEl: {
@@ -248,8 +248,8 @@ describe("serialization/montage-deserializer-element-spec", function () {
            }
         });
 
-        it("should deserialize an element with id and data-montage-id", function () {
-           rootEl.innerHTML = '<div id="realId" data-montage-id="id">content</div>';
+        it("should deserialize an element with id and data-mod-id", function () {
+           rootEl.innerHTML = '<div id="realId" data-mod-id="id">content</div>';
            deserializer.init({
                rootEl: {
                    value: {
@@ -266,8 +266,8 @@ describe("serialization/montage-deserializer-element-spec", function () {
            }
         });
 
-        it("should deserialize an element with the same id and data-montage-id", function () {
-           rootEl.innerHTML = '<div id="id" data-montage-id="id">content</div>';
+        it("should deserialize an element with the same id and data-mod-id", function () {
+           rootEl.innerHTML = '<div id="id" data-mod-id="id">content</div>';
            deserializer.init({
                rootEl: {
                    value: {
@@ -304,8 +304,8 @@ describe("serialization/montage-deserializer-element-spec", function () {
            }
         });
 
-        it("should deserialize an element reference through data-montage-id w/ optimization", function () {
-           rootEl.innerHTML = '<div data-montage-id="id">content</div>';
+        it("should deserialize an element reference through data-mod-id w/ optimization", function () {
+           rootEl.innerHTML = '<div data-mod-id="id">content</div>';
            deserializer.init({
                rootEl: {
                    value: {
@@ -324,9 +324,9 @@ describe("serialization/montage-deserializer-element-spec", function () {
            }
         });
 
-        it("should deserialize an element reference through data-montage-id over id w/ optimization", function () {
+        it("should deserialize an element reference through data-mod-id over id w/ optimization", function () {
            rootEl.innerHTML = '<div id="id">content1</div>' +
-                            '<div data-montage-id="id">content2</div>';
+                            '<div data-mod-id="id">content2</div>';
            deserializer.init({
                rootEl: {
                    value: {
@@ -345,8 +345,8 @@ describe("serialization/montage-deserializer-element-spec", function () {
            }
         });
 
-        it("should deserialize an element with id and data-montage-id w/ optimization", function () {
-           rootEl.innerHTML = '<div id="realId" data-montage-id="id">content</div>';
+        it("should deserialize an element with id and data-mod-id w/ optimization", function () {
+           rootEl.innerHTML = '<div id="realId" data-mod-id="id">content</div>';
            deserializer.init({
                rootEl: {
                    value: {
@@ -365,8 +365,8 @@ describe("serialization/montage-deserializer-element-spec", function () {
            }
         });
 
-        it("should deserialize an element with the same id and data-montage-id w/ optimization", function () {
-           rootEl.innerHTML = '<div id="id" data-montage-id="id">content</div>';
+        it("should deserialize an element with the same id and data-mod-id w/ optimization", function () {
+           rootEl.innerHTML = '<div id="id" data-mod-id="id">content</div>';
            deserializer.init({
                rootEl: {
                    value: {

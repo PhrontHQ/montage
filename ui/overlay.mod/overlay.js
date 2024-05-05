@@ -8,7 +8,7 @@ var Component = require("../component").Component,
     PressComposer = require("../../composer/press-composer").PressComposer,
     defaultEventManager = require("../../core/event/event-manager").defaultEventManager;
 
-var CLASS_PREFIX = "mod-Overlay",
+var CLASS_PREFIX = "overlay-mod",
     VISIBLE_CLASS_NAME = CLASS_PREFIX + "--visible";
 
 /**
@@ -426,5 +426,5 @@ var Overlay = exports.Overlay = Component.specialize( /** @lends Overlay.prototy
 });
 
 if (window.MontageElement) {
-    MontageElement.define("mod-overlay", Overlay);
+    MontageElement.define("overlay-mod", Overlay);
 }

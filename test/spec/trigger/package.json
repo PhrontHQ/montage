@@ -2,8 +2,8 @@
     "name": "trigger-test",
     "mappings": {
         "test": "../../",
-        "montage": "../../../",
-        "montage-testing": "../../../testing"
+        "mod": "../../../",
+        "mod-testing": "../../../testing"
     },
     "dependencies": {
         "inject-description-location": "*",

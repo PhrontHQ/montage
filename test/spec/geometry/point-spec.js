@@ -28,8 +28,8 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage,
-    Point = require("montage/core/geometry/point").Point;
+var Montage = require("mod/core/core").Montage,
+    Point = require("mod/core/geometry/point").Point;
 
 
 describe("geometry/point-spec",

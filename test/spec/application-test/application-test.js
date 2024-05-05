@@ -28,9 +28,9 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage,
-    Application = require("montage/core/application").Application,
-    TestController = require("montage-testing/test-controller").TestController;
+var Montage = require("mod/core/core").Montage,
+    Application = require("mod/core/application").Application,
+    TestController = require("mod-testing/test-controller").TestController;
 
 exports.ApplicationTest = TestController.specialize( {
 

@@ -2,6 +2,6 @@
 	"name": "teach-slot-mod",
 	"private": true,
 	"dependencies": {
-		"montage": "../.."
+		"mod": "../.."
 	}
 }

@@ -1,7 +1,7 @@
-var DataStream = require("montage/data/service/data-stream").DataStream,
-    DataQuery = require("montage/data/model/data-query").DataQuery,
-    Montage = require("montage").Montage,
-    ObjectDescriptor = require("montage/core/meta/object-descriptor").ObjectDescriptor;
+var DataStream = require("mod/data/service/data-stream").DataStream,
+    DataQuery = require("mod/data/model/data-query").DataQuery,
+    Montage = require("mod/core/core").Montage,
+    ObjectDescriptor = require("mod/core/meta/object-descriptor").ObjectDescriptor;
 
 describe("A DataStream", function() {
 
@@ -29,7 +29,7 @@ describe("A DataStream", function() {
             query = DataQuery.withTypeAndCriteria(type, {}),
             stream;
         expect(new DataStream()).toBeDefined();
-        
+
         stream = DataStream.withTypeOrSelector(type);
         expect(stream).toBeDefined();
         expect(stream.query).toBeDefined();

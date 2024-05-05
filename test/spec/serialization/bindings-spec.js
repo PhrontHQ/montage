@@ -1,9 +1,9 @@
 
-var Montage = require("montage").Montage;
-var Bindings = require("montage/core/core").Bindings;
-var serialize = require("montage/core/serialization/serializer/montage-serializer").serialize;
-var deserialize = require("montage/core/serialization/deserializer/montage-deserializer").deserialize;
-var Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
+var Montage = require("mod/core/core").Montage;
+var Bindings = require("mod/core/core").Bindings;
+var serialize = require("mod/core/serialization/serializer/montage-serializer").serialize;
+var deserialize = require("mod/core/serialization/deserializer/montage-deserializer").deserialize;
+var Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
 
 var Type = exports.Type = Montage.specialize( {
     foo: {
@@ -112,7 +112,7 @@ describe("serialization/bindings-spec", function () {
         it("should not allow binding to a template property of a component that does not exist", function (done) {
             var serialization = {
                     "component": {
-                        "prototype": "montage/ui/component",
+                        "prototype": "mod/ui/component",
                         "values": {
                             "value": {"<-": "@unknown:templateProperty"}
                         }
@@ -136,7 +136,7 @@ describe("serialization/bindings-spec", function () {
                     "known": {},
 
                     "component": {
-                        "prototype": "montage/ui/component",
+                        "prototype": "mod/ui/component",
                         "values": {
                             "value": {"<-": "@known:templateProperty"}
                         }
@@ -150,7 +150,7 @@ describe("serialization/bindings-spec", function () {
             deserializer.init(serializationString, require);
 
             deserializer.deserialize(instances).then(function (res) {
-                expect(res).toBeDefined();  
+                expect(res).toBeDefined();
             }).finally(function () {
                 done();
             });
@@ -164,7 +164,7 @@ describe("serialization/bindings-spec", function () {
                     "owner:templateProperty": {},
 
                     "component": {
-                        "prototype": "montage/ui/component",
+                        "prototype": "mod/ui/component",
                         "values": {
                             "value": {"<-": "@owner:templateProperty"}
                         }

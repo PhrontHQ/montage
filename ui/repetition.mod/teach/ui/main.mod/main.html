@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="main.css">
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
         {
             "owner": {
                 "values": {
@@ -11,7 +11,7 @@
             },
 
             "repetition": {
-                "prototype": "montage/ui/repetition.mod",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "repetition"},
                     "content": {"<-": "@owner.content"}
@@ -19,7 +19,7 @@
             },
 
             "text": {
-                "prototype": "montage/ui/text.mod",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "text"},
                     "value": {"<-": "@repetition:iteration.object"}
@@ -35,7 +35,7 @@
             },
 
             "text1": {
-                "prototype": "montage/ui/text.mod",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "text1"},
                     "value": {"<-": "@list1:iteration.object"}
@@ -71,23 +71,23 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="main" class="Main">
+    <div data-mod-id="main" class="Main">
         <header>Teach Repetition Mod</header>
         <div class="content">
             <h4>Simple</h4>
-            <div data-montage-id="repetition" class="list">
-                <span data-montage-id="text"><span>
+            <div data-mod-id="repetition" class="list">
+                <span data-mod-id="text"><span>
             </div>
             <h4>Repetition with templating</h4>
-            <div data-montage-id="list1" class="list">
-                <span data-montage-id="text1"><span>
+            <div data-mod-id="list1" class="list">
+                <span data-mod-id="text1"><span>
             </div>
             <h4>Repetition with templating and default</h4>
-            <div data-montage-id="list2" ></div>
+            <div data-mod-id="list2" ></div>
             <h4>Selection Enabled</h4>
-            <div data-montage-id="list3"></div>
+            <div data-mod-id="list3"></div>
             <h4>Multiple Selection Enabled</h4>
-            <div data-montage-id="list4"></div>
+            <div data-mod-id="list4"></div>
         </div>
     </div>
 </body>

@@ -1,15 +1,15 @@
 /**
     @module "./foo.mod"
     @requires montage
-    @requires montage/ui/component
+    @requires mod/ui/component
 */
-var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component;
+var Montage = require("mod/core/core").Montage,
+    Component = require("mod/ui/component").Component;
 
 /**
     Description TODO
     @class module:"./foo.mod".Foo
-    @extends module:montage/ui/component.Component
+    @extends module:mod/ui/component.Component
 */
 exports.Foo = Component.specialize( /** @lends module:"./foo.mod".Foo# */ {
 

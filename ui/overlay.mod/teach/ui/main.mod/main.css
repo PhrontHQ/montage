@@ -28,7 +28,7 @@
 
 }
 
-.overlay.montage-Overlay--visible {
+.overlay.overlay-mod--visible {
     /* -webkit-transform: translate3d( 0, 0px, 0 );
     -moz-transform: translate3d( 0, 0px, 0 );
     -ms-transform: translate3d( 0, 0px, 0 );
@@ -71,6 +71,6 @@
     background: hsl(0,0%,10%) linear-gradient(top, hsla(0,0%,40%,.1), hsla(0,0%,0%,.1) );
 }
 
-.overlay.montage-Overlay--visible {
+.overlay.overlay-mod--visible {
     opacity: 1;
 }

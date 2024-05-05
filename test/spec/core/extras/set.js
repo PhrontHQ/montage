@@ -1,5 +1,5 @@
-var Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
-    Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer;
+var Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+    Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer;
 
 require("montage");
 
@@ -8,7 +8,7 @@ describe("core/extras/set", function () {
     describe("Set#deserializeSelf", function () {
 
             it("can deserialize with entries", function (done) {
-                
+
                 var deserializer = new Deserializer(),
                     values = [],
                     serialization = {
@@ -34,7 +34,7 @@ describe("core/extras/set", function () {
                     console.warn(reason);
                     fail(reason);
                 });
-                
+
             });
 
     });

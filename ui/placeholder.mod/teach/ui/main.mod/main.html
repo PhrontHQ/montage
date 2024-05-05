@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="main.css">
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
         {
             "owner": {
                 "values": {
@@ -13,16 +13,16 @@
             },
 
             "placeholder": {
-                "prototype": "montage/ui/placeholder.mod",
+                "prototype": "mod/ui/placeholder.mod",
                 "values": {
                     "element": {"#": "placeholder"},
-                    "componentModule": {"%": "montage/ui/text.mod"},
+                    "componentModule": {"%": "mod/ui/text.mod"},
                     "component.value": {"<-": "'Message test'"}
                 }
             },
 
             "placeholder1": {
-                "prototype": "montage/ui/placeholder.mod",
+                "prototype": "mod/ui/placeholder.mod",
                 "values": {
                     "element": {"#": "placeholder1"},
                     "componentModule": {"<-": "!!@secondComponent.checked ? @owner.componentModule2 : @owner.componentModule"}
@@ -30,7 +30,7 @@
             },
 
             "placeholder2": {
-                "prototype": "montage/ui/placeholder.mod",
+                "prototype": "mod/ui/placeholder.mod",
                 "values": {
                     "element": {"#": "placeholder2"},
                     "data": {"<-": "!!@secondMessage.checked ? @owner.message2 : @owner.message"},
@@ -39,21 +39,21 @@
             },
 
             "placeholderHidden": {
-                "prototype": "montage/ui/placeholder.mod",
+                "prototype": "mod/ui/placeholder.mod",
                 "values": {
                     "element": {"#": "placeholderHidden"}
                 }
             },
 
             "secondMessage": {
-                "prototype": "montage/ui/checkbox.mod",
+                "prototype": "mod/ui/checkbox.mod",
                 "values": {
                     "element": {"#": "secondMessage"}
                 }
             },
 
             "secondComponent": {
-                "prototype": "montage/ui/checkbox.mod",
+                "prototype": "mod/ui/checkbox.mod",
                 "values": {
                     "element": {"#": "secondComponent"}
                 }
@@ -63,28 +63,28 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="main" class="Main">
+    <div data-mod-id="main" class="Main">
         <header>Teach PlaceHolder Mod</header>
 
         <h4>Options: </h4>
         <div class="options">
             <p>
                 <span>Second Message: </span>
-                <input type="checkbox" data-montage-id="secondMessage" />
+                <input type="checkbox" data-mod-id="secondMessage" />
             </p>
             <p>
                 <span>Second Component: </span>
-                <input type="checkbox" data-montage-id="secondComponent" />
+                <input type="checkbox" data-mod-id="secondComponent" />
             </p>
         </div>
 
         <h4>Use different component module ids</h4>
-        <div data-montage-id="placeholderHidden"></div>
-        <div data-montage-id="placeholder"></div><br />
-        <div data-montage-id="placeholder1"></div>
+        <div data-mod-id="placeholderHidden"></div>
+        <div data-mod-id="placeholder"></div><br />
+        <div data-mod-id="placeholder1"></div>
 
         <h4>Use an User Interface descriptor</h4>
-        <div data-montage-id="placeholder2"></div>
+        <div data-mod-id="placeholder2"></div>
 
     </div>
 </body>

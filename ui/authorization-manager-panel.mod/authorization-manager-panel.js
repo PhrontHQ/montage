@@ -2,7 +2,7 @@ var Component = require("ui/component").Component,
     Promise  = require("core/promise").Promise,
     application = require("core/application").application,
     Map = require("core/collections/map"),
-    Montage = require("montage").Montage;
+    Montage = require("core/core").Montage;
 
 /**
  * @class Main

@@ -30,7 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 exports = typeof exports !== "undefined" ? exports : {};
 
-var Montage = require("montage").Montage;
+var Montage = require("mod/core/core").Montage;
 var ComponentMother = require("reel/template/componentmother.mod").ComponentMother;
 
 

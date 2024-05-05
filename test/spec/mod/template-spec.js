@@ -2,16 +2,16 @@
 Copyright (c) 2013, António Afonso
 All Rights Reserved.
 </copyright> */
-var Montage = require("montage").Montage,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader,
-    Template = require("montage/core/template").Template,
-    DocumentPart = require("montage/core/document-part").DocumentPart,
-    TemplateResources = require("montage/core/template").TemplateResources,
-    Component = require("montage/ui/component").Component,
-    MontageLabeler = require("montage/core/serialization/serializer/montage-labeler").MontageLabeler,
-    Promise = require("montage/core/promise").Promise,
+var Montage = require("mod/core/core").Montage,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader,
+    Template = require("mod/core/template").Template,
+    DocumentPart = require("mod/core/document-part").DocumentPart,
+    TemplateResources = require("mod/core/template").TemplateResources,
+    Component = require("mod/ui/component").Component,
+    MontageLabeler = require("mod/core/serialization/serializer/montage-labeler").MontageLabeler,
+    Promise = require("mod/core/promise").Promise,
     objects = require("spec/serialization/testobjects-v2").objects,
-    URL = require("montage/core/mini-url");
+    URL = require("mod/core/mini-url");
 
 var DelegateMethods = require("spec/mod/template/delegate-methods").DelegateMethods;
 
@@ -66,7 +66,7 @@ describe("spec/mod/template-spec", function () {
             var html = require("spec/mod/template/simple-template.html").content,
                 expectedObjects = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "element": {"#": "text"},
                             "value": "Hello, World!"
@@ -81,7 +81,7 @@ describe("spec/mod/template-spec", function () {
                 expect(objects).toEqual(expectedObjects);
                 expect(children.length).toBe(1);
                 // there must be a better way to compare DOM tree's...
-                expect(children[0].outerHTML).toBe('<span data-montage-id="text"></span>');
+                expect(children[0].outerHTML).toBe('<span data-mod-id="text"></span>');
             }, function(reason) {
                 fail(reason);
             }).finally(function () {
@@ -94,7 +94,7 @@ describe("spec/mod/template-spec", function () {
                 htmlDocument = document.implementation.createHTMLDocument(""),
                 expectedObjects = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "element": {"#": "text"},
                             "value": "Hello, World!"
@@ -111,7 +111,7 @@ describe("spec/mod/template-spec", function () {
                 expect(objects).toEqual(expectedObjects);
                 expect(children.length).toBe(1);
                 // there must be a better way to compare DOM tree's...
-                expect(children[0].outerHTML).toBe('<span data-montage-id="text"></span>');
+                expect(children[0].outerHTML).toBe('<span data-mod-id="text"></span>');
             }, function(reason) {
                 fail(reason);
             }).finally(function () {
@@ -125,7 +125,7 @@ describe("spec/mod/template-spec", function () {
                 objects,
                 expectedObjects = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "element": {"#": "text"},
                             "value": "Hello, World!"
@@ -134,7 +134,7 @@ describe("spec/mod/template-spec", function () {
                 };
 
             fragment.appendChild(document.createElement("span"))
-                .setAttribute("data-montage-id", "text");
+                .setAttribute("data-mod-id", "text");
 
             template.initWithObjectsAndDocumentFragment(expectedObjects, fragment);
 
@@ -144,14 +144,14 @@ describe("spec/mod/template-spec", function () {
             expect(objects).toEqual(expectedObjects);
             expect(children.length).toBe(1);
             // there must be a better way to compare DOM tree's...
-            expect(children[0].outerHTML).toBe('<span data-montage-id="text"></span>');
+            expect(children[0].outerHTML).toBe('<span data-mod-id="text"></span>');
         });
 
         it("should initialize document and objects with a module id", function (done) {
             var moduleId = "spec/mod/template/simple-template.html",
                 expectedObjects = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "element": {"#": "text"},
                             "value": "Hello, World!"
@@ -166,7 +166,7 @@ describe("spec/mod/template-spec", function () {
                 expect(objects).toEqual(expectedObjects);
                 expect(children.length).toBe(1);
                 // there must be a better way to compare DOM tree's...
-                expect(children[0].outerHTML).toBe('<span data-montage-id="text"></span>');
+                expect(children[0].outerHTML).toBe('<span data-mod-id="text"></span>');
             }, function(reason) {
                 fail(reason);
             }).finally(function () {
@@ -224,7 +224,7 @@ describe("spec/mod/template-spec", function () {
                 },
 
                 "repetition": {
-                    "prototype": "montage/ui/repetition.mod",
+                    "prototype": "mod/ui/repetition.mod",
                     "values": {
                         "element": {"#": "repetition"}
                     }
@@ -243,7 +243,7 @@ describe("spec/mod/template-spec", function () {
                 fragment = document.createDocumentFragment();
 
             fragment.appendChild(div)
-                .setAttribute("data-montage-id", "text");
+                .setAttribute("data-mod-id", "text");
 
             template.initWithHtml(html, require).then(function () {
                 return template._instantiateObjects(null, fragment)
@@ -265,7 +265,7 @@ describe("spec/mod/template-spec", function () {
             var moduleId = "spec/mod/template/external-objects-file.html",
                 expectedSerialization = {
                     "text": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "element": {"#": "text"},
                             "value": "Hello, World!"
@@ -308,7 +308,7 @@ describe("spec/mod/template-spec", function () {
             expect(objects).toEqual(expectedObjects);
             expect(children.length).toBe(1);
             // there must be a better way to compare DOM tree's...
-            expect(children[0].outerHTML).toBe('<span data-montage-id="text"></span>');
+            expect(children[0].outerHTML).toBe('<span data-mod-id="text"></span>');
         });
 
         it("should clone the markup out of the document", function (done) {
@@ -323,7 +323,7 @@ describe("spec/mod/template-spec", function () {
                 element.appendChild(fragment);
 
                 expect(element.children.length).toBe(1);
-                expect(element.children[0].outerHTML).toBe('<span data-montage-id="text"></span>');
+                expect(element.children[0].outerHTML).toBe('<span data-mod-id="text"></span>');
                 expect(element.children[0]).not.toBe(children[0]);
            }, function(reason) {
                 fail(reason);
@@ -372,8 +372,8 @@ describe("spec/mod/template-spec", function () {
 
             collisionTable = template.insertNodeBefore(node, reference);
             expectedCollisionTable = {
-                "repetition": node.getAttribute("data-montage-id"),
-                "title": title.getAttribute("data-montage-id")
+                "repetition": node.getAttribute("data-mod-id"),
+                "title": title.getAttribute("data-mod-id")
             };
 
             expect(collisionTable).toEqual(jasmine.objectContaining(expectedCollisionTable));
@@ -678,7 +678,7 @@ describe("spec/mod/template-spec", function () {
                     element.appendChild(documentPart.fragment);
 
                     expect(element.children.length).toBe(1);
-                    expect(element.children[0].outerHTML).toBe('<span data-montage-id="text"></span>');
+                    expect(element.children[0].outerHTML).toBe('<span data-mod-id="text"></span>');
                 })
             }, function(reason) {
                 fail(reason);
@@ -1227,7 +1227,7 @@ describe("spec/mod/template-spec", function () {
             var moduleId = "spec/mod/template/sub-template.html",
                 expectedObjects = {
                     "item": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "element": {"#": "item"}
                         }
@@ -1253,13 +1253,13 @@ describe("spec/mod/template-spec", function () {
             var moduleId = "spec/mod/template/sub-template.html",
                 expectedObjects = {
                     "list": {
-                        "prototype": "montage/ui/repetition.mod",
+                        "prototype": "mod/ui/repetition.mod",
                         "values": {
                             "element": {"#": "list"}
                         }
                     },
                     "item": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "element": {"#": "item"}
                         }
@@ -1285,21 +1285,21 @@ describe("spec/mod/template-spec", function () {
             var moduleId = "spec/mod/template/sub-template.html",
                 expectedObjects = {
                     "row": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "element": {"#": "row"}
                         }
                     },
 
                     "columns": {
-                        "prototype": "montage/ui/repetition.mod",
+                        "prototype": "mod/ui/repetition.mod",
                         "values": {
                             "element": {"#": "columns"}
                         }
                     },
 
                     "column": {
-                        "prototype": "montage/ui/text.mod",
+                        "prototype": "mod/ui/text.mod",
                         "values": {
                             "element": {"#": "column"}
                         }
@@ -1325,7 +1325,7 @@ describe("spec/mod/template-spec", function () {
 
     describe("document (live) templates", function () {
         it("should instantiate in a live page", function (done) {
-            var module = require("montage/core/template");
+            var module = require("mod/core/template");
 
             createPage("spec/mod/template/simple-template.html").then(function (page) {
                 return module.instantiateDocument(page.document, require)
@@ -1343,7 +1343,7 @@ describe("spec/mod/template-spec", function () {
         });
 
         it("should instantiate in a live page with instances", function (done) {
-            var module = require("montage/core/template"),
+            var module = require("mod/core/template"),
                 instances = {
                     text: {}
                 };

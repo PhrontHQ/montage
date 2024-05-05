@@ -1,7 +1,7 @@
 {
     "mappings": {
-        "montage": {
-            "name": "montage",
+        "mod": {
+            "name": "mod",
             "location": "../../../../"
         }
     }

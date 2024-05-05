@@ -21,10 +21,10 @@ var Slot = require("../slot.mod").Slot,
  *
  * ##### Example - Declaring the substitution content
  * ```html
- * <div data-montage-id="substitution">
- *     <div data-arg="info" data-montage-id="infoPanel"></div>
- *     <div data-arg="contacts" data-montage-id="contactsPanel"></div>
- *     <div data-arg="review" data-montage-id="reviewPanel"></div>
+ * <div data-mod-id="substitution">
+ *     <div data-arg="info" data-mod-id="infoPanel"></div>
+ *     <div data-arg="contacts" data-mod-id="contactsPanel"></div>
+ *     <div data-arg="review" data-mod-id="reviewPanel"></div>
  * </div>
  * ```
  * `info`, `contacts` and `review` are the types of content declared and
@@ -35,7 +35,7 @@ var Slot = require("../slot.mod").Slot,
  *
  * ##### Example - Other substitution template configurations
  * ```html
- * <div data-montage-id="substitution">
+ * <div data-mod-id="substitution">
  *     <div data-arg="info">
  *         Name: John Doe
  *     </div>

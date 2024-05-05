@@ -1,5 +1,5 @@
 /**
- * @module "montage/ui/condition.mod"
+ * @module "mod/ui/condition.mod"
  */
 var Component = require("../component").Component,
     logger = require("../../core/logger").logger("condition");
@@ -125,14 +125,14 @@ exports.Condition = Component.specialize( /** @lends Condition.prototype # */ {
      * the DOM.
      *
      * A value of `hide` will make the condition hide its contents through CSS
-     * using the `montage-invisible` class while keeping them on the DOM. Apps using
-     * `hide` should declare the `montage-invisible` class
+     * using the `mod-invisible` class while keeping them on the DOM. Apps using
+     * `hide` should declare the `mod-invisible` class
      * which will be applied to elements.
      *
      * Example:
      *
      * ```css
-     * .montage-invisible {
+     * .mod-invisible {
      *   display: none;
      * }
      * ```
@@ -157,9 +157,9 @@ exports.Condition = Component.specialize( /** @lends Condition.prototype # */ {
     draw: {
         value: function () {
             if (this.condition) {
-                this.element.classList.remove("montage-invisible");
+                this.element.classList.remove("mod-invisible");
             } else {
-                this.element.classList.add("montage-invisible");
+                this.element.classList.add("mod-invisible");
             }
 
            if (this._needsClearDomContent) {

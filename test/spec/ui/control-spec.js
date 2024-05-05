@@ -1,4 +1,4 @@
-var Control = require("montage/ui/control").Control;
+var Control = require("mod/ui/control").Control;
 
 describe("test/ui/control-spec", function () {
     var control;

@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    AbstractRadioButton = require("montage/ui/base/abstract-radio-button").AbstractRadioButton,
+var Montage = require("mod/core/core").Montage,
+    AbstractRadioButton = require("mod/ui/base/abstract-radio-button").AbstractRadioButton,
     MockDOM = require("mocks/dom");
 
 AbstractRadioButton.prototype.hasTemplate = false;
@@ -57,7 +57,7 @@ describe("test/base/abstract-radio-button-spec", function () {
             it("should add the corresponding class name to classList when checked", function () {
                 aRadioButton.checked = true;
 
-                expect(aRadioButton.classList.contains("montage-RadioButton--checked")).toBe(true);
+                expect(aRadioButton.classList.contains("mod-RadioButton--checked")).toBe(true);
             });
         });
 
@@ -94,7 +94,7 @@ describe("test/base/abstract-radio-button-spec", function () {
             it("should add the corresponding class name to classList when enabled is false", function () {
                 aRadioButton.enabled = false;
 
-                expect(aRadioButton.classList.contains("montage--disabled")).toBe(true);
+                expect(aRadioButton.classList.contains("mod--disabled")).toBe(true);
             });
         });
 
@@ -135,7 +135,7 @@ describe("test/base/abstract-radio-button-spec", function () {
             it("should add the corresponding class name to classList when active", function () {
                 aRadioButton.active = true;
 
-                expect(aRadioButton.classList.contains("montage--active")).toBe(true);
+                expect(aRadioButton.classList.contains("mod--active")).toBe(true);
             });
         });
     });

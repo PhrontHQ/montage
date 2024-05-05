@@ -1,6 +1,6 @@
-var Component = require("montage/ui/component").Component,
-    MockService = require('montage/test/mocks/data/services/mock-service').MockService,
-    customerUIDescriptor = require('montage/test/mocks/data/models/customer-ui-descriptor.mjson').montageObject;
+var Component = require("mod/ui/component").Component,
+    MockService = require('mod/test/mocks/data/services/mock-service').MockService,
+    customerUIDescriptor = require('mod/test/mocks/data/models/customer-ui-descriptor.mjson').montageObject;
 
 exports.Main = Component.specialize(/** @lends Main# */{
 
@@ -8,8 +8,8 @@ exports.Main = Component.specialize(/** @lends Main# */{
         value: function () {
             this.mockService = new MockService();
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-                length,    
-                strings = [],    
+                length,
+                strings = [],
                 text;
 
 
@@ -30,5 +30,5 @@ exports.Main = Component.specialize(/** @lends Main# */{
             this.customerUIDescriptor = customerUIDescriptor;
         }
     }
-  
+
 });

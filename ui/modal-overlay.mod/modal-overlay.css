@@ -1,3 +1,4 @@
+.modalOverlay-mod-modalMask,
 .montage-ModalOverlay-modalMask {
     display: none;
     position: absolute;
@@ -9,6 +10,7 @@
     background-color: gray;
 }
 
+.ModalOverlay-mod-modalMask--visible,
 .montage-ModalOverlay-modalMask--visible {
     display: block;
 }

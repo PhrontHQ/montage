@@ -1,5 +1,5 @@
 
-var Browser = require("montage/core/browser").Browser;
+var Browser = require("mod/core/browser").Browser;
 
 describe("core/browser-spec", function () {
     var browser;

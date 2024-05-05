@@ -1,5 +1,5 @@
 /*global require,exports,describe,beforeEach,it,expect,waits,waitsFor,runs,spyOn */
-var ModuleReference = require("montage/core/module-reference").ModuleReference;
+var ModuleReference = require("mod/core/module-reference").ModuleReference;
 
 describe("core/module-reference-spec", function () {
     var ref;
@@ -66,7 +66,7 @@ describe("core/module-reference-spec", function () {
         it("returns a id for the module from a dependant package", function () {
             var montageRequire = require.getPackage({name: "montage"});
             ref.initWithIdAndRequire("core/module-reference", montageRequire);
-            expect(ref.resolve(require)).toBe("montage/core/module-reference");
+            expect(ref.resolve(require)).toBe("mod/core/module-reference");
         });
 
     });

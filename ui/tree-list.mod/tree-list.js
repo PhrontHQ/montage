@@ -973,7 +973,7 @@ var TreeList = exports.TreeList = Component.specialize(/** @lends TreeList.proto
                     // Delegate Method for ghost element?
                     var draggingElement = this._findTreeNodeElementWithNode(this._draggingTreeNode);
                     this._ghostElement = draggingElement.cloneNode(true);
-                    this._ghostElement.classList.add("montage-TreeList-ghostImage");
+                    this._ghostElement.classList.add("mod-TreeList-ghostImage");
                     document.body.appendChild(this._ghostElement);
                     this._needsToWaitforGhostElementBoundaries = true;
                     this.needsDraw = true;

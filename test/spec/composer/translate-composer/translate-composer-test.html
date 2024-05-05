@@ -34,10 +34,10 @@ POSSIBILITY OF SUCH DAMAGE.
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Translate Composer Test</title>
     <script type="text/javascript" src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">{
+    <script type="text/mod-serialization">{
 
     "translateComposer": {
-        "prototype": "montage/composer/translate-composer",
+        "prototype": "mod/composer/translate-composer",
         "values": {
             "component": {"@": "example"},
             "maxTranslateX": 350,
@@ -48,21 +48,21 @@ POSSIBILITY OF SUCH DAMAGE.
         }
     },
     "example": {
-        "prototype": "montage/ui/text.mod",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "example"},
             "value": "hi"
         }
     },
     "outermover": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "outermover"},
             "hasTemplate": false
         }
     },
     "outermoverComposer": {
-        "prototype": "montage/composer/translate-composer",
+        "prototype": "mod/composer/translate-composer",
         "values": {
             "component": {"@": "outermover"},
             "maxTranslateX": 200,
@@ -74,7 +74,7 @@ POSSIBILITY OF SUCH DAMAGE.
         }
     },
     "innermover": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "innermover"},
             "hasTemplate": false
@@ -82,7 +82,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
     },
     "innermoverComposer": {
-        "prototype": "montage/composer/translate-composer",
+        "prototype": "mod/composer/translate-composer",
         "values": {
             "component": {"@": "innermover"},
             "maxTranslateX": 150,
@@ -112,7 +112,7 @@ POSSIBILITY OF SUCH DAMAGE.
         }
     },
     "application": {
-        "prototype": "montage/core/application",
+        "prototype": "mod/core/application",
         "values": {
             "delegate": {"@": "test"}
         }
@@ -152,13 +152,13 @@ POSSIBILITY OF SUCH DAMAGE.
     </p>
 
     <div class="wrap">
-        <div class="mover" data-montage-id="example">something</div>
+        <div class="mover" data-mod-id="example">something</div>
     </div>
     <p>
     Nested example, they can be handle simultaniously in a multi touch environment.
     </p>
     <div class="wrap">
-        <div class="outermover" data-montage-id="outermover"><div class="mover" data-montage-id="innermover">nested</div></div>
+        <div class="outermover" data-mod-id="outermover"><div class="mover" data-mod-id="innermover">nested</div></div>
     </div>
 </body>
 </html>

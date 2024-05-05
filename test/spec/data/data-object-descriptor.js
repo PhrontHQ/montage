@@ -1,6 +1,6 @@
-var DataObjectDescriptor = require("montage/data/model/data-object-descriptor").DataObjectDescriptor,
-    DataPropertyDescriptor = require("montage/data/model/data-property-descriptor").DataPropertyDescriptor,
-    Montage = require("montage").Montage;
+var DataObjectDescriptor = require("mod/data/model/data-object-descriptor").DataObjectDescriptor,
+    DataPropertyDescriptor = require("mod/data/model/data-property-descriptor").DataPropertyDescriptor,
+    Montage = require("mod/core/core").Montage;
 
 describe("A DataObjectDescriptor", function() {
 

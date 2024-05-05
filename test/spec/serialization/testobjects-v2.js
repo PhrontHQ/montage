@@ -30,9 +30,9 @@ POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 exports = typeof exports !== "undefined" ? exports : {};
 
-var Montage = require("montage").Montage,
-    Target = require("montage/core/target").Target,
-    Uuid = require("montage/core/uuid").Uuid;
+var Montage = require("mod/core/core").Montage,
+    Target = require("mod/core/target").Target,
+    Uuid = require("mod/core/uuid").Uuid;
 
 exports.Empty = Montage.specialize( {});
 

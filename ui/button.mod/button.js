@@ -41,7 +41,7 @@ b1.addEventListener("action", function(event) {
         "prototype": "appListener"
     }
 }
-&lt;button data-montage-id="btnElement"></button>
+&lt;button data-mod-id="btnElement"></button>
 */
 var Button = exports.Button = class Button extends Control { /** @lends module:"mod/ui/native/button.mod".Button# */
 }
@@ -152,7 +152,7 @@ Button.addClassProperties( {
             var self = this;
             var test = function promiseResolved(){
                             if (promiseResolved.promise === self._promise){
-                                self.classList.remove('montage--pending');
+                                self.classList.remove('mod--pending');
                                 self._promise = undefined;
                             }
                         };
@@ -161,7 +161,7 @@ Button.addClassProperties( {
                 this._promise = value;
 
                 if (this._promise){
-                    this.classList.add('montage--pending');
+                    this.classList.add('mod--pending');
                     test.promise = value;
                     this._promise.then(test);
                 }
@@ -385,7 +385,7 @@ Button.addClassProperties( {
                     // }
                 }
 
-                //this.classList.add("montage-Button");
+                //this.classList.add("mod-Button");
                 this.element.setAttribute("role", "button");
                 this.element.addEventListener("keyup", this, false);
             }
