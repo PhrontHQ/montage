@@ -147,7 +147,7 @@ describe("ui/modal-overlay-spec", function () {
             aModalOverlay.willDraw();
             aModalOverlay.draw();
 
-            expect(aModalOverlay.modalMaskElement.classList.contains("ModalOverlay-mod-modalMask--visible")).toBe(true);
+            expect(aModalOverlay.modalMaskElement.classList.contains(`${aModalOverlay.elementCSSClassName}-modalMask--visible`)).toBe(true);
         });
 
         it("should hide the modal mask", function () {
@@ -155,7 +155,7 @@ describe("ui/modal-overlay-spec", function () {
 
             aModalOverlay.draw();
 
-            expect(aModalOverlay.modalMaskElement.classList.contains("ModalOverlay-mod-modalMask--visible")).toBe(false);
+            expect(aModalOverlay.modalMaskElement.classList.contains(`${aModalOverlay.elementCSSClassName}-modalMask--visible`)).toBe(false);
         });
     });
 });

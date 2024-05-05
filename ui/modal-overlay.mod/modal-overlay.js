@@ -14,6 +14,11 @@ var CLASS_PREFIX = "modalOverlay-mod";
  */
 var ModalOverlay = exports.ModalOverlay = Overlay.specialize(/** @lends ModalOverlay.prototype # */ {
 
+    elementCSSClassName: {
+        value: "modalOverlay-mod"
+    },
+
+
     enterDocument: {
         value: function (firstTime) {
             var body;
@@ -128,9 +133,9 @@ var ModalOverlay = exports.ModalOverlay = Overlay.specialize(/** @lends ModalOve
             this.super();
 
             if (this._isShown && this.hasModalMask) {
-                this.modalMaskElement.classList.add(CLASS_PREFIX + "-modalMask--visible");
+                this.modalMaskElement.classList.add(`${this.elementCSSClassName}-modalMask--visible`);
             } else {
-                this.modalMaskElement.classList.remove(CLASS_PREFIX + "-modalMask--visible");
+                this.modalMaskElement.classList.remove(`${this.elementCSSClassName}-modalMask--visible`);
             }
         }
     }
