@@ -1,4 +1,3 @@
-var montage = require("montage");
 var locale = require("mod/core/messageformat-locale");
 
 var MessageFormat = {
