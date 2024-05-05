@@ -1469,7 +1469,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
 
             if (isNewTarget && typeof target.nativeAddEventListener === "function") {
             //if (targetEntryForEventType.size === 1 && typeof target.nativeAddEventListener === "function") {
-                    this._observeTarget_forEventType_(target, eventType);
+                    this._observeTarget_forEventType_(target, eventType, listenerOptions);
             }
         }
     },
@@ -1789,7 +1789,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
      */
     _observeTarget_forEventType_: {
         enumerable: false,
-        value: function (target, eventType) {
+        value: function (target, eventType, listenerOptions) {
 
             var listenerTarget;
 
