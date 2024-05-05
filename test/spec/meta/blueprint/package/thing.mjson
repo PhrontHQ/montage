@@ -3,7 +3,7 @@
         "object": "dependency/thing.mjson"
     },
     "root": {
-        "prototype": "../../core/meta/module-object-descriptor",
+        "prototype": "mod/core/meta/module-object-descriptor",
         "values": {
             "name": "Thing",
             "module": {
