@@ -30,7 +30,7 @@
         }
     },
     "locale_descriptor": {
-        "object": "montage/core/locale.mjson"
+        "object": "mod/core/locale.mjson"
     },
 
     "localization": {

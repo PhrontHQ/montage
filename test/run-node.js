@@ -43,7 +43,7 @@ jasmineEnv.addReporter({
 Montage.loadPackage(PATH.join(__dirname, "."), {
     mainPackageLocation: PATH.join(__dirname, "../")
 })
-// Preload montage to avoid montage-testing/montage to be loaded
+// Preload montage to avoid mod-testing/montage to be loaded
 .then(function (mr) {
     return mr.async('montage').then(function (montage) {
          return mr;

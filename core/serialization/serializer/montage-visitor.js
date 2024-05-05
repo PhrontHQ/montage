@@ -9,6 +9,7 @@ var Montage = require("../../core").Montage,
 
 var MontageVisitor = Montage.specialize({
     _MONTAGE_ID_ATTRIBUTE: {value: "data-montage-id"},
+    _MOD_ID_ATTRIBUTE: {value: "data-mod-id"},
     _require: {value: null},
     _units: {value: null},
     _elements: {value: null},
@@ -78,14 +79,14 @@ var MontageVisitor = Montage.specialize({
             var elementReference,
                 id;
 
-            id = element.getAttribute(this._MONTAGE_ID_ATTRIBUTE);
+            id = element.getAttribute(this._MOD_ID_ATTRIBUTE) || element.getAttribute(this._MONTAGE_ID_ATTRIBUTE);
 
             if (id) {
                 elementReference = this.builder.createElementReference(id);
                 this.storeValue(elementReference, element, name);
                 this._elements.push(element);
             } else {
-                throw new Error("Not possible to serialize a DOM element with no " + this._MONTAGE_ID_ATTRIBUTE + " assigned: " + element.outerHTML);
+                throw new Error("Not possible to serialize a DOM element with no " + this._MOD_ID_ATTRIBUTE + " nor " + this._MONTAGE_ID_ATTRIBUTE + " assigned: " + element.outerHTML);
             }
         }
     },
@@ -378,7 +379,7 @@ var MontageVisitor = Montage.specialize({
                 objectInfo = Montage.getInfoForObject(object);
             }
 
-            if(!objectInfo.require.isMainPackage() && objectInfo.packageName !== "montage" && !moduleId.startsWith(objectInfo.packageName)) {
+            if(!objectInfo.require.isMainPackage() && objectInfo.packageName !== "mod" && !moduleId.startsWith(objectInfo.packageName)) {
                 var _moduleId = objectInfo.packageName;
                 _moduleId += "/";
                 moduleId = (_moduleId += moduleId);

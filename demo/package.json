@@ -2,9 +2,9 @@
     "name": "montage-demo",
     "version": "1.0.0",
     "dependencies": {
-        "montage": "*"
+        "mod": "*"
     },
      "mappings": {
-        "montage": "../"
+        "mod": "../"
     }
 }

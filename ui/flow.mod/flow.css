@@ -1,4 +1,4 @@
-.montage-Flow {
+.flow-mod, .montage-Flow {
     position: absolute;
     top: 0;
     left: 0;
@@ -11,8 +11,8 @@
     transform: translateZ(0);
 }
 
-.montage-Flow-camera,
-.montage-Flow-Repetition {
+.flow-mod-camera, .montage-Flow-camera,
+.flow-mod-repetition, .montage-Flow-Repetition {
     position: absolute;
     top: 0;
     left: 0;
@@ -28,7 +28,9 @@
     transform: translateZ(0);
 }
 
+.flow-mod-repetition .no-transition,
 .montage-Flow-Repetition .no-transition,
+.flow-mod-repetition .no-transition *,
 .montage-Flow-Repetition .no-transition * {
     -webkit-transition: none !important;
     -moz-transition: none !important;
@@ -36,6 +38,7 @@
     transition: none !important;
 }
 
+.flow-mod-repetition > div,
 .montage-Flow-Repetition > div {
     position: absolute;
     top: 50%;
@@ -53,7 +56,8 @@
     transform-style: preserve-3d;
 }
 
-.montage-Flow.camera-disabled .montage-Flow-Repetition > div {
+.flow-mod.camera-disabled .flow-mod-repetition > div,
+.montage-Flow.camera-disabled .montage-Flow-Repetition > div{
     position: absolute;
     top: 0;
     left: 0;
@@ -63,6 +67,7 @@
     height: auto;
 }
 
+.flow-mod-slot,
 .montage-Flow-Slot {
     position: absolute;
     top: 50%;
@@ -73,7 +78,9 @@
     transform: translate3d(-50%, -50%, 0);
 }
 
+.flow-mod.camera-disabled .flow-mod-repetition > div,
 .montage-Flow.camera-disabled .montage-Flow-Repetition > div,
+.flow-mod.camera-disabled .flow-mod-slot,
 .montage-Flow.camera-disabled .montage-Flow-Slot {
     top: 0;
     left: 0;

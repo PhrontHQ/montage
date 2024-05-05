@@ -1069,7 +1069,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                 - in node (we don't use mop there yet)
             this allows us to load bluebird only once, which is done in bootsrtapping, but can be required after.
         */
-        if(config.name === "montage") {
+        if(config.name === "mod" || config.name === "montage") {
             inject("bluebird", Promise);
         }
 
@@ -1912,8 +1912,9 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
 
         return function reelLoader(id, module) {
             if (id.endsWith(dotREEL)) {
-                if(module.require.config.name === "montage") {
-                    module.redirect = `${id.substr(0,id.length-4)}${mod}/${reelExpression.exec(id)[1]}`;
+                //if(module.require.config.name === "mod" || module.require.config.name === "montage") {
+                if(id.startsWith("mod") || id.startsWith("montage")) {
+                        module.redirect = `${id.substr(0,id.length-4)}${mod}/${reelExpression.exec(id)[1]}`;
                     module.extension = mod;
                     return module;
 

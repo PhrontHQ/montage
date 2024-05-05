@@ -1,7 +1,7 @@
 /*global require, exports, console, MontageElement */
 
 /**
- * @module "montage/ui/flow.mod"
+ * @module "mod/ui/flow.mod"
  */
 var Component = require("../component").Component,
     observeProperty = require("core/frb/observers").observeProperty,
@@ -2204,5 +2204,5 @@ var Flow = exports.Flow = Component.specialize( /** @lends Flow.prototype # */ {
 });
 
 if (window.MontageElement) {
-    MontageElement.define("montage-flow", Flow);
+    MontageElement.define("flow-mod", Flow);
 }

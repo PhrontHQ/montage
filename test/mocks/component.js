@@ -1,7 +1,7 @@
-var Set = require("montage/core/collections/set"),
+var Set = require("mod/core/collections/set"),
     Event = require("./event"),
-    Component = require("montage/ui/component").Component,
-    defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
+    Component = require("mod/ui/component").Component,
+    defaultEventManager = require("mod/core/event/event-manager").defaultEventManager;
 
 exports.component = function () {
     var eventListeners = {};
