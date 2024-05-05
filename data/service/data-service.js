@@ -4083,6 +4083,8 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
          * supportsDataOperation
          *
          * #WARNING Backward compatibility breaking
+         * TODO: Plan to remove it once more tests are done with
+         * older code base
          *
          * @property {boolean} assess that a DataService supports supportsDataOperations.
          * Legacy ones that don't need to overrides it to false to work as expected
@@ -4526,10 +4528,12 @@ DataService = exports.DataService = Target.specialize(/** @lends DataService.pro
                 /*
                     This a switch for 0% operations vs 100% operations. It should be possible to mix but it's more risky for side effects in older versions.
 
+                    In early versions of montage data, Data Objects and their Object Descriptors did not inherit from Target and therefore didn't respond to the .dispatchEvent() method. So we can use that to for the logic between new and old.
+
                     supportsDataOperation will be determined by all RawDataServices supportsDataOperation
                 */
 
-                if(self.supportsDataOperation) {
+                if(/*self.supportsDataOperation*/query.type.dispatchEvent) {
                     try {
 
                         var readEvent = ReadEvent.checkout();
