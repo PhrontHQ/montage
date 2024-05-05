@@ -82,7 +82,7 @@ var MontageInterpreter = Montage.specialize({
 var idCount = 0;
 var MontageContext = Montage.specialize({
     _ELEMENT_ID_ATTRIBUTE: {value: "data-montage-id"},
-    _ELEMENT_ID_SELECTOR_PREFIX: {value: '*[data-montage-id="'},
+    // _ELEMENT_ID_SELECTOR_PREFIX: {value: '*[data-montage-id="'},
     _ELEMENT_ID_SELECTOR_SUFFIX: {value: '"]'},
     unitsToDeserialize: {value: null},
     _mjsonDependencies: {value: null},
