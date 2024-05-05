@@ -3,7 +3,7 @@
     Based in part on Motorola Mobility’s Montage
     Copyright (c) 2012, Motorola Mobility LLC. All Rights Reserved.
     3-Clause BSD License
-    https://github.com/motorola-mobility/montage/blob/master/LICENSE.md
+    https://github.com/motorola-mobility/mod/blob/master/LICENSE.md
 */
 /*jshint node:true */
 var Require = require("./require");
@@ -13,7 +13,7 @@ var Promise = require("bluebird");
 var FS = require("fs");
 var PATH = require("path");
 
-Require.overlays = ["node", "server", "montage"];
+Require.overlays = ["node", "server", "mod"];
 
 var bootstrap = function () {
     var command = process.argv.slice(0, 3);
