@@ -171,11 +171,12 @@ exports.DataObjectDescriptor = ObjectDescriptor.specialize(/** @lends DataObject
                 parsed = this._parseGetterForArguments.apply(this, arguments),
                 getter = ObjectDescriptor.getterFor.call(this, parsed.exports, parsed.name, parsed.types);
             return function () {
-                
+
                 if (!this.hasOwnProperty("_TYPE")) {
                     this._TYPE = getter.call(this);
                     this._TYPE.identifierNames = parsed.identifiers;
                     this._TYPE._addRelationships(parsed.relationships);
+                    this._TYPE.object = parsed.exports[constructorName];
                 }
 
                 return this._TYPE;
