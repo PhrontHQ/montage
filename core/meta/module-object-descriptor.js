@@ -31,7 +31,10 @@ var OBJECT_DESCRIPTOR_CACHE = Object.create(null);
  * @class ModuleObjectDescriptor
  * @extends ObjectDescriptor
  */
-var ModuleObjectDescriptor = exports.ModuleObjectDescriptor = ObjectDescriptor.specialize(/** @lends ModuleObjectDescriptor# */ {
+var ModuleObjectDescriptor = exports.ModuleObjectDescriptor = class ModuleObjectDescriptor extends ObjectDescriptor {/** @lends ModuleObjectDescriptor */
+}
+
+ModuleObjectDescriptor.addClassProperties({
 
     /**
      * @function
