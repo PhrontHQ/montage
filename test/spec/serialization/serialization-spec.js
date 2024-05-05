@@ -2,9 +2,9 @@
 Copyright (c) 2013, António Afonso
 All Rights Reserved.
 </copyright> */
-var Montage = require("montage").Montage,
-    Serialization = require("montage/core/serialization/serialization").Serialization,
-    Promise = require("montage/core/promise").Promise;
+var Montage = require("mod/core/core").Montage,
+    Serialization = require("mod/core/serialization/serialization").Serialization,
+    Promise = require("mod/core/promise").Promise;
 
 describe("reel/serialization/serialization-spec", function () {
     var serialization;

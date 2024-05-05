@@ -1,0 +1,25 @@
+{
+    "converter_descriptor": {
+        "object": "./converter.mjson"
+    },
+    "root": {
+        "prototype": "../module-object-descriptor",
+        "values": {
+            "name": "ISO8601DurationRangeStringToDurationRangeConverter",
+            "customPrototype": false,
+            "parent": {
+                "@": "converter_descriptor"
+            },
+            "propertyDescriptors": [],
+            "propertyDescriptorGroups": {},
+            "propertyValidationRules": {},
+            "objectDescriptorModule": {
+                "%": "./i-s-o-8601-duration-range-string-to-duration-range-converter.mjson"
+            },
+            "exportName": "ISO8601DurationRangeStringToDurationRangeConverter",
+            "module": {
+                "%": "./i-s-o-8601-duration-range-string-to-duration-range-converter"
+            }
+        }
+    }
+}

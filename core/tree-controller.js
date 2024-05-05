@@ -1,7 +1,6 @@
 var Montage = require("./core").Montage,
-    WeakMap = require("collections/weak-map"),
-    parse = require("frb/parse"),
-    evaluate = require("frb/evaluate");
+    parse = require("core/frb/parse"),
+    evaluate = require("core/frb/evaluate");
 
 var TreeNode = exports.TreeNode = Montage.specialize({
 

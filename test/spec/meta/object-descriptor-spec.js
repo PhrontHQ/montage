@@ -1,27 +1,27 @@
 "use strict";
 /**
- @module montage/data/object-descriptor-spec.js
- @requires montage/core/core
- @requires montage/core/logger
+ @module mod/data/object-descriptor-spec.js
+ @requires mod/core/core
+ @requires mod/core/logger
  */
-var Montage = require("montage").Montage;
-var ObjectDescriptor = require("montage/core/meta/object-descriptor").ObjectDescriptor;
-var Model = require("montage/core/meta/model").Model;
-var PropertyDescriptor = require("montage/core/meta/property-descriptor").PropertyDescriptor;
-var Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer;
-var Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
+var Montage = require("mod/core/core").Montage;
+var ObjectDescriptor = require("mod/core/meta/object-descriptor").ObjectDescriptor;
+var Model = require("mod/core/meta/model").Model;
+var PropertyDescriptor = require("mod/core/meta/property-descriptor").PropertyDescriptor;
+var Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer;
+var Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
 var ModelHelper = require("./blueprint/model-helper").ModelHelper;
 var Person = require("./blueprint/person").Person;
 var Company = require("./blueprint/company").Company;
 var Employee = require("./blueprint/employee").Employee;
 var Customer = require("./blueprint/customer").Customer;
-var logger = require("montage/core/logger").logger("./object-descriptor-spec.js");
+var logger = require("mod/core/logger").logger("./object-descriptor-spec.js");
 
 // Require to deserialize
 // TODO add proper deps to montage modules
-require('montage/core/meta/object-descriptor');
-require('montage/core/meta/property-descriptor');
-require('montage/core/meta/module-object-descriptor');
+require('mod/core/meta/object-descriptor');
+require('mod/core/meta/property-descriptor');
+require('mod/core/meta/module-object-descriptor');
 
 describe("meta/object-descriptor-spec", function () {
     describe("Model", function () {
@@ -66,7 +66,7 @@ describe("meta/object-descriptor-spec", function () {
 
 
             describe("parent propertyDescriptors", function () {
-                var parent, parentProperty, 
+                var parent, parentProperty,
                     child, childProperty;
 
                 beforeEach(function () {
@@ -77,7 +77,7 @@ describe("meta/object-descriptor-spec", function () {
                 });
 
                 it("can get propertyDescriptor added to parent", function () {
-                    child.parent = parent;                    
+                    child.parent = parent;
                     child.addPropertyDescriptor(childProperty);
                     parent.addPropertyDescriptor(parentProperty);
                     expect(child.propertyDescriptorForName("bar")).toBe(childProperty);
@@ -94,8 +94,8 @@ describe("meta/object-descriptor-spec", function () {
                     parent.addPropertyDescriptor(parentProperty);
 
                     expect(child.propertyDescriptors.length).toBe(1);
-                    
-                    child.parent = parent;  
+
+                    child.parent = parent;
 
                     expect(child.propertyDescriptorForName("bar")).toBe(childProperty);
                     expect(child.propertyDescriptorForName("foo")).toBe(parentProperty);
@@ -106,7 +106,7 @@ describe("meta/object-descriptor-spec", function () {
                     expect(child.propertyDescriptors[1]).toBe(parentProperty);
                 });
             })
-            
+
         });
         describe("associations", function () {
 
@@ -313,10 +313,10 @@ describe("meta/object-descriptor-spec", function () {
             });
 
             it("has the correct module id for the parent", function (done) {
-                var ComponentObjectDescriptorTest1 = require("spec/meta/component-object-descriptor-test/component-object-descriptor-test-1.reel").ComponentObjectDescriptorTest1;
+                var ComponentObjectDescriptorTest1 = require("spec/meta/component-object-descriptor-test/component-object-descriptor-test-1.mod").ComponentObjectDescriptorTest1;
                 ObjectDescriptor.createDefaultObjectDescriptorForObject(ComponentObjectDescriptorTest1).then(function (objectDescriptor) {
                     var id = objectDescriptor.parent.objectDescriptorInstanceModule.resolve(require);
-                    expect(id === "montage/ui/component.meta" || id === "montage/ui/component.mjson").toBeTruthy();
+                    expect(id === "mod/ui/component.mjson" || id === "mod/ui/component.mjson").toBeTruthy();
                 }, function (err) {
                     fail(err);
                 }).finally(function () {
@@ -339,7 +339,7 @@ describe("meta/object-descriptor-spec", function () {
             //});
 
 
-            it("uses the correct module ID for objects with no .meta", function () {
+            it("uses the correct module ID for objects with no .mjson", function () {
                 var Sub = ObjectDescriptor.specialize();
                 // fake object loaded from module
                 Object.defineProperty(Sub, "_montage_metadata", {
@@ -358,12 +358,12 @@ describe("meta/object-descriptor-spec", function () {
                     isInstance: { value: true }
                 });
 
-                expect(sub.objectDescriptorModuleId === "pass.meta" || sub.objectDescriptorModuleId === "pass.mjson").toBeTruthy();
+                expect(sub.objectDescriptorModuleId === "pass.mjson" || sub.objectDescriptorModuleId === "pass.mjson").toBeTruthy();
             });
 
             it("creates an objectDescriptor when the parent has no objectDescriptor", function (done) {
                 ObjectDescriptor.objectDescriptor.then(function (objectDescriptor){
-                    expect( objectDescriptor.objectDescriptorInstanceModule.id === "core/meta/blueprint.meta" ||
+                    expect( objectDescriptor.objectDescriptorInstanceModule.id === "core/meta/blueprint.mjson" ||
                             objectDescriptor.objectDescriptorInstanceModule.id === "core/meta/object-descriptor.mjson").toBeTruthy();
                 }, function (err) {
                     fail(err);
@@ -374,7 +374,7 @@ describe("meta/object-descriptor-spec", function () {
         });
 
         describe("events", function () {
-            var EventDescriptor = require("montage/core/meta/event-descriptor").EventDescriptor;
+            var EventDescriptor = require("mod/core/meta/event-descriptor").EventDescriptor;
 
             var objectDescriptor;
             beforeEach(function () {
@@ -476,7 +476,7 @@ describe("meta/object-descriptor-spec", function () {
                     return objectDescriptor.userInterfaceDescriptor.then(function (userInterfaceDescriptor) {
                         expect(userInterfaceDescriptor).toBeTruthy();
                         expect(userInterfaceDescriptor.descriptionExpression).toBe("department");
-                        expect(userInterfaceDescriptor.inspectorComponentModule.id).toBe("ui/inspectors/employee.reel");
+                        expect(userInterfaceDescriptor.inspectorComponentModule.id).toBe("ui/inspectors/employee.mod");
 
                         return customer.constructor.objectDescriptor.then(function (objectDescriptor) {
                             return objectDescriptor.userInterfaceDescriptor.then(function (userInterfaceDescriptor) {

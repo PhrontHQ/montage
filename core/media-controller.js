@@ -1,10 +1,11 @@
 /**
- * @module montage/ui/controller/media-controller
- * @requires montage/core/core
- * @requires montage/ui/component
- * @requires montage/core/logger
+ * @module mod/ui/controller/media-controller
+ * @requires mod/core/core
+ * @requires mod/ui/component
+ * @requires mod/core/logger
  */
 var Target = require("./target").Target,
+    core = require("./core"),
     logger = require("./logger").logger("mediacontroller");
 
 /**
@@ -616,12 +617,12 @@ var MediaController = exports.MediaController = Target.specialize(/** @lends Med
     }
 
 }, {
-    blueprintModuleId:require("./core")._blueprintModuleIdDescriptor,
+    blueprintModuleId:core._blueprintModuleIdDescriptor,
 
-    blueprint:require("./core")._blueprintDescriptor,
+    blueprint:core._blueprintDescriptor,
 
-    objectDescriptorModuleId:require("./core")._objectDescriptorModuleIdDescriptor,
+    objectDescriptorModuleId:core._objectDescriptorModuleIdDescriptor,
 
-    objectDescriptor:require("./core")._objectDescriptorDescriptor
+    objectDescriptor:core._objectDescriptorDescriptor
 
 });

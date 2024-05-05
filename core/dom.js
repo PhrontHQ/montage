@@ -1,6 +1,6 @@
 /**
- * @module montage/core/dom
- * @requires montage/core/extras/dom
+ * @module mod/core/dom
+ * @requires mod/core/extras/dom
  */
 
  // Load dom extentions

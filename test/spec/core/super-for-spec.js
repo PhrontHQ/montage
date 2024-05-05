@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    Bindings = require("montage/core/core").Bindings;
+var Montage = require("mod/core/core").Montage,
+    Bindings = require("mod/core/core").Bindings;
 
 describe("test/core/super-for-spec", function () {
     var Vehicle, Car, Beetle,
@@ -11,7 +11,7 @@ describe("test/core/super-for-spec", function () {
         calledSpy;
     beforeEach(function () {
         calledSpy = [];
-        Vehicle = Montage.specialize( 
+        Vehicle = Montage.specialize(
             { constructor: { value: function Vehicle() {} }},
             { isVehicle: { value: true} });
         Car = Vehicle.specialize( {

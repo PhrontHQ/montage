@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage;
-var Button = require("montage/ui/button.reel").Button;
+var Montage = require("mod/core/core").Montage;
+var Button = require("mod/ui/button.mod").Button;
 var MockDOM = require("mocks/dom");
 
 describe("test/ui/button-spec", function () {

@@ -34,16 +34,16 @@ POSSIBILITY OF SUCH DAMAGE.
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Press Composer Test</title>
     <script type="text/javascript" src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
 {
     "press_composer": {
-        "prototype": "montage/composer/press-composer",
+        "prototype": "mod/composer/press-composer",
         "values": {
             "component": {"@": "example"}
         }
     },
     "example": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "example"},
             "value": "hi"
@@ -51,41 +51,41 @@ POSSIBILITY OF SUCH DAMAGE.
     },
 
     "outerComponent": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "hasTemplate": false,
             "element": {"#": "outerComponent"}
         }
     },
     "outer_press_composer": {
-        "prototype": "montage/composer/press-composer",
+        "prototype": "mod/composer/press-composer",
         "values": {
             "component": {"@": "outerComponent"}
         }
     },
 
     "innerComponent": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "hasTemplate": false,
             "element": {"#": "innerComponent"}
         }
     },
     "inner_press_composer": {
-        "prototype": "montage/composer/press-composer",
+        "prototype": "mod/composer/press-composer",
         "values": {
             "component": {"@": "innerComponent"}
         }
     },
     "inner2Component": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "hasTemplate": false,
             "element": {"#": "inner2Component"}
         }
     },
     "inner2_press_composer": {
-        "prototype": "montage/composer/press-composer",
+        "prototype": "mod/composer/press-composer",
         "values": {
             "component": {"@": "inner2Component"}
         }
@@ -105,7 +105,7 @@ POSSIBILITY OF SUCH DAMAGE.
         }
     },
     "application": {
-        "prototype": "montage/core/application",
+        "prototype": "mod/core/application",
         "values": {
             "delegate": {"@": "test"}
         }
@@ -143,11 +143,11 @@ POSSIBILITY OF SUCH DAMAGE.
 <body>
     <h1>Press Composer test</h1>
 
-    <div data-montage-id="example" class="example"></div>
+    <div data-mod-id="example" class="example"></div>
 
-    <div data-montage-id="outerComponent" class="outerComponent">
-        <div data-montage-id="innerComponent" class="innerComponent"></div>
-        <div data-montage-id="inner2Component" class="inner2Component"></div>
+    <div data-mod-id="outerComponent" class="outerComponent">
+        <div data-mod-id="innerComponent" class="innerComponent"></div>
+        <div data-mod-id="inner2Component" class="inner2Component"></div>
     </div>
 </body>
 </html>

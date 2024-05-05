@@ -28,14 +28,14 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component,
-    logger = require("montage/core/logger").logger("deserializer-spec"),
-    Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
-    deserialize = require("montage/core/serialization/deserializer/montage-deserializer").deserialize,
-    Alias = require("montage/core/serialization/alias").Alias,
-    Bindings = require("montage/frb"),
-    Promise = require("montage/core/promise").Promise,
+var Montage = require("mod/core/core").Montage,
+    Component = require("mod/ui/component").Component,
+    logger = require("mod/core/logger").logger("deserializer-spec"),
+    Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+    deserialize = require("mod/core/serialization/deserializer/montage-deserializer").deserialize,
+    Alias = require("mod/core/serialization/alias").Alias,
+    Bindings = require("mod/core/frb/bindings"),
+    Promise = require("mod/core/promise").Promise,
     objects = require("spec/serialization/testobjects-v2").objects;
 
 logger.isError = true;
@@ -515,7 +515,7 @@ describe("serialization/montage-deserializer-spec", function () {
         it("should not deserialize a montage object as a template property", function (done) {
             var serialization = {
                     ":templateProperty": {
-                        "prototype": "montage/ui/component"
+                        "prototype": "mod/ui/component"
                     }
                 },
                 serializationString = JSON.stringify(serialization);
@@ -639,10 +639,10 @@ describe("serialization/montage-deserializer-spec", function () {
             });
         });
 
-        it("should deserialize using prototype: module-name.reel", function (done) {
+        it("should deserialize using prototype: module-name.mod", function (done) {
             var serialization = {
                     "root": {
-                        "prototype": "spec/serialization/module-name.reel",
+                        "prototype": "spec/serialization/module-name.mod",
                         "values": {
                             "number": 42,
                             "string": "a string"
@@ -654,7 +654,7 @@ describe("serialization/montage-deserializer-spec", function () {
             deserializer.init(serializationString, require);
             deserializer.deserializeObject().then(function (root) {
                 var info = Montage.getInfoForObject(root);
-                expect(info.moduleId).toBe("spec/serialization/module-name.reel");
+                expect(info.moduleId).toBe("spec/serialization/module-name.mod");
                 expect(info.objectName).toBe("ModuleName");
                 expect(info.isInstance).toBe(true);
             }).catch(function(reason) {
@@ -1266,7 +1266,7 @@ describe("serialization/montage-deserializer-spec", function () {
             deserializer2 = new Deserializer(),
             serialization = {
                 root: {
-                    prototype: "ui/main.reel"
+                    prototype: "ui/main.mod"
                 }
             },
             serializationString = JSON.stringify(serialization);
@@ -1296,7 +1296,7 @@ describe("serialization/montage-deserializer-spec", function () {
         serializationString = JSON.stringify(serialization);
 
         deserializer.init(serializationString, require);
-        deserializer.deserialize(serializationString).then(function (objects) {
+        deserializer.deserialize().then(function (objects) {
             expect(objects.a).toBe(null);
         }).catch(function(reason) {
             fail(reason);
@@ -1341,6 +1341,66 @@ describe("serialization/montage-deserializer-spec", function () {
     });
 
     describe("deserialization", function() {
+        it("should deserialize native types", function (done) {
+            var expectedResult = {
+                    string: "string",
+                    date: new Date('05 October 2011 14:48 UTC'),
+                    number: 42,
+                    regexp: /regexp/gi,
+                    array: [1, 2, 3],
+                    boolean: true,
+                    nil: null
+                },
+                expectedSerialization,
+                deserializer,
+                serializationString;
+
+            expectedResult.object = expectedResult;
+
+            serializationString = {
+                object: {
+                    value: {
+                        string: "string",
+                        date: "2011-10-05T14:48:00.000Z",
+                        number: 42,
+                        regexp: {"/": {source: "regexp", flags: "gi"}},
+                        array: {"@": "array"},
+                        boolean: true,
+                        nil: null,
+                        object: {"@": "object"}
+                    }
+                },
+                array: {
+                    value: [1, 2, 3]
+                },
+                string: {
+                    value: "string"
+                },
+                date: {
+                    value: "2011-10-05T14:48:00.000Z"
+                },
+                number: {
+                    value: 42
+                },
+                regexp: {
+                    value: {"/": {source: "regexp", flags: "gi"}}
+                },
+                boolean: {
+                    value: true
+                },
+                nil: {
+                    value: null
+                }
+            };
+
+            deserializer = new Deserializer().init(serializationString, require);
+            deserializer.deserialize().then(function(objects) {
+                expect(objects).toEqual(jasmine.objectContaining(expectedResult));
+            }).finally(function () {
+                done();
+            });
+        });
+
         it("should deserialize a serialization string", function(done) {
             var serialization = {
                     "string": {
@@ -1505,7 +1565,7 @@ describe("serialization/montage-deserializer-spec", function () {
         it("deserializes objects synchronously if all needed modules are available", function () {
             var serialization = {
                     "component": {
-                        "prototype": "montage/ui/component"
+                        "prototype": "mod/ui/component"
                     }
                 },
                 serializationString = JSON.stringify(serialization),

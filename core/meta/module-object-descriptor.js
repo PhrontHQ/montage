@@ -31,7 +31,10 @@ var OBJECT_DESCRIPTOR_CACHE = Object.create(null);
  * @class ModuleObjectDescriptor
  * @extends ObjectDescriptor
  */
-var ModuleObjectDescriptor = exports.ModuleObjectDescriptor = ObjectDescriptor.specialize(/** @lends ModuleObjectDescriptor# */ {
+var ModuleObjectDescriptor = exports.ModuleObjectDescriptor = class ModuleObjectDescriptor extends ObjectDescriptor {/** @lends ModuleObjectDescriptor */
+}
+
+ModuleObjectDescriptor.addClassProperties({
 
     /**
      * @function
@@ -106,13 +109,39 @@ var ModuleObjectDescriptor = exports.ModuleObjectDescriptor = ObjectDescriptor.s
      * A reference to the actual object that this object descriptor is for.
      * @type {Object}
      */
-    object: {
+    _object: {
         value: null
     },
+    object: {
+        get: function() {
+            return this._object;
+        },
+        set: function(value) {
+            if(value !== this._object) {
+                this._object = value;
+                value.objectDescriptor = this;
+                if(value.prototype) {
+                    value.prototype.objectDescriptor = this;
+                }
+            }
+        }
+    },
 
+    loadObjectFromModule: {
+        value : function() {
+            if(this.object) {
+                return Promise.resolve(this.object);
+            } else if(this.module) {
+                var self = this;
+                return this.module.require.async(this.module.id).then(function (exports) {
+                    return (self.object = exports[self.exportName]);
+                });
+            }
+        }
+    },
 
     /**
-     * The name of the export this object descriptor is for.
+     * The name of the export. this object descriptor is for.
      * @type {string}
      */
     exportName: {
@@ -123,6 +152,18 @@ var ModuleObjectDescriptor = exports.ModuleObjectDescriptor = ObjectDescriptor.s
         serializable: false,
         value: null
     }
+    /*
+    ,
+
+    prepareToHandleDataEvents: {
+        value: function (event) {
+            if(this.object) {
+                this.object.prepareToHandleEvent(event);
+            }
+        }
+    },
+    */
+
 
 }, /** @lends ModuleObjectDescriptor. */ {
 
@@ -134,8 +175,8 @@ var ModuleObjectDescriptor = exports.ModuleObjectDescriptor = ObjectDescriptor.s
      */
     getObjectDescriptorWithModuleId: {
         value: function (moduleId, _require) {
-            if (moduleId.search(/\.meta$/) === -1 && moduleId.search(/\.mjson$/) === -1) {
-                throw new Error(moduleId + " object descriptor module id does not end in '.meta' or '.mjson'");
+            if (moduleId.search(/\.mjson$/) === -1) {
+                throw new Error(moduleId + " object descriptor module id does not end with '.mjson'");
             }
             if (!_require) {
                 throw new Error("Require needed to get object descriptor " + moduleId);

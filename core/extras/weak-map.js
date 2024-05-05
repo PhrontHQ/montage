@@ -1,7 +1,7 @@
 /**
     Defines extensions to intrinsic `WeakMap`.
     @see {external:WeakMap}
-    @module montage/core/extras/weak-map
+    @module mod/core/extras/weak-map
 */
 
 /**
@@ -13,13 +13,13 @@ Object.defineProperty(WeakMap.prototype, "deserializeSelf", {
     value: function (deserializer) {
         var entries, keys, values,
             i, n;
-            
+
         entries = deserializer.getProperty("entries");
         if (entries) {
             for (i = 0, n = entries.length; i < n; i++) {
                 this.set(entries[i].key, entries[i].value);
             }
-        } 
+        }
         if (!entries) {
             keys = deserializer.getProperty("keys");
             values = deserializer.getProperty("values");

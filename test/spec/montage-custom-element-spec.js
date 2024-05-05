@@ -1,10 +1,10 @@
-var Montage = require("montage").Montage,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader,
-    Template = require("montage/core/template").Template,
-    Application = require("montage/core/application").application;
+var Montage = require("mod/core/core").Montage,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader,
+    Template = require("mod/core/template").Template,
+    Application = require("mod/core/application").application;
 
 TestPageLoader.queueTest("custom-elements/custom-elements", function (testPage) {
-    describe("montage-custom-element-spec", function () {
+    describe("mod-custom-element-spec", function () {
         var eventManager,
             application,
             delegate;
@@ -17,12 +17,12 @@ TestPageLoader.queueTest("custom-elements/custom-elements", function (testPage) 
         };
 
         beforeEach(function () {
-            application = testPage.global.mr("montage/core/application").application;
+            application = testPage.global.mr("mod/core/application").application;
             eventManager = application.eventManager;
             delegate = application.delegate;
         });
 
-        describe('montage-text', function () {
+        describe('text-mod', function () {
 
             it("should be instantiated", function () {
                 var textLabel1 = querySelector(".textLabel1");
@@ -65,8 +65,8 @@ TestPageLoader.queueTest("custom-elements/custom-elements", function (testPage) 
                             expect(textLabel1._instance.element.textContent).toBe('bar');
                             expect(textLabel1.getAttribute('value')).toBe('bar');
                             done();
-                        });  
-                    });    
+                        });
+                    });
                 });
             });
 
@@ -89,7 +89,7 @@ TestPageLoader.queueTest("custom-elements/custom-elements", function (testPage) 
                     expect(textLabel2._instance.element.textContent).toBe('foo');
                     expect(textLabel2.getAttribute('value')).toBe('foo');
                     done();
-                }); 
+                });
             });
         });
 

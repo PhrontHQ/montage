@@ -1,8 +1,8 @@
 /*global Node, Element*/
 
 /**
- * @module montage/core/dom
- * @requires montage/core/geometry/point
+ * @module mod/core/dom
+ * @requires mod/core/geometry/point
 */
 
 
@@ -24,6 +24,38 @@ if (typeof Node !== "undefined") {
         //If child is defined then we didn't walk all the way up to the root
         return child ? true : false;
     };
+
+    /**
+     * This static method builds a function that can be used to directly access node from parentNode.
+     * This is interesting to access related nodes when a piece of DOM is cloned.
+     *
+     * A similar method could be build to instead builds a CSS selector that could then be passed to parentNode.querySelector()
+     *
+     * @function
+     * @returns {Function}
+     * @private
+     */
+
+    Node.directAccessFunctionFromParentNodeToChildNode = function(parentNode,node,accessFunctionChildNodesKey) {
+        var walkNode = node,walkNodeParent, nodes,i,countI, walkNodeParentChildNode, parts=[];
+        accessFunctionChildNodesKey = accessFunctionChildNodesKey ? accessFunctionChildNodesKey : "childNodes";
+        while(walkNode !== parentNode) {
+            walkNodeParent = walkNode.parentNode;
+            nodes = walkNodeParent.childNodes;
+            i=0;
+            countI = nodes.length;
+            do {
+                if((walkNodeParentChildNode = nodes[i]) === walkNode) {
+                    parts.unshift( "."+accessFunctionChildNodesKey+"[",i,"]")
+                    break;
+                }
+            }
+            while(++i<countI);
+            walkNode = walkNodeParent;
+        }
+        return (new Function("return function(element) { return element"+parts.join("")+";};"))();
+    };
+
 }
 
 
@@ -79,7 +111,7 @@ var ElementPrototype = Element.prototype;
     });
 
     var classListProp = "classList";
-    
+
     /**
      * @function external:Element#set
      * classList.js
@@ -192,9 +224,12 @@ if (typeof DOMTokenList !== "undefined") {
 
     if (typeof DOMTokenListPrototype.has === 'undefined') {
         Object.defineProperty(DOMTokenListPrototype, 'has', {
-            value: function (key) {
-                return this.contains(key);
-            }
+            value: DOMTokenListPrototype.contains
+        });
+    }
+    if (typeof DOMTokenListPrototype.delete === 'undefined') {
+        Object.defineProperty(DOMTokenListPrototype, 'delete', {
+            value: DOMTokenListPrototype.remove
         });
     }
 }

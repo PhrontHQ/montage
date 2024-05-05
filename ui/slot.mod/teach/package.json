@@ -1,0 +1,7 @@
+{
+	"name": "teach-slot-mod",
+	"private": true,
+	"dependencies": {
+		"mod": "../.."
+	}
+}

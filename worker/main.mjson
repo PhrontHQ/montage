@@ -1,0 +1,14 @@
+{
+    "root": {
+        "prototype": "./worker",
+        "values": {
+            "name": "MainWorker",
+            "apiGateway": null,
+            "mainService": {"@": "mainDataService"}
+        }
+    },
+
+    "mainDataService": {
+        "object": "../data/main.mod/main.mjson"
+    }
+}

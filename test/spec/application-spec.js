@@ -29,8 +29,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 /*global require,exports,describe,it,expect */
-var Montage = require("montage").Montage,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
+var Montage = require("mod/core/core").Montage,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
 
 TestPageLoader.queueTest("application-as-application", {src: "spec/application/as-application.html"}, function (testPage) {
     describe("application-spec", function () {
@@ -68,8 +68,8 @@ TestPageLoader.queueTest("application-test", {src: "spec/application-test/applic
                 testWindow = testPage.iframe.contentWindow;
             });
             it("should be added to exports", function (done) {
-                
-                testWindow.mr.async("montage/core/application")
+
+                testWindow.mr.async("mod/core/application")
                     .then(function (exports) {
                         expect(exports.application).toBeDefined();
                         done();
@@ -78,8 +78,9 @@ TestPageLoader.queueTest("application-test", {src: "spec/application-test/applic
 
             describe("delegate", function () {
                 it("should have willFinishLoading method called", function (done) {
-                    testWindow.mr.async("montage/core/application").get("application")
-                        .then(function (testApplication) {
+                    testWindow.mr.async("mod/core/application")
+                        .then(function (exports) {
+                            const testApplication = exports.application;
                             expect(testApplication.delegate.willFinishLoadingCalled).toBeTruthy();
                             done();
                         })
@@ -103,7 +104,7 @@ TestPageLoader.queueTest("application-test-subtype", {src: "spec/application-tes
             describe("subtyping", function () {
                 it("should use defined subtype", function () {
                     var testWindow = testPage.iframe.contentWindow;
-                    var testApplication = testWindow.mr("montage/core/application").application;
+                    var testApplication = testWindow.mr("mod/core/application").application;
                     expect(testApplication.testProperty).toBeTruthy();
                 });
 

@@ -7,22 +7,172 @@
  */
 
 /**
- * @module montage/core/event/event-manager
- * @requires montage/core/core
- * @requires montage/core/event/mutable-event
- * @requires montage/core/serialization
- * @requires montage/core/event/action-event-listener
+ * @module mod/core/event/event-manager
+ * @requires mod/core/core
+ * @requires mod/core/event/mutable-event
+ * @requires mod/core/serialization
+ * @requires mod/core/event/action-event-listener
  */
 
 var Montage = require("../core").Montage,
-    MutableEvent = require("./mutable-event").MutableEvent, 
+    MutableEvent = require("./mutable-event").MutableEvent,
     Serializer = require("../serialization/serializer/montage-serializer").MontageSerializer,
     Deserializer = require("../serialization/deserializer/montage-deserializer").MontageDeserializer,
-    Map = require("collections/map"),
-    WeakMap = require("collections/weak-map"),
-    currentEnvironment = require("../environment").currentEnvironment;
+    Map = require("../collections/map"),
+    currentEnvironment = require("../environment").currentEnvironment,
+    isBrowser = currentEnvironment.isBrowser,
+    Event_NONE = 0,
+    Event_CAPTURING_PHASE =	1,
+    Event_AT_TARGET	= 2,
+    Event_BUBBLING_PHASE = 3,
+    defaultEventManager,
+    browserSupportsCaptureOption = false,
+    browserSupportsPassiveOption = false,
+    MontageElement = (typeof window === "object") ? window.MontageElement : null;
 
-var defaultEventManager;
+
+
+
+
+/**
+ * Notes to integrate coomposers in event manager:
+ *
+ * 1. Composers have to be registered.
+ *      - Composer's code  should register themeselves
+ *      - Component relying on them today already require them
+ *      - later the tool can have a map of event names -> moduleId and
+ *      automatically add to the root serialization, or each template, the  modules  needed.
+ *
+ * 2. addEventListner("eventName")
+ *      - if not standard, find in map the composer registered if any
+ *      - instantiate one
+ *      - if listener is a component, set the relationship as before
+ *          - load, etc... which make the composer add it's own listeners
+ *      - add the composer to the options object.
+ */
+
+
+
+
+
+/**
+ * add|removeEventListener options related feature detection for older browsers
+ */
+try {
+    var options = {
+        get passive() {
+            browserSupportsPassiveOption = true;
+            return false;
+        },
+        get capture() {
+            browserSupportsCaptureOption = true;
+            return false;
+        }
+    };
+    addEventListener("test", null, options);
+    removeEventListener("test", null, options);
+} catch(e) {}
+
+
+/**
+ * If needed, polyfill for Event Listener with Options
+ * from:
+ * https://raw.githubusercontent.com/WICG/EventListenerOptions/gh-pages/EventListenerOptions.polyfill.js
+ *
+ */
+if (typeof EventTarget === "function" && (!browserSupportsPassiveOption || !browserSupportsCaptureOption)) {
+    (function() {
+        var super_add_event_listener = EventTarget.prototype.addEventListener;
+        var super_remove_event_listener = EventTarget.prototype.removeEventListener;
+        var super_prevent_default = Event.prototype.preventDefault;
+
+        function parseOptions(type, listener, options, action) {
+        var needsWrapping = false;
+        var useCapture = false;
+        var passive = false;
+        var fieldId;
+        if (options) {
+            if (typeof(options) === 'object') {
+            passive = options.passive ? true : false;
+            useCapture = options.useCapture ? true : false;
+            } else {
+            useCapture = options;
+            }
+        }
+        if (passive)
+            needsWrapping = true;
+        if (needsWrapping) {
+            fieldId = useCapture.toString();
+            fieldId += passive.toString();
+        }
+        action(needsWrapping, fieldId, useCapture, passive);
+        }
+
+        Event.prototype.preventDefault = function() {
+        if (this.__passive) {
+            console.warn("Ignored attempt to preventDefault an event from a passive listener");
+            return;
+        }
+        super_prevent_default.apply(this);
+        }
+
+        EventTarget.prototype.addEventListener = function(type, listener, options) {
+        var super_this = this;
+        parseOptions(type, listener, options,
+            function(needsWrapping, fieldId, useCapture, passive) {
+            if (needsWrapping) {
+                var fieldId = useCapture.toString();
+                fieldId += passive.toString();
+
+                if (!this.__event_listeners_options)
+                this.__event_listeners_options = {};
+                if (!this.__event_listeners_options[type])
+                this.__event_listeners_options[type] = {};
+                if (!this.__event_listeners_options[type][listener])
+                this.__event_listeners_options[type][listener] = [];
+                if (this.__event_listeners_options[type][listener][fieldId])
+                return;
+                var wrapped = {
+                handleEvent: function (e) {
+                    e.__passive = passive;
+                    if (typeof(listener) === 'function') {
+                    listener(e);
+                    } else {
+                    listener.handleEvent(e);
+                    }
+                    e.__passive = false;
+                }
+                };
+                this.__event_listeners_options[type][listener][fieldId] = wrapped;
+                super_add_event_listener.call(super_this, type, wrapped, useCapture);
+            } else {
+                super_add_event_listener.call(super_this, type, listener, useCapture);
+            }
+            });
+        }
+
+        EventTarget.prototype.removeEventListener = function(type, listener, options) {
+        var super_this = this;
+        parseOptions(type, listener, options,
+            function(needsWrapping, fieldId, useCapture, passive) {
+            if (needsWrapping &&
+                this.__event_listeners_options &&
+                this.__event_listeners_options[type] &&
+                this.__event_listeners_options[type][listener] &&
+                this.__event_listeners_options[type][listener][fieldId]) {
+                super_remove_event_listener.call(super_this, type, this.__event_listeners_options[type][listener][fieldId], false);
+                delete this.__event_listeners_options[type][listener][fieldId];
+                if (this.__event_listeners_options[type][listener].length == 0)
+                delete this.__event_listeners_options[type][listener];
+            } else {
+                super_remove_event_listener.call(super_this, type, listener, useCapture);
+            }
+            });
+        }
+
+    })();
+}
+
 
 //This is a quick polyfill for IE10 that is not exposing CustomEvent as a function.
 //From https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill
@@ -42,6 +192,8 @@ if (
     CustomEvent.prototype = Event.prototype;
     window.CustomEvent = CustomEvent;
 }
+
+
 
 // jshint -W015
 /* This is to handle browsers that have TouchEvents but don't have the global constructor function Touch */
@@ -222,42 +374,90 @@ var _StoredEvent = Montage.specialize({
     }
 });
 
-var _serializeObjectRegisteredEventListenersForPhase = function (serializer, object, registeredEventListeners, eventListenerDescriptors, capture) {
-    var i, l, type, listenerRegistrations, listeners, aListener, mapIter;
-    mapIter = registeredEventListeners.keys();
 
-    while ((type = mapIter.next().value)) {
-        listenerRegistrations = registeredEventListeners.get(type);
-        listeners = listenerRegistrations && listenerRegistrations.get(object);
-        if (Array.isArray(listeners) && listeners.length > 0) {
-            for (i = 0, l = listeners.length; i < l; i++) {
-                aListener = listeners[i];
-                eventListenerDescriptors.push({
-                    type: type,
-                    listener: serializer.addObjectReference(aListener),
-                    capture: capture
-                });
-            }
-        }
-        else if (listeners){
-            eventListenerDescriptors.push({
-                type: type,
-                listener: serializer.addObjectReference(listeners),
-                capture: capture
-            });
-        }
+
+/***************************************************************************************************************
+ *
+ * Support for Event Serialiation/Deserialization
+ *
+ **************************************************************************************************************/
+
+// var _serializeObjectRegisteredEventListenersForPhase = function (serializer, object, registeredEventListeners, eventListenerDescriptors, capture) {
+//     var i, l, type, listenerRegistrations, listeners, aListener, mapIter;
+//     mapIter = registeredEventListeners.keys();
+
+//     while ((type = mapIter.next().value)) {
+//         listenerRegistrations = registeredEventListeners.get(type);
+//         listeners = listenerRegistrations && listenerRegistrations.get(object);
+//         if (Array.isArray(listeners) && listeners.length > 0) {
+//             for (i = 0, l = listeners.length; i < l; i++) {
+//                 aListener = listeners[i];
+//                 eventListenerDescriptors.push({
+//                     type: type,
+//                     listener: serializer.addObjectReference(aListener),
+//                     capture: capture
+//                 });
+//             }
+//         }
+//         else if (listeners){
+//             eventListenerDescriptors.push({
+//                 type: type,
+//                 listener: serializer.addObjectReference(listeners),
+//                 capture: capture
+//             });
+//         }
+//     }
+// };
+
+
+
+var _serializedListenerEntryForType = function (listenerEntry, eventType, serializer) {
+    //If entry only contains listener and capture keys, we can steamline to capture only
+    if(Object.keys(listenerEntry) === 2) {
+        return {
+            type: eventType,
+            listener: serializer.addObjectReference(listenerEntry.listener),
+            capture: listenerEntry.capture
+        };
+    } else {
+        var serializedEntry = {};
+        Object.assign(serializedEntry,listenerEntry);
+        delete serializedEntry.listener;
+        return {
+            type: eventType,
+            listener: serializer.addObjectReference(listenerEntry.listener),
+            options: serializedEntry
+        };
     }
-};
+}
 
 Serializer.defineSerializationUnit("listeners", function listenersSerializationUnit(serializer, object) {
     var eventManager = defaultEventManager,
         eventListenerDescriptors = [],
+        targetEntry = eventManager._targetEventListeners.get(object),
         descriptors,
         descriptor,
         listener;
 
-        _serializeObjectRegisteredEventListenersForPhase(serializer, object,eventManager._registeredCaptureEventListeners,eventListenerDescriptors,true);
-        _serializeObjectRegisteredEventListenersForPhase(serializer, object,eventManager._registeredBubbleEventListeners,eventListenerDescriptors,false);
+        // _serializeObjectRegisteredEventListenersForPhase(serializer, object,eventManager._registeredCaptureEventListeners,eventListenerDescriptors,true);
+        // _serializeObjectRegisteredEventListenersForPhase(serializer, object,eventManager._registeredBubbleEventListeners,eventListenerDescriptors,false);
+
+        targetEntry && targetEntry.forEach(function(targetEntryForEventType/*value*/, eventType/*key*/, map) {
+            targetEntryForEventType.forEach(function(listenerEntries/*value*/, phase/*key*/, map) {
+                var i, l, iListenerEntry, iSerializedEntry;
+
+                if (Array.isArray(listenerEntries) && listenerEntries.length > 0) {
+                    for (i = 0, l = listenerEntries.length; i < l; i++) {
+                        eventListenerDescriptors.push(_serializedListenerEntryForType(listenerEntries[i],eventType,serializer));
+                    }
+                }
+                else if (listenerEntries){
+                    eventListenerDescriptors.push(_serializedListenerEntryForType(listenerEntries,eventType,serializer));
+                }
+
+            });
+        });
+
 
     if (eventListenerDescriptors.length > 0) {
         return eventListenerDescriptors;
@@ -266,9 +466,22 @@ Serializer.defineSerializationUnit("listeners", function listenersSerializationU
 
 Deserializer.defineDeserializationUnit("listeners", function listenersDeserializationUnit(deserializer, object, listeners) {
     for (var i = 0, listener; (listener = listeners[i]); i++) {
-        object.addEventListener(listener.type, listener.listener, listener.capture);
+        if(listener.hasOwnProperty("capture") && typeof listener.capture === "boolean")  {
+            object.addEventListener(listener.type, listener.listener, listener.capture);
+        } else {
+            object.addEventListener(listener.type, listener.listener, listener.options);
+        }
     }
 });
+
+
+
+
+function EventListener(){}
+
+
+
+
 
 /**
  * @class EventManager
@@ -292,6 +505,31 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             this._elementEventHandlerByElement = new WeakMap();
             this.environment = currentEnvironment;
             this._trackingTouchTimeoutIDs = new Map();
+            // this._functionType = "function";
+
+            this._targetEventListeners = new Map();
+            /*
+                _targetEventListeners -> Map( eventType -> map (
+                                                        CaptureEventListeners -> [EventListeners{
+                                                                                    listener: {},
+                                                                                    capture: true,
+                                                                                    once: true/false,
+                                                                                    passive: true/false,
+                                                                                    callBack
+                                                        }]
+                                                        BubbleEventListeners -> [EventListeners{
+                                                                                    listener: {},
+                                                                                    capture: false,
+                                                                                    once: true/false,
+                                                                                    passive: true/false,
+                                                                                    callBack
+
+                                                        }]) )
+
+
+                when addEventListner is going to be called with a boolean capture, we're going to buil d a listener object with the matching defauls (those might need to change per browser?)
+            */
+
             return this;
         }
     },
@@ -340,6 +578,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             cut: {bubbles: true, cancelable: true}, //ClipboardEvent
             dblclick: {bubbles: true, cancelable: false}, //DOM3
             DOMActivate: {bubbles: true, cancelable: true, deprecated: true}, //DOM2, DOM3 deprecated
+            DOMContentLoaded: {bubbles: true, cancelable: false},
             DOMMouseScroll: {bubbles: true}, //GECKO
             drag: {bubbles: true, cancelable: true}, //DND
             dragend: {bubbles: true, cancelable: false}, //DND
@@ -351,9 +590,11 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             error: {
                 bubbles: function (target) {
                     // error does not bubble when used as a ProgressEvent
-                    return !(XMLHttpRequest.prototype.isPrototypeOf(target) ||
-                    target.tagName && "VIDEO" === target.tagName.toUpperCase() ||
-                    target.tagName && "AUDIO" === target.tagName.toUpperCase());
+                    // return !(XMLHttpRequest.prototype.isPrototypeOf(target) ||
+                    return !(target instanceof XMLHttpRequest ||
+                        target instanceof WebSocket ||
+                        target.tagName && "VIDEO" === target.tagName.toUpperCase() ||
+                        target.tagName && "AUDIO" === target.tagName.toUpperCase());
                 },
                 cancelable: false
             }, //DOM2, DOM3, ProgressEvent
@@ -361,6 +602,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             focusin: {bubbles: true, cancelable: false}, //DOM3
             focusout: {bubbles: true, cancelable: false}, //DOM3
             input: {bubbles: true, cancelable: false}, // INPUT
+            invalid: {bubbles: false, cancelable: true}, // INPUT
             keydown: {bubbles: true, cancelable: false}, //DOM3
             keypress: {bubbles: true, cancelable: false}, //DOM3
             keyup: {bubbles: true, cancelable: false}, //DOM3
@@ -376,6 +618,9 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             mouseover: {bubbles: true, cancelable: true}, //DOM3
             mouseup: {bubbles: true, cancelable: true}, //DOM3
             mousewheel: {bubbles: true},
+            offline: {bubbles: false, cancelable: false}, //DOM3
+            online: {bubbles: false, cancelable: false}, //DOM3
+            open: {bubbles: false, cancelable: false}, //DOM3
             orientationchange: {bubbles: false},
             paste: {bubbles: true, cancelable: true}, //ClipboardEvent
             progress: {bubbles: false, cancelable: false}, //ProgressEvent
@@ -392,11 +637,33 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             select: {bubbles: true, cancelable: false}, //DOM2, DOM3
 
             submit: {bubbles: true, cancelable: true}, //DOM2
+            timeout: {bubbles: false, cancelable: false}, //DOM2
             touchcancel: {bubbles: true, cancelable: false}, //TouchEvent
             touchend: {bubbles: true, cancelable: true}, //TouchEvent
             touchmove: {bubbles: true, cancelable: true}, //TouchEvent
             touchstart: {bubbles: true, cancelable: true}, //TouchEvent
             unload: {bubbles: false, cancelable: false}, //DOM2, DOM3
+            visibilitychange: {
+                bubbles: true,
+                cancelable: false,
+                type: (typeof document !== "undefined")
+                    ? (typeof document.msHidden !== "undefined")
+                        ? "msvisibilitychange"
+                        : (typeof document.webkitHidden !== "undefined")
+                            ? "webkitvisibilitychange"
+                            : undefined
+                    : undefined
+            }, //DOM2, DOM3
+            webkitvisibilitychange: {
+                bubbles: true,
+                cancelable: false,
+                type: "visibilitychange"
+            },
+            msvisibilitychange: {
+                bubbles: true,
+                cancelable: false,
+                type: "visibilitychange"
+            }, //DOM2, DOM3
             wheel: {bubbles: true, cancelable: true}, //DOM3
             pointerdown: {bubbles: true, cancelable: true}, //PointerEvent
             pointerup: {bubbles: true, cancelable: true}, //PointerEvent
@@ -473,6 +740,8 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
         },
         set: function (application) {
             this._application = application;
+            //To avoid circular depenencies, we set it on environment
+            this.environment.application = application;
         }
     },
 
@@ -554,7 +823,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             if (aWindow.EventTarget) {
                 aWindow.EventTarget.prototype.nativeAddEventListener = aWindow.EventTarget.prototype.addEventListener;
             }
-            
+
             aWindow.Element.prototype.nativeAddEventListener = aWindow.Element.prototype.addEventListener;
             Object.defineProperty(aWindow, "nativeAddEventListener", {
                 configurable: true,
@@ -612,8 +881,9 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 value: (aWindow.XMLHttpRequest.prototype.addEventListener =
                     aWindow.Element.prototype.addEventListener =
                         aWindow.document.addEventListener =
-                            function addEventListener(eventType, listener, useCapture) {
-                                return aWindow.defaultEventManager.registerEventListener(this, eventType, listener, !!useCapture);
+                            function addEventListener(eventType, listener, optionsOrUseCapture) {
+                                //this.nativeAddEventListener(eventType, listener, optionsOrUseCapture);
+                                aWindow.defaultEventManager.registerTargetEventListener(this, eventType, listener, optionsOrUseCapture);
                             })
             });
             if (aWindow.EventTarget) {
@@ -633,8 +903,11 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                     aWindow.XMLHttpRequest.prototype.removeEventListener =
                     aWindow.Element.prototype.removeEventListener =
                         aWindow.document.removeEventListener =
-                            function removeEventListener(eventType, listener, useCapture) {
-                                return aWindow.defaultEventManager.unregisterEventListener(this, eventType, listener, !!useCapture);
+                            function removeEventListener(eventType, listener, optionsOrUseCapture) {
+                                //this.nativeRemoveEventListener(eventType, listener, optionsOrUseCapture);
+                                if(aWindow.defaultEventManager) {
+                                    return aWindow.defaultEventManager.unregisterTargetEventListener(this, eventType, listener, optionsOrUseCapture);
+                                }
                             })
             });
 
@@ -759,7 +1032,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             if (aWindow.EventTarget) {
                 aWindow.EventTarget.prototype.removeEventListener = aWindow.EventTarget.prototype.nativeRemoveEventListener;
             }
-            
+
             aWindow.Element.prototype.removeEventListener = aWindow.Element.prototype.nativeRemoveEventListener;
             Object.defineProperty(aWindow, "removeEventListener", {
                 configurable: true,
@@ -801,7 +1074,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             if (aWindow.EventTarget) {
                 delete aWindow.EventTarget.prototype.nativeAddEventListener;
             }
-            
+
             delete aWindow.Element.prototype.nativeAddEventListener;
             delete aWindow.nativeAddEventListener;
 
@@ -863,37 +1136,59 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
      * @param {Event} eventType The event type.
      * @returns null || listeners
      */
+    // registeredEventListenersForEventType_: {
+    //     value: function (eventType) {
+    //         var captureRegistration = this._registeredCaptureEventListeners.get(eventType),
+    //             bubbleRegistration = this._registeredBubbleEventListeners.get(eventType),
+    //             result = null;
+
+    //         if (captureRegistration) {
+    //             captureRegistration.forEach(function(listeners, target, map) {
+    //                 if (listeners && listeners.length > 0) {
+    //                     result = result || [];
+    //                     listeners.forEach(function(aListener) {
+    //                         result.push(aListener);
+    //                     });
+    //                 }
+    //             });
+    //         }
+
+    //         if (bubbleRegistration) {
+    //             bubbleRegistration.forEach(function(listeners, target, map) {
+    //                 if (listeners && listeners.length > 0) {
+    //                     result = result || [];
+    //                     listeners.forEach(function(aListener) {
+    //                         result.push(aListener);
+    //                     });
+    //                 }
+    //             });
+    //         }
+
+    //         return result;
+    //     }
+    // },
+
     registeredEventListenersForEventType_: {
         value: function (eventType) {
-            var captureRegistration = this._registeredCaptureEventListeners.get(eventType),
-                bubbleRegistration = this._registeredBubbleEventListeners.get(eventType),
-                result = null;
+            var result = null,
+                self = this;
+            this._targetEventListeners.forEach(function(targetEntry/*value*/, target/*key*/, map) {
 
-            if (captureRegistration) {
-                captureRegistration.forEach(function(listeners, target, map) {
-                    if (listeners && listeners.length > 0) {
-                        result = result || [];
-                        listeners.forEach(function(aListener) {
-                            result.push(aListener);
-                        });
+                    var forEachResult = self.registeredEventListenersForEventType_onTarget_(eventType, target);
+                    if(forEachResult) {
+                        if(!Array.isArray(forEachResult)) {
+                            (result || (result = [])).push(forEachResult);
+                        } else {
+                            Array.prototype.push.apply((result || (result = [])), forEachResult);
+                        }
                     }
-                });
-            }
 
-            if (bubbleRegistration) {
-                bubbleRegistration.forEach(function(listeners, target, map) {
-                    if (listeners && listeners.length > 0) {
-                        result = result || [];
-                        listeners.forEach(function(aListener) {
-                            result.push(aListener);
-                        });
-                    }
-                });
-            }
-
+            });
             return result;
         }
     },
+
+
 
     /**
      * Returns the list of all listeners registered for
@@ -904,34 +1199,85 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
      * @param {Event} target - The event target.
      * @returns {?ActionEventListener}
      */
+    // registeredEventListenersForEventType_onTarget_: {
+    //     enumerable: false,
+    //     value: function (eventType, target) {
+
+    //         var captureRegistration = this._registeredCaptureEventListeners.get(eventType),
+    //             bubbleRegistration = this._registeredBubbleEventListeners.get(eventType),
+    //             listeners,
+    //             result = null;
+
+    //         if (!eventType || !target || (!captureRegistration && !bubbleRegistration)) {
+    //             return null;
+    //         } else {
+    //             listeners = captureRegistration ? captureRegistration.get(target) : null;
+    //             if (listeners) {
+    //                 if (!result) {
+    //                     result = listeners;
+    //                 }
+    //             }
+    //             listeners = bubbleRegistration ? bubbleRegistration.get(target) : null;
+    //             if (listeners) {
+    //                 if (!result) {
+    //                     result = listeners;
+    //                 } else {
+    //                     result = result.union(listeners);
+    //                 }
+    //             }
+    //             return result;
+    //         }
+    //     }
+    // },
+
     registeredEventListenersForEventType_onTarget_: {
         enumerable: false,
         value: function (eventType, target) {
-
-            var captureRegistration = this._registeredCaptureEventListeners.get(eventType),
-                bubbleRegistration = this._registeredBubbleEventListeners.get(eventType),
-                listeners,
-                result = null;
-
-            if (!eventType || !target || (!captureRegistration && !bubbleRegistration)) {
+            if (!eventType || !target) {
                 return null;
-            } else {
-                listeners = captureRegistration ? captureRegistration.get(target) : null;
-                if (listeners) {
-                    if (!result) {
-                        result = listeners;
-                    }
-                }
-                listeners = bubbleRegistration ? bubbleRegistration.get(target) : null;
-                if (listeners) {
-                    if (!result) {
-                        result = listeners;
-                    } else {
-                        result = result.union(listeners);
-                    }
-                }
-                return result;
             }
+
+            var targetEntry = this._targetEventListeners.get(target),
+            targetEntryForEventType = targetEntry && targetEntry.get(eventType),
+            captureListenerEntries = targetEntryForEventType && targetEntryForEventType.get(Event_CAPTURING_PHASE),
+            bubbleListenerEntries = targetEntryForEventType && targetEntryForEventType.get(Event_BUBBLING_PHASE),
+            result = null;
+
+            if(captureListenerEntries || bubbleListenerEntries) {
+                if(captureListenerEntries) {
+                    if(!Array.isArray(captureListenerEntries)) {
+                        result = captureListenerEntries.listener;
+                    }
+                    else {
+                        result = [];
+                        Array.prototype.push.apply(result, captureListenerEntries.map(this._listenerEntryListenerMapper));
+                    }
+                }
+                if(bubbleListenerEntries) {
+                    if(!Array.isArray(bubbleListenerEntries)) {
+                        if(!result) {
+                            result = bubbleListenerEntries.listener;
+                        } else if(!Array.isArray(result)) {
+                            result = [result,bubbleListenerEntries.listener]
+                        } else {
+                            result.push(bubbleListenerEntries.listener)
+                        }
+                    }
+                    else {
+                        if(!result) {
+                            result = [];
+                        }
+                        Array.prototype.push.apply(result, bubbleListenerEntries.map(this._listenerEntryListenerMapper));
+                    }
+                }
+            }
+
+            return result;
+        }
+    },
+    _listenerEntryListenerMapper: {
+        value: function(listenerEntry) {
+            return listenerEntry.listener;
         }
     },
 
@@ -944,15 +1290,25 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
      * @param {Event} target - The event target.
      * @returns {?ActionEventListener}
      */
+    // registeredEventListenersForEventType_onTarget_phase_: {
+    //     enumerable: false,
+    //     value: function (eventType, target, capture) {
+    //         if (!target) {
+    //             return null;
+    //         }
+    //         return this._registeredEventListenersForEventType_onTarget_registeredEventListeners_(eventType, target, (capture ? this._registeredCaptureEventListeners : this._registeredBubbleEventListeners));
+    //     }
+    // },
     registeredEventListenersForEventType_onTarget_phase_: {
         enumerable: false,
         value: function (eventType, target, capture) {
             if (!target) {
                 return null;
             }
-            return this._registeredEventListenersForEventType_onTarget_registeredEventListeners_(eventType, target, (capture ? this._registeredCaptureEventListeners : this._registeredBubbleEventListeners));
+            return this._registeredEventListenersOnTarget_eventType_eventPhase(target, eventType,  (capture ? Event_CAPTURING_PHASE : Event_BUBBLING_PHASE));
         }
     },
+
     _registeredEventListenersForEventType_onTarget_registeredEventListeners_: {
         value: function (eventType, target, registeredEventListeners) {
 
@@ -962,6 +1318,23 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
         },
         enumerable: false
     },
+
+    _registeredEventListenersOnTarget_eventType_eventPhase: {
+        value: function (target, eventType, eventPhase) {
+
+            var targetEntry = this._targetEventListeners.get(target),
+            targetEntryForEventType = targetEntry ? targetEntry.get(eventType) : null,
+            targetEntryForEventTypeListeners = targetEntryForEventType
+            ? eventPhase === Event_CAPTURING_PHASE
+                ? targetEntryForEventType.get(Event_CAPTURING_PHASE)
+                : targetEntryForEventType.get(Event_BUBBLING_PHASE)
+            : null;
+
+            return targetEntryForEventTypeListeners || null;
+        },
+        enumerable: false
+    },
+
 
     /**
      * Returns the dictionary of all listeners registered on
@@ -1018,16 +1391,165 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
      _registeredCaptureEventListeners: {
        value:null
     },
+
     _registeredBubbleEventListeners: {
       value:null
-   },
-     registerEventListener: {
-         enumerable: false,
-         value: function registerEventListener(target, eventType, listener, useCapture) {
-             var result;
-             result = this._registerEventListener(target, eventType, listener, useCapture ? this._registeredCaptureEventListeners : this._registeredBubbleEventListeners);
-             return result;
+    },
 
+    _indexOfRegisteredListener: {
+        enumerable: false,
+        value: function indexOfRegisteredListener(targetEntryForEventTypeListeners, listener, listenerEntry) {
+            var i=0, countI = targetEntryForEventTypeListeners.length;
+
+            if(listenerEntry) {
+
+                for(;i<countI;i++) {
+                    if(targetEntryForEventTypeListeners[i] === listenerEntry) return i;
+                }
+
+            } else {
+
+                for(;i<countI;i++) {
+                    if(targetEntryForEventTypeListeners[i].listener === listener) return i;
+                }
+
+            }
+            return -1;
+        }
+    },
+
+   registerTargetEventListener: {
+        enumerable: false,
+        value: function registerTargetEventListener(target, eventType, listener, optionsOrUseCapture) {
+            var listenerOptions = typeof optionsOrUseCapture === "object" ? optionsOrUseCapture : {capture: !!optionsOrUseCapture},
+                targetEntry = this._targetEventListeners.get(target) || (this._targetEventListeners.set(target, (targetEntry = new Map())) && targetEntry),
+                targetEntryForEventType = targetEntry.get(eventType) || (targetEntry.set(eventType, (targetEntryForEventType = new Map())) && targetEntryForEventType),
+                isNewTarget = false,
+                //For the first listener and for perf optimization we don't create an array. We do that starting with the second listener, unless for some reason the listener is an Array??
+                targetEntryForEventTypeListeners = listenerOptions.capture
+                    ? targetEntryForEventType.get(Event_CAPTURING_PHASE) || (targetEntryForEventType.set(Event_CAPTURING_PHASE, (targetEntryForEventTypeListeners = Array.isArray(listenerOptions) ? [listenerOptions] : listenerOptions)) && targetEntryForEventTypeListeners)
+                    : targetEntryForEventType.get(Event_BUBBLING_PHASE) || (targetEntryForEventType.set(Event_BUBBLING_PHASE, (targetEntryForEventTypeListeners = Array.isArray(listenerOptions) ? [listenerOptions] : listenerOptions)) && targetEntryForEventTypeListeners);
+
+            // if(eventType === "pointerdown" || eventType === "pointerup" || eventType.indexOf("press") !== -1) {
+                if(typeof optionsOrUseCapture === "object") {
+
+                    if(optionsOrUseCapture.passive) {
+                        // console.log(target,"registerTargetEventListener "+eventType," listener:",listener, "optionsOrUseCapture:",optionsOrUseCapture);
+                    }
+                    //trigger passive:
+                    optionsOrUseCapture.passive;
+
+                }
+                // else {
+                //     console.log(target.toString(),"registerTargetEventListener "+eventType);
+
+                // }
+            // }
+
+            listenerOptions.listener = listener;
+
+            if(targetEntryForEventTypeListeners) {
+                if(Array.isArray(targetEntryForEventTypeListeners)) {
+                    if(Array.isArray(listener) && targetEntryForEventTypeListeners.length === 1) {
+                        isNewTarget = true;
+                    }
+                    if(this._indexOfRegisteredListener(targetEntryForEventTypeListeners,listener) === -1) {
+                        //We need to make sure we don't add it twice:
+                        targetEntryForEventTypeListeners.push(listenerOptions);
+                    }
+                } else if(targetEntryForEventTypeListeners.listener !== listener) {
+                    targetEntryForEventType.set(listenerOptions.capture ? Event_CAPTURING_PHASE : Event_BUBBLING_PHASE,[targetEntryForEventTypeListeners, listenerOptions]);
+                } else {
+                    isNewTarget = true;
+                }
+            }
+            //console.log("targetEntryForEventType",targetEntryForEventType);
+
+            //We'll check/cache the callbacks when we first dispatch
+
+            if (isNewTarget && typeof target.nativeAddEventListener === "function") {
+            //if (targetEntryForEventType.size === 1 && typeof target.nativeAddEventListener === "function") {
+                    this._observeTarget_forEventType_(target, eventType, listenerOptions);
+            }
+        }
+    },
+
+    unregisterTargetEventListener: {
+        enumerable: false,
+        value: function unregisterTargetEventListener(target, eventType, listener, optionsOrUseCapture) {
+            // if(typeof optionsOrUseCapture === "object") {
+            //     console.log(target,"unregisterTargetEventListener "+eventType," listener:",listener, "optionsOrUseCapture:",optionsOrUseCapture);
+            // }
+
+            var listenerOptions = typeof optionsOrUseCapture === "object" ? optionsOrUseCapture : {capture: !!optionsOrUseCapture},
+                targetEntry = this._targetEventListeners.get(target),
+                targetEntryForEventType = targetEntry ? targetEntry.get(eventType) : null,
+                targetEntryForEventTypeListeners = targetEntryForEventType
+                ? listenerOptions.capture
+                    ? targetEntryForEventType.get(Event_CAPTURING_PHASE)
+                    : targetEntryForEventType.get(Event_BUBBLING_PHASE)
+                : null,
+                targetEntryForEventTypeOtherPhaseListeners = targetEntryForEventType
+                ? listenerOptions.capture
+                    ? targetEntryForEventType.get(Event_BUBBLING_PHASE)
+                    : targetEntryForEventType.get(Event_CAPTURING_PHASE)
+                : null,
+                /* Only if options is passed as an array car we safely assume it's the objects we stored and keep track on, which helps us find it faster */
+                registeredListenerRecordIndex = Array.isArray(targetEntryForEventTypeListeners)
+                    ? this._indexOfRegisteredListener(targetEntryForEventTypeListeners,listener, (optionsOrUseCapture === listenerOptions ? listenerOptions : null))
+                    : -1;
+
+            if(registeredListenerRecordIndex !== -1) {
+                if (this._currentDispatchedTargetListeners.has(targetEntryForEventTypeListeners)) {
+                    var indexes = this._currentDispatchedTargetListeners.get(targetEntryForEventTypeListeners);
+                    if (!indexes) {
+                        this._currentDispatchedTargetListeners.set(targetEntryForEventTypeListeners,(indexes = []));
+                    }
+                    indexes.push(registeredListenerRecordIndex);
+
+                } else {
+                    this.spliceOne(targetEntryForEventTypeListeners,registeredListenerRecordIndex);
+                }
+                //If it's empty after, we remove
+                if(targetEntryForEventTypeListeners.length === 0) {
+                    listenerOptions.capture
+                    ? targetEntryForEventType.delete(Event_CAPTURING_PHASE)
+                    : targetEntryForEventType.delete(Event_BUBBLING_PHASE)
+                }
+
+            } else if(targetEntryForEventTypeListeners) {
+                //We have only one listener, we remove the whole entry
+                listenerOptions.capture
+                ? targetEntryForEventType.delete(Event_CAPTURING_PHASE)
+                : targetEntryForEventType.delete(Event_BUBBLING_PHASE)
+            }
+
+            this._stopObservingTargeForEventTypeIfNeeded(target, eventType, targetEntryForEventType);
+            // if(targetEntryForEventType && !targetEntryForEventType.get(Event_CAPTURING_PHASE) && !targetEntryForEventType.get(Event_BUBBLING_PHASE)) {
+            //     // If no targets for this eventType; stop observing this event
+            //     this._stopObservingTarget_forEventType_(target, eventType);
+            // }
+        }
+    },
+
+    _stopObservingTargeForEventTypeIfNeeded: {
+        value: function(target, eventType, _targetEntryForEventType) {
+            var targetEntry,
+                targetEntryForEventType = _targetEntryForEventType || ((targetEntry = this._targetEventListeners.get(target)) ? targetEntry.get(eventType) : null);
+
+                if(targetEntryForEventType && !targetEntryForEventType.get(Event_CAPTURING_PHASE) && !targetEntryForEventType.get(Event_BUBBLING_PHASE)) {
+                    // If no targets for this eventType; stop observing this event
+                    this._stopObservingTarget_forEventType_(target, eventType);
+                }
+
+        }
+    },
+
+    registerEventListener: {
+         enumerable: false,
+         value: function registerEventListener(target, eventType, listener, optionsOrUseCapture) {
+             var capture = typeof  optionsOrUseCapture === "object" ? optionsOrUseCapture.capture : !!optionsOrUseCapture;
+             this._registerEventListener(target, eventType, listener, capture ? this._registeredCaptureEventListeners : this._registeredBubbleEventListeners);
         }
     },
     _registerEventListener: {
@@ -1267,7 +1789,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
      */
     _observeTarget_forEventType_: {
         enumerable: false,
-        value: function (target, eventType) {
+        value: function (target, eventType, listenerOptions) {
 
             var listenerTarget;
 
@@ -1277,12 +1799,26 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 }
                 this._observedTarget_byEventType_[eventType].set(listenerTarget,this);
 
-                var isPassiveEventType = this.isPassiveEventType(eventType),
-                    eventOpts = isPassiveEventType ? {
-                        passive: true
-                    } : true;
+                var eventDefinition = this.eventDefinitions[eventType],
+                    eventOpts;
 
-                listenerTarget.nativeAddEventListener(eventType, this, eventOpts);
+                if(!eventDefinition) {
+                    console.debug("Event type "+eventType+" missed definition");
+                }
+
+                eventOpts = this.isPassiveEventType(eventType)
+                    ? {passive: true}
+                    : eventDefinition
+                        ? eventDefinition.bubbles
+                        : true; //by default
+
+
+                // eventOpts = {
+                //     passive: this.isPassiveEventType(eventType),
+                //     capture: true
+                // }
+
+                listenerTarget.nativeAddEventListener((eventDefinition ? (eventDefinition.type || eventType) : eventType), this, eventOpts);
             }
             // console.log("started listening: ", eventType, listenerTarget)
         }
@@ -1295,10 +1831,16 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
         enumerable: false,
         value: function (target, eventType) {
 
-            var listenerTarget;
+            var listenerTarget = this.actualDOMTargetForEventTypeOnTarget(eventType, target),
+                registeredTargetForActivation = this._registeredTargetForActivation.get(eventType);
 
-            listenerTarget = this.actualDOMTargetForEventTypeOnTarget(eventType, target);
-            if (listenerTarget) {
+            /*
+                In registerTargetForActivation, we listen to event types that start an interaction cycle. If these were removed, it would create bugs as they wouldn't be dispatched by the event manager anymore. So we keep track of these in this._registeredTargetForActivation, and we check before removing the native event listener that this is not one of them.
+
+                Some of these are instaled on window, so we add a check to see it's the documennt of that window. Ideally we wouldn't have to do that, but that requires thorough testing.
+            */
+
+            if (listenerTarget && (!registeredTargetForActivation || (registeredTargetForActivation && ((registeredTargetForActivation !== listenerTarget) && (registeredTargetForActivation.document !== listenerTarget)))) ) {
                 this._observedTarget_byEventType_[eventType].delete(listenerTarget);
                 listenerTarget.nativeRemoveEventListener(eventType, this, true);
             }
@@ -1363,6 +1905,10 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
         }
     },
 
+    _registeredTargetForActivation: {
+        value: new Map()
+    },
+
     registerTargetForActivation: {
         value: function (target) {
             var _document = target instanceof Window ? target.document : target;
@@ -1373,21 +1919,49 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             // before finding event handlers that were registered for these events
             if (window.PointerEvent) {
                 target.nativeAddEventListener("pointerdown", this._activationHandler, true);
+                this._registeredTargetForActivation.set("pointerdown", target);
+
                 _document.nativeAddEventListener("pointerenter", this._activationHandler, true);
+                this._registeredTargetForActivation.set("pointerenter", _document);
+
 
             } else if (window.MSPointerEvent && window.navigator.msPointerEnabled) {
                 target.nativeAddEventListener("MSPointerDown", this._activationHandler, true);
+                this._registeredTargetForActivation.set("MSPointerDown", target);
+
                 // IE10 has no support for pointerenter or pointerleave events.
                 _document.nativeAddEventListener("mouseenter", this._activationHandler, true);
+                this._registeredTargetForActivation.set("mouseenter", _document);
 
             } else {
                 target.nativeAddEventListener("touchstart", this._activationHandler, true);
+                this._registeredTargetForActivation.set("touchstart", target);
+
                 target.nativeAddEventListener("mousedown", this._activationHandler, true);
+                this._registeredTargetForActivation.set("mousedown", target);
+
                 // mouseenter events are not dispatched from window under Chrome and Safari.
                 _document.nativeAddEventListener("mouseenter", this._activationHandler, true);
+                this._registeredTargetForActivation.set("mouseenter", _document);
             }
 
             target.nativeAddEventListener("focus", this._activationHandler, true);
+            this._registeredTargetForActivation.set("focus", target);
+
+            // Clicking on a label element with a for attribute pointing to an
+            // input type radio or checkbox will check the input. In Chrome
+            // this will fire a focus event in the input element, this focus
+            // will call the _activationHandler, and that will allow a change
+            // event to fire in the input. In Safari, at least in the version at
+            // the time of writing this comment (15.5), the focus event is not
+            // fired and that was causing the event manager to fail to fire the
+            // expected change event. The following two lines fix the issue by
+            // directly listening to the change event in the window to call
+            // the _activationHandler:
+
+            target.nativeAddEventListener("change", this._activationHandler, true);
+            this._registeredTargetForActivation.set("change", target);
+
         }
 
     },
@@ -1426,38 +2000,49 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
     /**
      * @function
      */
-    _resetRegisteredEventListeners: {
-        enumerable: false,
-        value: function (registeredEventListeners) {
-            var i, l, target, eventType,
-                eventRegistration,
-                self = this;
+    // _resetRegisteredEventListeners: {
+    //     enumerable: false,
+    //     value: function (registeredEventListeners) {
+    //         var i, l, target, eventType,
+    //             eventRegistration,
+    //             self = this;
 
-            for (eventType in registeredEventListeners) {
-                if (registeredEventListeners.hasOwnProperty(eventType)) {
-                    eventRegistration = registeredEventListeners.get(eventType);
+    //         for (eventType in registeredEventListeners) {
+    //             if (registeredEventListeners.hasOwnProperty(eventType)) {
+    //                 eventRegistration = registeredEventListeners.get(eventType);
 
-                    if (eventRegistration && eventRegistration.length > 0) {
-                        for (i = 0, l = eventRegistration.length; i < l; i++) {
-                            target = eventRegistration[i];
-                            self._stopObservingTarget_forEventType_(target, eventType);
-                        }
-                    }
-                }
-            }
-        }
-    },
+    //                 if (eventRegistration && eventRegistration.length > 0) {
+    //                     for (i = 0, l = eventRegistration.length; i < l; i++) {
+    //                         target = eventRegistration[i];
+    //                         self._stopObservingTarget_forEventType_(target, eventType);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // },
 
     reset: {
         enumerable: false,
         value: function () {
-            this._resetRegisteredEventListeners(this._registeredCaptureEventListeners);
-            this._resetRegisteredEventListeners(this._registeredBubbleEventListeners);
+            // this._resetRegisteredEventListeners(this._registeredCaptureEventListeners);
+            // this._resetRegisteredEventListeners(this._registeredBubbleEventListeners);
+
+            self = this;
+            this._targetEventListeners.forEach(function(targetEntry/*value*/, target/*key*/, map) {
+
+                targetEntry.forEach(function(targetEntryForEventType/*value*/, eventType/*key*/, map) {
+                    self._stopObservingTarget_forEventType_(target, eventType);
+                });
+
+            });
+
 
             // TODO for each component claiming a pointer, force them to surrender the pointer?
             this._claimedPointers = new Map();
-            this._registeredCaptureEventListeners = new Map();
-            this._registeredBubbleEventListeners = new Map();
+            this._targetEventListeners = new Map();
+            // this._registeredCaptureEventListeners = new Map();
+            // this._registeredBubbleEventListeners = new Map();
 
         }
     },
@@ -1778,7 +2363,10 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             storeEvent: function (mutableEvent) {
                 var isBrowserSupportPointerEvents = currentEnvironment.isBrowserSupportPointerEvents,
                     event = mutableEvent instanceof MutableEvent ? mutableEvent._event : mutableEvent,
-                    pointerType = event.pointerType;
+                    pointerType = event
+                                    ? event.pointerType
+                                    : null;
+                if(!pointerType) return;
 
                 if ((isBrowserSupportPointerEvents &&
                     (pointerType === "mouse" || (window.MSPointerEvent && pointerType === window.MSPointerEvent.MSPOINTER_TYPE_MOUSE))) ||
@@ -2481,18 +3069,133 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
      *
      * @private
      */
+    // _processCurrentDispatchedTargetListenersToRemove: {
+    //     value: function(target, eventType, useCapture, listeners) {
+
+    //         var registeredEventListeners,
+    //             otherPhaseRegisteredEventListeners,
+    //             currentDispatchedTargetListenersToRemove = this._currentDispatchedTargetListeners.get(listeners);
+
+    //         if (currentDispatchedTargetListenersToRemove && currentDispatchedTargetListenersToRemove.size > 0) {
+    //             listeners.removeObjects(currentDispatchedTargetListenersToRemove);
+    //             registeredEventListeners = useCapture ? this._registeredCaptureEventListeners : this._registeredBubbleEventListeners;
+    //             otherPhaseRegisteredEventListeners = useCapture ? this._registeredBubbleEventListeners : this._registeredCaptureEventListeners;
+    //             this._unregisterTargetForEventTypeIfNeeded(target, eventType, listeners, registeredEventListeners, otherPhaseRegisteredEventListeners);
+    //         }
+    //     }
+    // },
+    _integerAscendingSortFunction: {
+        value: function(a, b) {
+            return a - b;
+        }
+    },
     _processCurrentDispatchedTargetListenersToRemove: {
-        value: function(target, eventType, useCapture, listeners) {
+        value: function(target, eventType, phase, listeners) {
 
             var registeredEventListeners,
                 otherPhaseRegisteredEventListeners,
+                //currentDispatchedTargetListenersToRemove is an array that contains the indexes of the listenerEntries that needs to be removed post phase distribution
                 currentDispatchedTargetListenersToRemove = this._currentDispatchedTargetListeners.get(listeners);
 
-            if (currentDispatchedTargetListenersToRemove && currentDispatchedTargetListenersToRemove.size > 0) {
-                listeners.removeObjects(currentDispatchedTargetListenersToRemove);
-                registeredEventListeners = useCapture ? this._registeredCaptureEventListeners : this._registeredBubbleEventListeners;
-                otherPhaseRegisteredEventListeners = useCapture ? this._registeredBubbleEventListeners : this._registeredCaptureEventListeners;
-                this._unregisterTargetForEventTypeIfNeeded(target, eventType, listeners, registeredEventListeners, otherPhaseRegisteredEventListeners);
+            if (currentDispatchedTargetListenersToRemove && currentDispatchedTargetListenersToRemove.length > 0) {
+                var targetEntry = this._targetEventListeners.get(target),
+                targetEntryForEventType = targetEntry ? targetEntry.get(eventType) : null,
+                targetEntryForEventTypeListeners = targetEntryForEventType
+                    ? targetEntryForEventType.get(phase)
+                    : null;
+
+                //Remove what needs to be
+                currentDispatchedTargetListenersToRemove.sort(this._integerAscendingSortFunction);
+                for(var i = 0, countI = currentDispatchedTargetListenersToRemove.length, index; i < countI; i++) {
+                    index = currentDispatchedTargetListenersToRemove[i] - i;
+                    targetEntryForEventTypeListeners.splice(index, 1);
+                }
+
+                this._stopObservingTargeForEventTypeIfNeeded(target, eventType, targetEntryForEventType);
+            }
+        }
+    },
+
+    _invokeTargetListenersForEventPhase: {
+        value: function(iTarget, mutableEvent, phase, _eventType, promise) {
+            if(promise && promise.then) {
+                return promise.then(() => {
+                    if(!mutableEvent.immediatePropagationStopped) {
+                        return this.__invokeTargetListenersForEventPhase(iTarget, mutableEvent, phase, _eventType);
+                    }
+                });
+            } else {
+                return this.__invokeTargetListenersForEventPhase(iTarget, mutableEvent, phase, _eventType);
+            }
+        }
+    },
+
+
+    __invokeTargetListenersForEventPhase: {
+        value: function __invokeTargetListenersForEventPhase(iTarget, mutableEvent, phase, _eventType) {
+            var eventType = (_eventType || mutableEvent.type),
+                listenerEntries = this._registeredEventListenersOnTarget_eventType_eventPhase(iTarget, eventType, phase);
+
+            if (listenerEntries) {
+
+                // currentTargetIdentifierSpecificCaptureMethodName = this.methodNameForCapturePhaseOfEventType(eventType, iTarget.identifier, capitalizedEventType);
+                if (Array.isArray(listenerEntries)) {
+                    var j=0,
+                        _currentDispatchedTargetListeners = this._currentDispatchedTargetListeners,
+                        nextEntry,
+                        previousPromise,
+                        promise,
+                        // promises,
+                        mutableEventPhase = mutableEvent.eventPhase,
+                        self = this;
+
+                    _currentDispatchedTargetListeners.set(listenerEntries,null);
+                    while ((nextEntry = listenerEntries[j++]) && !mutableEvent.immediatePropagationStopped) {
+                        if(promise) {
+                            if(promise.then) {
+                                previousPromise = promise;
+                            }
+                        }
+                        promise = this._invokeTargetListenerEntryForEvent(iTarget, nextEntry, mutableEvent, mutableEventPhase, undefined/*currentTargetIdentifierSpecificCaptureMethodName*/, undefined/*identifierSpecificCaptureMethodName*/, undefined/*captureMethodName*/, previousPromise);
+
+                        // if(previousPromise && promise) {
+                        //     if(!promises) {
+                        //         promises = [previousPromise, promise];
+                        //     } else {
+                        //         promises.push(promise);
+                        //     }
+                        // }
+                    }
+
+                    if(/*promises || */promise && promise.then) {
+                        /*
+                            We now chain each listener promise, so we can enforce an stopImmedidatePopagation
+
+                            mutableEvent.immediatePropagationStopped
+
+                            So no need to do a promise.all anymore
+                        */
+                        // promise =  (promises && promises.length)
+                        // ? Promise.all(promises)
+                        // : promise;
+
+                        return promise.finally(function() {
+                            self._processCurrentDispatchedTargetListenersToRemove(iTarget, eventType, phase, listenerEntries);
+                            _currentDispatchedTargetListeners.delete(listenerEntries);
+                        });
+
+                    } else {
+                        this._processCurrentDispatchedTargetListenersToRemove(iTarget, eventType, phase, listenerEntries);
+                        _currentDispatchedTargetListeners.delete(listenerEntries);
+                        return;
+                    }
+                }
+                else {
+                    /*
+                        There's only one listener, so no previous promise to pass
+                    */
+                    return this._invokeTargetListenerEntryForEvent(iTarget, listenerEntries, mutableEvent, mutableEvent.eventPhase, undefined/*currentTargetIdentifierSpecificCaptureMethodName*/, undefined/*identifierSpecificCaptureMethodName*/, undefined/*captureMethodName*/, /*promise*/undefined);
+                }
             }
         }
     },
@@ -2503,50 +3206,55 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
      */
     handleEvent: {
         enumerable: false,
-        value: function (event) {
-            if ((window.MontageElement && event.target instanceof MontageElement) ||
-                (event instanceof UIEvent && !this._shouldDispatchEvent(event))) {
-                return void 0;
-            }
-
-            if (this.monitorDOMModificationInEventHandling) {
-                document.body.addEventListener("DOMSubtreeModified", this.domModificationEventHandler, true);
-                document.body.addEventListener("DOMAttrModified", this.domModificationEventHandler, true);
-                document.body.addEventListener("DOMCharacterDataModified", this.domModificationEventHandler, true);
-            }
-
-            var loadedWindow,
-                i,
-                j,
+        value: function EventManager_handleEvent(event) {
+            // if(event.type === "pointerdown" || event.type === "pointerup" || event.type.indexOf("press") !== -1) {
+            //     console.log("handleEvent "+event.type,event.target);
+            // }
+            //console.log("----> handleEvent "+event.type);
+            var i,
                 iTarget,
-                listenerEntries,
-                nextEntry,
                 eventPath,
                 eventType = event.type,
-                capitalizedEventType = eventType.toCapitalized(),
+                eventDefinition = this.eventDefinitions[eventType],
                 eventBubbles = event.bubbles,
-                captureMethodName,
-                bubbleMethodName,
-                identifierSpecificCaptureMethodName,
-                identifierSpecificBubbleMethodName,
-                capitalizedIdentifier,
                 mutableEvent,
                 mutableEventTarget,
-                _currentDispatchedTargetListeners = this._currentDispatchedTargetListeners,
-                registeredCaptureEventListeners = this._registeredCaptureEventListeners,
-                registeredBubbleEventListeners = this._registeredBubbleEventListeners;
 
-            if ("DOMContentLoaded" === eventType) {
-                loadedWindow = event.target.defaultView;
-                if (loadedWindow && this._windowsAwaitingFinalRegistration.has(loadedWindow)) {
-                    this._finalizeWindowRegistration(loadedWindow);
-                    // Stop listening for DOMContentLoaded on this target
-                    // Otherwise the eventManager's handleEvent will be called
-                    // again from within here when the eventManager is found
-                    // to be a listener for this event when we find the listeners
-                    event.target.removeEventListener("DOMContentLoaded", this, true);
+                //New stuff
+                CAPTURING_PHASE = Event_CAPTURING_PHASE,
+                BUBBLING_PHASE = Event_BUBBLING_PHASE,
+                targetEntry, targetEntryForEventType,
+                promise;
+
+            if(isBrowser) {
+                if(
+                    (MontageElement && event.target instanceof MontageElement) ||
+                    (event instanceof UIEvent && !this._shouldDispatchEvent(event))
+                ) {
+                    return void 0;
+                }
+
+                // performance.mark('event-manager:handleEvent:start');
+
+                if (this.monitorDOMModificationInEventHandling) {
+                    document.body.addEventListener("DOMSubtreeModified", this.domModificationEventHandler, true);
+                    document.body.addEventListener("DOMAttrModified", this.domModificationEventHandler, true);
+                    document.body.addEventListener("DOMCharacterDataModified", this.domModificationEventHandler, true);
+                }
+
+                if ("DOMContentLoaded" === eventType) {
+                    var loadedWindow = event.target.defaultView;
+                    if (loadedWindow && this._windowsAwaitingFinalRegistration.has(loadedWindow)) {
+                        this._finalizeWindowRegistration(loadedWindow);
+                        // Stop listening for DOMContentLoaded on this target
+                        // Otherwise the eventManager's handleEvent will be called
+                        // again from within here when the eventManager is found
+                        // to be a listener for this event when we find the listeners
+                        event.target.removeEventListener("DOMContentLoaded", this, true);
+                    }
                 }
             }
+
 
             if (typeof event.propagationStopped !== "boolean") {
                 mutableEvent = MutableEvent.fromEvent(event);
@@ -2554,25 +3262,16 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 mutableEvent = event;
             }
 
+            if(eventDefinition && eventDefinition.type) {
+                mutableEvent.type = eventType = eventDefinition.type;
+            }
+
             mutableEventTarget = mutableEvent.target;
-            if (Element.isElement(mutableEventTarget) || mutableEventTarget instanceof Document || mutableEventTarget === window) {
+            if (isBrowser && (Element.isElement(mutableEventTarget) || mutableEventTarget instanceof Document || mutableEventTarget === window)) {
                 eventPath = this._eventPathForDomTarget(mutableEventTarget);
             } else {
                 eventPath = this._eventPathForTarget(mutableEventTarget);
             }
-
-            // use most specific handler method available, possibly based upon the identifier of the event target
-            if (mutableEventTarget.identifier) {
-                capitalizedIdentifier = mutableEventTarget.identifier.toCapitalized();
-                identifierSpecificCaptureMethodName = this.methodNameForCapturePhaseOfEventType(eventType, mutableEventTarget.identifier, capitalizedEventType, capitalizedIdentifier);
-                identifierSpecificBubbleMethodName = this.methodNameForBubblePhaseOfEventType(eventType, mutableEventTarget.identifier, capitalizedEventType, capitalizedIdentifier);
-            } else {
-                identifierSpecificCaptureMethodName = null;
-                identifierSpecificBubbleMethodName = null;
-            }
-
-            captureMethodName = this.methodNameForCapturePhaseOfEventType(eventType, null, capitalizedEventType);
-            bubbleMethodName = this.methodNameForBubblePhaseOfEventType(eventType, null, capitalizedEventType);
 
             // Let the delegate handle the event first
             if (this.delegate && typeof this.delegate.willDistributeEvent === "function") {
@@ -2583,137 +3282,268 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 this._pointerStorage.storeEvent(mutableEvent);
             }
 
+
+            targetEntry = this._targetEventListeners.get(mutableEventTarget);
+            targetEntryForEventType = targetEntry ? targetEntry.get(eventType) : null;
+
             // Capture Phase Distribution
-            mutableEvent.eventPhase = Event.CAPTURING_PHASE;
+            mutableEvent.eventPhase = CAPTURING_PHASE;
             // The event path we generate is from bottom to top, capture needs to traverse this backwards
-            for (i = eventPath.length - 1; !mutableEvent.propagationStopped && (iTarget = eventPath[i]); i--) {
+            i = eventPath.length;
+            while (!mutableEvent.immediatePropagationStopped && !mutableEvent.propagationStopped && (iTarget = eventPath[--i])) {
                 mutableEvent.currentTarget = iTarget;
 
-                listenerEntries = this._registeredEventListenersForEventType_onTarget_registeredEventListeners_(eventType, iTarget, registeredCaptureEventListeners);
-                if (!listenerEntries) {
-                    continue;
-                }
-                if (Array.isArray(listenerEntries)) {
-                    j=0;
-                    _currentDispatchedTargetListeners.set(listenerEntries,null);
-                    while ((nextEntry = listenerEntries[j++]) && !mutableEvent.immediatePropagationStopped) {
-                        this._invokeTargetListenerForEvent(iTarget, nextEntry, mutableEvent, identifierSpecificCaptureMethodName, captureMethodName);
-                    }
-                    this._processCurrentDispatchedTargetListenersToRemove(iTarget, eventType, true, listenerEntries);
-                    _currentDispatchedTargetListeners.delete(listenerEntries);
-                }
-                else {
-                    this._invokeTargetListenerForEvent(iTarget, listenerEntries, mutableEvent, identifierSpecificCaptureMethodName, captureMethodName);
-                }
-
+                promise = this._invokeTargetListenersForEventPhase(iTarget, mutableEvent, CAPTURING_PHASE, eventType, promise);
             }
 
             // At Target Distribution
-            if (!mutableEvent.propagationStopped) {
-                mutableEvent.eventPhase = Event.AT_TARGET;
+            if (!mutableEvent.immediatePropagationStopped && !mutableEvent.propagationStopped) {
+                mutableEvent.eventPhase = Event_AT_TARGET;
                 mutableEvent.currentTarget = iTarget = mutableEventTarget;
                 //Capture
-                listenerEntries = this._registeredEventListenersForEventType_onTarget_registeredEventListeners_(eventType, iTarget, registeredCaptureEventListeners);
-                if (listenerEntries) {
-                    if (Array.isArray(listenerEntries)) {
-                        j=0;
-                        _currentDispatchedTargetListeners.set(listenerEntries,null);
-                        while ((nextEntry = listenerEntries[j++]) && !mutableEvent.immediatePropagationStopped) {
-                            this._invokeTargetListenerForEvent(iTarget, nextEntry, mutableEvent, identifierSpecificCaptureMethodName, captureMethodName);
-                        }
-                        this._processCurrentDispatchedTargetListenersToRemove(iTarget, eventType, true, listenerEntries);
-                        _currentDispatchedTargetListeners.delete(listenerEntries);
-                    }
-                    else {
-                        this._invokeTargetListenerForEvent(iTarget, listenerEntries, mutableEvent, identifierSpecificCaptureMethodName, captureMethodName);
-                    }
+                promise = this._invokeTargetListenersForEventPhase(iTarget, mutableEvent, CAPTURING_PHASE, eventType, promise);
 
-                }
                 //Bubble
-                listenerEntries = this._registeredEventListenersForEventType_onTarget_registeredEventListeners_(eventType, iTarget, registeredBubbleEventListeners);
-                if (listenerEntries) {
-                    if (Array.isArray(listenerEntries)) {
-                        j=0;
-                        _currentDispatchedTargetListeners.set(listenerEntries,null);
-                        while ((nextEntry = listenerEntries[j++]) && !mutableEvent.immediatePropagationStopped) {
-                            this._invokeTargetListenerForEvent(iTarget, nextEntry, mutableEvent, identifierSpecificBubbleMethodName, bubbleMethodName);
-                        }
-                        this._processCurrentDispatchedTargetListenersToRemove(iTarget, eventType, false, listenerEntries);
-                        _currentDispatchedTargetListeners.delete(listenerEntries);
-                    }
-                    else {
-                        this._invokeTargetListenerForEvent(iTarget, listenerEntries, mutableEvent, identifierSpecificBubbleMethodName, bubbleMethodName);
-                    }
-
-                }
+                promise = this._invokeTargetListenersForEventPhase(iTarget, mutableEvent, BUBBLING_PHASE, eventType, promise);
             }
 
             // Bubble Phase Distribution
-            mutableEvent.eventPhase = Event.BUBBLING_PHASE;
-            for (i = 0; eventBubbles && !mutableEvent.propagationStopped && (iTarget = eventPath[i]); i++) {
-                mutableEvent.currentTarget = iTarget;
+            if(eventBubbles) {
+                mutableEvent.eventPhase = BUBBLING_PHASE;
+                for (i = 0; !mutableEvent.immediatePropagationStopped && !mutableEvent.propagationStopped && (iTarget = eventPath[i]); i++) {
+                    mutableEvent.currentTarget = iTarget;
 
-                listenerEntries = this._registeredEventListenersForEventType_onTarget_registeredEventListeners_(eventType, iTarget, registeredBubbleEventListeners);
-                if (!listenerEntries) {
-                    continue;
+                    promise = this._invokeTargetListenersForEventPhase(iTarget, mutableEvent, BUBBLING_PHASE, eventType, promise);
+
                 }
-
-                if (Array.isArray(listenerEntries)) {
-                    j=0;
-                    _currentDispatchedTargetListeners.set(listenerEntries,null);
-                      while ((nextEntry = listenerEntries[j++]) && !mutableEvent.immediatePropagationStopped) {
-                          this._invokeTargetListenerForEvent(iTarget, nextEntry, mutableEvent, identifierSpecificBubbleMethodName, bubbleMethodName);
-                      }
-                      this._processCurrentDispatchedTargetListenersToRemove(iTarget, eventType, false, listenerEntries);
-                      _currentDispatchedTargetListeners.delete(listenerEntries);
-                  }
-                  else {
-                      this._invokeTargetListenerForEvent(iTarget, listenerEntries, mutableEvent, identifierSpecificBubbleMethodName, bubbleMethodName);
-                  }
             }
 
-            mutableEvent.eventPhase = Event.NONE;
-            mutableEvent.currentTarget = null;
 
-            if (this._isStoringPointerEvents) {
-                this._pointerStorage.removeEvent(event);
+            if(promise) {
+                var self = this;
+                mutableEvent.propagationPromise = promise.then(function() {
+                    self._finalizeHandleEvent(mutableEvent, event);
+                });
+            } else {
+                this._finalizeHandleEvent(mutableEvent, event);
             }
 
-            if (this.monitorDOMModificationInEventHandling) {
-                document.body.removeEventListener("DOMSubtreeModified", this.domModificationEventHandler, true);
-                document.body.removeEventListener("DOMAttrModified", this.domModificationEventHandler, true);
-                document.body.removeEventListener("DOMCharacterDataModified", this.domModificationEventHandler, true);
-            }
             //console.profileEnd("handleEvent "+event.type);
             //console.groupTimeEnd("handleEvent");
+
+            // performance.mark('event-manager:handleEvent:end');
+            // performance.measure('handleEvent', 'event-manager:handleEvent:start', 'event-manager:handleEvent:end');
+        }
+    },
+
+    _finalizeHandleEvent: {
+        value: function(mutableEvent, event) {
+            mutableEvent.eventPhase = Event_NONE;
+            mutableEvent.currentTarget = null;
+
+            if(isBrowser) {
+                if (this._isStoringPointerEvents) {
+                    this._pointerStorage.removeEvent(event);
+                }
+
+                if (this.monitorDOMModificationInEventHandling) {
+                    document.body.removeEventListener("DOMSubtreeModified", this.domModificationEventHandler, true);
+                    document.body.removeEventListener("DOMAttrModified", this.domModificationEventHandler, true);
+                    document.body.removeEventListener("DOMCharacterDataModified", this.domModificationEventHandler, true);
+                }
+            }
+
+
         }
     },
 
     /**
      * @private
      */
-    _invokeTargetListenerForEvent: {
-        value: function _invokeTargetListenerForEvent(iTarget, jListener, mutableEvent, identifierSpecificPhaseMethodName, phaseMethodName) {
-            var functionType = "function";
-            if (typeof jListener === functionType) {
-                jListener.call(iTarget, mutableEvent);
+    // _invokeTargetListenerForEvent: {
+    //     value: function _invokeTargetListenerForEvent(iTarget, jListener, mutableEvent, currentTargetIdentifierSpecificPhaseMethodName, targetIdentifierSpecificPhaseMethodName, phaseMethodName) {
+    //         // var functionType = "function";
+    //         // if (typeof jListener === functionType) {
+    //         //     jListener.call(iTarget, mutableEvent);
+    //         // }
+    //         // else if (identifierSpecificPhaseMethodName && typeof jListener[identifierSpecificPhaseMethodName] === functionType) {
+    //         //     jListener[identifierSpecificPhaseMethodName](mutableEvent);
+    //         // }
+    //         // else if (typeof jListener[phaseMethodName] === functionType) {
+    //         //     jListener[phaseMethodName](mutableEvent);
+    //         // }
+    //         // else if (typeof jListener.handleEvent === functionType) {
+    //         //     jListener.handleEvent(mutableEvent);
+    //         // }
+    //     (currentTargetIdentifierSpecificPhaseMethodName && typeof jListener[currentTargetIdentifierSpecificPhaseMethodName] === this._functionType)
+    //         ? jListener[currentTargetIdentifierSpecificPhaseMethodName](mutableEvent)
+    //         : (targetIdentifierSpecificPhaseMethodName && typeof jListener[targetIdentifierSpecificPhaseMethodName] === this._functionType)
+    //             ? jListener[targetIdentifierSpecificPhaseMethodName](mutableEvent)
+    //             : (typeof jListener[phaseMethodName] === this._functionType)
+    //                 ? jListener[phaseMethodName](mutableEvent)
+    //                 : (typeof jListener.handleEvent === this._functionType)
+    //                     ? jListener.handleEvent(mutableEvent)
+    //                     : (typeof jListener === this._functionType)
+    //                         ? jListener.call(iTarget, mutableEvent)
+    //                         : void 0;
+
+    //     }
+    // },
+
+    _invokeTargetListenerEntryForEvent: {
+        value: function _invokeTargetListenerEntryForEvent(iTarget, listenerEntry, mutableEvent, phase, currentTargetIdentifierSpecificPhaseMethodName, targetIdentifierSpecificPhaseMethodName, phaseMethodName, promise) {
+            if(promise && promise.then) {
+                return promise.then(() => {
+                    if(!mutableEvent.immediatePropagationStopped) {
+                        return this.__invokeTargetListenerEntryForEvent(iTarget, listenerEntry, mutableEvent, phase, currentTargetIdentifierSpecificPhaseMethodName, targetIdentifierSpecificPhaseMethodName, phaseMethodName);
+                    } else {
+                        throw new Error("immediatePropagationStopped");
+                    }
+                });
+            } else {
+                return this.__invokeTargetListenerEntryForEvent(iTarget, listenerEntry, mutableEvent, phase, currentTargetIdentifierSpecificPhaseMethodName, targetIdentifierSpecificPhaseMethodName, phaseMethodName);
             }
-            else if (identifierSpecificPhaseMethodName && typeof jListener[identifierSpecificPhaseMethodName] === functionType) {
-                jListener[identifierSpecificPhaseMethodName](mutableEvent);
+        }
+    },
+
+
+    /**
+     * @method
+     * @param {String} type The type of an event.
+     * @param {Object} listener The listener for the event described.
+     * @param {Object} target The target of the event.
+     * @param {Boolean} capture true if asking for a callback in the capture phase, false for bubble.
+
+     * @description Returns the function to invoke on listener when an event happens. This takes into account our logic on routing event callbacks
+     * based on event type, phase and target's identifier.
+     *
+     */
+
+    callbackForEventTypeListenerOnTargetInPhase: {
+        value: function callbackForEventTypeListenerOnTargetInPhase(type, listener, target, capture, currentTarget) {
+            var callback, currentTargetIdentifierSpecificPhaseMethodName, targetIdentifierSpecificPhaseMethodName, phaseMethodName;
+
+            callback = ((currentTargetIdentifierSpecificPhaseMethodName = this._currentTargetIdentifierSpecificPhaseMethodName(capture, type, currentTarget.identifier)) && typeof listener[currentTargetIdentifierSpecificPhaseMethodName] === "function")
+            ? currentTargetIdentifierSpecificPhaseMethodName
+            : ((targetIdentifierSpecificPhaseMethodName =  this._currentTargetIdentifierSpecificPhaseMethodName(capture,type,target.identifier)) && typeof listener[targetIdentifierSpecificPhaseMethodName] === "function")
+                ? targetIdentifierSpecificPhaseMethodName
+                : (typeof listener[(phaseMethodName = this._currentTargetIdentifierSpecificPhaseMethodName(capture,type, null))] === "function")
+                    ? phaseMethodName
+                    : (typeof listener.handleEvent === "function")
+                        ? "handleEvent"
+                        : typeof listener === "function"
+                            ? listener
+                            : void 0;
+
+            if(typeof callback === "string") {
+                callback = listener[callback];
             }
-            else if (typeof jListener[phaseMethodName] === functionType) {
-                jListener[phaseMethodName](mutableEvent);
+
+            return callback;
+        }
+    },
+
+        /**
+     * @private
+     */
+    __invokeTargetListenerEntryForEvent: {
+        value: function __invokeTargetListenerEntryForEvent(iTarget, listenerEntry, mutableEvent, phase, currentTargetIdentifierSpecificPhaseMethodName, targetIdentifierSpecificPhaseMethodName, phaseMethodName) {
+            var listener = listenerEntry.listener,
+                callback,
+                // callbacks = listenerEntry.callbacks,
+                result;
+
+
+            //TEST, shutting currentTargetIdentifierSpecificPhaseMethodName down:
+            //currentTargetIdentifierSpecificPhaseMethodName = null;
+
+            // if(typeof listener === this._functionType) {
+            //     result = listener.call(iTarget, mutableEvent);
+            // } else {
+
+
+            /*
+                Caching the callback needs the same fallback strategy as finding it, worth it?
+            */
+
+            //if(!(callback = (callbacks && callbacks.get(iTarget)))) {
+
+                    // callback = (currentTargetIdentifierSpecificPhaseMethodName && typeof (callback = listener[currentTargetIdentifierSpecificPhaseMethodName]) === this._functionType)
+                    //     ? callback
+                    //     : (targetIdentifierSpecificPhaseMethodName && typeof (callback = listener[targetIdentifierSpecificPhaseMethodName]) === this._functionType)
+                    //         ? callback
+                    //         : (typeof (callback = listener[phaseMethodName]) === this._functionType)
+                    //             ? callback
+                    //             : (typeof (callback = listener.handleEvent) === this._functionType)
+                    //                 ? callback
+                    //                 : void 0;
+
+
+                    // callback = ((currentTargetIdentifierSpecificPhaseMethodName = this._currentTargetIdentifierSpecificPhaseMethodName(listenerEntry.capture, mutableEvent.type, iTarget.identifier)) && typeof listener[currentTargetIdentifierSpecificPhaseMethodName] === this._functionType)
+                    // ? currentTargetIdentifierSpecificPhaseMethodName
+                    // : ((targetIdentifierSpecificPhaseMethodName =  this._currentTargetIdentifierSpecificPhaseMethodName(listenerEntry.capture,mutableEvent.type,mutableEvent.target.identifier)) && typeof listener[targetIdentifierSpecificPhaseMethodName] === this._functionType)
+                    //     ? targetIdentifierSpecificPhaseMethodName
+                    //     : (typeof listener[(phaseMethodName = this._currentTargetIdentifierSpecificPhaseMethodName(listenerEntry.capture,mutableEvent.type, null))] === this._functionType)
+                    //         ? phaseMethodName
+                    //         : (typeof listener.handleEvent === this._functionType)
+                    //             ? "handleEvent"
+                    //             : typeof listener === this._functionType
+                    //                 ? listener
+                    //                 : void 0;
+
+                    // if(typeof callback === "string") {
+                    //     callback = listener[callback];
+                    // }
+
+                    callback = this.callbackForEventTypeListenerOnTargetInPhase(mutableEvent.type, listener, mutableEvent.target, listenerEntry.capture, iTarget);
+
+                    // if(!listenerEntry.once) {
+                    //     if(!callbacks) {
+                    //         listenerEntry.callbacks = callbacks = new Map();
+                    //     }
+                    //     callbacks.set(iTarget, callback);
+                    // }
+                //}
+
+                if(callback) {
+
+                    mutableEvent.eventPhase = phase;
+                    mutableEvent.currentTarget = iTarget;
+
+
+                    //callback.call(listener, mutableEvent);
+                    result = typeof callback !== "function"
+                    ? listener[callback](mutableEvent)
+                    : (callback === listener)
+                        ? callback.call(iTarget, mutableEvent)
+                        : callback.call(listener, mutableEvent);
+
+                }
+            //}
+
+            if(listenerEntry.once) {
+                this.unregisterTargetEventListener(iTarget, mutableEvent.type, listener, listenerEntry);
             }
-            else if (typeof jListener.handleEvent === functionType) {
-                jListener.handleEvent(mutableEvent);
-            }
+
+            return result;
 
         }
     },
 
+    _currentTargetIdentifierSpecificPhaseMethodName: {
+        value: function(capture, eventType, targetIdentifier) {
+            return capture
+                ? this.methodNameForCapturePhaseOfEventType(eventType, targetIdentifier)
+                : this.methodNameForBubblePhaseOfEventType(eventType, targetIdentifier);
+        }
+    },
+
+
     /**
      * Ensure that any components associated with DOM elements in the hierarchy between the
      * original activationEvent target and the window are preparedForActionEvents
+     *
+     * Benoit todo: Make this more generic and configurable to be applicable to different trees.
      *
      * @function
      * @private
@@ -2932,9 +3762,13 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             var oldEventHandler = this.eventHandlerForElement(anElement);
             // unreference unused event handlers
             if (oldEventHandler) {
-                this.unregisterEventHandlerForElement(anElement);
+                if(oldEventHandler !== anElementEventHandler) {
+                    this.unregisterEventHandlerForElement(anElement);
+                    this._elementEventHandlerByElement.set(anElement,anElementEventHandler);
+                }
+            } else {
+                this._elementEventHandlerByElement.set(anElement,anElementEventHandler);
             }
-            this._elementEventHandlerByElement.set(anElement,anElementEventHandler);
         }
     },
 
@@ -3008,14 +3842,19 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
 
 });
 
-Object.defineProperty(exports, "defaultEventManager", {
-    get: function () {
-        if (typeof defaultEventManager === "undefined") {
-            defaultEventManager = new EventManager();
-            if (typeof window !== "undefined") {
-                defaultEventManager.initWithWindow(window);
-            }
-        }
-        return defaultEventManager;
-    }
-});
+// Object.defineProperty(exports, "defaultEventManager", {
+//     get: function () {
+//         if (typeof defaultEventManager === "undefined") {
+//             defaultEventManager = new EventManager();
+//             if (typeof window !== "undefined") {
+//                 defaultEventManager.initWithWindow(window);
+//             }
+//         }
+//         return defaultEventManager;
+//     }
+// });
+
+exports.defaultEventManager = defaultEventManager = new EventManager();
+if (typeof window !== "undefined") {
+    defaultEventManager.initWithWindow(window);
+}

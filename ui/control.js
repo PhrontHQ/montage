@@ -1,32 +1,33 @@
 /**
-    @module montage/ui/control
+    @module mod/ui/control
 */
 
 var Component = require("ui/component").Component,
     deprecate = require("core/deprecate"),
-    Map = require("collections/map");
+    Map = require("core/collections/map");
 
 /**
     Base component for all native components, such as RadioButton and Checkbox.
-    @class module:montage/ui/control.Control
-    @extends module:montage/ui/component.Component
+    @class module:mod/ui/control.Control
+    @extends module:mod/ui/component.Component
  */
-var Control = exports.Control = Component.specialize(/** @lends module:montage/ui/control.Control# */ {
+var Control = exports.Control = class Control extends Component {/** @lends module:mod/ui/control.Control# */
+    constructor() {
+        super();
+        this.defineBindings({
+            // classList management
+            "classList.has('mod--disabled')": {
+                "<-": "disabled"
+            },
+            "classList.has('mod--active')": {
+                "<-": "active"
+            }
+        });
+    }
+}
 
-    constructor: {
-        value: function Control () {
-            this.defineBindings({
-                // classList management
-                "classList.has('montage--disabled')": {
-                    "<-": "disabled"
-                },
-                "classList.has('montage--active')": {
-                    "<-": "active"
-                }
-            });
-        }
-    },
-
+Control.addClassProperties(
+{
     /**
      * Dispatched when the button is activated through a mouse click, finger
      * tap, or when focused and the spacebar is pressed.
@@ -254,7 +255,7 @@ var Control = exports.Control = Component.specialize(/** @lends module:montage/u
 /**
     Specifies whether the button should receive focus or not.
     @type {boolean}
-    @event longpress 
+    @event longpress
 */
     preventFocus: {
         get: function () {
@@ -352,9 +353,10 @@ var Control = exports.Control = Component.specialize(/** @lends module:montage/u
 
                     this.callDelegateMethod("didChange", this);
 
-                    this._elementAttributeValues["value"] = value;
-
-                    this.needsDraw = true;
+                    if(!fromInput) {
+                        this._elementAttributeValues["value"] = value;
+                        this.needsDraw = true;
+                    }
                 }
             }
         }
@@ -364,7 +366,7 @@ var Control = exports.Control = Component.specialize(/** @lends module:montage/u
         A reference to a Converter object whose <code>revert()</code> function is invoked when a new value is assigned to the TextInput object's <code>value</code> property. The revert() function attempts to transform the newly assigned value into a "typed" data property. For instance, a DateInput component could assign a DateConverter object to this property to convert a user-supplied date string into a standard date format.
         @type {Converter}
         @default null
-        @see {@link module:montage/core/converter.Converter}
+        @see {@link module:mod/core/converter.Converter}
     */
     converter:{
         value: null
@@ -385,7 +387,7 @@ var Control = exports.Control = Component.specialize(/** @lends module:montage/u
 */
 
 /**
-    If an error is thrown by the converter object during a new value assignment, this property is set to <code>true</code>, and schedules a new draw cycle so the the UI can be updated to indicate the error state. the <code>montage--invalidText</code> CSS class is assigned to the component's DOM element during the next draw cycle.
+    If an error is thrown by the converter object during a new value assignment, this property is set to <code>true</code>, and schedules a new draw cycle so the the UI can be updated to indicate the error state. the <code>mod--invalidText</code> CSS class is assigned to the component's DOM element during the next draw cycle.
     @type {boolean}
     @default false
 */
@@ -394,9 +396,11 @@ var Control = exports.Control = Component.specialize(/** @lends module:montage/u
             return this._error;
         },
         set: function (v) {
-            this._error = v;
-            this.errorMessage = this._error ? this._error.message : null;
-            this.needsDraw = true;
+            if(v !== this._error ) {
+                this._error = v;
+                this.errorMessage = this._error ? this._error.message : null;
+                this.needsDraw = true;
+            }
         }
     },
 
@@ -419,14 +423,17 @@ var Control = exports.Control = Component.specialize(/** @lends module:montage/u
         }
     },
 
-    // // set value from user input
-    // /**
-    //   @private
-    // */
+    /**
+     * sets value from the elemnt's value. if isFromInput is true, it means it came from a DOM event, therefore the element alreaady has that value, we're
+     * just catching up.
+     *   @private
+     */
     takeValueFromElement: {
-        value: function() {
-            this.value = this.elementValue;
-            // Object.getPropertyDescriptor(this, "value").set.call(this, this.element.value, true);
+        value: function(isFromInput) {
+            //console.log(this.identifier+".takeValueFromElement - this.elementValue is "+this.elementValue);
+            isFromInput
+                ? Object.getPropertyDescriptor(this, "value").set.call(this, this.elementValue, true)
+                : this.value = this.elementValue;
         }
     },
     /**
@@ -435,7 +442,7 @@ var Control = exports.Control = Component.specialize(/** @lends module:montage/u
         @type {}
         @default false
         * @returns {boolean}
-        @see {@link module:montage/core/converter.Converter}
+        @see {@link module:mod/core/converter.Converter}
     */
     isContinuous: {
         value: false
@@ -444,7 +451,7 @@ var Control = exports.Control = Component.specialize(/** @lends module:montage/u
 });
 
 //http://www.w3.org/TR/html5/elements.html#global-attributes
-Control.addAttributes( /** @lends module:montage/ui/control.Control# */ {
+Control.addAttributes( /** @lends module:mod/ui/control.Control# */ {
     /**
         Specifies if the control should receive focus when the document loads. Because Montage components are loaded asynchronously after the document has loaded, setting this property has no effect on the element's focus state.
         @type {boolean}

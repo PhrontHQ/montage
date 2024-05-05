@@ -1,7 +1,7 @@
 /**
  * Defines standardized shims for the intrinsic String object.
  * @see {external:String}
- * @module montage/core/shim/string
+ * @module mod/core/shim/string
  */
 
 /**

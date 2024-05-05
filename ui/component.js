@@ -1,15 +1,15 @@
 /*global Element, console */
 /**
- * @module montage/ui/component
+ * @module mod/ui/component
  * @requires montage
- * @requires montage/core/target
- * @requires montage/core/template
- * @requires montage/core/document-resources
- * @requires montage/core/gate
- * @requires montage/core/promise
- * @requires montage/core/logger
- * @requires montage/core/event/event-manager
- * @requires montage/core/serialization/alias
+ * @requires mod/core/target
+ * @requires mod/core/template
+ * @requires mod/core/document-resources
+ * @requires mod/core/gate
+ * @requires mod/core/promise
+ * @requires mod/core/logger
+ * @requires mod/core/event/event-manager
+ * @requires mod/core/serialization/alias
  * @requires collections/set
  */
 var Montage = require("../core/core").Montage,
@@ -27,9 +27,17 @@ var Montage = require("../core/core").Montage,
     drawListLogger = require("../core/logger").logger("drawing list").color.blue(),
     needsDrawLogger = require("../core/logger").logger("drawing needsDraw").color.violet(),
     drawLogger = require("../core/logger").logger("drawing").color.blue(),
-    WeakMap = require("collections/weak-map"),
-    Map = require("collections/map"),
-    Set = require("collections/set");
+    Map = require("core/collections/map"),
+    Set = require("core/collections/set"),
+    currentEnvironment = require("core/environment").currentEnvironment,
+    PropertyChanges = require("core/collections/listen/property-changes");
+
+/*
+    For supporting Live Edit in apps connected to the studio, the connected app sets the global:
+     _montage_le_flag = true;
+
+     which activates some relevant logic here.
+*/
 
 /**
  * @const
@@ -217,9 +225,9 @@ var CssBasedAnimation = Montage.specialize({
             } else {
                 if (this._needsToMeasureAnimationTime) {
                     this._onAnimationsCompleted(function () {
-                        if (this._finishedDeferred) {
-                            this._finishedDeferred.resolve();
-                            this._finishedDeferred = null;
+                        if (this._finishedPromise) {
+                            this._finishedPromise.resolve();
+                            this._finishedPromise = null;
                         }
                     });
                     this.component.removeEventListener("didDraw", this, false);
@@ -229,25 +237,34 @@ var CssBasedAnimation = Montage.specialize({
         }
     },
 
-    _finishedDeferred: {
+    _finishedPromise: {
         value: null
     },
 
     finished: {
         get: function () {
-            if (!this._finishedDeferred) {
-                this._finishedDeferred = Promise.pending();
+            if (!this._finishedPromise) {
+                var _resolve, _reject;
+                this._finishedPromise = new Promise(function(resolve, reject) {
+                    _resolve = resolve;
+                    _reject = reject;
+                });
+
+                this._finishedPromise.resolve = _resolve;
+                this._finishedPromise.reject = _reject;
             }
-            return this._finishedDeferred.promise;
+            return this._finishedPromise;
         }
     },
 
     play: {
         value: function () {
             if (this.component) {
-                if (!this._finishedDeferred || this._cancelled) {
+                if (!this._finishedPromise || this._cancelled) {
                     this._cancelled = false;
-                    this._finishedDeferred = Promise.pending();
+
+                    //This will create
+                    this.finished;
                 }
                 this.component.needsDraw = true;
                 if (this.fromCssClass) {
@@ -299,8 +316,8 @@ var CssBasedAnimation = Montage.specialize({
                 this.component.classList.remove(this.toCssClass);
             }
             this.component.removeEventListener("didDraw", this, false);
-            if (this._finishedDeferred) {
-                this._finishedDeferred.reject();
+            if (this._finishedPromise) {
+                this._finishedPromise.reject(new Error("cancelled"));
             }
         }
     }
@@ -313,7 +330,126 @@ var rootComponent;
  * @classdesc Base class for all Montage components.
  * @extends Target
  */
-var Component = exports.Component = Target.specialize(/** @lends Component.prototype */{
+var Component = exports.Component = class Component extends Target {
+    static userInterfaceDescriptorLoadedField = 'userInterfaceDescriptorLoaded';
+
+    /**
+     * Add the specified properties as properties of this component.
+     * @function
+     * @param {object} properties An object that contains the properties you want to add.
+     * @private
+     */
+     //TODO, this should be renamed addAttributeProperties
+    static addAttributes(properties) {
+        var i, descriptor, property, object;
+        this.prototype._elementAttributeDescriptors = properties;
+
+        for(property in properties) {
+            if(properties.hasOwnProperty(property)) {
+                object = properties[property];
+                // Make sure that the descriptor is of the correct form.
+                if(object === null || typeof object === "string") {
+                    descriptor = {value: object, dataType: "string"};
+                    properties[property] = descriptor;
+                } else {
+                    descriptor = object;
+                }
+
+                // Only add the internal property, and getter and setter if
+                // they don't already exist.
+                if(typeof this.prototype[property] === 'undefined') {
+                    this.defineAttribute(property, descriptor);
+                }
+            }
+        }
+    }
+
+
+    //TODO, this should be renamed attributePropertySetter
+    static defineAttributeSetter(name, _name, descriptor) {
+        return (function (name, attributeName, setter) {
+            return function (value, fromInput) {
+                var descriptor = this._getElementAttributeDescriptor(name, this);
+
+                // if requested dataType is boolean (eg: checked, readonly etc)
+                // coerce the value to boolean
+                if(descriptor && "boolean" === descriptor.dataType) {
+                    value = ( (value || value === "") ? true : false);
+                }
+
+                // If the set value is different to the current one,
+                // update it here, and set it to be updated on the
+                // element in the next draw cycle.
+                if(typeof value !== 'undefined' && (this[attributeName] !== value)) {
+
+                    if (setter) {
+                        setter.call(this, value);
+                    } else {
+                        this[attributeName] = value;
+                    }
+
+                    this._elementAttributeValues[name] = value;
+                    if (!fromInput) {
+                        this.needsDraw = true;
+                    }
+                }
+            };
+        }(name, _name, descriptor.set));
+    }
+
+    //TODO, this should be renamed attributePropertySetter
+    static defineAttributeGetter(_name) {
+        return (function (attributeName) {
+            return function () {
+                return this[attributeName];
+            };
+        }(_name));
+    }
+    /**
+     * Adds a property to the component with the specified name.
+     * This method is used internally by the framework convert a DOM element's
+     * standard attributes into bindable properties.
+     * It creates an accessor property (getter/setter) with the same name as
+     * the specified property, as well as a "backing" data property whose name
+     * is prepended with an underscore (_).
+     * The backing variable is assigned the value from the property descriptor.
+     * For example, if the name "title" is passed as the first parameter, a
+     * "title" accessor property is created as well a data property named
+     * "_title".
+     * @function
+     * @param {string} name The property name to add.
+     * @param {Object} descriptor An object that specifies the new properties default attributes such as configurable and enumerable.
+     * @private
+     */
+     //https://github.com/kangax/html-minifier/issues/63 for a list of boolean attributes
+     //TODO, this should be renamed defineAttributeProperty
+    static defineAttribute (name, descriptor) {
+        descriptor = descriptor || {};
+        var _name = '_' + name;
+
+
+        var newDescriptor = {
+            configurable: (typeof descriptor.configurable === 'undefined') ? true: descriptor.configurable,
+            enumerable: (typeof descriptor.enumerable === 'undefined') ?  true: descriptor.enumerable,
+            set: this.defineAttributeSetter(name, _name, descriptor),
+            get: descriptor.get || this.defineAttributeGetter(_name)
+        };
+
+        // Define _ property
+        // TODO this.constructor.defineProperty
+        if(!this.prototype.hasOwnProperty(_name)) {
+            Montage.defineProperty(this.prototype, _name, {value: descriptor.value});
+        }
+        // Define property getter and setter
+        Montage.defineProperty(this.prototype, name, newDescriptor);
+    }
+
+}
+
+Component.addClassProperties(
+    {
+
+// var Component = exports.Component = Target.specialize(/** @lends Component.prototype */{
     // Virtual Interface
 
     /**
@@ -339,6 +475,17 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
      * @name Component#identifier
      * @property {String}
      */
+
+    /**
+     * The combination from the root component of all owner's component's identifiers.
+     * This represents the unique position of a component in an app's tree.
+     *
+     * @example "main.list.0.appointment"
+     *
+     * @name Component#absoluteIdentifier
+     * @property {String}
+     */
+
 
     /**
      * Lifecycle hook for when Component's domContent changes.
@@ -529,10 +676,10 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
      * each element that represents an argument.
      *
      * ```html
-     * <div data-montage-id="component">
+     * <div data-mod-id="component">
      *     <h1 data-arg="title"></h1>
      *     <div data-arg="content">
-     *         <span data-montage-id="text"></span>
+     *         <span data-mod-id="text"></span>
      *     <div>
      * </div>
      * ```
@@ -618,7 +765,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
             var element = this._element;
 
             if (element) {
-                return element.getAttribute("data-montage-id");
+                return element.getAttribute("data-mod-id") || element.getAttribute("data-mod-id");
             }
         }
     },
@@ -629,9 +776,10 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 domArguments,
                 name,
                 node,
-                element = this.element;
+                element = this.element,
+                DOM_ARG_ATTRIBUTE = this.DOM_ARG_ATTRIBUTE;
 
-            candidates = element.querySelectorAll("*[" + this.DOM_ARG_ATTRIBUTE + "]");
+            candidates = element.childElementCount && element.querySelectorAll("*[" + DOM_ARG_ATTRIBUTE + "]");
 
             // Need to make sure that we filter dom args that are for nested
             // components and not for this component.
@@ -647,10 +795,10 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                         continue nextCandidate;
                     }
                 }
-                this._findAndDetachComponents(candidate);
+                this._findAndDetachComponentsFromNode(candidate);
                 candidate.parentNode.removeChild(candidate);
-                name = candidate.getAttribute(this.DOM_ARG_ATTRIBUTE);
-                candidate.removeAttribute(this.DOM_ARG_ATTRIBUTE);
+                name = candidate.getAttribute(DOM_ARG_ATTRIBUTE);
+                candidate.removeAttribute(DOM_ARG_ATTRIBUTE);
                 domArguments[name] = candidate;
             }
 
@@ -747,7 +895,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
 
     dragManager: {
         get: function () {
-            return _defaultDragManager || 
+            return _defaultDragManager ||
             ((_defaultDragManager = new DragManager()).initWithComponent(this.rootComponent));
         }
     },
@@ -859,16 +1007,28 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
         }
     },
 
+    _environment: {
+        value: null
+    },
+
+    environment: {
+        enumerable: false,
+        get: function () {
+            return this._environment || (Component.prototype._environment = currentEnvironment);
+        }
+    },
+
+
     /**
      * Convenience to access the defaultEventManager object.
      * @type {EventManager}
      */
-    eventManager: {
-        enumerable: false,
-        get: function () {
-            return defaultEventManager;
-        }
-    },
+    // eventManager: {
+    //     enumerable: false,
+    //     get: function () {
+    //         return defaultEventManager;
+    //     }
+    // },
 
     /**
      * Convenience to access the rootComponent object.
@@ -1113,6 +1273,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
             if (this.childComponents.indexOf(childComponent) === -1) {
                 this.childComponents.push(childComponent);
                 childComponent._parentComponent = this;
+                childComponent._detachedParentComponent = null;
                 childComponent._prepareForEnterDocument();
                 if (childComponent.needsDraw &&
                     !this.rootComponent.isComponentWaitingNeedsDraw(childComponent)) {
@@ -1156,6 +1317,21 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
 
             if (parentComponent) {
                 parentComponent.removeChildComponent(this);
+
+                if(!this._detachedParentComponent) {
+                    this._detachedParentComponent = parentComponent;
+                }
+            }
+
+            /*
+                If a component is set to _blocksOwnerComponentDraw with _blocksOwnerComponentDraw set to true, _updateOwnerCanDrawGate adds that component as a gating factor for it's ownerCompoennt.
+
+                But if such a component doesn't get it's "componentTreeLoaded" canDrawGate set to true, which seems to happens when a repetition extracts it's template for example, the the wnole thing stays locked.
+
+                So we add that check if a component is taken out from it's hierarchy and cleaan things up to prevent that issue.
+            */
+            if(this.ownerComponent && this._blocksOwnerComponentDraw && this.ownerComponent.canDrawGate.hasField(this)) {
+                this.ownerComponent.canDrawGate.removeField(this);
             }
         }
     },
@@ -1204,6 +1380,14 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
     },
 
     _inDocument: {
+        get: function() {
+            return this.inDocument;
+        },
+        set: function(value) {
+            this.inDocument = value;
+        }
+    },
+    inDocument: {
         value: false
     },
 
@@ -1217,9 +1401,9 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 this.unregisterDroppable();
             }
 
-            if (this._inDocument && typeof this.exitDocument === "function") {                
+            if (this.inDocument && typeof this.exitDocument === "function") {
                 this.exitDocument();
-                this._inDocument = false;
+                this.inDocument = false;
             }
         }
     },
@@ -1241,7 +1425,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                         }
                     }
 
-                    if (component._inDocument) {
+                    if (component.inDocument) {
                         component.__exitDocument();
                     }
                 };
@@ -1319,6 +1503,12 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
         enumerable: false,
         value: false
     },
+    isTemplateLoaded: {
+        enumerable: false,
+        get: function() {
+            return this._isTemplateLoaded;
+        }
+    },
 
     _isTemplateInstantiated: {
         enumerable: false,
@@ -1354,7 +1544,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
         value: null
     },
 
-    _elementsToAppend: {
+    _contentElementsToAppend: {
         value: null
     },
 
@@ -1369,12 +1559,12 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
         },
         set: function (value) {
             var components,
-                componentsToAdd = [],
+                componentsToAdd,
                 i,
                 component;
 
-            if (!this._elementsToAppend) {
-                this._elementsToAppend = [];
+            if (!this._contentElementsToAppend) {
+                this._contentElementsToAppend = [];
             }
             this._newDomContent = value;
             this.needsDraw = true;
@@ -1391,32 +1581,35 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
             components = this.childComponents;
             if (value) {
                 if (!this._componentsPendingBuildOut) {
-                    this._componentsPendingBuildOut = [];
+                    this._componentsPendingBuildOut = new Set;
                 }
                 for (i = components.length - 1; i >= 0; i--) {
-                    if (this._componentsPendingBuildOut.indexOf(components[i]) === -1) {
-                        this._componentsPendingBuildOut.push(components[i]);
+                    if (!this._componentsPendingBuildOut.has(components[i])) {
+                        this._componentsPendingBuildOut.add(components[i]);
                     }
                 }
             } else {
-                this._componentsPendingBuildOut = [];
+                this._componentsPendingBuildOut = new Set;
                 for (i = components.length - 1; i >= 0; i--) {
                     components[i]._shouldBuildOut = true;
                 }
             }
             if (value instanceof Element) {
-                this._elementsToAppend.push(value);
-                this._findAndDetachComponents(value, componentsToAdd);
+                this._contentElementsToAppend.push(value);
+                this._findAndDetachComponentsFromNode(value, (componentsToAdd = []));
             } else if (value && value[0]) {
+                componentsToAdd = [];
                 for (i = 0; i < value.length; i++) {
-                    this._elementsToAppend.push(value[i]);
-                    this._findAndDetachComponents(value[i], componentsToAdd);
+                    this._contentElementsToAppend.push(value[i]);
+                    this._findAndDetachComponentsFromNode(value[i], componentsToAdd);
                 }
             }
 
-            // not sure if I can rely on _parentComponent to detach the nodes instead of doing one loop for dettach and another to attach...
-            for (i = 0; (component = componentsToAdd[i]); i++) {
-                this.addChildComponent(component);
+            if(componentsToAdd) {
+                // not sure if I can rely on _parentComponent to detach the nodes instead of doing one loop for dettach and another to attach...
+                for (i = 0; (component = componentsToAdd[i]); i++) {
+                    this.addChildComponent(component);
+                }
             }
         }
     },
@@ -1425,26 +1618,22 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
         value: false
     },
 
-    _findAndDetachComponents: {
+    _findAndDetachComponentsFromNode: {
         value: function (node, components) {
             // TODO: Check if searching the childComponents of the parent
             //       component can make the search faster..
-            var component = node.component,
-                children;
 
-            if (!components) {
-                components = [];
-            }
-
-            if (component) {
-                component.detachFromParentComponent();
-                components.push(component);
+            if (node.component) {
+                node.component.detachFromParentComponent();
+                if(components) {
+                    components.push(node.component);
+                }
             } else {
                 // DocumentFragments don't have children so we default to
                 // childNodes.
-                children = node.children || node.childNodes;
+                var children = node.children || node.childNodes;
                 for (var i = 0, child; (child = children[i]); i++) {
-                    this._findAndDetachComponents(child, components);
+                    this._findAndDetachComponentsFromNode(child, components);
                 }
             }
 
@@ -1567,11 +1756,11 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
         value: true
     },
 
-    _loadComponentTreeDeferred: {value: null},
+    _loadComponentTreePromise: {value: null},
     loadComponentTree: {
         value: function loadComponentTree() {
 
-            if (!this._loadComponentTreeDeferred) {
+            if (!this._loadComponentTreePromise) {
 
                 this.canDrawGate.setField("componentTreeLoaded", false);
 
@@ -1586,7 +1775,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 var self = this;
 
 
-                this._loadComponentTreeDeferred = this.expandComponent()
+                this._loadComponentTreePromise = this.expandComponent()
                     .then(function() {
                         if (self.hasTemplate || self.shouldLoadComponentTree) {
                             var promises,
@@ -1620,7 +1809,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                         console.error(error);
                     });
             }
-            return this._loadComponentTreeDeferred;
+            return this._loadComponentTreePromise;
         }
     },
 
@@ -1699,7 +1888,22 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                         this._expandComponentPromise = this._instantiateTemplate().then(function() {
                             self._isComponentExpanded = true;
                             self._addTemplateStylesIfNeeded();
-                            self.needsDraw = true;
+
+                            /*
+                                Javier found out that there was a double draw in repetition.
+                                Commenting out self.needsDraw = true here fixes it,
+                                which seems to particularly improve performance for repetition
+                                where items’s templates contain repetitions that themselves
+                                have items with templates that contains repetitions, etc …
+                                the impact is on component that have templates. To be benchmarked.
+
+                                But: comenting it out causes 1 repetition tests to fail:
+
+                                repetition/repetition ui/repetition-spec Repetition in a external component should draw the repetition of the 'component repetition'
+
+                                So more to look at before we can enjoy that win.
+                            */
+                            //self.needsDraw = true;
                         }).catch(function (error) {
                             console.error(error);
                         });
@@ -1851,6 +2055,18 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
     },
 
     _loadTemplatePromise: {value: null},
+    /**
+     * Returns the promise that resolves to the component's template object
+     * if it has one.
+     *
+     * @property {Promise}
+     */
+
+    loadTemplatePromise: {
+        get: function() {
+            return this._loadTemplatePromise || this._loadTemplate();
+        }
+    },
     _loadTemplate: {
         value: function _loadTemplate() {
             var info;
@@ -1886,28 +2102,43 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
 
     _getDefaultTemplateModuleId: {
         value: function () {
-            var templateModuleId,
-                slashIndex,
-                moduleId,
-                info;
+            var info = Montage.getInfoForObject(this),
+                moduleId = info.moduleId,
+                //moduleExtension = info.require.getModuleDescriptor(info.module).extension,
+                moduleIdExtension = moduleId.substring(moduleId.lastIndexOf(".")+1),
+                slashIndex = moduleId.lastIndexOf("/"),
+                templateModuleId = moduleId;
 
-            info = Montage.getInfoForObject(this);
-            moduleId = info.moduleId;
-            slashIndex = moduleId.lastIndexOf("/");
-            templateModuleId = moduleId + "/" + moduleId.slice(slashIndex === -1 ? 0 : slashIndex+1, -5 /* ".reel".length */) + ".html";
+
+
+
+            templateModuleId += "/";
+            /* . of extenson added here */
+            templateModuleId +=  moduleId.slice(slashIndex === -1 ? 0 : slashIndex+1, moduleId.length - (moduleIdExtension ? moduleIdExtension.length : 0) -1)
+            templateModuleId +=  ".html";
 
             return templateModuleId;
         }
     },
 
     deserializedFromSerialization: {
-        value: function () {
-            this.attachToParentComponent();
+        value: function (label) {
+            /*
+                We've been using this to stich the component tree based on the DOM structure, but at some point, to for example serialize an app in a known state, it will more reliable and efficient to store the parentComponent in the serialization produced from  live app.
+
+                There's also a bug if a component that isn't assigned an element in the template serialization is used in a slot, the slot sets itself as the parentComponent as expected, but it wa wiped out by calling this.attachToParentComponent() here.
+
+                So before calling this.attachToParentComponent(), we now check if there isn't this._parentComponent set already.
+            */
+            if(!this._parentComponent) {
+                this.attachToParentComponent();
+            }
         }
     },
 
     _deserializedFromTemplate: {
         value: function (owner, label, documentPart) {
+            //console.log("_deserializedFromTemplate(",owner,label,documentPart);
             Montage.getInfoForObject(this).label = label;
             this._ownerDocumentPart = documentPart;
 
@@ -1951,18 +2182,19 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 info = Montage.getInfoForObject(self);
                 var moduleId = info.moduleId,
                     slashIndex = moduleId.lastIndexOf("/"),
-                    dotIndex = moduleId.lastIndexOf(".");
+                    dotIndex = moduleId.lastIndexOf("."),
+                    dotExtension;
                 slashIndex = ( slashIndex === -1 ? 0 : slashIndex + 1 );
                 dotIndex = ( dotIndex === -1 ? moduleId.length : dotIndex );
                 dotIndex = ( dotIndex < slashIndex ? moduleId.length : dotIndex );
 
                 var objectDescriptorModuleId;
-                if ((dotIndex < moduleId.length) && ( moduleId.slice(dotIndex, moduleId.length) === ".reel")) {
+                if ((dotIndex < moduleId.length) && ( ((dotExtension = moduleId.slice(dotIndex, moduleId.length)) === ".mod")) || (dotExtension === ".mod")) {
                     // We are in a reel
-                    objectDescriptorModuleId = moduleId + "/" + moduleId.slice(slashIndex, dotIndex) + ".meta";
+                    objectDescriptorModuleId = moduleId + "/" + moduleId.slice(slashIndex, dotIndex) + ".mjson";
                 } else {
                     // We look for the default
-                    objectDescriptorModuleId = moduleId.slice(0, dotIndex) + ".meta";
+                    objectDescriptorModuleId = moduleId.slice(0, dotIndex) + ".mjson";
                 }
 
                 Montage.defineProperty(self, "_objectDescriptorModuleId", {
@@ -2151,23 +2383,36 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 value,
                 i,
                 attribute,
-                templateAttributeValue;
+                templateAttributeValue,
+                _montage_le_flag = attributes.length ? global._montage_le_flag : false;
 
             // TODO: get a spec for this, what attributes should we merge?
             for (i = 0; (attribute = attributes[i]); i++) {
                 attributeName = attribute.nodeName;
                 //jshint -W106
-                if (global._montage_le_flag && attributeName === ATTR_LE_COMPONENT) {
+                if (_montage_le_flag && attributeName === ATTR_LE_COMPONENT) {
                     //jshint +W106
                     value = attribute.nodeValue;
-                } else if (attributeName === "id" || attributeName === "data-montage-id") {
+                } else if (attributeName === "id" || attributeName === "data-mod-id" || attributeName === "data-montage-id") {
                     value = attribute.nodeValue;
                 } else {
                     templateAttributeValue = template.getAttribute(attributeName) || "";
                     if (templateAttributeValue) {
-                        value = templateAttributeValue +
-                            (attributeName === "style" ? "; " : " ") +
-                            attribute.nodeValue;
+                        /*
+                            Assuming only style and class are actually multi-value and we merge them
+                        */
+                        if(attributeName === "style") {
+                            value = templateAttributeValue;
+                            value += "; ";
+                            value += attribute.nodeValue;
+
+                        } else if(attributeName === "class") {
+                            value = templateAttributeValue;
+                            value += " ";
+                            value += attribute.nodeValue;
+                        } else {
+                            value = attribute.nodeValue;
+                        }
                     } else {
                         value = attribute.nodeValue;
                     }
@@ -2203,10 +2448,8 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
 
     _addTemplateStylesIfNeeded: {
         value: function () {
-            var part = this._templateDocumentPart;
-
-            if (part) {
-                this.rootComponent.addStyleSheetsFromTemplate(part.template);
+            if(this._templateDocumentPart) {
+                this.rootComponent.addStyleSheetsFromTemplate(this._templateDocumentPart.template);
             }
         }
     },
@@ -2378,13 +2621,13 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                             }
                         }
 
-                        components = this._findAndDetachComponents(contents);
+                        components = this._findAndDetachComponentsFromNode(contents, (components = []));
                         parameterElement.parentNode.replaceChild(contents, parameterElement);
 
                         for (i = 0; (component = components[i]); i++) {
                             component.attachToParentComponent();
                         }
-                    }    
+                    }
                 }
             }
         }
@@ -2466,24 +2709,27 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
         value: function () {
             var contents = this._newDomContent,
                 element,
+                elementsToAppend = this._contentElementsToAppend,
                 elementToAppend,
                 i;
 
             if (contents || this._shouldClearDomContentOnNextDraw) {
                 element = this._element;
 
+                var elementChildNodes = element.childNodes;
+
                 // Setting the innerHTML to clear the children will not work on
                 // IE because it modifies the underlying child nodes. Here's the
                 // test case that shows this issue: http://jsfiddle.net/89X6F/
-                for (i = element.childNodes.length - 1; i >= 0; i--) {
-                    if (!element.childNodes[i].component) {
-                        element.removeChild(element.childNodes[i]);
+                for (i = elementChildNodes.length - 1; i >= 0; i--) {
+                    if (!elementChildNodes[i].component) {
+                        element.removeChild(elementChildNodes[i]);
                     }
                 }
 
-                if (this._elementsToAppend) {
-                    while (this._elementsToAppend.length) {
-                        elementToAppend = this._elementsToAppend.shift();
+                if (elementsToAppend) {
+                    while (elementsToAppend.length) {
+                        elementToAppend = elementsToAppend.shift();
                         if (!element.contains(elementToAppend)) {
                             element.appendChild(elementToAppend);
                         }
@@ -2557,6 +2803,55 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
     didDraw: {
         enumerable: false,
         value: Function.noop
+    },
+
+
+    _didDraw: {
+        enumerable: false,
+        value: function(frameTime) {
+            if(this._updatesLayoutProperties) {
+                var ownerStyle = this.ownerComponent && this.ownerComponent.element && this.ownerComponent.element.style;
+
+                if(ownerStyle) {
+                    var boundingRect = this.element.getBoundingClientRect(),
+                        identifier = this.identifier;
+
+                    if(this._updatesLayoutPropertyX) {
+                        ownerStyle.setProperty(`--${identifier}X`, boundingRect.x);
+                    }
+                    if(this._updatesLayoutPropertyY) {
+                        ownerStyle.setProperty(`--${identifier}Y`, boundingRect.y);
+                    }
+                    if(this._updatesLayoutPropertyWidth) {
+                        ownerStyle.setProperty(`--${identifier}Width`, boundingRect.width);
+                    }
+                    if(this._updatesLayoutPropertyHeight) {
+                        ownerStyle.setProperty(`--${identifier}Height`, boundingRect.height);
+                    }
+                    if(this._updatesLayoutPropertyTop) {
+                        ownerStyle.setProperty(`--${identifier}Top`, boundingRect.top);
+                        this.top = boundingRect.top;
+                    }
+                    if(this._updatesLayoutPropertyRight) {
+                        ownerStyle.setProperty(`--${identifier}Right`, boundingRect.right);
+                        this.right = boundingRect.right;
+                    }
+                    if(this._updatesLayoutPropertyBottom) {
+                        ownerStyle.setProperty(`--${identifier}Bottom`, boundingRect.bottom);
+                        this.bottom = boundingRect.bottom;
+                    }
+                    if(this._updatesLayoutPropertyLeft) {
+                        ownerStyle.setProperty(`--${identifier}Left`, boundingRect.left);
+                        this.left = boundingRect.left;
+                    }
+
+                }
+
+
+
+            }
+            this.didDraw(frameTime);
+        }
     },
 
     /**
@@ -2959,7 +3254,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
     registerDraggable: {
         value: function () {
             this.dragManager.registerDraggable(this);
-            this.classList.add("montage-draggable");
+            this.classList.add("mod-draggable");
         }
     },
 
@@ -2969,17 +3264,20 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
     unregisterDraggable: {
         value: function () {
             this.dragManager.unregisterDraggable(this);
-            this.classList.remove("montage-draggable");
+            this.classList.remove("mod-draggable");
         }
     },
 
     /**
      * Register a component for beeing a drag destination.
+     * droppable is the name of the html5 attribrutes,
+     * isDroppable would be a more consistent name while close to standard,
+     * acceptDrop/acceptsDrop could work too
      */
     registerDroppable: {
         value: function () {
             this.dragManager.registerDroppable(this);
-            this.classList.add("montage-droppable");
+            this.classList.add("mod-droppable");
         }
     },
 
@@ -2989,7 +3287,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
     unregisterDroppable: {
         value: function () {
             this.dragManager.unregisterDroppable(this);
-            this.classList.remove("montage-droppable");
+            this.classList.remove("mod-droppable");
         }
     },
 
@@ -3059,24 +3357,33 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
         value: true
     },
 
+    /*
+        TODO: Re-design _shouldBuildIn and _shouldBuildOut in a more precise way.
+
+        Right now _shouldBuildIn works as expected as setter, but the value it
+        returns as getter is confusing:
+
+        When _shouldBuildIn is true, it can mean 3 things: it is going to build in,
+        it is building in, or the last build animation played was a build in. The
+        same goes with _shouldBuildOut, and in the end they represent multiple
+        phases, maybe up to 6 or 7 different ones.
+
+        To make the system precise, an option would be to store this phase and
+        convert _shouldBuildIn and _shouldBuildOut into functions.
+    */
     _shouldBuildIn: {
         get: function () {
             return this.__shouldBuildIn;
         },
         set: function (value) {
-            var index;
-
             value = !!value;
             this.__shouldBuildIn = value;
             if (value) {
                 if (this.parentComponent && this.parentComponent._componentsPendingBuildOut) {
-                    index = this.parentComponent._componentsPendingBuildOut.indexOf(this);
-                    if (index !== -1) {
-                        this.parentComponent._componentsPendingBuildOut.splice(index, 1);
-                    }
+                    this.parentComponent._componentsPendingBuildOut.remove(this);
                 }
                 this._shouldBuildOut = false;
-                if (this._inDocument) {
+                if (this.inDocument) {
                     this._buildIn();
                 }
             }
@@ -3096,7 +3403,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
             this.__shouldBuildOut = value;
             if (value) {
                 this._shouldBuildIn = false;
-                if (this._inDocument) {
+                if (this.inDocument) {
                     this._buildOut();
                 }
             }
@@ -3292,26 +3599,31 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 bubbles: false
             });
             this.dispatchEvent(event);
-            this._inDocument = true;
+            this.inDocument = true;
             if (this.parentComponent) {
                 this.parentComponent._childWillEnterDocument();
             }
             if (this.__shouldBuildIn) {
                 this._buildIn();
             }
-            this._isElementAttachedToParent = true;
+            this._isElementAttachedToParent = this._element.parentNode instanceof Element;
             if (this.__shouldBuildOut) {
                 this._buildOut();
             }
         }
     },
 
+    _componentsPendingBuildOutForEachFunction: {
+        value: function (component) {
+            component._shouldBuildOut = true;
+        }
+    },
+
     _childWillEnterDocument: {
         value: function () {
             if (this._componentsPendingBuildOut) {
-                while (this._componentsPendingBuildOut.length) {
-                    this._componentsPendingBuildOut.pop()._shouldBuildOut = true;
-                }
+                this._componentsPendingBuildOut.forEach(this._componentsPendingBuildOutForEachFunction);
+                this._componentsPendingBuildOut.clear();
             }
         }
     },
@@ -3344,6 +3656,10 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 // have been set on it.
                 originalElement = this.originalElement;
 
+                /*
+                    Original
+                */
+
                 var attributes, i, length, name, value, attributeName, descriptor;
                 attributes = originalElement.attributes;
                 if (attributes) {
@@ -3365,6 +3681,31 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                         }
                     }
                 }
+
+
+/*
+                var attributes, i, length, name, value, attributeName, descriptor;
+                attributes = originalElement.attributes;
+                if (attributes) {
+                    length = attributes.length;
+                    // Iterate over element's attributes
+                    for (name of originalElement.getAttributeNames()) {
+
+                        descriptor = this._getElementAttributeDescriptor(name, this);
+                        // check if this attribute from the markup is a well-defined attribute of the component
+                        if (descriptor || (typeof this[name] !== 'undefined')) {
+                            // only set the value if a value has not already been set by binding
+                            if (typeof this._elementAttributeValues[name] === 'undefined') {
+                                value = originalElement.getAttribute(name);
+                                this._elementAttributeValues[name] = value;
+                                if(this[name] === null || this[name] === undefined) {
+                                    this[name] = value;
+                                }
+                            }
+                        }
+                    }
+                }
+*/
 
                 // textContent is a special case since it isn't an attribute
                 descriptor = this._getElementAttributeDescriptor('textContent', this);
@@ -3389,7 +3730,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                             var _name = "_"+attributeName;
                             if ((this[_name] === null) && descriptor !== null && "value" in descriptor) {
                                 this[_name] = descriptor.value;
-                            }   
+                            }
                         }
                     }
                 }
@@ -3404,13 +3745,16 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
     _draw: {
         value: function () {
             var element = this.element,
+                _elementAttributeValues,
+                value,
                 descriptor;
 
             //Buffered/deferred element attribute values
-            if(this.__elementAttributeValues !== null) {
-                for(var attributeName in this._elementAttributeValues) {
-                    if(this._elementAttributeValues.hasOwnProperty(attributeName)) {
-                        var value = this[attributeName];
+            if((_elementAttributeValues = this.__elementAttributeValues) !== null) {
+                var attributeNames = Object.keys(_elementAttributeValues);
+                for(var i=0, attributeName; (attributeName = attributeNames[i]); i++) {
+                        //value = this[attributeName];
+                        value = _elementAttributeValues[attributeName];
                         descriptor = this._getElementAttributeDescriptor(attributeName, this);
                         if(descriptor) {
 
@@ -3430,19 +3774,39 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                                         //https://developer.mozilla.org/en/DOM/element.setAttribute
                                         element.setAttribute(attributeName, value);
                                     }
-
+                                } else {
+                                    element.setAttribute(attributeName, "");
                                 }
                             }
 
+                        } else {
+                            element.setAttribute(attributeName, value === undefined ? "" : String(value));
                         }
 
-                        delete this._elementAttributeValues[attributeName];
-                    }
+                        delete _elementAttributeValues[attributeName];
                 }
             }
 
             // classList
             this._drawClassListIntoComponent();
+
+            //Layout
+            var style = element && element.style;
+            if(style) {
+                if(this.top) {
+                    style.setProperty("top", this.top);
+                }
+                if(this.right) {
+                    style.setProperty("right", this.right);
+                }
+                if(this.bottom) {
+                    style.setProperty("bottom", this.bottom);
+                }
+                if(this.left) {
+                    style.setProperty("left", this.left);
+                }
+            }
+
         }
     },
 
@@ -3586,39 +3950,62 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 false
             );
 
-            if (typeof object === "object" &&
-                (constructor = object.constructor) &&
-                constructor.objectDescriptorModuleId
-            ) {
-                objectDescriptorModuleId = constructor.objectDescriptorModuleId;
+
+            objectDescriptor = object.objectDescriptor;
+            if(objectDescriptor) {
+                if(!Promise.is(objectDescriptor)) {
+                    promise = Promise.resolve(objectDescriptor);
+                }
+                else {
+                    promise = objectDescriptor;
+                    objectDescriptor = undefined;
+                }
             }
 
-            objectDescriptorModuleIdCandidate = this.callDelegateMethod(
-                "componentWillUseObjectDescriptorModuleIdForObject",
-                this,
-                objectDescriptorModuleId,
-                object
-            );
+            if(!promise && this.application.mainService) {
+                objectDescriptor = this.application.mainService.objectDescriptorForObject(object);
 
-            if (objectDescriptorModuleIdCandidate) {
-                infoDelegate = Montage.getInfoForObject(this.delegate);
-                objectDescriptorModuleId = objectDescriptorModuleIdCandidate;
+                if(objectDescriptor) {
+                    promise = Promise.resolve(objectDescriptor);
+                }
             }
 
-            if (objectDescriptorModuleId) {
-                if (objectDescriptorModuleIdCandidate) {
-                    objectDescriptor = getObjectDescriptorWithModuleId(
-                        objectDescriptorModuleId,
-                        infoDelegate ? infoDelegate.require : require
-                    );
-                } else {
-                    objectDescriptor = constructor.objectDescriptor;
+            if(!promise) {
+                if (typeof object === "object" &&
+                    (constructor = object.constructor) &&
+                    constructor.objectDescriptorModuleId
+                ) {
+                    objectDescriptorModuleId = constructor.objectDescriptorModuleId;
                 }
 
-                promise = objectDescriptor;
-            } else {
-                promise = Promise.resolve();
+                objectDescriptorModuleIdCandidate = this.callDelegateMethod(
+                    "componentWillUseObjectDescriptorModuleIdForObject",
+                    this,
+                    objectDescriptorModuleId,
+                    object
+                );
+
+                if (objectDescriptorModuleIdCandidate) {
+                    infoDelegate = Montage.getInfoForObject(this.delegate);
+                    objectDescriptorModuleId = objectDescriptorModuleIdCandidate;
+                }
+
+                if (objectDescriptorModuleId) {
+                    if (objectDescriptorModuleIdCandidate) {
+                        objectDescriptor = getObjectDescriptorWithModuleId(
+                            objectDescriptorModuleId,
+                            infoDelegate ? infoDelegate.require : require
+                        );
+                    } else {
+                        objectDescriptor = constructor.objectDescriptor;
+                    }
+
+                    promise = objectDescriptor;
+                } else {
+                    promise = Promise.resolve(objectDescriptor);
+                }
             }
+
 
             promise = promise.then(function (objectDescriptor) {
                 var moduleInfo = Montage.getInfoForObject(self),
@@ -3626,7 +4013,7 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                     moduleId = packageName + "/" + moduleInfo.moduleId,
                     userInterfaceDescriptorModuleId,
                     userInterfaceDescriptorModuleIdCandidate;
-                
+
                 if (objectDescriptor && objectDescriptor.userInterfaceDescriptorModules) {
                     userInterfaceDescriptorModuleId =
                         objectDescriptor.userInterfaceDescriptorModules[moduleId];
@@ -3672,130 +4059,286 @@ var Component = exports.Component = Target.specialize(/** @lends Component.proto
                 );
             });
         }
-    }
-
-}, {
-
-    userInterfaceDescriptorLoadedField: {
-        value: 'userInterfaceDescriptorLoaded'
     },
+
     /**
-     * Add the specified properties as properties of this component.
-     * @function
-     * @param {object} properties An object that contains the properties you want to add.
+     * As dispatching has been implemented in key  setters, limit use of default method
+     * for corresponding keys.
      * @private
      */
-     //TODO, this should be renamed addAttributeProperties
-    addAttributes: {
-        value: function (properties) {
-            var i, descriptor, property, object;
-            this.prototype._elementAttributeDescriptors = properties;
+    _superMakePropertyObservable : {
+        value: PropertyChanges.prototype.makePropertyObservable
+    },
+    makePropertyObservable: {
+        value: function(key) {
 
-            for(property in properties) {
-                if(properties.hasOwnProperty(property)) {
-                    object = properties[property];
-                    // Make sure that the descriptor is of the correct form.
-                    if(object === null || typeof object === "string") {
-                        descriptor = {value: object, dataType: "string"};
-                        properties[property] = descriptor;
-                    } else {
-                        descriptor = object;
-                    }
+            switch(key) {
+                case 'x':
+                    this._updatesLayoutProperties = true;
+                    this._updatesLayoutPropertyX = true;
+                    break;
 
-                    // Only add the internal property, and getter and setter if
-                    // they don't already exist.
-                    if(typeof this[property] === 'undefined') {
-                        this.defineAttribute(property, descriptor);
-                    }
+                case 'y':
+                    this._updatesLayoutProperties = true;
+                    this._updatesLayoutPropertyY = true;
+                    break;
+
+                case 'width':
+                    this._updatesLayoutProperties = true;
+                    this._updatesLayoutPropertyWidth = true;
+                    break;
+
+                case 'height':
+                    this._updatesLayoutProperties = true;
+                    this._updatesLayoutPropertyHeight = true;
+                    break;
+
+               case 'top':
+                    this._updatesLayoutProperties = true;
+                    this._updatesLayoutPropertyTop = true;
+                    break;
+
+                case 'right':
+                    this._updatesLayoutProperties = true;
+                    this._updatesLayoutPropertyRight = true;
+                    break;
+
+                case 'bottom':
+                    this._updatesLayoutProperties = true;
+                    this._updatesLayoutPropertyBottom = true;
+                    break;
+
+               case 'left':
+                this._updatesLayoutProperties = true;
+                this._updatesLayoutPropertyLeft = true;
+                break;
+        }
+            this._superMakePropertyObservable( key);
+        }
+    },
+
+    _updatesLayoutProperties: {
+        value: 0
+    },
+    _updatesLayoutPropertyX: {
+        value: false
+    },
+    updatesLayoutPropertyX: {
+        get: function () {
+            return this._updatesLayoutPropertyX;
+        },
+        set: function (value) {
+            if (this._updatesLayoutPropertyX !== value) {
+                this._updatesLayoutPropertyX = value;
+                if(value) {
+                    this._updatesLayoutProperties++;
+                } else {
+                    this._updatesLayoutProperties--;
                 }
+                this.needsDraw = true;
+            }
+        }
+    },
+
+    _updatesLayoutPropertyY: {
+        value: false
+    },
+    updatesLayoutPropertyY: {
+        get: function () {
+            return this._updatesLayoutPropertyY;
+        },
+        set: function (value) {
+            if (this._updatesLayoutPropertyY !== value) {
+                this._updatesLayoutPropertyY = value;
+                if(value) {
+                    this._updatesLayoutProperties++;
+                } else {
+                    this._updatesLayoutProperties--;
+                }
+                this.needsDraw = true;
+            }
+        }
+    },
+
+    _updatesLayoutPropertyWidth: {
+        value: false
+    },
+    updatesLayoutPropertyWidth: {
+        get: function () {
+            return this._updatesLayoutPropertyWidth;
+        },
+        set: function (value) {
+            if (this._updatesLayoutPropertyWidth !== value) {
+                this._updatesLayoutPropertyWidth = value;
+                if(value) {
+                    this._updatesLayoutProperties++;
+                } else {
+                    this._updatesLayoutProperties--;
+                }
+                this.needsDraw = true;
+            }
+    }
+    },
+
+    _updatesLayoutPropertyHeight: {
+        value: false
+    },
+    updatesLayoutPropertyHeight: {
+        get: function () {
+            return this._updatesLayoutPropertyHeight;
+        },
+        set: function (value) {
+            if (this._updatesLayoutPropertyHeight !== value) {
+                this._updatesLayoutPropertyHeight = value;
+                if(value) {
+                    this._updatesLayoutProperties++;
+                } else {
+                    this._updatesLayoutProperties--;
+                }
+                this.needsDraw = true;
+            }
+        }
+    },
+
+    _updatesLayoutPropertyTop: {
+        value: false
+    },
+    updatesLayoutPropertyTop: {
+        get: function () {
+            return this._updatesLayoutPropertyTop;
+        },
+        set: function (value) {
+            if (this._updatesLayoutPropertyTop !== value) {
+                this._updatesLayoutPropertyTop = value;
+                if(value) {
+                    this._updatesLayoutProperties++;
+                } else {
+                    this._updatesLayoutProperties--;
+                }
+                this.needsDraw = true;
+            }
+        }
+    },
+
+    _updatesLayoutPropertyRight: {
+        value: false
+    },
+    updatesLayoutPropertyRight: {
+        get: function () {
+            return this._updatesLayoutPropertyRight;
+        },
+        set: function (value) {
+            if (this._updatesLayoutPropertyRight !== value) {
+                this._updatesLayoutPropertyRight = value;
+                if(value) {
+                    this._updatesLayoutProperties++;
+                } else {
+                    this._updatesLayoutProperties--;
+                }
+                this.needsDraw = true;
+            }
+        }
+    },
+
+    _updatesLayoutPropertyBottom: {
+        value: false
+    },
+    updatesLayoutPropertyBottom: {
+        get: function () {
+            return this._updatesLayoutPropertyBottom;
+        },
+        set: function (value) {
+            if (this._updatesLayoutPropertyBottom !== value) {
+                this._updatesLayoutPropertyBottom = value;
+                if(value) {
+                    this._updatesLayoutProperties++;
+                } else {
+                    this._updatesLayoutProperties--;
+                }
+                this.needsDraw = true;
             }
         }
     },
 
 
-    //TODO, this should be renamed attributePropertySetter
-    defineAttributeSetter: {
-        value: function (name, _name, descriptor) {
-            return (function (name, attributeName, setter) {
-                return function (value, fromInput) {
-                    var descriptor = this._getElementAttributeDescriptor(name, this);
-
-                    // if requested dataType is boolean (eg: checked, readonly etc)
-                    // coerce the value to boolean
-                    if(descriptor && "boolean" === descriptor.dataType) {
-                        value = ( (value || value === "") ? true : false);
-                    }
-
-                    // If the set value is different to the current one,
-                    // update it here, and set it to be updated on the
-                    // element in the next draw cycle.
-                    if(typeof value !== 'undefined' && (this[attributeName] !== value)) {
-
-                        if (setter) {
-                            setter.call(this, value);
-                        } else {
-                            this[attributeName] = value;                            
-                        }
-
-                        this._elementAttributeValues[name] = value;
-                        if (!fromInput) {
-                            this.needsDraw = true;
-                        }
-                    }
-                };
-            }(name, _name, descriptor.set));
-        }
+    _updatesLayoutPropertyLeft: {
+        value: false
     },
-    //TODO, this should be renamed attributePropertySetter
-    defineAttributeGetter: {
-        value: function (_name) {
-            return (function (attributeName) {
-                return function () {
-                    return this[attributeName];
-                };
-            }(_name));
-        }
-    },
-    /**
-     * Adds a property to the component with the specified name.
-     * This method is used internally by the framework convert a DOM element's
-     * standard attributes into bindable properties.
-     * It creates an accessor property (getter/setter) with the same name as
-     * the specified property, as well as a "backing" data property whose name
-     * is prepended with an underscore (_).
-     * The backing variable is assigned the value from the property descriptor.
-     * For example, if the name "title" is passed as the first parameter, a
-     * "title" accessor property is created as well a data property named
-     * "_title".
-     * @function
-     * @param {string} name The property name to add.
-     * @param {Object} descriptor An object that specifies the new properties default attributes such as configurable and enumerable.
-     * @private
-     */
-     //https://github.com/kangax/html-minifier/issues/63 for a list of boolean attributes
-     //TODO, this should be renamed defineAttributeProperty
-    defineAttribute: {
-        value: function (name, descriptor) {
-            descriptor = descriptor || {};
-            var _name = '_' + name;
-
-
-            var newDescriptor = {
-                configurable: (typeof descriptor.configurable === 'undefined') ? true: descriptor.configurable,
-                enumerable: (typeof descriptor.enumerable === 'undefined') ?  true: descriptor.enumerable,
-                set: this.defineAttributeSetter(name, _name, descriptor),
-                get: descriptor.get || this.defineAttributeGetter(_name)
-            };
-
-            // Define _ property
-            // TODO this.constructor.defineProperty
-            if(!this.prototype.hasOwnProperty(_name)) {
-                Montage.defineProperty(this.prototype, _name, {value: descriptor.value});
+    updatesLayoutPropertyLeft: {
+        get: function () {
+            return this._updatesLayoutPropertyLeft;
+        },
+        set: function (value) {
+            if (this._updatesLayoutPropertyLeft !== value) {
+                this._updatesLayoutPropertyLeft = value;
+                if(value) {
+                    this._updatesLayoutProperties++;
+                } else {
+                    this._updatesLayoutProperties--;
+                }
+                this.needsDraw = true;
             }
-            // Define property getter and setter
-            Montage.defineProperty(this.prototype, name, newDescriptor);
+        }
+    },
+
+    _top: {
+        value: undefined
+    },
+    top: {
+        get: function () {
+            return this._top;
+        },
+        set: function (value) {
+            if (this._top !== value) {
+                this._top = value;
+                this.needsDraw = true;
+            }
+        }
+    },
+    _right: {
+        value: undefined
+    },
+    right: {
+        get: function () {
+            return this._right;
+        },
+        set: function (value) {
+            if (this._right !== value) {
+                this._right = value;
+                this.needsDraw = true;
+            }
+        }
+    },
+    _bottom: {
+        value: undefined
+    },
+    bottom: {
+        get: function () {
+            return this._bottom;
+        },
+        set: function (value) {
+            if (this._bottom !== value) {
+                this._bottom = value;
+                this.needsDraw = true;
+            }
+        }
+    },
+    _left: {
+        value: undefined
+    },
+    left: {
+        get: function () {
+            return this._left;
+        },
+        set: function (value) {
+            if (this._left !== value) {
+                this._left = value;
+                this.needsDraw = true;
+            }
         }
     }
+
+
 });
 
 /**
@@ -3818,6 +4361,10 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
      */
     init: {
         value: function () {
+            this.bodyComponent = new Component();
+            this.bodyComponent.hasTemplate = false;
+            this.bodyComponent.element = document.body;
+            this.addChildComponent(this.bodyComponent);
             return this;
         }
     },
@@ -4055,7 +4602,7 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
      * @function
      */
     requestAnimationFrame: {
-        value: (global.requestAnimationFrame || global.webkitRequestAnimationFrame || 
+        value: (global.requestAnimationFrame || global.webkitRequestAnimationFrame ||
                     global.mozRequestAnimationFrame ||  global.msRequestAnimationFrame),
         enumerable: false
     },
@@ -4065,7 +4612,7 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
      * @function
      */
     cancelAnimationFrame: {
-        value: (global.cancelAnimationFrame ||  global.webkitCancelAnimationFrame || 
+        value: (global.cancelAnimationFrame ||  global.webkitCancelAnimationFrame ||
                     global.mozCancelAnimationFrame || global.msCancelAnimationFrame),
         enumerable: false
     },
@@ -4091,7 +4638,7 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
         // Written by John Resig. Used under the Creative Commons Attribution 2.5 License.
         // http://ejohn.org/projects/javascript-diff-algorithm/
         value: function ( o, n ) {
-            var ns = {}, 
+            var ns = {},
                 os = {};
 
             function isNullOrUndefined(o) {
@@ -4100,9 +4647,9 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
 
             for (var i = 0; i < n.length; i++ ) {
                 if (isNullOrUndefined(ns[n[i]])) {
-                    ns[n[i]] = { 
-                        rows: [], 
-                        o: null 
+                    ns[n[i]] = {
+                        rows: [],
+                        o: null
                     };
                 }
                 ns[n[i]].rows.push( i );
@@ -4110,9 +4657,9 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
 
             for (i = 0; i < o.length; i++ ) {
                 if (isNullOrUndefined(os[o[i]])) {
-                    os[o[i]] = { 
-                        rows: [], 
-                        n: null 
+                    os[o[i]] = {
+                        rows: [],
+                        n: null
                     };
                 }
                 os[o[i]].rows.push(i);
@@ -4120,17 +4667,17 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
 
             for (i in ns ) {
                 if (
-                    ns[i].rows.length === 1 && 
-                        !isNullOrUndefined(os[i]) && 
+                    ns[i].rows.length === 1 &&
+                        !isNullOrUndefined(os[i]) &&
                             os[i].rows.length === 1
                 ) {
-                    n[ns[i].rows[0]] = { 
-                        text: n[ns[i].rows[0]], 
-                        row: os[i].rows[0] 
+                    n[ns[i].rows[0]] = {
+                        text: n[ns[i].rows[0]],
+                        row: os[i].rows[0]
                     };
-                    o[ os[i].rows[0] ] = { 
-                        text: o[ os[i].rows[0] ], 
-                        row: ns[i].rows[0]  
+                    o[ os[i].rows[0] ] = {
+                        text: o[ os[i].rows[0] ],
+                        row: ns[i].rows[0]
                     };
                 }
             }
@@ -4152,20 +4699,20 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
                         n[i].row > 0 && isNullOrUndefined(o[ n[i].row - 1].text) &&
                             n[i - 1] === o[ n[i].row - 1 ]
                 ) {
-                    n[i - 1] = { 
-                        text: n[i - 1], 
-                        row: n[i].row - 1 
+                    n[i - 1] = {
+                        text: n[i - 1],
+                        row: n[i].row - 1
                     };
-                    o[n[i].row-1] = { 
-                        text: o[n[i].row-1], 
-                        row: i - 1 
+                    o[n[i].row-1] = {
+                        text: o[n[i].row-1],
+                        row: i - 1
                     };
                 }
             }
 
-            return { 
-                o: o, 
-                n: n 
+            return {
+                o: o,
+                n: n
             };
         }
     },
@@ -4214,8 +4761,8 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
     addStyleSheetsFromTemplate: {
         value: function(template) {
             if(!this._addedStyleSheetsByTemplate.has(template)) {
-                var resources = template.getResources(), 
-                    ownerDocument = this.element.ownerDocument, 
+                var resources = template.getResources(),
+                    ownerDocument = this.element.ownerDocument,
                     styles = resources.createStylesForDocument(ownerDocument);
 
                 for (var i = 0, style; (style = styles[i]); i++) {
@@ -4262,7 +4809,7 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
             if (this.requestedAnimationFrame === null) { // 0 is a valid requestedAnimationFrame value
                 var requestAnimationFrame = this.requestAnimationFrame;
                 if (requestAnimationFrame) {
-                    this.requestedAnimationFrame = requestAnimationFrame.call(window, this._drawTree);
+                    this.requestedAnimationFrame = requestAnimationFrame(this._drawTree);
                 } else {
                     // Shim based in Erik Möller's code at
                     // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
@@ -4425,6 +4972,7 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
         value: function drawIfNeeded() {
             var needsDrawList = this._readyToDrawList, component, i, j, start = 0, firstDrawEvent,
                 composerList = this._composerList, composer, composerListLength,
+                frameTime,
                 isDrawLoggerDebug = drawLogger.isDebug;
 
             needsDrawList.length = 0;
@@ -4438,7 +4986,7 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
                 for (i = 0; i < composerListLength; i++) {
                     composer = composerList[i];
                     composer.needsFrame = false;
-                    composer.frame(this._frameTime);
+                    composer.frame((frameTime || (frameTime = this._frameTime)));
                 }
 
                 composerList.length = 0;
@@ -4459,7 +5007,7 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
                 for (i = start; i < j; i++) {
                     component = needsDrawList[i];
                     if (typeof component.willDraw === "function") {
-                        component.willDraw(this._frameTime);
+                        component.willDraw((frameTime || (frameTime = this._frameTime)));
                     }
                     if (isDrawLoggerDebug) {
                         drawLogger.debug("Level " + component._treeLevel + " " + loggerToString(component));
@@ -4488,8 +5036,8 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
             // TODO: add the possibility to display = "none" the body during development (IKXARIA-3631).
             for (i = j-1; i >= 0; i--) {
                 component = needsDrawList[i];
-                component._draw(this._frameTime);
-                component.draw(this._frameTime);
+                component._draw((frameTime || (frameTime = this._frameTime)));
+                component.draw((frameTime || (frameTime = this._frameTime)));
                 if (isDrawLoggerDebug) {
                     drawLogger.debug("Level " + component._treeLevel + " " + loggerToString(component));
                 }
@@ -4509,8 +5057,8 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
             }
             for (i = 0; i < j; i++) {
                 component = needsDrawList[i];
+                component._didDraw((frameTime || (frameTime = this._frameTime)));
                 component.dispatchEvent(this._didDrawEvent);
-                component.didDraw(this._frameTime);
                 if (!component._completedFirstDraw) {
                     firstDrawEvent = document.createEvent("CustomEvent");
                     firstDrawEvent.initCustomEvent("firstDraw", true, false, null);
@@ -4574,12 +5122,13 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
 
 
 });
- 
+
 exports.__root__ = rootComponent = new RootComponent().init();
+rootComponent.identifier = "rootComponent";
 
 //https://github.com/kangax/html-minifier/issues/63
 //http://www.w3.org/TR/html-markup/global-attributes.html
-Component.addAttributes( /** @lends module:montage/ui/control.Control# */ {
+Component.addAttributes( /** @lends module:mod/ui/control.Control# */ {
 
 /**
     Specifies the shortcut key(s) that gives focuses to or activates the element.
@@ -4635,7 +5184,7 @@ Component.addAttributes( /** @lends module:montage/ui/control.Control# */ {
     @default false
 */
     hidden: {dataType: 'boolean'},
-    //id: null,
+    id: null,
 
 /**
     Specifies the primary language for the element's contents and for any of the element's attributes that contain text.

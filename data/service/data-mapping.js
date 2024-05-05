@@ -1,4 +1,4 @@
-var Montage = require("core/core").Montage;
+var Montage = require("../../core/core").Montage;
 
 /**
  * Maps raw data to data objects of a specific type.
@@ -65,6 +65,7 @@ exports.DataMapping = Montage.specialize(/** @lends DataMapping.prototype */ {
         value: function (object, data) {
             // TO DO: Provide a default mapping based on object.TYPE.
             // For now, subclasses must override this.
+            Object.assign(data,object);
         }
     },
 

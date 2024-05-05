@@ -1,11 +1,11 @@
 /*global require,exports,describe,it,expect */
-var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component,
-    Overlay = require("montage/ui/overlay.reel").Overlay,
+var Montage = require("mod/core/core").Montage,
+    Component = require("mod/ui/component").Component,
+    Overlay = require("mod/ui/overlay.mod").Overlay,
     MockDOM = require("mocks/dom"),
     Event = require("mocks/event"),
-    defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
-    defaultKeyManager = require("montage/core/event/key-manager").defaultKeyManager;
+    defaultEventManager = require("mod/core/event/event-manager").defaultEventManager;
+    defaultKeyManager = require("mod/core/event/key-manager").defaultKeyManager;
 
 describe("ui/overlay-spec", function () {
     var anOverlay;
@@ -361,7 +361,7 @@ describe("ui/overlay-spec", function () {
             anOverlay.draw();
 
             expect(anOverlay.needsDraw).toBe(true);
-            expect(anOverlay.classList.has("montage-Overlay--visible")).toBe(true);
+            expect(anOverlay.classList.has("overlay-mod--visible")).toBe(true);
         });
 
         it("should be requested after hide() when shown", function () {
@@ -370,7 +370,7 @@ describe("ui/overlay-spec", function () {
             anOverlay.hide();
 
             expect(anOverlay.needsDraw).toBe(true);
-            expect(anOverlay.classList.has("montage-Overlay--visible")).toBe(false);
+            expect(anOverlay.classList.has("overlay-mod--visible")).toBe(false);
         });
 
         it("should not calculate position on willDraw when content is not shown", function () {

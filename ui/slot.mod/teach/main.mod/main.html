@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script type="text/mod-serialization">
+        {
+            "owner": {
+                "values": {
+                    "element": {"#": "main"},
+                    "componentWithNoElement": {"@": "dynamictext3"},
+                    "componentInPageWithElement": {"@": "dynamictext1"},
+                    "photoViewer": {"@": "photoviewer1"},
+                    "videoViewer": {"@": "videoviewer1"},
+                    "barContent": {"@": "slider2"},
+                    "bazContent": {"#": "bazContent"},
+                    "quxContent": {"#": "quxContent"},
+                    "slot": {"@": "slot1"},
+                    "componentWithNoElementButton": {"@": "button1"},
+                    "componentInPageWithElementButton": {"@": "button2"},
+                    "barButton": {"@": "button3"},
+                    "bazButton": {"@": "button4"},
+                    "quxButton": {"@": "button5"},
+                    "emptyButton": {"@": "button6"},
+                    "videoButton": {"@": "button7"},
+                    "photoButton": {"@": "button8"}
+                }
+            },
+            "application": {
+                "prototype": "mod/core/application",
+                "values": {
+                    "delegate": {"@": "owner"}
+                }
+            },
+            "slot1": {
+                "prototype": "mod/ui/slot.mod",
+                "values": {
+                    "element": {"#": "slot"}
+                }
+            },
+            "slider1": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "slider"}
+                }
+            },
+            "dynamictext1": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "componentInPageWithElement"},
+                    "value": "This is a component in the page with an element"
+                }
+            },
+            "dynamictext2": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "sliderValue"},
+                    "value": {"<-": "@slider1.value"}
+                }
+            },
+            "dynamictext3": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "value": "Hey there, I'm the foo component!"
+                }
+            },
+            "photoviewer1": {
+                "prototype": "../photo-viewer.mod",
+                "values": {
+                    "photo": {"<-": "@owner.currentMedia"}
+                }
+            },
+            "videoviewer1": {
+                "prototype": "../video-viewer.mod",
+                "values": {
+                    "video": {"<-": "@owner.currentMedia"}
+                }
+            },
+            "slider2": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "value": 20
+                }
+            },
+            "button1Composer": {
+                "prototype": "mod/composer/press-composer",
+                "values": {
+                    "component": {"@": "button1"},
+                    "identifier": "componentWithNoElementButton"
+                }
+            },
+            "button1": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "componentWithNoElementButton"},
+                    "identifier": "componentWithNoElementButton"
+                }
+            },
+            "button2Composer": {
+                "prototype": "mod/composer/press-composer",
+                "values": {
+                    "component": {"@": "button2"},
+                    "identifier": "componentInPageWithElementButton"
+                }
+            },
+            "button2": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "componentInPageWithElementButton"},
+                    "identifier": "componentInPageWithElementButton"
+                }
+            },
+            "button3Composer": {
+                "prototype": "mod/composer/press-composer",
+                "values": {
+                    "component": {"@": "button3"},
+                    "identifier": "barButton"
+                }
+            },
+            "button3": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "barButton"}
+                }
+            },
+            "button4Composer": {
+                "prototype": "mod/composer/press-composer",
+                "values": {
+                    "component": {"@": "button4"},
+                    "identifier": "bazButton"
+                }
+            },
+            "button4": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "bazButton"},
+                    "identifier": "bazButton"
+                }
+            },
+            "button5Composer": {
+                "prototype": "mod/composer/press-composer",
+                "values": {
+                    "component": {"@": "button5"},
+                    "identifier": "quxButton"
+                }
+            },
+            "button5": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "quxButton"},
+                    "identifier": "quxButton"
+                }
+            },
+            "button6Composer": {
+                "prototype": "mod/composer/press-composer",
+                "values": {
+                    "component": {"@": "button6"},
+                    "identifier": "emptyButton"
+                }
+            },
+            "button6": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "emptyButton"},
+                    "identifier": "emptyButton"
+                }
+            },
+            "button7Composer": {
+                "prototype": "mod/composer/press-composer",
+                "values": {
+                    "component": {"@": "button7"},
+                    "identifier": "videoButton"
+                }
+            },
+            "button7": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "videoButton"},
+                    "identifier": "videoButton"
+                }
+            },
+            "button8Composer": {
+                "prototype": "mod/composer/press-composer",
+                "values": {
+                    "component": {"@": "button8"},
+                    "identifier": "photoButton"
+                }
+            },
+            "button8": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "photoButton"},
+                    "identifier": "photoButton"
+                }
+            }
+        }
+    </script>
+
+</head>
+<body>
+    <div data-mod-id="main">
+        <h1>Teach Slot Mod</h1>
+
+        <div data-mod-id="slotChooser">
+            <button class="button" data-mod-id="componentWithNoElementButton">Show Component With No Element (Text)</button>
+            <button class="button" data-mod-id="barButton">Show Bar Component in Slot</button>
+            <button class="button" data-mod-id="componentInPageWithElementButton">Show Component In Page With Element</button>
+            <button class="button" data-mod-id="bazButton">Show Baz Element in Slot</button>
+            <button class="button" data-mod-id="quxButton">Show Qux Element in Slot</button>
+            <button class="button" data-mod-id="emptyButton">Show Nothing in Slot</button>
+            <button class="button" data-mod-id="videoButton">Switch to "video"</button>
+            <button class="button" data-mod-id="photoButton">Switch to "photo"</button>
+        </div>
+
+        <div data-mod-id="slot" id="slot">
+            <div>Content inside the slot from the template</div>
+        </div>
+
+        <div data-mod-id="componentInPageWithElement"></div>
+
+        <div data-mod-id="bazContent">This is some content initially outside the slot, but available to put inside the slot</div>
+
+        <div data-mod-id="quxContent">
+            <p>This is some content initially outside the slot, with a component inside, but available to put inside the slot</p>
+            <div data-mod-id="slider"></div>
+        </div>
+
+        <div data-mod-id="sliderValue"></div>
+
+    </div>
+</body>
+</html>

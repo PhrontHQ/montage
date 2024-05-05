@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    Bindings = require("montage/core/core").Bindings;
+var Montage = require("mod/core/core").Montage,
+    Bindings = require("mod/core/core").Bindings;
 
 describe("test/core/super-spec", function () {
     var Vehicle, Car, Beetle,

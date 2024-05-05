@@ -2,9 +2,12 @@ var Montage = require("../../core").Montage,
     MontageContext = require("./montage-interpreter").MontageContext,
     MontageReviver = require("./montage-reviver").MontageReviver,
     BindingsModule = require("../bindings"),
-    Map = require("collections/map").Map,
-    Promise = require("core/promise").Promise,
-    deprecate = require("../../deprecate");
+    Map = require("../../../core/collections/map").Map,
+    Promise = require("../../promise").Promise,
+    currentEnvironment = require("../../environment").currentEnvironment,
+    deprecate = require("../../deprecate"),
+    ObjectKeys = Object.keys,
+    JSON_parse = JSON.parse;
 
 var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
 
@@ -25,15 +28,28 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
     },
 
     init: {
-        value: function (serialization, _require, objectRequires, module, isSync) {
+        value: function (serialization, _require, objectRequires, module, isSync, useParsedSerialization) {
             if (typeof serialization === "string") {
                 this._serializationString = serialization;
             } else {
-                this._serializationString = JSON.stringify(serialization);
+                if(useParsedSerialization) {
+                    this._serialization = serialization;
+                } else {
+                    this._serializationString = JSON.stringify(serialization);
+                }
             }
             this._require = _require;
             this._module = module;
-            var locationId = module && _require.location + module.id;
+
+            /*
+                forking for node's require
+            */
+            var locationId = module
+                ? _require.location
+                    ? _require.location + module.id
+                    : module.id
+                : module;
+
             this._locationId = locationId;
 
             this._reviver = new MontageReviver().init(
@@ -51,7 +67,17 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
         }
     },
 
-    /**
+    __defaultInstances: {
+        value: undefined
+    },
+    _defaultInstances: {
+        get: function() {
+            return this.__defaultInstances || (this.__defaultInstances = {
+                application: Montage.application
+            });
+        }
+    },
+        /**
      * @param {Object} instances Map-like object of external user objects to
      * link against the serialization.
      * @param {Element} element The root element to resolve element references
@@ -62,6 +88,17 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
      */
     deserialize: {
         value: function (instances, element) {
+            var _serializationString = this._serializationString;
+            if((!_serializationString) && !this._serialization) {
+                return this._isSync ? null : Promise.resolve(null);
+            }
+
+            if(!instances) {
+                instances = this._defaultInstances;
+            } else if(!instances.application) {
+                instances.application = this._defaultInstances.application;
+            }
+
             var context = this._module && MontageDeserializer.moduleContexts.get(this._module),
                 circularError;
             if (context) {
@@ -82,7 +119,11 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
             }
 
             try {
-                var serialization = JSON.parse(this._serializationString);
+                var serialization = this._serialization || JSON_parse(_serializationString);
+                //We need a new JSON.parse every time, so if we had one, we use it, but we trash it after.
+                if(this._serialization) {
+                    this._serialization = null;
+                }
                 context = new MontageContext()
                     .init(serialization, this._reviver, instances, element, this._require, this._isSync);
                 if (this._locationId) {
@@ -92,6 +133,12 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
                     return context.getObjects();
                 } catch (ex) {
                     if (this._isSync) {
+                        if(currentEnvironment.isNode && ex.code === "ERR_INVALID_ARG_VALUE" && ex.message.startsWith("The argument 'filename' must be a file URL object, file URL string, or absolute path string. Received ")) {
+                            var messageParts = ex.message.split("The argument 'filename' must be a file URL object, file URL string, or absolute path string. Received ");
+                            if(messageParts.length === 2) {
+                                console.error("context.getObjects() failed. serialization at "+this._module.id+" contains package-relative moduleId "+messageParts[1]+" that needs to be changed to file relative to be compatible with node's native require");
+                            }
+                        }
                         throw ex;
                     } else {
                         return Promise.reject(ex);
@@ -101,7 +148,7 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
                 if (this._isSync) {
                     throw ex;
                 } else {
-                    return this._formatSerializationSyntaxError(this._serializationString);
+                    return this._formatSerializationSyntaxError(_serializationString);
                 }
             }
         }
@@ -111,7 +158,7 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
         value: function(objects) {
             return (this._isSync    ? this.deserialize(objects).root
                                     : this.deserialize(objects).then(function(objects) {
-                                            return objects.root;
+                                            return objects ? objects.root : null;
                                         }));
         }
     },
@@ -131,7 +178,7 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
                 promises;
 
             if (serialization !== null) {
-                labels = Object.keys(serialization);
+                labels = ObjectKeys(serialization);
                 for (i = 0; (label = labels[i]); ++i) {
                     object = serialization[label];
                     locationId = object.prototype || object.object;
@@ -144,7 +191,7 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
                             );
                         }
                         locationDesc = MontageReviver.parseObjectLocationId(locationId);
-                        module = moduleLoader.getModule(locationDesc.moduleId, label);
+                        module = moduleLoader.getModule(locationDesc.moduleId, label, this);
                         if (Promise.is(module)) {
                             (promises || (promises = [])).push(module);
                         }
@@ -164,7 +211,7 @@ var MontageDeserializer = exports.MontageDeserializer = Montage.specialize({
                 labels = [];
 
             for (var label in serialization) {
-                if (Object.keys(serialization[label]).length === 0) {
+                if (ObjectKeys(serialization[label]).length === 0) {
                     labels.push(label);
                 }
             }

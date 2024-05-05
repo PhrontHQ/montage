@@ -1,0 +1,9 @@
+{
+    "name": "mod-testing-test",
+    "version": "0.0.0",
+	"main": "all",
+  	"mappings": {
+    	"mod": "../node_modules/mod",
+    	"mod-testing": "../"
+  	}
+}

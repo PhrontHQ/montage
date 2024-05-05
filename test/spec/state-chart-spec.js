@@ -28,9 +28,9 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage;
-var StateChart= require("montage/core/state-chart").StateChart;
-var State = require("montage/core/state-chart").State;
+var Montage = require("mod/core/core").Montage;
+var StateChart= require("mod/core/state-chart").StateChart;
+var State = require("mod/core/state-chart").State;
 
 describe("state-chart-spec", function () {
 

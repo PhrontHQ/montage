@@ -35,7 +35,7 @@ POSSIBILITY OF SUCH DAMAGE.
     <title> Draw </title>
     <link rel="stylesheet" type="text/css" href="draw.css"/>
     <script type="text/javascript" src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
 {
     "test": {
         "prototype": "spec/ui/draw/draw",
@@ -88,24 +88,24 @@ POSSIBILITY OF SUCH DAMAGE.
         }
     },
     "owner": {
-        "prototype": "spec/ui/draw/owner.reel"
+        "prototype": "spec/ui/draw/owner.mod"
     },
     "repetition": {
-        "prototype": "montage/ui/repetition.reel",
+        "prototype": "mod/ui/repetition.mod",
         "values": {
             "element": {"#": "repetition"},
             "content": [1, 2, 3]
         }
     },
     "componentC": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentC"},
             "hasTemplate": false
         }
     },
     "componentC1": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentC1"},
             "hasTemplate": false
@@ -113,7 +113,7 @@ POSSIBILITY OF SUCH DAMAGE.
     },
 
     "componentNoelement": {
-        "prototype": "spec/ui/draw/component-noelement.reel",
+        "prototype": "spec/ui/draw/component-noelement.mod",
         "values": {
             "value": "componentNoelement",
             "parentOfNoElement": {"@": "componentE"}
@@ -121,65 +121,65 @@ POSSIBILITY OF SUCH DAMAGE.
     },
 
     "componentD": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentD"},
             "hasTemplate": false
         }
     },
     "componentD1": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentD1"},
             "hasTemplate": false
         }
     },
     "componentDtarget": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentDtarget"},
             "hasTemplate": false
         }
     },
     "componentE": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentE"},
             "hasTemplate": false
         }
     },
     "componentE11": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentE11"},
             "hasTemplate": false
         }
     },
     "componentStyle": {
-        "prototype": "spec/ui/draw/component-style.reel",
+        "prototype": "spec/ui/draw/component-style.mod",
         "values": {
             "element": {"#": "component-style"}
         }
     },
     "componentWithoutIdentifier": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "hasTemplate": false
     },
     "componentWithIdentifier": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "identifier": "anIdentifier",
             "hasTemplate": false
         }
     },
     "componentOwner": {
-        "prototype": "spec/ui/draw/component-owner.reel",
+        "prototype": "spec/ui/draw/component-owner.mod",
         "values": {
             "element": {"#": "component-owner"}
         }
     },
     "componentLayout": {
-        "prototype": "spec/ui/draw/component-layout.reel",
+        "prototype": "spec/ui/draw/component-layout.mod",
         "values": {
             "element": {"#": "component-layout"},
             "left": {"#": "component-layout-left"},
@@ -189,21 +189,21 @@ POSSIBILITY OF SUCH DAMAGE.
         }
     },
     "componentLayoutLeft": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "component-layout-left"},
             "hasTemplate": false
         }
     },
     "componentLayoutRight": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "component-layout-right"},
             "hasTemplate": false
         }
     },
     "componentToBeCleaned": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "component-tobeclean"},
             "hasTemplate": false,
@@ -211,163 +211,163 @@ POSSIBILITY OF SUCH DAMAGE.
         }
     },
     "text1": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "text1"},
             "value": "Text"
         }
     },
     "componentDrawsParent": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentDrawsParent"},
             "hasTemplate": false
         }
     },
     "componentParent": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "parentComponent"},
             "hasTemplate": false
         }
     },
     "componentWithDelegate": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "delegate": {"@": "test"},
             "hasTemplate": false
         }
     },
     "componentList": {
-        "prototype": "spec/ui/draw/component-list.reel",
+        "prototype": "spec/ui/draw/component-list.mod",
         "values": {
             "element": {"#": "componentList"}
         }
     },
     "text2": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "text2"},
             "value": "Text 2"
         }
     },
     "arguments1": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "arguments1"},
             "hasTemplate": false
         }
     },
     "arguments2": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "arguments2"},
             "hasTemplate": false
         }
     },
     "noArguments": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "noArguments"},
             "hasTemplate": false
         }
     },
     "nestedArguments": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "nestedArguments"},
             "hasTemplate": false
         }
     },
     "nestedArgumentsComponent": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "nestedArgumentsComponent"},
             "hasTemplate": false
         }
     },
     "wrappedArguments": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "wrappedArguments"},
             "hasTemplate": false
         }
     },
     "componentBindingStar1": {
-        "prototype": "spec/ui/draw/component-binding-star.reel",
+        "prototype": "spec/ui/draw/component-binding-star.mod",
         "values": {
             "element": {"#": "componentBindingStar1"}
         }
     },
     "componentBindingStarText1": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentBindingStarText1"},
             "hasTemplate": false
         }
     },
     "componentBindingStar2": {
-        "prototype": "spec/ui/draw/component-binding-star.reel",
+        "prototype": "spec/ui/draw/component-binding-star.mod",
         "values": {
             "element": {"#": "componentBindingStar2"}
         }
     },
     "componentBindingStarText2": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentBindingStarText2"},
             "hasTemplate": false
         }
     },
     "componentBindingParams1": {
-        "prototype": "spec/ui/draw/component-binding-params.reel",
+        "prototype": "spec/ui/draw/component-binding-params.mod",
         "values": {
             "element": {"#": "componentBindingParams1"}
         }
     },
     "componentBindingParamsLeft1": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentBindingParamsLeft1"},
                         "hasTemplate": false
         }
     },
     "componentBindingParamsRight1": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentBindingParamsRight1"},
             "hasTemplate": false
         }
     },
     "componentBindingParams2": {
-        "prototype": "spec/ui/draw/component-binding-params.reel",
+        "prototype": "spec/ui/draw/component-binding-params.mod",
         "values": {
             "element": {"#": "componentBindingParams2"}
         }
     },
     "componentBindingParamsLeft2": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentBindingParamsLeft2"},
             "hasTemplate": false
         }
     },
     "componentBindingParamsRight2": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentBindingParamsRight2"},
             "hasTemplate": false
         }
     },
     "templateObjects": {
-        "prototype": "spec/ui/draw/template-objects.reel",
+        "prototype": "spec/ui/draw/template-objects.mod",
         "values": {
             "element": {"#": "templateObjects"}
         }
     },
 
     "componentClassList": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentClassList"},
             "hasTemplate": false,
@@ -376,20 +376,20 @@ POSSIBILITY OF SUCH DAMAGE.
         }
     },
     "componentClassInMarkup": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentClassInMarkup"},
             "hasTemplate": false
         }
     },
     "componentClassInTemplate": {
-        "prototype": "spec/ui/draw/class-list-template.reel",
+        "prototype": "spec/ui/draw/class-list-template.mod",
         "values": {
             "element": {"#": "componentClassInTemplate"}
         }
     },
     "componentClassInTemplateAndBindings": {
-        "prototype": "spec/ui/draw/class-list-template.reel",
+        "prototype": "spec/ui/draw/class-list-template.mod",
         "values": {
             "element": {"#": "componentClassInTemplateAndBindings"},
             "classList.has('class1')": {"<-": "@test.classListTemplate1"},
@@ -398,7 +398,7 @@ POSSIBILITY OF SUCH DAMAGE.
     },
 
     "componentF": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentF"},
             "hasTemplate": false
@@ -406,7 +406,7 @@ POSSIBILITY OF SUCH DAMAGE.
     },
 
     "componentF1": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentF1"},
             "hasTemplate": false
@@ -414,7 +414,7 @@ POSSIBILITY OF SUCH DAMAGE.
     },
 
     "componentG": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentG"},
             "hasTemplate": false
@@ -422,7 +422,7 @@ POSSIBILITY OF SUCH DAMAGE.
     },
 
     "componentH": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentH"},
             "hasTemplate": false
@@ -430,7 +430,7 @@ POSSIBILITY OF SUCH DAMAGE.
     },
 
     "componentH1": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "element": {"#": "componentH1"},
             "hasTemplate": false,
@@ -450,66 +450,66 @@ POSSIBILITY OF SUCH DAMAGE.
     <div class="componentB1">B1</div>
     <div class="componentB2">B2</div>
 </div>
-<div data-montage-id="componentC">
-    <div data-montage-id="fakeComponentC1"></div>
+<div data-mod-id="componentC">
+    <div data-mod-id="fakeComponentC1"></div>
 </div>
-<div data-montage-id="componentC1">C1</div>
-<div data-montage-id="componentD">
+<div data-mod-id="componentC1">C1</div>
+<div data-mod-id="componentD">
     <h1>
-        <div data-montage-id="componentD1">D1</div>
+        <div data-mod-id="componentD1">D1</div>
     </h1>
 </div>
-<div data-montage-id="componentDtarget"></div>
-<div data-montage-id="repetition"><h3>Original Content</h3><p>here</p></div>
-<div data-montage-id="componentE">
-    <div data-montage-id="componentE1" id="componentE1">
-        <div data-montage-id="componentE11"></div>
+<div data-mod-id="componentDtarget"></div>
+<div data-mod-id="repetition"><h3>Original Content</h3><p>here</p></div>
+<div data-mod-id="componentE">
+    <div data-mod-id="componentE1" id="componentE1">
+        <div data-mod-id="componentE11"></div>
     </div>
 </div>
-<div style="margin: 2px" data-montage-id="component-style" data-element-attr="element"></div>
-<div data-montage-id="component-owner"></div>
-<div data-montage-id="component-layout"></div>
-<div data-montage-id="component-layout-left">Left</div>
-<div data-montage-id="component-layout-right">Right</div>
-<div data-montage-id="component-tobeclean">
+<div style="margin: 2px" data-mod-id="component-style" data-element-attr="element"></div>
+<div data-mod-id="component-owner"></div>
+<div data-mod-id="component-layout"></div>
+<div data-mod-id="component-layout-left">Left</div>
+<div data-mod-id="component-layout-right">Right</div>
+<div data-mod-id="component-tobeclean">
     To Be Clean
-    <span data-montage-id="text1"></span>
+    <span data-mod-id="text1"></span>
 </div>
 
-<div data-montage-id="parentComponent">
+<div data-mod-id="parentComponent">
     Buzz
-    <div data-montage-id="componentDrawsParent">Fizz</div>
+    <div data-mod-id="componentDrawsParent">Fizz</div>
 </div>
 
-<div data-montage-id="componentList" id="componentList">
-    <span data-montage-id="text2"></span>
+<div data-mod-id="componentList" id="componentList">
+    <span data-mod-id="text2"></span>
 </div>
 
-<div data-montage-id="arguments1">
+<div data-mod-id="arguments1">
     <span data-arg="one" class="one"></span>
     <span data-arg="two" class="two"></span>
 </div>
 
-<div data-montage-id="arguments2">
+<div data-mod-id="arguments2">
     <span data-arg="one" class="one"></span>
     <span data-arg="two" class="two"></span>
 </div>
 
-<div data-montage-id="noArguments">
+<div data-mod-id="noArguments">
     <span class="content1"></span>
     <span class="content2"></span>
 </div>
 
-<div data-montage-id="nestedArguments">
+<div data-mod-id="nestedArguments">
     <span data-arg="one" class="one"></span>
     <span data-arg="two" class="two"></span>
-    <div data-montage-id="nestedArgumentsComponent">
+    <div data-mod-id="nestedArgumentsComponent">
         <span data-arg="three" class="three"></span>
         <span data-arg="four" class="four"></span>
     </div>
 </div>
 
-<div data-montage-id="wrappedArguments">
+<div data-mod-id="wrappedArguments">
     <table>
         <tr>
             <td data-arg="one" class="one"></td>
@@ -517,58 +517,58 @@ POSSIBILITY OF SUCH DAMAGE.
     </table>
 </div>
 
-<div data-montage-id="componentBindingStar1">
+<div data-mod-id="componentBindingStar1">
     <h1></h1>
-    <span data-montage-id="componentBindingStarText1" class="text"></span>
+    <span data-mod-id="componentBindingStarText1" class="text"></span>
     <h1></h1>
 </div>
 
-<div data-montage-id="componentBindingStar2">
-    <span data-montage-id="componentBindingStarText2" class="text"></span>
+<div data-mod-id="componentBindingStar2">
+    <span data-mod-id="componentBindingStarText2" class="text"></span>
 </div>
 
-<div data-montage-id="componentBindingParams1">
+<div data-mod-id="componentBindingParams1">
     <div data-arg="left">
         <h1></h1>
-        <span data-montage-id="componentBindingParamsLeft1" class="leftText"></span>
+        <span data-mod-id="componentBindingParamsLeft1" class="leftText"></span>
         <h1></h1>
     </div>
 
     <div data-arg="right">
         <h1></h1>
-        <span data-montage-id="componentBindingParamsRight1" class="rightText"></span>
+        <span data-mod-id="componentBindingParamsRight1" class="rightText"></span>
         <h1></h1>
     </div>
 </div>
 
-<div data-montage-id="componentBindingParams2">
+<div data-mod-id="componentBindingParams2">
     <div data-arg="left">
         <h1></h1>
-        <span data-montage-id="componentBindingParamsLeft2" class="leftText"></span>
+        <span data-mod-id="componentBindingParamsLeft2" class="leftText"></span>
         <h1></h1>
     </div>
 
     <div data-arg="right">
         <h1></h1>
-        <span data-montage-id="componentBindingParamsRight2" class="rightText"></span>
+        <span data-mod-id="componentBindingParamsRight2" class="rightText"></span>
         <h1></h1>
     </div>
 </div>
 
-<div data-montage-id="templateObjects"></div>
+<div data-mod-id="templateObjects"></div>
 
-<div data-montage-id="componentClassList"></div>
-<div data-montage-id="componentClassInMarkup" class="markupClass1 markupClass2"></div>
-<div data-montage-id="componentClassInTemplate" class="markupClass3"></div>
-<div data-montage-id="componentClassInTemplateAndBindings" class="markupClass3"></div>
+<div data-mod-id="componentClassList"></div>
+<div data-mod-id="componentClassInMarkup" class="markupClass1 markupClass2"></div>
+<div data-mod-id="componentClassInTemplate" class="markupClass3"></div>
+<div data-mod-id="componentClassInTemplateAndBindings" class="markupClass3"></div>
 
-<div data-montage-id="componentF">
-    <div data-montage-id="componentF1">F1</div>
+<div data-mod-id="componentF">
+    <div data-mod-id="componentF1">F1</div>
 </div>
-<div data-montage-id="componentG"></div>
+<div data-mod-id="componentG"></div>
 
-<div data-montage-id="componentH">
-    <div data-montage-id="componentH1">H1</div>
+<div data-mod-id="componentH">
+    <div data-mod-id="componentH1">H1</div>
 </div>
 
 </body>

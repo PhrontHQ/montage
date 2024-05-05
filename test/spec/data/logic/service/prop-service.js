@@ -1,4 +1,4 @@
-var RawDataService = require("montage/data/service/raw-data-service").RawDataService,
+var RawDataService = require("mod/data/service/raw-data-service").RawDataService,
     CategoryNames = ["Action"];
 
 exports.PropService = RawDataService.specialize(/** @lends PropService.prototype */ {

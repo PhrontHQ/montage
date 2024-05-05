@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Baz Component</title>
+
+    <link rel="stylesheet" href="baz.css">
+
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "Baz"}
+            }
+        },
+        "width": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "width"},
+                "value": {"<-": "@owner.width"}
+            }
+        },
+        "height": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "height"},
+                "value": {"<-": "@owner.height"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="Baz" class="baz absolute">
+        <h2>Width</h2>
+        <span data-mod-id="width"></span>
+        <h2>Height</h2>
+        <span data-mod-id="height"></span>
+    </div>
+</body>
+</html>

@@ -1,7 +1,7 @@
 /**
- * @module montage/composer/swipe-composer
+ * @module mod/composer/swipe-composer
  * @requires montage
- * @requires montage/composer/composer
+ * @requires mod/composer/composer
  */
 var Montage = require("../core/core").Montage,
     Composer = require("./composer").Composer,
@@ -21,8 +21,8 @@ var SwipeEvent = exports.SwipeEvent = MutableEvent.specialize({
      * @type {String}
      * @default "swipe"
      * @description Name of the swipe event.
-     * 
-     * Possible values: 
+     *
+     * Possible values:
      * - "swipe"
      * - "swipeUp"
      * - "swipeRight"
@@ -283,7 +283,7 @@ exports.SwipeComposer = Composer.specialize( /** @lends SwipeComposer# */ {
                     ), direction;
 
                     if (
-                        angle >= 0 && angle <= 45 || 
+                        angle >= 0 && angle <= 45 ||
                         angle >= 315 && angle <= 360
                     ) {
                         direction = DIRECTION_RIGHT;
@@ -326,7 +326,7 @@ exports.SwipeComposer = Composer.specialize( /** @lends SwipeComposer# */ {
             var arctangent = (
                 (Math.atan2(p2y - p1y, p2x - p1x) * -180) / Math.PI
             );
-                
+
             if (arctangent < 0) {
                 arctangent = 360 + arctangent;
             }
@@ -339,7 +339,7 @@ exports.SwipeComposer = Composer.specialize( /** @lends SwipeComposer# */ {
      * @private
      * @function _findVelocity
      * @param distance - distance traveled by the swipe gesture.
-     * @param deltaTime - the time difference between the begining and 
+     * @param deltaTime - the time difference between the begining and
      * the end of the translate gesture.
      * @description Find the velocity of a swipe gesture.
      * @returns Number

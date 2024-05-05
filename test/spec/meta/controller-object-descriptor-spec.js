@@ -1,19 +1,19 @@
 /* <copyright>
  </copyright> */
 /**
- @requires montage/core/core
- @requires montage/core/logger
+ @requires mod/core/core
+ @requires mod/core/logger
  */
-var Montage = require("montage").Montage;
-var ObjectDescriptor = require("montage/core/meta/object-descriptor").ObjectDescriptor;
+var Montage = require("mod/core/core").Montage;
+var ObjectDescriptor = require("mod/core/meta/object-descriptor").ObjectDescriptor;
 
 var ParentController = require("spec/meta/controller-object-descriptor-test/parent-controller").ParentController;
 var ChildController = require("spec/meta/controller-object-descriptor-test/child-controller").ChildController;
 var TestController = require("spec/meta/controller-object-descriptor-test/test-controller").TestController;
 
-var Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer;
+var Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer;
 
-var logger = require("montage/core/logger").logger("meta/object-descriptor-spec.js");
+var logger = require("mod/core/logger").logger("meta/object-descriptor-spec.js");
 
 describe("meta/controller-object-descriptor-spec", function () {
 

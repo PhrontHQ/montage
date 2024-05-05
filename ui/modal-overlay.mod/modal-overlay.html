@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../overlay.mod/overlay.css">
+    <link rel="stylesheet" type="text/css" href="modal-overlay.css">
+    <script type="text/mod-serialization">
+        {
+            "owner": {
+                "values": {
+                    "element": {"#": "modalOverlay"},
+                    "modalMaskElement": {"#": "modalMask"},
+                    "_slotComponent": {"@": "slot"}
+                }
+            },
+
+            "slot": {
+                "prototype": "ui/slot.mod",
+                "values": {
+                    "element": {"#": "slot"}
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div data-mod-id="modalOverlay" class="overlay-mod modalOverlay-mod montage-Overlay montage-ModalOverlay">
+        <div data-mod-id="modalMask" class="modalOverlay-mod-modalMask montage-ModalOverlay-modalMask"></div>
+        <div data-mod-id="slot">
+            <!--FIXME: Backward Compatibility-->
+            <div data-param="*"></div>
+        </div>
+    </div>
+</body>
+</html>

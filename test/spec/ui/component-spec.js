@@ -28,14 +28,14 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader,
-    Component = require("montage/ui/component").Component,
-    Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer,
-    Template = require("montage/core/template").Template,
-    DocumentPart = require("montage/core/document-part").DocumentPart,
-    Alias = require("montage/core/serialization/alias").Alias;
-var Bindings = require("montage/core/core").Bindings;
+var Montage = require("mod/core/core").Montage,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader,
+    Component = require("mod/ui/component").Component,
+    Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer,
+    Template = require("mod/core/template").Template,
+    DocumentPart = require("mod/core/document-part").DocumentPart,
+    Alias = require("mod/core/serialization/alias").Alias;
+var Bindings = require("mod/core/core").Bindings;
 var MockDOM = require("mocks/dom");
 
 TestPageLoader.queueTest("draw/draw", function (testPage) {
@@ -105,7 +105,7 @@ TestPageLoader.queueTest("draw/draw", function (testPage) {
                         componentC1 = testPage.test.componentC1;
                     testPage.waitForComponentDraw(componentC).then(function () {
                         expect(componentC.domContent.length).toBe(1);
-                        expect(componentC.domContent[0].outerHTML).toBe('<div data-montage-id="componentC1">C1</div>');
+                        expect(componentC.domContent[0].outerHTML).toBe('<div data-mod-id="componentC1">C1</div>');
                         expect(componentC.domContent[0].component).toBe(componentC1);
                         done();
                     });
@@ -117,7 +117,7 @@ TestPageLoader.queueTest("draw/draw", function (testPage) {
 
                     componentDtarget.domContent = domContent;
                     testPage.waitForDraw().then(function () {
-                        expect(componentDtarget._element.innerHTML).toBe("\n    <h1>\n        <div data-montage-id=\"componentD1\">D1</div>\n    </h1>\n");
+                        expect(componentDtarget._element.innerHTML).toBe("\n    <h1>\n        <div data-mod-id=\"componentD1\">D1</div>\n    </h1>\n");
                         done();
                     });
                 });
@@ -215,7 +215,7 @@ TestPageLoader.queueTest("draw/draw", function (testPage) {
                         });
                     });
                 });
-                it("should draw children before parents even if the parents are added during willDraw", function () {
+                it("should draw children before parents even if the parents are added during willDraw", function (done) {
                     // Draw the components once so that they are fully loaded, then run the test
                     testPage.test.componentDrawsParent.needsDraw = true;
                     testPage.test.componentParent.parentHasDrawn = false;
@@ -232,7 +232,9 @@ TestPageLoader.queueTest("draw/draw", function (testPage) {
                         expect(testPage.test.componentParent.parentHasDrawn).toBeFalsy();
                     });
 
-                    testPage.waitForDraw();
+                    testPage.waitForDraw().then(function () {
+                        done();
+                    });
                 });
             });
 
@@ -453,7 +455,7 @@ TestPageLoader.queueTest("draw/draw", function (testPage) {
 
                 xit("should receive a first draw event after its first draw", function (done) {
                     // TODO: we can't make this working at the moment because
-                    // enter/exitDocument is implemented by forcing a draw                        
+                    // enter/exitDocument is implemented by forcing a draw
                     testPage.test.componentB1.addEventListener("firstDraw", testPage.test.componentB1, false);
                     testPage.test.componentB.addEventListener("firstDraw", testPage.test.componentB, false);
 
@@ -526,7 +528,7 @@ TestPageLoader.queueTest("draw/draw", function (testPage) {
                     expect(testPage.test.componentE.childComponents.length).toBe(1);
                     expect(testPage.test.componentE.childComponents[0]).toBe(componentE1);
                     expect(componentE1.childComponents.length).toBe(1);
-                    expect(componentE1.childComponents[0]).toBe(testPage.test.componentE11);  
+                    expect(componentE1.childComponents[0]).toBe(testPage.test.componentE11);
                 });
 
                 it("should remove a component from its previous parent component childComponent's when it is reattached in another part of the component tree", function () {
@@ -616,10 +618,10 @@ TestPageLoader.queueTest("draw/draw", function (testPage) {
             });
         });
 
-        it("should maintain the placeholder data-montage-id and not the one from the template", function () {
+        it("should maintain the placeholder data-mod-id and not the one from the template", function () {
            var element = testPage.test.componentList.element;
 
-           expect(element.getAttribute("data-montage-id")).toBe("componentList");
+           expect(element.getAttribute("data-mod-id")).toBe("componentList");
         });
 
         it("should maintain the placeholder id and not the one from the template", function () {
@@ -998,7 +1000,7 @@ TestPageLoader.queueTest("draw/draw", function (testPage) {
                 });
             });
 
-            it("should clone an argument even if it's inside a data-montage-id element", function (done) {
+            it("should clone an argument even if it's inside a data-mod-id element", function (done) {
                  var templateHtml = require("spec/ui/draw/template-arguments.html").content,
                     template = new Template(),
                     component = new Component();
@@ -1266,9 +1268,9 @@ TestPageLoader.queueTest("draw/draw", function (testPage) {
                 componentB._needsEnterDocument = false;
                 componentC._needsEnterDocument = false;
 
-                componentA._inDocument = true;
-                componentB._inDocument = false;
-                componentC._inDocument = false;
+                componentA.inDocument = true;
+                componentB.inDocument = false;
+                componentC.inDocument = false;
 
                 componentA._firstDraw = false;
                 componentB._firstDraw = false;
@@ -1308,9 +1310,9 @@ TestPageLoader.queueTest("draw/draw", function (testPage) {
                 componentB._needsEnterDocument = false;
                 componentC._needsEnterDocument = false;
 
-                componentA._inDocument = true;
-                componentB._inDocument = true;
-                componentC._inDocument = true;
+                componentA.inDocument = true;
+                componentB.inDocument = true;
+                componentC.inDocument = true;
             });
 
             it("should exit the document in bottom-up order", function () {

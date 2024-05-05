@@ -29,11 +29,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 /*global require,exports,describe,beforeEach,it,expect,spyOn */
-var Montage = require("montage").Montage,
-    Localizer = require("montage/core/localizer"),
-    Promise = require("montage/core/promise").Promise,
-    Bindings = require("montage/core/core").Bindings,
-    Map = require("montage/collections/map");
+var Montage = require("mod/core/core").Montage,
+    Localizer = require("mod/core/localizer"),
+    Promise = require("mod/core/promise").Promise,
+    Bindings = require("mod/core/core").Bindings,
+    Map = require("mod/core/collections/map");
 
 describe("core/localizer-spec", function () {
 
@@ -318,7 +318,7 @@ describe("core/localizer-spec", function () {
         });
 
         describe("loadMessages", function () {
-            
+
             it("fails when package.json has no localizer/no-package-manifest/manifest", function (done) {
                 require.loadPackage(module.directory + "localizer/no-package-manifest/", {}).then(function (r){
                     l.require = r;

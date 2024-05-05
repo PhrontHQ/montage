@@ -1,8 +1,26 @@
 /*global define, module, console, MontageElement, Reflect, customElements */
 (function (root, factory) {
+    /*
+        https://mathiasbynens.be/notes/globalthis
+
+        Also see: https://www.npmjs.com/package/globalthis
+    */
+    if (typeof globalThis !== 'object') {
+        Object.prototype.__defineGetter__('__magic__', function() {
+            return this;
+        });
+        __magic__.globalThis = __magic__; // lolwat
+        delete Object.prototype.__magic__;
+    }
+
+    if(typeof browser === "undefined" && typeof chrome === "object") {
+        globalThis.browser = chrome;
+    }
+
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define('montage', [], factory);
+        define('mod', [], factory);
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
@@ -17,9 +35,13 @@
     "use strict";
 
     // reassigning causes eval to not use lexical scope.
-    var globalEval = eval,
+    //var globalEval = eval,
         /*jshint evil:true */
-        global = globalEval('this'),
+        //global = globalEval('this'),
+        /*
+            By leveraging globalThis we probably don't need to do this anymore
+        */
+        var global = globalThis,
         /*jshint evil:false */
         montageExports = exports;
 
@@ -29,88 +51,226 @@
     // TODO make sure mop closure has it also cause it's mop role to expose
     global.global = global;
 
-    var browser = {
+    /*
+        To better desl with browser extensions:
+    */
+
+    function isCurrentPathname(path) {
+        if (!path) {
+            return false;
+        }
+        try {
+            const { pathname } = new URL(path, location.origin);
+            return pathname === location.pathname;
+        }
+        catch {
+            return false;
+        }
+    }
+    function getManifest(_version) {
+        return globalThis.browser?.runtime?.getManifest?.();
+    }
+    function once(function_) {
+        let result;
+        return () => {
+            if (!cache || typeof result === 'undefined') {
+                result = function_();
+            }
+            return result;
+        };
+    }
+
+    /*
+        See: https://github.com/fregante/webext-detect-page/blob/main/index.ts
+    */
+if(globalThis.browser) {
+    Object.defineProperties(browser, {
+        /** Indicates whether the code is being run in extension contexts that have access to the chrome API */
+        "_isExtensionContext": {
+            value: undefined,
+            writable: true,
+            enumerable: false
+        },
+        "isExtensionContext": {
+            get: function() {
+                return this._isExtensionContext !== undefined
+                    ? this._isExtensionContext
+                    : (this._isExtensionContext = typeof globalThis.browser?.extension === 'object');
+            },
+            enumerable: false
+        },
+        "_isWebPage": {
+            value: undefined,
+            writable: true,
+            enumerable: false
+        },
+        /** Indicates whether the code is being run on http(s):// pages (it could be in a content script or regular web context) */
+        "isWebPage": {
+            get: function() {
+                return this._isWebPage !== undefined
+                    ? this._isWebPage
+                    : (this._isWebPage = globalThis.location?.protocol.startsWith('http'));
+            }
+        },
+        /** Indicates whether the code is being run in a content script */
+        "_isContentScript": {
+            value: undefined,
+            writable: true,
+            enumerable: false
+        },
+        "isContentScript": {
+            get: function() {
+                return this._isContentScript !== undefined
+                    ? this._isContentScript
+                    : (this._isContentScript = (this.isExtensionContext && this.isWebPage));
+            }
+        },
+        /** Indicates whether the code is being run in a background context */
+        "_isBackground": {
+            value: undefined,
+            writable: true,
+            enumerable: false
+        },
+        "isBackground": {
+            get: function() {
+                return this._isBackground !== undefined
+                    ? this._isBackground
+                    : (this._isBackground = (this.isBackgroundPage || this.isBackgroundWorker));
+            }
+        },
+        /** Indicates whether the code is being run in a background page */
+        "_isBackgroundPage": {
+            value: undefined,
+            writable: true,
+            enumerable: false
+        },
+        "isBackgroundPage": {
+            get: function() {
+                return this._isBackgroundPage !== undefined
+                    ? this._isBackgroundPage
+                    : (function() {
+                        const manifest = getManifest(2);
+                        if (manifest
+                            && isCurrentPathname(manifest.background_page || manifest.background?.page)) {
+                                return (this._isBackgroundPage = true);
+                        } else {
+                            return (this._isBackgroundPage = Boolean(manifest?.background?.scripts
+                                && isCurrentPathname('/_generated_background_page.html')));
+
+                        }
+                    })()
+            }
+        },
+        /** Indicates whether the code is being run in a background worker */
+        "_isBackgroundWorker": {
+            value: undefined,
+            writable: true,
+            enumerable: false
+        },
+        "isBackgroundWorker": {
+            get: function() {
+                return this._isBackgroundWorker !== undefined
+                    ? this._isBackgroundWorker
+                    : (this._isBackgroundWorker = (isCurrentPathname(getManifest(3)?.background?.service_worker)));
+            }
+        }
+
+    });
+}
+
+
+    var browserPlatform = {
 
         makeResolve: function () {
 
-            try {
-
-                var testHost = "http://example.org",
-                    testPath = "/test.html",
-                    resolved = new URL(testPath, testHost).href;
-
-                if (!resolved || resolved !== testHost + testPath) {
-                    throw new Error('NotSupported');
-                }
-
-                return function (base, relative) {
+            return function (base, relative) {
+                if(relative === "./") {
+                    return base.substring(0,base.lastIndexOf("/")+1);
+                } else {
                     return new URL(relative, base).href;
-                };
-
-            } catch (err) {
-
-                var IS_ABSOLUTE_REG = /^[\w\-]+:/,
-                    head = document.querySelector("head"),
-                    currentBaseElement = head.querySelector("base"),
-                    baseElement = document.createElement("base"),
-                    relativeElement = document.createElement("a"),
-                    needsRestore = false;
-
-                    if(currentBaseElement) {
-                        needsRestore = true;
-                    }
-                    else {
-                        currentBaseElement = document.createElement("base");
-                    }
-
-                // Optimization, we won't check ogain if there's a base tag.
-                baseElement.href = "";
-
-                return function (base, relative) {
-                    var restore;
-
-                    if (!needsRestore) {
-                        head.appendChild(currentBaseElement);
-                    }
-
-                    base = String(base);
-                    if (IS_ABSOLUTE_REG.test(base) === false) {
-                        throw new Error("Can't resolve from a relative location: " + JSON.stringify(base) + " " + JSON.stringify(relative));
-                    }
-                    if(needsRestore) {
-                        restore = currentBaseElement.href;
-                    }
-                    currentBaseElement.href = base;
-                    relativeElement.href = relative;
-                    var resolved = relativeElement.href;
-                    if (needsRestore) {
-                        currentBaseElement.href = restore;
-                    } else {
-                        head.removeChild(currentBaseElement);
-                    }
-                    return resolved;
-                };
-            }
+                }
+            };
         },
 
         load: function (location, callback) {
-            var script = document.createElement("script");
-            script.src = location;
-            script.onload = function () {
-                if (callback) {
-                    callback(null, script);
+
+            var xhr = new XMLHttpRequest(),
+                global = globalThis;
+
+            xhr.onload = function onload(event) {
+                var xhr = event.target;
+                // Determine if an XMLHttpRequest was successful
+                // Some versions of WebKit return 0 for successful file:// URLs
+                if (xhr.status === 200 || (xhr.status === 0 && xhr.responseText)) {
+
+                    var evalText = "(function (require, exports, module, global) {";
+                    evalText += xhr.responseText;
+                    evalText += "//*/\n})\n//# sourceURL=";
+                    evalText += location;
+
+                    try {
+                        var resultFunction = eval(evalText),
+                            exports = {},
+                            module = {};
+
+                        module.exports = exports;
+                        resultFunction(function require(){}, exports, module, global);
+
+                        if (callback) {
+                            callback(null, module.exports);
+                        }
+
+                    } catch (error) {
+                        console.error("eval failed for '"+location+"' with error:", error);
+                        if (callback) {
+                            callback(error, undefined);
+                        }
+                    }
+                } else {
+                    if (callback) {
+                        callback(new Error("Can't load script " + JSON.stringify(location)), undefined);
+                    }
                 }
-                // remove clutter
-                script.parentNode.removeChild(script);
+                //This clears the response from memory
+                xhr.abort();
+
             };
-            script.onerror = function () {
+            xhr.onerror = function onerror(event) {
+                var xhr = event.target;
+
+                //This clears the response from memory
+                xhr.abort();
+
                 if (callback) {
-                    callback(new Error("Can't load script " + JSON.stringify(location)), script);
+                    callback(new Error("Can't load script " + JSON.stringify(location)), undefined);
                 }
-                // remove clutter
-                script.parentNode.removeChild(script);
+
             };
-            document.getElementsByTagName("head")[0].appendChild(script);
+            xhr.open("GET", location, true);
+            xhr.send(null);
+
+            return;
+
+            /*
+                Previous script tag based approach that doesn't work an an extension content script
+            */
+            // var script = document.createElement("script");
+            // script.src = location;
+            // script.addEventListener("load", function () {
+            //     if (callback) {
+            //         callback(null, script);
+            //     }
+            //     // remove clutter
+            //     script.parentNode.removeChild(script);
+            // });
+            // script.addEventListener("error", function () {
+            //     if (callback) {
+            //         callback(new Error("Can't load script " + JSON.stringify(location)), script);
+            //     }
+            //     // remove clutter
+            //     script.parentNode.removeChild(script);
+            // });
+            // document.getElementsByTagName("head")[0].appendChild(script);
         },
 
         getParams: function () {
@@ -122,58 +282,78 @@
                 name;
             if (!this._params) {
                 this._params = {};
-                // Find the <script> that loads us, so we can divine our
-                // parameters from its attributes.
-                var scripts = document.getElementsByTagName("script");
-                for (i = 0; i < scripts.length; i++) {
-                    script = scripts[i];
-                    montage = false;
-                    if (script.src && (match = script.src.match(/^(.*)montage.js(?:[\?\.]|$)/i))) {
-                        this._params.montageLocation = match[1];
-                        montage = true;
-                    }
-                    if (script.hasAttribute("data-montage-location")) {
-                        this._params.montageLocation = script.getAttribute("data-montage-location");
-                        montage = true;
-                    }
-                    if (montage) {
-                        if (script.dataset) {
-                            for (name in script.dataset) {
-                                if (script.dataset.hasOwnProperty(name)) {
-                                    this._params[name] = script.dataset[name];
-                                }
-                            }
-                        } else if (script.attributes) {
-                            var dataRe = /^data-(.*)$/, // TODO cache RegEx
-                                letterAfterDash = /-([a-z])/g,
-                                upperCaseChar = function (_, c) {
-                                    return c.toUpperCase();
-                                };
 
-                            for (j = 0; j < script.attributes.length; j++) {
-                                attr = script.attributes[j];
-                                match = attr.name.match(dataRe);
-                                if (match) {
-                                    this._params[match[1].replace(letterAfterDash, upperCaseChar)] = attr.value;
+                if(globalThis.browser.isContentScript) {
+                    /*
+                        for now, we set the root of the content script's world as the root of the extension
+                    */
+                    this._params.montageLocation = "node_modules/mod/";
+                } else {
+
+                    // Find the <script> that loads us, so we can divine our
+                    // parameters from its attributes.
+                    var scripts = document.getElementsByTagName("script");
+                    for (i = 0; i < scripts.length; i++) {
+                        script = scripts[i];
+                        montage = false;
+                        if (script.src && (match = script.src.match(/^(.*)montage.js(?:[\?\.]|$)/i))) {
+                            this._params.montageLocation = match[1];
+                            montage = true;
+                        }
+                        if (script.hasAttribute("data-mod-location") || script.hasAttribute("data-montage-location")) {
+                            this._params.montageLocation = script.getAttribute("data-mod-location") || script.getAttribute("data-montage-location");
+                            montage = true;
+                        }
+                        if (montage) {
+                            if (script.dataset) {
+                                for (name in script.dataset) {
+                                    if (script.dataset.hasOwnProperty(name)) {
+                                        this._params[name] = script.dataset[name];
+                                    }
+                                }
+                            } else if (script.attributes) {
+                                var dataRe = /^data-(.*)$/, // TODO cache RegEx
+                                    letterAfterDash = /-([a-z])/g,
+                                    upperCaseChar = function (_, c) {
+                                        return c.toUpperCase();
+                                    };
+
+                                for (j = 0; j < script.attributes.length; j++) {
+                                    attr = script.attributes[j];
+                                    match = attr.name.match(dataRe);
+                                    if (match) {
+                                        this._params[match[1].replace(letterAfterDash, upperCaseChar)] = attr.value;
+                                    }
                                 }
                             }
+                            // Permits multiple montage.js <scripts>; by
+                            // removing as they are discovered, next one
+                            // finds itself.
+                            script.parentNode.removeChild(script);
+                            break;
                         }
-                        // Permits multiple montage.js <scripts>; by
-                        // removing as they are discovered, next one
-                        // finds itself.
-                        script.parentNode.removeChild(script);
-                        break;
                     }
                 }
+
             }
             return this._params;
         },
 
         bootstrap: function (callback) {
-            var Require, DOM, Promise, URL;
+            var Require, DOM, Promise, URL,
+                params = this.getParams(),
+                resolve = this.makeResolve(),
+                montageLocation, appLocation;
 
-            var params = this.getParams();
-            var resolve = this.makeResolve();
+                montageLocation = montageLocation || resolve((browser.isContentScript ? browser.runtime.getURL("") : global.location), params.montageLocation);
+                if(params.package) {
+                    appLocation = resolve(global.location, params.package);
+                    //should be endsWith
+                    if(!appLocation.lastIndexOf("/") !== appLocation.length-1) {
+                        appLocation += "/";
+                    }
+                }
+
 
             // observe dom loading and load scripts in parallel
             function callbackIfReady() {
@@ -195,8 +375,9 @@
 
                 if(!!root.classList) {
                     root.classList.add("montage-app-bootstrapping");
+                    root.classList.add("mod-app-bootstrapping");
                 } else {
-                    root.className = root.className + " montage-app-bootstrapping";
+                    root.className = root.className + " mod-app-bootstrapping montage-app-bootstrapping";
                 }
 
                 document._montageTiming = document._montageTiming || {};
@@ -215,10 +396,11 @@
 
             // determine which scripts to load
             var pending = {
-                "require": "node_modules/mr/require.js",
-                "require/browser": "node_modules/mr/browser.js",
-                "promise": "node_modules/bluebird/js/browser/bluebird.min.js"
-                // "shim-string": "core/shim/string.js" // needed for the `endsWith` function.
+                "require": montageLocation+"core/mr/require.js",
+                "require/browser": montageLocation+"core/mr/browser.js",
+                "promise": (params.montageLocation === (global.location.origin+"/"))
+                ? montageLocation+"core/promise.js" //montage in test
+                : montageLocation+"core/promise.js" //anything else
             };
 
             // miniature module system
@@ -262,18 +444,16 @@
                 allModulesLoaded();
             };
 
-            var montageLocation;
             function loadModuleScript(path, callback) {
-                montageLocation = montageLocation || resolve(global.location, params.montageLocation);
                 // try loading script relative to app first (npm 3+)
-                browser.load(resolve(global.location, path), function (err, script) {
+                browserPlatform.load(resolve(appLocation || global.location, path), function (err, exports) {
                     if (err) {
                         // if that fails, the app may have been installed with
                         // npm 2 or with --legacy-bundling, in which case the
                         // script will be under montage's node_modules
-                        browser.load(resolve(montageLocation, path), callback);
+                        browserPlatform.load(resolve(montageLocation, path), callback);
                     } else if (callback) {
-                        callback(null, script);
+                        callback(null, exports);
                     }
                 });
             }
@@ -283,15 +463,20 @@
             if (typeof global.BUNDLE === "undefined") {
 
                 // Special Case bluebird for now:
-                loadModuleScript(pending.promise, function () {
+                loadModuleScript(pending.promise, function (error, exports) {
                     delete pending.promise;
 
+                    var exportedPromise = typeof exports === "function"
+                        ? exports
+                        : exports.Promise;
                     //global.bootstrap cleans itself from global once all known are loaded. "bluebird" is not known, so needs to do it first
                     global.bootstrap("bluebird", function (require, exports) {
-                        return global.Promise;
+                        return exportedPromise;
+                        //return global.Promise;
                     });
                     global.bootstrap("promise", function (require, exports) {
-                        return global.Promise;
+                        return exportedPromise;
+                        //return global.Promise;
                     });
 
                     for (var module in pending) {
@@ -332,12 +517,13 @@
         initMontage: function (montageRequire, applicationRequire, params) {
             var dependencies = [
                 "core/core",
+                "core/promise",
                 "core/event/event-manager",
                 "core/serialization/deserializer/montage-reviver",
                 "core/logger"
             ];
 
-            var Promise = montageRequire("core/promise").Promise;
+            var Promise = global.Promise;
             var deepLoadPromises = [];
             var self = this;
 
@@ -366,8 +552,10 @@
                     global.montageWillLoad();
                 }
 
-                // Load the application
 
+
+
+                // Load the application
                 var appProto = applicationRequire.packageDescription.applicationPrototype,
                     applicationLocation, appModulePromise;
 
@@ -397,58 +585,97 @@
                             MontageElement.ready(applicationRequire, application, MontageReviver);
                         }
                     });
+
                 });
             });
         }
     };
 
+    // exports.TemplateCompilerFactory = function TemplateCompilerFactory(require, exports, module, global, moduleFilename, moduleDirectory) {
+
+    // };
+
     exports.MJSONCompilerFactory = function MJSONCompilerFactory(require, exports, module, global, moduleFilename, moduleDirectory) {
 
-            //var root =  Require.delegate.compileMJSONFile(module.text, require.config.requireForId(module.id), module.id, /*isSync*/ true);
+        //var root =  Require.delegate.compileMJSONFile(module.text, require.config.requireForId(module.id), module.id, /*isSync*/ true);
 
-            if(module.exports.hasOwnProperty("montageObject")) {
+        if(module.exports.hasOwnProperty("montageObject")) {
+            throw new Error(
+                'using reserved word as property name, \'montageObject\' at: ' +
+                module.location
+            );
+        }
+
+        if(!module.deserializer) {
+            // var root =  Require.delegate.compileMJSONFile(module.text, require.config.requireForId(module.id), module, /*isSync*/ true);
+            if(!montageExports.MontageDeserializer) {
+                var MontageDeserializerModule = montageExports.config.modules["core/serialization/deserializer/montage-deserializer"];
+                montageExports.MontageDeserializer = MontageDeserializerModule.require("./core/serialization/deserializer/montage-deserializer").MontageDeserializer;
+            }
+
+            var deserializer = new montageExports.MontageDeserializer(),
+                //deserializerRequire = require.config ? require.config.requireForId(module.id) : module.parent.require /* in node */,
+                deserializerRequire = require.config ? require.config.requireForId(module.id) : require /* in node */,
+                root;
+
+            module.deserializer = deserializer;
+            deserializer.init(module.parsedText, deserializerRequire, void 0, module, true, /*useParsedSerialization*/true);
+            // deserializer.init(module.json, deserializerRequire, void 0, module, true, true);
+
+            try {
+                root = deserializer.deserializeObject();
+            } catch(error) {
+                console.log(module.id+" deserializeObject() failed with error:",error);
+
+                throw error;
+            }
+
+            // console.log("********MJSONCompilerFactory END compileMJSONFile",module.id);
+
+            if ("montageObject" in module.exports && module.exports.montageObject !== root) {
                 throw new Error(
-                    'using reserved word as property name, \'montageObject\' at: ' +
+                    'Final deserialized object is different than one set on module ' +
                     module.location
                 );
             }
+            else if(!("montageObject" in module.exports)) {
 
-            if(!module.deserializer) {
-                // var root =  Require.delegate.compileMJSONFile(module.text, require.config.requireForId(module.id), module, /*isSync*/ true);
-                if(!montageExports.MontageDeserializer) {
-                    montageExports.MontageDeserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
-                }
+                /*
+                    The following bellow is an option to avoid doing an Object.assign(),
+                    which is costly moving every root entry of a serialization to exports,
+                    by inverting the logic: replace exports by module.parsedText and then add the montageObject to it.
+                    A tweak within in require.js Require.SerializationCompiler where we assign metadata had to be made so we would loop
+                    over the replaces module exports vs the one that was passed so far.
+                */
+                // module.exports = module.parsedText;
+                // module.exports.montageObject = root;
 
-                var deserializer = new montageExports.MontageDeserializer(),
-                    deserializerRequire = require.config.requireForId(module.id),
-                    root;
-                module.deserializer = deserializer;
-                deserializer.init(module.text, deserializerRequire, void 0, module, true);
-                root = deserializer.deserializeObject();
 
-                // console.log("********MJSONCompilerFactory END compileMJSONFile",module.id);
+                /*
+                    But the downside is that we're still creating montage metadata for all these entries that don't need one.
+                    So, we kept these entries thinking that otherwise there wouldn't be a way to require the json content of a.mjson file as such.
+                    But we haven't really needed that, and if we did, it would still be accessible through another call, or we could also add
+                    exports.[json / parsedJson] = module.parsedText;
 
-                if (module.exports.montageObject && module.exports.montageObject !== root) {
-                    throw new Error(
-                        'Final deserialized object is different than one set on module ' +
-                        module.location
-                    );
-                }
-                else if(!module.exports.montageObject) {
-                    module.exports.montageObject = root;
-                }
-
-                if(module.exports) {
-                    Object.assign(module.exports, module.parsedText);
-                }
-                else {
-                    module.exports = module.parsedText;
-                }
-
-                module.deserializer = null;
-                module.text = null;
+                */
+                module.exports.montageObject = root;
+                //Object.assign(module.exports, module.parsedText);
 
             }
+
+            // if(module.exports) {
+            //     Object.assign(module.exports, module.parsedText);
+            // }
+            // else {
+            //     module.exports = module.parsedText;
+            // }
+
+            module.deserializer = null;
+            module.text = null;
+            //Cleaning the parsedText now as we don't use it and it's using memory for no good reason.
+            module.parsedText = null;
+
+        }
 
         // console.log("********MJSONCompilerFactory END montageObject THERE",module.id);
 
@@ -467,26 +694,36 @@
         }
     }
 
-    exports.parseMJSONDependencies = function parseMJSONDependencies(jsonRoot) {
+    var _dependenciesWorkingSet = new Set();
+    exports.parseMJSONDependencies = function parseMJSONDependencies(module, callback) {
 
-        var rootEntries = Object.keys(jsonRoot),
-            i=0, iLabel, dependencies = [], iLabelObject;
+        _dependenciesWorkingSet.clear();
+
+        var jsonRoot = module.parsedText,
+            base = module.location,
+            rootEntries = Object.keys(jsonRoot),
+            _moduleIdWithoutExportSymbol = moduleIdWithoutExportSymbol,
+            i=0, iLabel, iDependency, dependencies = _dependenciesWorkingSet, iLabelObject,
+            values, valuesKeys, j, countJ, jModule, jKeyValue;
 
         while ((iLabel = rootEntries[i])) {
             iLabelObject = jsonRoot[iLabel];
-            if(iLabelObject.hasOwnProperty("prototype")) {
-                dependencies.push(moduleIdWithoutExportSymbol(iLabelObject["prototype"]));
+            if(typeof iLabelObject.prototype === "string") {
+                dependencies.add((iDependency = _moduleIdWithoutExportSymbol(iLabelObject.prototype)));
+                if(callback) {
+                    callback(iDependency);
+                }
 
                 //This is to enable expression-data-mapping to deserialize itself synchronously
                 //despite the fact it may have been serialized using object-descriptor-reference.
                 //This allows us to add the objectDescriptorModule's id ("%") as a dependency upfront.
                 //A stronger version would analyze the whole file for the construct: {"%": "someModuleId"}.
                 //But this would impact performance for a use case that we don't need so far.
-                if(dependencies[dependencies.length-1] === "montage/core/meta/object-descriptor-reference") {
+                if(iDependency === "mod/core/meta/object-descriptor-reference") {
                     /*
                         We're adding the module of that referrence, typiacally serialized as:
                         "ObjectDescriptorReference": {
-                            "prototype": "montage/core/meta/object-descriptor-reference",
+                            "prototype": "mod/core/meta/object-descriptor-reference",
                             "properties": {
                                 "valueReference": {
                                     "objectDescriptor": "Object_Descriptor_Name",
@@ -496,60 +733,175 @@
                             }
                         },
                     */
-                    dependencies.push(iLabelObject.properties.valueReference.objectDescriptorModule["%"]);
+                    dependencies.add((iDependency = iLabelObject.properties.valueReference.objectDescriptorModule["%"]));
+                    if(callback) {
+                        callback(iDependency);
+                    }
                 }
 
             }
-            else if(iLabelObject.hasOwnProperty("object")) {
-                dependencies.push(moduleIdWithoutExportSymbol(iLabelObject["object"]));
+            else if(typeof iLabelObject.object === "string") {
+                dependencies.add((iDependency = _moduleIdWithoutExportSymbol(iLabelObject.object)));
+                if(callback) {
+                    callback(iDependency);
+                }
+            }
+
+            /*
+                introspect values block to detect properties that hold modules.
+            */
+            values = iLabelObject.values || iLabelObject.properties;
+
+            if((valuesKeys = values ? Object.keys(values) : null)) {
+                for(j=0, countJ = valuesKeys.length, jModule, jKeyValue; (j < countJ); j++) {
+                    if(typeof (jKeyValue = values[valuesKeys[j]]) === "object" && jKeyValue && typeof (jKeyValue = jKeyValue["%"]) === "string") {
+                        jModule = _moduleIdWithoutExportSymbol(jKeyValue);
+                        /*
+                            We need to eliminate cases where the module refers to the current file,
+                            like the objectDescriptorModule property in serialized "mod/core/meta/module-object-descriptor"
+                            This is not perfect but will do for now.
+                        */
+                        if(!(jModule.startsWith("./") && (base.endsWith(jModule.substring(1))))) {
+                            dependencies.add(jModule);
+
+                            if(callback) {
+                                callback(jModule);
+                            }
+
+                        }
+                    }
+
+                }
             }
 
             i++;
         }
-        return dependencies;
+        return dependencies.size > 0 ? Array.from(dependencies) : null;
     };
 
-    var dotMeta = ".meta",
-        dotMJSON = ".mjson",
-        dotMJSONLoadJs = ".mjson.load.js";
+    var dotMJSON = ".mjson",
+        dotMJSONLoadJs = ".mjson.load.js",
+        TemplatePromise,
+        Template;
 
     exports.Compiler = function (config, compile) {
+        if(!exports.config && (config.name === "mod" || config.name === "montage")) {
+            exports.config = config;
+        }
         return function(module) {
 
-            if (module.exports || module.factory || (typeof module.text !== "string") || (typeof module.exports === "object")) {
-                return module;
-            }
+            // if(module.id.endsWith(".html")) {
+            //     var html = module.text,
+            //         TemplatePromise;
 
-            var location = module.location,
-                isMJSON = (location && (location.endsWith(dotMJSON) || location.endsWith(dotMJSONLoadJs) || location.endsWith(dotMeta)));
+            //     if(!Template) {
+            //         TemplatePromise = TemplatePromise ||
+            //         (
+            //             /* global.require is application's require */
+            //             TemplatePromise = global.require.async("mod/core/template")
+            //         .then((exports) => {
+            //             Template = exports.Template;
+            //             return;
+            //         }));
+            //     } else {
+            //         TemplatePromise = TemplatePromise || (TemplatePromise = Promise.resolve(Template));
+            //     }
 
-            if (isMJSON) {
-                if (typeof module.exports !== "object" && typeof module.text === "string") {
-                    try {
-                        module.parsedText = JSON.parse(module.text);
-                    } catch (e) {
-                        if (e instanceof SyntaxError) {
-                            console.error("SyntaxError parsing JSON at "+location);
-                            config.lint(module);
-                        } else {
-                            throw e;
+            //     return TemplatePromise
+            //     .then(() => {
+            //         var template = new Template();
+            //         return template.initWithModule(module)
+            //         .then(() => {
+
+            //             //FIXME: That method is lame, getObjectsString() should get the document internally
+            //             var loadDependencyPromise,
+            //                 objectsStringPromise = template.getObjectsString(template.document),
+            //                 loadResourcesPromise;
+
+            //             var resources = template.getResources();
+            //             if (!resources.resourcesLoaded() && resources.hasResources()) {
+            //                 //We can't be sure that we wan these in the root document?
+            //                 loadResourcesPromise = resources.loadResources(global.document);
+            //             }
+
+            //             if(objectsStringPromise && loadResourcesPromise) {
+            //                 loadDependencyPromise = Promise.all([objectsStringPromise, loadResourcesPromise]);
+            //             } else {
+            //                 loadDependencyPromise = objectsStringPromise;
+            //             }
+
+            //             return loadDependencyPromise.then((resolvedValues) => {
+            //                 var objectsString;
+            //                 if(Array.isArray(resolvedValues)) {
+            //                     objectsString = resolvedValues[0];
+            //                 } else {
+            //                     objectsString = resolvedValues;
+            //                 }
+
+            //                 var serializationJSON = JSON.parse(objectsString);
+            //                 module.dependencies = montageExports.parseMJSONDependencies(serializationJSON);
+            //                 // module.exports.template = template;
+            //                 module.exports.montageObject = template;
+
+            //                 //module.factory = exports.TemplateCompilerFactory;
+
+            //                 return module;
+            //             })
+            //             // .then(() => {
+            //             //     return template.instantiateWithInstances(/*context._objects*/null, context._element.ownerDocument)
+            //             //     .then((documentPart) => {
+            //             //         if(documentPart) {
+            //             //             module.exports = documentPart.objects;
+
+            //             //         } else {
+            //             //             return null;
+            //             //         }
+
+            //             // });
+            //         });
+
+
+
+            //     });
+
+
+            // } else {
+                if (module.exports || module.factory || (typeof module.text !== "string" &&  !module.parsedText) || (typeof module.exports === "object")) {
+                    return module;
+                }
+
+                var location = module.location,
+                    isMJSON = (location && (location.endsWith(dotMJSON) || location.endsWith(dotMJSONLoadJs)));
+
+                if (isMJSON) {
+                    if (typeof module.exports !== "object" && (module.parsedText || typeof module.text === "string")) {
+                        try {
+                            module.parsedText = module.json;
+                        } catch (e) {
+                            if (e instanceof SyntaxError) {
+                                console.error("SyntaxError parsing JSON at "+location);
+                                config.lint(module);
+                            } else {
+                                throw e;
+                            }
+                        }
+                        if (module.parsedText.montageObject) {
+                            throw new Error(
+                                'using reserved word as property name, \'montageObject\' at: ' +
+                                location
+                            );
                         }
                     }
-                    if (module.parsedText.montageObject) {
-                        throw new Error(
-                            'using reserved word as property name, \'montageObject\' at: ' +
-                            location
-                        );
-                    }
-                }
-                module.dependencies = montageExports.parseMJSONDependencies(module.parsedText);
-                module.factory = exports.MJSONCompilerFactory;
+                    module.dependencies = montageExports.parseMJSONDependencies(module);
+                    module.factory = exports.MJSONCompilerFactory;
 
-                return module;
-            } else {
-                var result = compile(module);
-                return result;
-            }
+                    return module;
+                } else {
+                    var result = compile(module);
+                    return result;
+                }
+            // }
+
         };
     };
 
@@ -559,7 +911,8 @@
             return void 0;
         }
 
-        function makeCustomElementConstructor(superConstructor) {
+
+        window.makeCustomElementConstructor = function makeCustomElementConstructor(superConstructor) {
             var constructor = function () {
                 return Reflect.construct(
                     HTMLElement, [], constructor
@@ -647,8 +1000,9 @@
                 var self = this,
                     component = this.instantiateComponent();
 
+                this._instance = component;
                 return this.findParentComponent().then(function (parentComponent) {
-                    self._instance = component;
+                    //self._instance = component;
                     parentComponent.addChildComponent(component);
                     component._canDrawOutsideDocument = true;
                     component.needsDraw = true;
@@ -675,9 +1029,13 @@
             return Promise.resolve(candidate) || this.getRootComponent();
         };
 
+        MontageElement.prototype._deserializedFromTemplate = function (owner, label, documentPart) {
+            this._instance._deserializedFromTemplate(owner, label, documentPart);
+        }
+
         MontageElement.prototype.getRootComponent = function () {
             if (!MontageElement.rootComponentPromise) {
-                MontageElement.rootComponentPromise = this.require.async("montage/ui/component")
+                MontageElement.rootComponentPromise = this.require.async("mod/ui/component")
                     .then(function (exports) {
                         return exports.__root__;
                     });
@@ -695,6 +1053,7 @@
 
         MontageElement.prototype.bootstrapComponent = function (component) {
             var shadowRoot = this.attachShadow({ mode: 'open' }),
+                self = this,
                 mainEnterDocument = component.enterDocument,
                 mainTemplateDidLoad = component.templateDidLoad,
                 proxyElement = this.findProxyForElement(this);
@@ -702,7 +1061,6 @@
             if (proxyElement) {
                 var observedAttributes = this.observedAttributes,
                     observedAttribute,
-                    self = this,
                     length;
 
                 if (observedAttributes && (length = observedAttributes.length)) {
@@ -814,7 +1172,7 @@
                 global.BUNDLE.forEach(function (bundleLocations) {
                     preloaded = preloaded.then(function () {
                         return Promise.all(bundleLocations.map(function (bundleLocation) {
-                            browser.load(bundleLocation);
+                            browserPlatform.load(bundleLocation);
                             return getDefinition(bundleLocation).promise;
                         }));
                     });
@@ -832,9 +1190,15 @@
                 if ("autoPackage" in params) {
                     Require.injectPackageDescription(location, {
                         dependencies: {
+                            mod: "*"
+                        }
+                    }, config);
+                    Require.injectPackageDescription(location, {
+                        dependencies: {
                             montage: "*"
                         }
                     }, config);
+
                 } else {
                     // handle explicit package.json location
                     if (location.slice(location.length - 5) === ".json") {
@@ -883,7 +1247,7 @@
                     window.addEventListener("message", messageCallback);
                 });
 
-                applicationRequirePromise = trigger.spread(function (location, injections) {
+                applicationRequirePromise = trigger.then(function ([location, injections]) {
                     var promise = Require.loadPackage({
                         location: location,
                         hash: applicationHash
@@ -948,7 +1312,6 @@
                 })
                 .then(function (montageRequire) {
                     montageRequire.inject("core/mini-url", URL);
-                    montageRequire.inject("core/promise", {Promise: Promise});
 
                     // install the linter, which loads on the first error
                     config.lint = function (module) {
@@ -975,14 +1338,14 @@
                 });
 
             // Will throw error if there is one
-            }).done();
+            });
         });
     };
 
     // Bootstrapping for multiple-platforms
     exports.getPlatform = function () {
         if (typeof window !== "undefined" && window && window.document) {
-            return browser;
+            return browserPlatform;
         } else if (typeof process !== "undefined") {
             return require("./node.js");
         } else {

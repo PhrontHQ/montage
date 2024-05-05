@@ -1,10 +1,11 @@
-var Montage = require("core/core").Montage,
+var Montage = require("../../core/core").Montage,
+    Enum = require("../../core/enum").Enum,
     ASCENDING = {name: "Ascending"},
     DESCENDING = {name: "Descending"};
-    // parse = require("frb/parse"),
-    // compile = require("frb/compile-evaluator"),
-    // evaluate = require("frb/evaluate"),
-    // Scope = require("frb/scope");
+    // parse = require("core/frb/parse"),
+    // compile = require("core/frb/compile-evaluator"),
+    // evaluate = require("core/frb/evaluate"),
+    // Scope = require("core/frb/scope");
 
 /*
  * var syntax = parse("a.b");
@@ -23,6 +24,13 @@ var Montage = require("core/core").Montage,
  * var inverseSortedArray = evaluatedInvertedSortExpression(new Scope(array));
  * var doubleSortedArray = evaluatedDoubleSortExpression(new Scope(array));
  */
+
+var orderTypes = [
+    "Ascending",
+    "Descending"
+];
+exports.OrderType = OrderType = new Enum().initWithMembersAndValues(orderTypes,orderTypes);
+
 
 /**
  * @class
@@ -61,6 +69,14 @@ exports.DataOrdering = Montage.specialize(/** @lends DataOrdering.prototype */ {
             ordering.order = order;
             return ordering;
         }
+    },
+
+    Ascending: {
+        value: OrderType.Ascending
+    },
+
+    Descending: {
+        value: OrderType.Descending
     },
 
     ASCENDING: {

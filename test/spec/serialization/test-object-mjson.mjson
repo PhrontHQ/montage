@@ -1,6 +1,6 @@
 {
     "root": {
-        "object": "montage/core/core[Montage]",
+        "object": "mod/core/core[Montage]",
         "values": {
             "blah": "RootObjectDescriptor"
         }

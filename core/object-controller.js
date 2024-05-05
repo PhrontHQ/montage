@@ -1,9 +1,10 @@
 /**
- * @module montage/core/object-controller
- * @requires montage/core/core
+ * @module mod/core/object-controller
+ * @requires mod/core/core
  */
 
-var Montage = require("./core").Montage;
+var core = require("./core"),
+    Montage = core.Montage;
 
 /**
  * @class ObjectController
@@ -53,13 +54,13 @@ exports.ObjectController = Montage.specialize( /** @lends ObjectController# */ {
         value: null
     },
 
-    objectDescriptorModuleId:require("./core")._objectDescriptorModuleIdDescriptor,
+    objectDescriptorModuleId:core._objectDescriptorModuleIdDescriptor,
 
-    objectDescriptor:require("./core")._objectDescriptorDescriptor,
+    objectDescriptor:core._objectDescriptorDescriptor,
 
-    blueprintModuleId:require("./core")._blueprintModuleIdDescriptor,
+    blueprintModuleId:core._blueprintModuleIdDescriptor,
 
-    blueprint:require("./core")._blueprintDescriptor
+    blueprint:core._blueprintDescriptor
 
 });
 

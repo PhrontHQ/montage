@@ -3,7 +3,7 @@
 var AbstractControl = require("./abstract-control").AbstractControl,
     PressComposer = require("../../composer/press-composer").PressComposer;
 
-var CLASS_PREFIX = "montage-Link";
+var CLASS_PREFIX = "mod-Link";
 
 /**
  * @class AbstractLink
@@ -23,7 +23,7 @@ var AbstractLink = exports.AbstractLink = AbstractControl.specialize(
 
     constructor: {
         value: function AbstractLink() {
-            if(this.constructor ===  AbstractLink) {
+            if(this.constructor ===  exports.AbstractLink) {
                 throw new Error("AbstractLink cannot be instantiated.");
             }
 
@@ -32,10 +32,10 @@ var AbstractLink = exports.AbstractLink = AbstractControl.specialize(
 
             this.defineBindings({
                 // classList management
-                "classList.has('montage--disabled')": {
+                "classList.has('mod--disabled')": {
                     "<-": "!enabled"
                 },
-                "classList.has('montage--active')": {
+                "classList.has('mod--active')": {
                     "<-": "active"
                 }
             });

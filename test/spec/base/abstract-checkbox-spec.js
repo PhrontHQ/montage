@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    AbstractCheckbox = require("montage/ui/base/abstract-checkbox").AbstractCheckbox,
+var Montage = require("mod/core/core").Montage,
+    AbstractCheckbox = require("mod/ui/base/abstract-checkbox").AbstractCheckbox,
     MockDOM = require("mocks/dom");
 
 AbstractCheckbox.hasTemplate = false;
@@ -72,7 +72,7 @@ describe("test/base/abstract-checkbox-spec", function () {
             it("should add the corresponding class name to classList when checked", function () {
                 aCheckbox.checked = true;
 
-                expect(aCheckbox.classList.contains("montage-Checkbox--checked")).toBe(true);
+                expect(aCheckbox.classList.contains("mod-Checkbox--checked")).toBe(true);
             });
         });
 
@@ -109,7 +109,7 @@ describe("test/base/abstract-checkbox-spec", function () {
             it("should add the corresponding class name to classList when enabled is false", function () {
                 aCheckbox.enabled = false;
 
-                expect(aCheckbox.classList.contains("montage--disabled")).toBe(true);
+                expect(aCheckbox.classList.contains("mod--disabled")).toBe(true);
             });
         });
 
@@ -150,7 +150,7 @@ describe("test/base/abstract-checkbox-spec", function () {
             it("should add the corresponding class name to classList when active", function () {
                 aCheckbox.active = true;
 
-                expect(aCheckbox.classList.contains("montage--active")).toBe(true);
+                expect(aCheckbox.classList.contains("mod--active")).toBe(true);
             });
         });
     });

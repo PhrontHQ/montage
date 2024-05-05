@@ -33,8 +33,8 @@
 // IMPLIED, INCLUDING BUT NOT LIMITED
 //
 /**
- * @module montage/core/converter/number-converter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/number-converter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter;
 var Validator = require("./converter").Validator;
@@ -49,14 +49,14 @@ require('../shim/string');
  * (powers of 1024) conversions.  Also allow final 'B' to be interpreted as
  * byte-count, implicitly triggering binary conversion (e.g., '10.2MB').
  * @type {RegExp}
- * @memberof module:montage/core/converter#
+ * @memberof module:mod/core/converter#
  * @private
  */
 var SCALED_NUMERIC_RE_ = /^([\-]?\d+\.?\d*)([K,M,G,T,P,k,m,u,n]?)[B]?$/;
 
 /**
  * Ordered list of scaling prefixes in decreasing order.
- * @memberof module:montage/converter#
+ * @memberof module:mod/converter#
  * @type {Array}
  * @private
  */
@@ -68,7 +68,7 @@ var NUMERIC_SCALE_PREFIXES_ = [
 
 /**
  * Scaling factors for conversion of numeric value to string.  SI conversion.
- * @memberof module:montage/converter#
+ * @memberof module:mod/converter#
  * @type {Object}
  * @private
  */
@@ -87,7 +87,7 @@ var NUMERIC_SCALES_SI_ = exports.NUMERIC_SCALES_SI_ = {
 
 /**
  * Scaling factors for conversion of numeric value to string. Binary conversion.
- * @memberof module:montage/converter#
+ * @memberof module:mod/converter#
  * @type {Object}
  * @private
  */
@@ -106,7 +106,7 @@ var NUMERIC_SCALES_BINARY_ = exports.NUMERIC_SCALES_BINARY_ = {
 
 /**
  * Converts a numeric value to string, using specified conversion scales.
- * @memberof module:montage/converter#
+ * @memberof module:mod/converter#
  * @param {number} val Value to be converted.
  * @param {Object} conversion Dictionary of scaling factors.
  * @param {number} optDecimals The number of decimals to use.  Default is 2.
@@ -134,7 +134,8 @@ var _numericValueToString = exports._numericValueToString = function (val, conve
     }
     if (!symbol) {
         scale = 1;
-    } else if (optSuffix) {
+    }
+    if (optSuffix) {
         symbol += optSuffix;
     }
     var ex = Math.pow(10, isDef(optDecimals) ? optDecimals : 2);
@@ -143,7 +144,7 @@ var _numericValueToString = exports._numericValueToString = function (val, conve
 
 /**
  * Converts a string to numeric value, taking into account the units.
- * @memberof module:montage/converter#
+ * @memberof module:mod/converter#
  * @param {string} stringValue String to be converted to numeric value.
  * @param {Object} conversion Dictionary of conversion scales.
  * @returns {number} Numeric value for string.  If it cannot be converted, returns NaN.
@@ -165,7 +166,7 @@ var _stringToNumericValue = function (stringValue, conversion) {
  * point.
  * Negative numbers are valid.
  * @example 0, 1, 1.0, 10.4K, 2.3M, -0.3P, 1.2m
- * @memberof module:montage/core/converter#
+ * @memberof module:mod/core/converter#
  * @function
  * @param {string} val String value to check.
  * @returns {boolean} true If the string could be converted to a numeric value.
@@ -178,7 +179,7 @@ var isConvertableScaledNumber = function (val) {
 /**
  * Converts a string to numeric value, taking into account the units.
  * If string ends in 'B', use binary conversion.
- * @memberof module:montage/core/converter#
+ * @memberof module:mod/core/converter#
  * @function
  * @param {string} stringValue String to be converted to numeric value.
  * @returns {number} Numeric value for string.
@@ -196,7 +197,7 @@ var stringToNumericValue = exports.stringToNumericValue = function (stringValue)
 
 /**
  * Converts a numeric value to string representation. SI conversion.
- * @memberof module:montage/core/converter#
+ * @memberof module:mod/core/converter#
  * @function
  * @param {number} val Value to be converted.
  * @param {number} optDecimals The number of decimals to use. Defaults to 2.

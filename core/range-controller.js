@@ -1,9 +1,10 @@
 /**
- * @module montage/core/range-controller
+ * @module mod/core/range-controller
  */
-var Montage = require("./core").Montage;
-var GenericCollection = require("collections/generic-collection");
-var observableArrayProperties = require("collections/listen/array-changes").observableArrayProperties;
+var core = require("./core"),
+    Montage = core.Montage,
+    GenericCollection = require("core/collections/generic-collection"),
+    observableArrayProperties = require("core/collections/listen/array-changes").observableArrayProperties;
 
 // The content controller is responsible for determining which content from a
 // source collection are visible, their order of appearance, and whether they
@@ -113,6 +114,11 @@ Object.defineProperty(_RangeSelection.prototype, "swap_or_push", {
     configurable: false,
     value: function(start, howMany, itemsToAdd) {
         var content = this.rangeController.content;
+
+        if(!content) {
+            return;
+        }
+
         this.contentEquals = content && content.contentEquals || Object.is;
         start = start >= 0 ? start : this.length + start;
         var plus;
@@ -123,24 +129,55 @@ Object.defineProperty(_RangeSelection.prototype, "swap_or_push", {
 
             itemsToAdd.contentEquals = this.contentEquals;
 
-            plus = itemsToAdd.filter(function(item, index){
-                // do not add items to the selection if they aren't in content
-                if (content && !content.has(item)) {
-                    return false;
+            // plus = itemsToAdd.filter(function(item, index){
+            //     // do not add items to the selection if they aren't in content
+            //     if (content && !content.has(item)) {
+            //         return false;
+            //     }
+
+            //     // if the same item appears twice in the add list, only add it once
+            //     if (itemsToAdd.findLast(item) > index) {
+            //         return false;
+            //     }
+
+            //     // if the item is already in the selection, don't add it
+            //     // unless it's in the part that we're about to delete.
+            //     var indexInSelection = this.find(item);
+            //     return indexInSelection < 0 ||
+            //             (indexInSelection >= start && indexInSelection < start + minusLength);
+
+            // }, this);
+
+
+            plus = [];
+            for(var indexInSelection, i=0, countI = itemsToAdd.length;(i<countI); i++) {
+                if (i in itemsToAdd) {
+
+                    // do not add items to the selection if they aren't in content
+                    if (content && !content.has(itemsToAdd[i])) {
+                        continue;
+                    }
+
+                    // if the same item appears twice in the add list, only add it once
+                    if (itemsToAdd.findLastValue(itemsToAdd[i]) > i) {
+                        continue;
+                    }
+
+                    // if the item is already in the selection, don't add it
+                    // unless it's in the part that we're about to delete.
+                    indexInSelection = this.findValue(itemsToAdd[i]);
+                    if(indexInSelection < 0 ||
+                            (indexInSelection >= start && indexInSelection < start + minusLength)) {
+                                plus.push(itemsToAdd[i]);
+                            }
                 }
 
-                // if the same item appears twice in the add list, only add it once
-                if (itemsToAdd.findLast(item) > index) {
-                    return false;
-                }
+            }
 
-                // if the item is already in the selection, don't add it
-                // unless it's in the part that we're about to delete.
-                var indexInSelection = this.find(item);
-                return indexInSelection < 0 ||
-                        (indexInSelection >= start && indexInSelection < start + minusLength);
+            // if(JSON.stringify(plus) !== JSON.stringify(plus2)) {
+            //     debug;
+            // }
 
-            }, this);
 		}
 		else {
 			plus = EMPTY_ARRAY;
@@ -308,6 +345,9 @@ var RangeController = exports.RangeController = Montage.specialize( /** @lends R
      * An FRB expression that determines how to filter content like
      * "name.startsWith('A')" to see only names starting with 'A'.
      * If the `filterPath` is null, all content is accepted.
+     *
+     * TODO: this needs to be at least renamed to filterExpression,
+     * but it should really be a criteria object.
      *
      * @property {string} value
      */
@@ -664,6 +704,27 @@ var RangeController = exports.RangeController = Montage.specialize( /** @lends R
         }
     },
 
+
+    /**
+     * @private
+     */
+    _contentDescriptor: {
+        value: null
+    },
+    contentDescriptor: {
+        get: function () {
+            return this._contentDescriptor;
+        },
+        set: function (value) {
+            this._contentDescriptor = value;
+        }
+    },
+
+    /**
+     * TODO: reconciliate contentDescriptor's module with
+     * _contentConstructor when contentDescriptor is used.
+    */
+
     /**
      * @private
      */
@@ -718,14 +779,22 @@ var RangeController = exports.RangeController = Montage.specialize( /** @lends R
 
                 if (this.selection.length) {
                     this.selection.deleteEach(diff);
+                    // The following block was removed in mod's PR, I belive to fix a bug
 
-                    // ensure selection always has content
-                    if (this.selection.length === 0 && this.content && this.content.length &&
-                        this.avoidsEmptySelection && !this.allowsMultipleSelection) {
-                        // selection can't contain previous content value as content already changed
-                        this.selection.add(this.content[this.content.length - 1]);
+                     //// ensure selection always has content
+                     //if (this.selection.length === 0 && this.content && this.content.length &&
+                     //    this.avoidsEmptySelection && !this.allowsMultipleSelection) {
+                     //    // selection can't contain previous content value as content already changed
+                     //    this.selection.add(this.content[this.content.length - 1]);
                     }
                 }
+            }
+
+            // ensure selection always has content
+            if (this.selection.length === 0 && this.content && this.content.length &&
+                this.avoidsEmptySelection && !this.allowsMultipleSelection) {
+                // selection can't contain previous content value as content already changed
+                this.selection.add(this.content[this.content.length - 1]);
             }
         }
     },
@@ -832,13 +901,13 @@ var RangeController = exports.RangeController = Montage.specialize( /** @lends R
 
 }, /** @lends RangeController. */ {
 
-    objectDescriptorModuleId:require("./core")._objectDescriptorModuleIdDescriptor,
+    objectDescriptorModuleId:core._objectDescriptorModuleIdDescriptor,
 
-    objectDescriptor:require("./core")._objectDescriptorDescriptor,
+    objectDescriptor:core._objectDescriptorDescriptor,
 
-    blueprintModuleId:require("./core")._blueprintModuleIdDescriptor,
+    blueprintModuleId:core._blueprintModuleIdDescriptor,
 
-    blueprint:require("./core")._blueprintDescriptor
+    blueprint:core._blueprintDescriptor
 
 });
 

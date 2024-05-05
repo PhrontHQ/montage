@@ -1,17 +1,17 @@
-var ExpressionDataMapping = require("montage/data/service/expression-data-mapping").ExpressionDataMapping,
+var ExpressionDataMapping = require("mod/data/service/expression-data-mapping").ExpressionDataMapping,
     CategoryService = require("spec/data/logic/service/category-service").CategoryService,
     CountryService = require("spec/data/logic/service/country-service").CountryService,
-    DataService = require("montage/data/service/data-service").DataService,
-    DateConverter = require("montage/core/converter/date-converter").DateConverter,
-    ModuleObjectDescriptor = require("montage/core/meta/module-object-descriptor").ModuleObjectDescriptor,
-    ModuleReference = require("montage/core/module-reference").ModuleReference,
+    DataService = require("mod/data/service/data-service").DataService,
+    DateConverter = require("mod/core/converter/date-converter").DateConverter,
+    ModuleObjectDescriptor = require("mod/core/meta/module-object-descriptor").ModuleObjectDescriptor,
+    ModuleReference = require("mod/core/module-reference").ModuleReference,
     PlotSummaryService = require("spec/data/logic/service/plot-summary-service").PlotSummaryService,
     PropService = require("spec/data/logic/service/prop-service").PropService,
-    Promise = require("montage/core/promise").Promise,
-    PropertyDescriptor = require("montage/core/meta/property-descriptor").PropertyDescriptor,
-    RawDataService = require("montage/data/service/raw-data-service").RawDataService,
-    RawDataTypeMapping = require("montage/data/service/raw-data-type-mapping").RawDataTypeMapping,
-    RawForeignValueToObjectConverter = require("montage/data/converter/raw-foreign-value-to-object-converter").RawForeignValueToObjectConverter;
+    Promise = require("mod/core/promise").Promise,
+    PropertyDescriptor = require("mod/core/meta/property-descriptor").PropertyDescriptor,
+    RawDataService = require("mod/data/service/raw-data-service").RawDataService,
+    RawDataTypeMapping = require("mod/data/service/raw-data-type-mapping").RawDataTypeMapping,
+    RawForeignValueToObjectConverter = require("mod/data/converter/raw-foreign-value-to-object-converter").RawForeignValueToObjectConverter;
 
 
 var Movie = require("spec/data/logic/model/movie").Movie,
@@ -27,6 +27,8 @@ describe("An Expression Data Mapping", function() {
         categoryModuleReference,
         categoryObjectDescriptor,
         categoryPropertyDescriptor,
+        categoryMapping,
+        categorySchema,
         categoryService,
         countryConverter,
         countryMapping,
@@ -85,6 +87,7 @@ describe("An Expression Data Mapping", function() {
 
     DataService.mainService = undefined;
     mainService = new DataService();
+    mainService.supportsDataOperation = false;
     mainService.NAME = "Movies";
     movieService = new RawDataService();
     movieModuleReference = new ModuleReference().initWithIdAndRequire("spec/data/logic/model/movie", require);
@@ -109,6 +112,11 @@ describe("An Expression Data Mapping", function() {
     categoryPropertyDescriptor = new PropertyDescriptor().initWithNameObjectDescriptorAndCardinality("category", movieObjectDescriptor, 1);
     categoryPropertyDescriptor.valueDescriptor = categoryObjectDescriptor;
     movieObjectDescriptor.addPropertyDescriptor(categoryPropertyDescriptor);
+    categorySchemaModuleReference = new ModuleReference().initWithIdAndRequire("spec/data/schema/logic/category", require);
+    categorySchema = new ModuleObjectDescriptor().initWithModuleAndExportName(categorySchemaModuleReference, "CategorySchema");
+    categoryMapping = new ExpressionDataMapping().initWithServiceObjectDescriptorAndSchema(categoryService, categoryObjectDescriptor, categorySchema);
+    categoryMapping.rawDataPrimaryKeys = ["id"];
+
 
 
     countryService = new CountryService();
@@ -235,14 +243,14 @@ describe("An Expression Data Mapping", function() {
     it("properly registers the object descriptor type to the mapping object in a service", function (done) {
         return registrationPromise.then(function () {
             expect(movieService.parentService).toBe(mainService);
-            expect(movieService.mappingWithType(movieObjectDescriptor)).toBe(movieMapping);
+            expect(movieService.mappingForType(movieObjectDescriptor)).toBe(movieMapping);
             done();
         });
     });
 
     it("can create the correct number of mapping rules", function () {
-        expect(movieMapping.objectMappingRules.size).toBe(8);
-        expect(movieMapping.rawDataMappingRules.size).toBe(7);
+        expect(Object.keys(movieMapping.objectMappingRules).length).toBe(8);
+        expect(Object.keys(movieMapping.rawDataMappingRules).length).toBe(7);
     });
 
     it("can inherit rawDataPrimaryKeys", function () {
@@ -368,6 +376,9 @@ describe("An Expression Data Mapping", function() {
             data = {};
         category.name = "Action";
         category.id = 1;
+
+        mainService.recordDataIdentifierForObject(categoryService.dataIdentifierForTypePrimaryKey(categoryObjectDescriptor, category.id), category)
+
         movie.title = "Star Wars";
         movie.budget = 14000000.00;
         movie.isFeatured = true;

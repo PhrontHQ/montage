@@ -1,6 +1,6 @@
 /* global console */
 var Montage = require("./core").Montage;
-    Map = require("collections/map");
+    Map = require("./collections/map");
 
 var deprecatedFeaturesOnceMap = new Map();
 
@@ -9,7 +9,7 @@ function generateDeprecatedKey(name, alternative) {
 }
 
 /**
- * @module montage/core/deprecate
+ * @module mod/core/deprecate
  */
 
 /**
@@ -75,11 +75,11 @@ exports.deprecateMethod = function deprecate(scope, deprecatedFunction, name, al
     var deprecationWrapper = function () {
         // stackTraceLimit = 3 // deprecationWarning + deprecate + caller of the deprecated method
         if (once) {
-            exports.deprecationWarningOnce(name, alternative, 3);
+            exports.deprecationWarningOnce(name, alternative, 6);
         } else {
             deprecationWarning(name, alternative, 3);
         }
-        
+
         return deprecatedFunction.apply(scope ? scope : this, arguments);
     };
     deprecationWrapper.deprecatedFunction = deprecatedFunction;

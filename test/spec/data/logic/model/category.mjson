@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "montage/core/meta/module-object-descriptor",
+        "prototype": "mod/core/meta/module-object-descriptor",
         "properties": {
             "name": "Category",
             "propertyDescriptors": [
@@ -17,7 +17,7 @@
     },
 
     "name": {
-        "prototype": "montage/core/meta/property-descriptor",
+        "prototype": "mod/core/meta/property-descriptor",
         "properties": {
             "name": "name",
             "valueType": "string"

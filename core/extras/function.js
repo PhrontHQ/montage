@@ -1,7 +1,7 @@
 /**
  * Defines extensions to intrinsic `Function` object.
  * @see {external:Function}
- * @module montage/core/extras/function
+ * @module mod/core/extras/function
  */
 
 /**
@@ -67,6 +67,13 @@ Object.defineProperty(Function, "by", {
         return compareBy;
     },
     writable: true,
+    configurable: true
+});
+
+Object.defineProperty(Function.prototype, "isClass", {
+    get: function () {
+        return this.toString().startsWith("class");
+    },
     configurable: true
 });
 

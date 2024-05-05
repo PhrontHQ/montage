@@ -1,6 +1,6 @@
-console.log('montage-testing', 'Start');
+console.log('mod-testing', 'Start');
 
-module.exports = require("montage-testing").run(require, [
+module.exports = require("mod/testing/run").run(require, [
     // App
     {name: "spec/application-spec", node: false},
     // Internal
@@ -28,6 +28,7 @@ module.exports = require("montage-testing").run(require, [
     "spec/core/request-spec",
     "spec/core/selector-spec",
     "spec/core/criteria-spec",
+    "spec/core/date-spec",
     "spec/core/super-spec",
     "spec/core/super-for-spec",
     {name: "spec/core/undo-manager-spec", node: false},
@@ -35,6 +36,7 @@ module.exports = require("montage-testing").run(require, [
     "spec/core/extras/function",
     "spec/core/extras/string",
     "spec/core/set-spec",
+    "spec/core/counted-set-spec",
     {name: "spec/core/dom-spec", node: false, karma: false},
     {name: "spec/core/extras/url", node: false},
     "spec/core/range-controller-spec",
@@ -74,6 +76,7 @@ module.exports = require("montage-testing").run(require, [
     "spec/serialization/alias-spec",
     "spec/serialization/labeler-spec",
     "spec/serialization/reviver-spec",
+    //deprecated
     "spec/serialization/interpreter-spec",
     "spec/serialization/visitor-spec",
     "spec/serialization/serialization-extractor-spec",
@@ -104,8 +107,8 @@ module.exports = require("montage-testing").run(require, [
     {name: "spec/ui/segmented-bar/segmented-bar-spec", node: false, karma: false},
     {name: "spec/ui/flow-spec", node: false},
     {name: "spec/ui/component-spec", node: false},
-    // Reel
-    {name: "spec/reel/template-spec", node: false, karma: true},
+    // Mod
+    {name: "spec/mod/template-spec", node: false, karma: true},
     // UI - repetition
     {name: "spec/ui/repetition-spec", node: false, karma: false},
     {name: "spec/ui/repetition-selection-spec", node: false, karma: false},
@@ -141,8 +144,8 @@ module.exports = require("montage-testing").run(require, [
     {name: "spec/meta/controller-object-descriptor-spec", node: false},
     {name: "spec/meta/event-descriptor-spec", node: false},
 ]).then(function () {
-    console.log('montage-testing', 'End');
+    console.log('mod-testing', 'End');
 }, function (err) {
-    console.log('montage-testing', 'Fail', err, err.stack);
+    console.log('mod-testing', 'Fail', err, err.stack);
     throw err;
 });

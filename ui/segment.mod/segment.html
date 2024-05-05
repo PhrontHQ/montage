@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="segment.css">
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "Segment"}
+            }
+        },
+        "text": {
+            "prototype": "ui/text.mod",
+            "values": {
+                "element": {"#": "text"},
+                "value": {"<-": "@owner.label"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="Segment" class="segment-mod, montage-Segment">
+        <span data-mod-id="text"></span>
+    </div>
+</body>
+</html>

@@ -34,10 +34,10 @@ POSSIBILITY OF SUCH DAMAGE.
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>ObjectHierarchyTest</title>
     <script type="text/javascript" src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
 {
     "component1": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "hasTemplate": false,
             "element": {"#": "drawTrigger"}
@@ -45,7 +45,7 @@ POSSIBILITY OF SUCH DAMAGE.
     },
 
     "component2": {
-        "prototype": "montage/ui/component",
+        "prototype": "mod/ui/component",
         "values": {
             "hasTemplate": false,
             "element": {"#": "child"}
@@ -59,7 +59,7 @@ POSSIBILITY OF SUCH DAMAGE.
         }
     },
     "application": {
-        "prototype": "montage/core/application",
+        "prototype": "mod/core/application",
         "values": {
             "delegate": {"@": "test"}
         }
@@ -69,8 +69,8 @@ POSSIBILITY OF SUCH DAMAGE.
 
 </head>
 <body>
-    <div data-montage-id="drawTrigger">
-        <div data-montage-id="child"></div>
+    <div data-mod-id="drawTrigger">
+        <div data-mod-id="child"></div>
     </div>
     ObjectHierarchy…
 </body>

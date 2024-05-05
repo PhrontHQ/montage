@@ -1,4 +1,4 @@
-var request = require("montage/core/request");
+var request = require("mod/core/request");
 
 describe("core/request-spec", function () {
     var object, xhr;

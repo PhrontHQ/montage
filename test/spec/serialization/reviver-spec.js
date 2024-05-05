@@ -1,6 +1,6 @@
-var Reviver = require("montage/core/serialization/deserializer/montage-reviver").MontageReviver,
-    Context = require("montage/core/serialization/deserializer/montage-interpreter").MontageContext,
-    Promise = require("montage/core/promise").Promise;
+var Reviver = require("mod/core/serialization/deserializer/montage-reviver").MontageReviver,
+    Context = require("mod/core/serialization/deserializer/montage-interpreter").MontageContext,
+    Promise = require("mod/core/promise").Promise;
 
 
 describe("reviver", function() {
@@ -24,7 +24,8 @@ describe("reviver", function() {
                         getUserObject: function() {
                             return externalObject;
                         },
-                        setObjectLabel: function() {}
+                        setObjectLabel: function(object, label) {return object;},
+                        setUnitsToDeserialize: function(){}
                     },
                     object = reviver.reviveRootObject({}, context, "external");
 
@@ -40,7 +41,8 @@ describe("reviver", function() {
                         getUserObject: function() {
                             return;
                         },
-                        setObjectLabel: function() {}
+                        setObjectLabel: function(object, label) {return object;},
+                        setUnitsToDeserialize: function(){}
                     },
                     revived;
 
@@ -162,7 +164,7 @@ describe("reviver", function() {
 
             var serialization = {
                     "main": {
-                        "prototype": "montage/core/core[Montage]",
+                        "prototype": "mod/core/core[Montage]",
                         "values": {
                             "name": "a custom1 object"
                         }
@@ -202,14 +204,14 @@ describe("reviver", function() {
 
             var serialization = {
                     "object1": {
-                        "prototype": "montage/core/core[Montage]",
+                        "prototype": "mod/core/core[Montage]",
                         "values": {
                             "name": "a custom1 object"
                         }
                     },
 
                     "object2": {
-                        "prototype": "montage/core/core[Montage]",
+                        "prototype": "mod/core/core[Montage]",
                         "values": {
                             "name": "a custom2 object"
                         }
@@ -273,14 +275,14 @@ describe("reviver", function() {
 
             var serialization = {
                     "main": {
-                        "prototype": "montage/core/core[Montage]",
+                        "prototype": "mod/core/core[Montage]",
                         "values": {
                             "name": "a custom1 object"
                         }
                     },
 
                     "one": {
-                        "prototype": "montage/core/core[Montage]",
+                        "prototype": "mod/core/core[Montage]",
                         "values": {
                             "main": {"@": "main"}
                         }
@@ -344,10 +346,10 @@ describe("reviver", function() {
         it("gets objects synchronously if all needed modules are available", function () {
             var serialization = {
                 reviver: {
-                    prototype: "montage/core/serialization/deserializer/montage-reviver"
+                    prototype: "mod/core/serialization/deserializer/montage-reviver"
                 },
                 context: {
-                    prototype: "montage/core/serialization/deserializer/montage-interpreter"
+                    prototype: "mod/core/serialization/deserializer/montage-interpreter"
                 }
             };
 
@@ -362,10 +364,10 @@ describe("reviver", function() {
         it("throws an error if some needed modules are not available", function () {
             var serialization = {
                 reviver: {
-                    prototype: "montage/core/serialization/deserializer/montage-reviver"
+                    prototype: "mod/core/serialization/deserializer/montage-reviver"
                 },
                 context: {
-                    prototype: "montage/core/serialization/deserializer/montage-interpreter"
+                    prototype: "mod/core/serialization/deserializer/montage-interpreter"
                 },
                 text: {
                     prototype: "foo/bar"

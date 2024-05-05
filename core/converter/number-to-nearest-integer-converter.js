@@ -1,6 +1,6 @@
 /**
- * @module montage/core/converter/number-to-nearest-integer-converter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/number-to-nearest-integer-converter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
     singleton;

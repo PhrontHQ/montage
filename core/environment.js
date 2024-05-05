@@ -16,13 +16,123 @@ var Environment = exports.Environment = Montage.specialize({
         }
     },
 
+    /*
+        set by EventManager to avoid circular dependencies... Should environment be exposed only via application and live inside application.js?
+    */
+    application: {
+        value: null
+    },
+
+    systemLocaleIdentifier: {
+        get: function () {
+            return this.languages[0];
+        }
+    },
+
+    _languages: {
+        value: undefined
+    },
+
+    languages: {
+        get: function() {
+            if(!this._languages) {
+                this._languages = typeof navigator === "object"
+                    ? (navigator.languages && navigator.languages.length)
+                        ? navigator.languages
+                        : [navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en']
+                    : ["en"];
+            }
+            return this._languages;
+        },
+        set: function(value) {
+            this._languages = value;
+        }
+    },
+
+    userAgentIPAddress: {
+        value: undefined
+    },
+
+    /**
+     * The name of the stage the code is running.
+     *
+     * this.application.url.searchParams.get("stage");
+     *
+     * @property {string}
+     */
+    _stage: {
+        value: undefined
+    },
+    stage: {
+        get: function() {
+            if(this._stage === undefined) {
+                //Check if we have an argument:
+                var applicationURL = this.application.url,
+                    stageArgument = applicationURL && applicationURL.searchParams.get("stage");
+
+                if(stageArgument) {
+                    this._stage = stageArgument;
+                } else if(applicationURL && (applicationURL.hostname === "127.0.0.1" || applicationURL.hostname === "localhost" || applicationURL.hostname.endsWith(".local")) ) {
+                    this._stage = "mod";
+                } else {
+                    /*
+                        This means we're live:
+                    */
+                   this._stage = "live";
+                }
+            }
+
+            return this._stage;
+        },
+        set: function(value) {
+            this._stage = value;
+        }
+    },
+
+    isBrowser: {
+        value: (typeof window !== "undefined")
+    },
+
+    _isNode: {
+        value: undefined
+    },
+    isNode: {
+        get: function() {
+            return this._isNode || (this._isNode = ((typeof process !== 'undefined') &&
+(process.release.name.search(/node|io.js/) !== -1)));
+        }
+    },
+
+    _isAWS: {
+        value: undefined
+    },
+
+    /**
+     * Returns true if the code runs in AWS LAMBDA environment using the reserved environment variable
+     *
+     * AWS_EXECUTION_ENV
+     *
+     * more at https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html
+     *
+     * @property {Boolean} value
+     */
+
+    isAWS: {
+        get: function() {
+            return this._isAWS || (this._isAWS = ((typeof process !== 'undefined') && (typeof process.env.AWS_EXECUTION_ENV !== 'undefined')));
+        }
+    },
+
     _userAgent: {
         value: null
     },
 
     userAgent: {
         set: function (userAgent) {
-            userAgent = userAgent.toLowerCase();
+
+            if(userAgent) {
+                userAgent = userAgent.toLowerCase();
+            }
 
             if (userAgent !== this._userAgent) {
                 this._userAgent = userAgent;
@@ -55,6 +165,41 @@ var Environment = exports.Environment = Montage.specialize({
         }
     },
 
+    _supportsLinkRel: {
+        value: function _supportsLinkRel(feature){
+            var tokenList;
+            var fakeLink = document.createElement('link');
+            try {
+                if(fakeLink.relList && _.isFunction(fakeLink.relList.supports)){
+                    return  fakeLink.relList.supports(feature);
+                }
+            } catch(err){
+                return false;
+            }
+        }
+    },
+
+    _supportsLinkPrefetch: {
+        value: undefined
+    },
+    supportsLinkPrefetch: {
+        value: function() {
+            return typeof this._supportsLinkPrefetch === "boolean"
+                ? this._supportsLinkPrefetch
+                : (this._supportsLinkPrefetch = (this.isBrowser && this._supportsLinkRel('prefetch')));
+        }
+    },
+    _supportsLinkPreload: {
+        value: undefined
+    },
+    supportsLinkPreload: {
+        value: function() {
+            return typeof this._supportsLinkPreload === "boolean"
+                ? this._supportsLinkPreload
+                : (this._supportsLinkPreload = (this.isBrowser && this._supportsLinkRel('preload')));
+        }
+    },
+
     _supportsPointerEvents: {
         value: null
     },
@@ -66,6 +211,19 @@ var Environment = exports.Environment = Montage.specialize({
                 (global.MSPointerEvent && global.navigator.msPointerEnabled))) : this._supportsPointerEvents;
         }
     },
+
+
+    _isApplePlatform: {
+        value: null
+    },
+
+    isApplePlatform: {
+        get: function () {
+            return typeof this._isApplePlatform !== "boolean" ?
+                (this._isApplePlatform = new RegExp(Environment.Platform.MACINTOSH+"|"+Environment.Platform.IOS).test(this.platformName)) : this._isApplePlatform;
+        }
+    },
+
 
     _isIOSDevice: {
         value: null

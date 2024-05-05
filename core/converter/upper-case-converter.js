@@ -1,11 +1,11 @@
 /**
- * @module montage/core/converter/upper-case-converter
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/upper-case-converter
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter,
     deprecate = require("../deprecate"),
-    shouldMuteWarning = false,    
-    singleton;    
+    shouldMuteWarning = false,
+    singleton;
 
 /**
  * @class UpperCaseConverter

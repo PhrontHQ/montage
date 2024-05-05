@@ -1,0 +1,12 @@
+{
+    "name": "teach-image-galery-mod",
+    "version": "0.1.0",
+    "scripts": {
+        "postinstall": "npm link ../../.."
+    },
+    "dependencies": {
+        "mod": "../../.."
+    },
+    "private": true,
+    "bundle": [ "ui/main.mod" ]
+}

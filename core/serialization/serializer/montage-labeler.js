@@ -14,8 +14,8 @@ exports.MontageLabeler = Montage.specialize({
 
     constructor: {
         value: function MontageLabeler() {
-            this._labels = Object.create(null);
-            this._objectsLabels = Object.create(null);
+            this._labels = new Set();
+            this._objectsLabels = new Map();
             this._objects = Object.create(null);
             this._baseNamesIndex = Object.create(null);
             this._userDefinedLabels = Object.create(null);
@@ -36,13 +36,10 @@ exports.MontageLabeler = Montage.specialize({
 
     _getObjectLabel: {
         value: function(object) {
-            var hash = Object.hash(object),
-                label;
+            var label;
 
-            if (hash in this._objectsLabels) {
-                if (Object.hasOwnProperty.call(this._objectsLabels, hash)) {
-                    label = this._objectsLabels[hash];
-                }
+            if (this._objectsLabels.has(object)) {
+                label = this._objectsLabels.get(object);
             } else {
                 label = this.generateObjectLabel(object);
                 this.setObjectLabel(object, label);
@@ -69,8 +66,9 @@ exports.MontageLabeler = Montage.specialize({
             var identifier = object.identifier,
                 objectName;
 
-            if (identifier && this._labelRegexp.test(identifier)) {
-                objectName = object.identifier;
+            if (identifier && this._labelRegexp.test((identifier = identifier.toString()))) {
+                //objectName = object.identifier;
+                objectName = identifier;
             } else if (object && typeof object === "object" && "getInfoForObject" in object || "getInfoForObject" in object.constructor ) {
                 objectName = Montage.getInfoForObject(object).objectName;
                 objectName = objectName.toLowerCase();
@@ -94,11 +92,11 @@ exports.MontageLabeler = Montage.specialize({
      */
     initWithObjects: {
         value: function(labels) {
-            for (var label in labels) {
-                if (labels.hasOwnProperty(label)) {
-                    this.setObjectLabel(labels[label], label);
-                    this._userDefinedLabels[label] = true;   
-                }
+            var keys = Object.keys(labels),
+                i, label;
+            for(i=0;(label = keys[i]); i++) {
+                this.setObjectLabel(labels[label], label);
+                this._userDefinedLabels[label] = true;
             }
         }
     },
@@ -116,6 +114,7 @@ exports.MontageLabeler = Montage.specialize({
     generateLabel: {
         value: function(baseName) {
             var index = this._baseNamesIndex[baseName],
+                labels = this._labels,
                 label;
 
             do {
@@ -126,7 +125,7 @@ exports.MontageLabeler = Montage.specialize({
                     label = baseName;
                     this._baseNamesIndex[baseName] = index = this._INITIAL_LABEL_NUMBER;
                 }
-            } while (label in this._labels);
+            } while (labels.has(label));
 
             return label;
         }
@@ -140,7 +139,7 @@ exports.MontageLabeler = Montage.specialize({
 
     addLabel: {
         value: function(label) {
-            this._labels[label] = true;
+            this._labels.add(label);
         }
     },
 
@@ -154,7 +153,7 @@ exports.MontageLabeler = Montage.specialize({
 
     isLabelDefined: {
         value: function(label) {
-            return label in this._labels;
+            return this._labels.has(label);
         }
     },
 
@@ -175,10 +174,8 @@ exports.MontageLabeler = Montage.specialize({
     setObjectLabel: {
         value: function(object, label) {
             if (typeof object !== "undefined") {
-                var hash = Object.hash(object);
-
                 this.addLabel(label);
-                this._objectsLabels[hash] = label;
+                this._objectsLabels.set(object, label);
                 this._objects[label] = object;
             }
         }

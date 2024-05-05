@@ -1,3 +1,3 @@
-require("../../deprecate").deprecationWarning("montage/core/serialization/deserializer/properties-deserializer", "montage/core/serialization/deserializer/values-deserializer");
+require("../../deprecate").deprecationWarning("mod/core/serialization/deserializer/properties-deserializer", "mod/core/serialization/deserializer/values-deserializer");
 
 exports.PropertiesDeserializer = require("./values-deserializer").ValuesDeserializer;

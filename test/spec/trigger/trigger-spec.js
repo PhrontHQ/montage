@@ -1,7 +1,7 @@
 /*global require,exports,describe,it,expect */
-var Montage = require("montage").Montage;
-var Promise = require("montage/core/promise").Promise;
-var TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
+var Montage = require("mod/core/core").Montage;
+var Promise = require("mod/core/promise").Promise;
+var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
 
 var options = TestPageLoader.options("trigger-test", {timeoutLength: 10000}, function () {console.log("trigger-test callback");});
 describe("trigger-test", function () {
@@ -12,7 +12,7 @@ describe("trigger-test", function () {
         it("should receive a montageReady event", function (done) {
             //console.group("trigger-test");
             promiseForFrameLoad = TestPageLoader.testPage.loadFrame(options);
-            promiseForFrameLoad.then(function(iWindow) {
+            return promiseForFrameLoad.then(function(iWindow) {
                 var deferForMontageReady = new Promise(function(resolve, reject) {
                     testWindow = iWindow;
 
@@ -40,8 +40,9 @@ describe("trigger-test", function () {
 
         it("load when message is posted", function (done) {
             //console.log("load when message is posted");
-            require.async("spec/trigger/to-be-defined-package.json").then(function (packageJSON) {
-                var injections = {};
+            return require.async("spec/trigger/to-be-defined-package.json").then(function (packageJSON) {
+            //return require.async("trigger/to-be-defined-package.json").then(function (packageJSON) {
+                    var injections = {};
 
                 //packageDescriptions
                 injections.packageDescriptions = [
@@ -101,9 +102,10 @@ describe("trigger-test", function () {
 
         it("should be able to inject a packaged description", function (done) {
             // the inject-description-location.json is supposed to define the main modules as inject.js
-            var injectModule = TestPageLoader.testPage.global.mr.async("to-be-defined/inject");
+            //var injectModule = TestPageLoader.testPage.global.mr.async("to-be-defined/inject");
+            var injectModule = TestPageLoader.testPage.global.require.async("to-be-defined/inject");
 
-            injectModule.then(function (inject) {
+            return injectModule.then(function (inject) {
                 expect(inject.injected).toBeTruthy();
             }, function (err) {
                 fail(err);
@@ -114,9 +116,10 @@ describe("trigger-test", function () {
 
         it("should be able to inject a packaged description location", function (done) {
             // the inject-description-location.json is supposed to define the main modules as inject.js
-            var injectModule = TestPageLoader.testPage.global.mr.async("inject-description-location");
+            //var injectModule = TestPageLoader.testPage.global.mr.async("inject-description-location");
+            var injectModule = TestPageLoader.testPage.global.require.async("inject-description-location");
 
-            injectModule.then(function (inject) {
+            return injectModule.then(function (inject) {
                 expect(inject.injected).toBeTruthy();
             }, function (err) {
                 fail(err);
@@ -129,7 +132,7 @@ describe("trigger-test", function () {
 
             var injectModule = TestPageLoader.testPage.global.mr.async("__custom/inject");
 
-            injectModule.then(function (inject) {
+            return injectModule.then(function (inject) {
                 expect(inject.injected).toBeTruthy();
             }, function (err) {
                 fail(err);
@@ -142,7 +145,7 @@ describe("trigger-test", function () {
 
             var injectModule = TestPageLoader.testPage.global.mr.async("injected-dependency/inject");
 
-            injectModule.then(function (inject) {
+            return injectModule.then(function (inject) {
                 expect(inject.injected).toBeTruthy();
             }, function (err) {
                 fail(err);
@@ -155,7 +158,7 @@ describe("trigger-test", function () {
 
             var injectModule = TestPageLoader.testPage.global.mr.async("existing/inject");
 
-            injectModule.then(function (inject) {
+            return injectModule.then(function (inject) {
                 expect(inject.injected).toBeTruthy();
             }, function (err) {
                 fail(err);

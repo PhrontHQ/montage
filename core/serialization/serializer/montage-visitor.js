@@ -9,6 +9,7 @@ var Montage = require("../../core").Montage,
 
 var MontageVisitor = Montage.specialize({
     _MONTAGE_ID_ATTRIBUTE: {value: "data-montage-id"},
+    _MOD_ID_ATTRIBUTE: {value: "data-mod-id"},
     _require: {value: null},
     _units: {value: null},
     _elements: {value: null},
@@ -20,12 +21,19 @@ var MontageVisitor = Montage.specialize({
         value: function (builder, labeler, require, units) {
             this.builder = builder;
             this.labeler = labeler;
-            this._objectsSerialization = Object.create(null);
+            this._objectsSerialization = new Map();
             this._require = require;
             this._units = units;
             this._elements = [];
 
             return this;
+        }
+    },
+
+    cleanup: {
+        value: function() {
+            this._elements = [];
+            this._objectsSerialization =  new Map();
         }
     },
 
@@ -71,14 +79,14 @@ var MontageVisitor = Montage.specialize({
             var elementReference,
                 id;
 
-            id = element.getAttribute(this._MONTAGE_ID_ATTRIBUTE);
+            id = element.getAttribute(this._MOD_ID_ATTRIBUTE) || element.getAttribute(this._MONTAGE_ID_ATTRIBUTE);
 
             if (id) {
                 elementReference = this.builder.createElementReference(id);
                 this.storeValue(elementReference, element, name);
                 this._elements.push(element);
             } else {
-                throw new Error("Not possible to serialize a DOM element with no " + this._MONTAGE_ID_ATTRIBUTE + " assigned: " + element.outerHTML);
+                throw new Error("Not possible to serialize a DOM element with no " + this._MOD_ID_ATTRIBUTE + " nor " + this._MONTAGE_ID_ATTRIBUTE + " assigned: " + element.outerHTML);
             }
         }
     },
@@ -243,32 +251,42 @@ var MontageVisitor = Montage.specialize({
         value: function (malker, object, builderObject) {
             var selfSerializer,
                 substituteObject,
-                valuesBuilderObject = this.builder.createObjectLiteral();
+                valuesBuilderObject = this.builder.createObjectLiteral(),
+                type = this.setObjectType(object, builderObject);
 
-            this.setObjectType(object, builderObject);
-            builderObject.setProperty("values", valuesBuilderObject);
+            /*
+                If an object serialized as part of another came it self from a .mjson,
+                we clearly don't want to have it reserializes itself, the .mjson needs to stay the reference.
 
-            this.builder.push(builderObject);
+                It's not obvious what should happen if some values were changed (as = or bindings) on it post deserialziation: should they stay "local" and appear in that serialization? Should the be expected to be saved in that .mjson? I don' think we have enough context here to decide one way or the other.
+            */
 
-            if (typeof object.serializeSelf === "function") {
-                selfSerializer = new SelfSerializer().
-                    initWithMalkerAndVisitorAndObject(
-                        malker, this, object, builderObject);
-                substituteObject = object.serializeSelf(selfSerializer);
-            } else {
-                this.setObjectValues(malker, object);
-                this.setObjectBindings(malker, object);
-                this.setObjectCustomUnits(malker, object);
-            }
+            if(!(type === "object" && builderObject.getProperty("object").value.endsWith(".mjson"))) {
 
-            this.builder.pop();
+                builderObject.setProperty("values", valuesBuilderObject);
 
-            // Remove the values unit in case none was serialized,
-            // we need to add it before any other units to make sure that
-            // it's the first unit to show up in the serialization, since we
-            // don't have a way to order the property names in a serialization.
-            if (valuesBuilderObject.getPropertyNames().length === 0) {
-                builderObject.clearProperty("values");
+                this.builder.push(builderObject);
+
+                if (typeof object.serializeSelf === "function") {
+                    selfSerializer = new SelfSerializer().
+                        initWithMalkerAndVisitorAndObject(
+                            malker, this, object, builderObject);
+                    substituteObject = object.serializeSelf(selfSerializer);
+                } else {
+                    this.setObjectValues(malker, object);
+                    this.setObjectBindings(malker, object);
+                    this.setObjectCustomUnits(malker, object);
+                }
+
+                this.builder.pop();
+
+                // Remove the values unit in case none was serialized,
+                // we need to add it before any other units to make sure that
+                // it's the first unit to show up in the serialization, since we
+                // don't have a way to order the property names in a serialization.
+                if (valuesBuilderObject.getPropertyNames().length === 0) {
+                    builderObject.clearProperty("values");
+                }
             }
 
             return substituteObject;
@@ -280,7 +298,7 @@ var MontageVisitor = Montage.specialize({
             var selfSerializer,
                 substituteObject,
                 valuesBuilderObject = this.builder.createObjectLiteral();
-                
+
             builderObject.setProperty("prototype", object.constructor.name);
             builderObject.setProperty("values", valuesBuilderObject);
 
@@ -306,33 +324,69 @@ var MontageVisitor = Montage.specialize({
 
     setObjectType: {
         value: function (object, builderObject) {
-            var isInstance = Montage.getInfoForObject(object).isInstance,
-                locationId = this.getObjectLocationId(object),
-                locationIdBuilderObject = this.builder.createString(locationId);
+            var objectInfo = Montage.getInfoForObject(object),
+                wasLoadedFromMJSON = objectInfo.module.endsWith(".mjson"),
+                isInstance = objectInfo.isInstance,
+                locationId = (isInstance && wasLoadedFromMJSON)
+                    ? this._require.config.name === objectInfo.require.config.name
+                        ? objectInfo.module
+                        :(objectInfo.require.config.name+"/"+objectInfo.module)
+                    : this.getObjectLocationId(object, objectInfo),
+                locationIdBuilderObject = this.builder.createString(locationId),
+                type = (isInstance && !wasLoadedFromMJSON) ? "prototype" : "object";
 
-            if (isInstance) {
-                builderObject.setProperty("prototype", locationIdBuilderObject);
-            } else {
-                builderObject.setProperty("object", locationIdBuilderObject);
-            }
+                builderObject.setProperty(type, locationIdBuilderObject);
+
+                return type;
         }
     },
 
     getObjectModuleId: {
-        value: function (object) {
-            var objectInfo = Montage.getInfoForObject(object);
+        value: function (object, objectInfo) {
+            if(!objectInfo) {
+                objectInfo = Montage.getInfoForObject(object);
+            }
 
-            return this._require.identify(objectInfo.moduleId,
-                                          objectInfo.require);
+            /*
+                Mr
+            */
+            if(this._require.identify) {
+                return this._require.identify(objectInfo.moduleId,
+                    objectInfo.require);
+            }
+            /*
+                Node
+            */
+            else {
+                return objectInfo.moduleId;
+            }
         }
     },
 
     getObjectLocationId: {
-        value: function (object) {
-            var moduleId = this.getObjectModuleId(object),
+        value: function (object, objectInfo) {
+            var moduleId = this.getObjectModuleId(object, objectInfo),
                 defaultObjectName,
-                objectInfo = Montage.getInfoForObject(object),
-                objectName = objectInfo.objectName;
+                objectName;
+
+            /*
+                If the object was deserialized from an .mjson, we need to re-serialize it as it's conatructor's moduleId
+            */
+            if(moduleId.endsWith(".mjson")) {
+                moduleId = this.getObjectModuleId(object.constructor);
+                objectInfo = Montage.getInfoForObject(object.constructor);
+            } else if(!objectInfo) {
+                objectInfo = Montage.getInfoForObject(object);
+            }
+
+            if(!objectInfo.require.isMainPackage() && objectInfo.packageName !== "mod" && !moduleId.startsWith(objectInfo.packageName)) {
+                var _moduleId = objectInfo.packageName;
+                _moduleId += "/";
+                moduleId = (_moduleId += moduleId);
+            }
+
+            objectName = objectInfo.objectName;
+
 
             defaultObjectName = MontageSerializerModule.MontageSerializer.getDefaultObjectNameForModuleId(moduleId);
 
@@ -355,7 +409,7 @@ var MontageVisitor = Montage.specialize({
                     var valuesObject = this.builder.top.getProperty("values");
                     this.builder.push(valuesObject);
 
-                    
+
                     /* jshint forin: true */
                     for (var key in bindings) {
                     /* jshint forin: false */
@@ -381,7 +435,7 @@ var MontageVisitor = Montage.specialize({
         value: function (malker, object) {
             var valuesSerializer,
                 valuesObject = this.builder.top.getProperty("values");
-            
+
             this.builder.push(valuesObject);
 
             if (typeof object.serializeProperties === "function" || typeof object.serializeValues === "function") {
@@ -432,8 +486,8 @@ var MontageVisitor = Montage.specialize({
             // a reference to an object but that would be an external reference
             // the problem here is that the serializable defaults to "reference"
             // for most cases when in reality we probably just want "value".
-            return typeof value === "object" && 
-                (value !== null && value !== undefined) && 
+            return typeof value === "object" &&
+                (value !== null && value !== undefined && !(value instanceof Date)) &&
                     !(typeof Element !== "undefined" && Element.isElement(value));
         }
     },
@@ -465,7 +519,7 @@ var MontageVisitor = Montage.specialize({
 
                     this.setObjectCustomUnit(malker, object, unitName);
                 }
-            }   
+            }
         }
     },
 
@@ -523,19 +577,19 @@ var MontageVisitor = Montage.specialize({
 
     setObjectSerialization: {
         value: function(object, serialization) {
-            this._objectsSerialization[Object.hash(object)] = serialization;
+            this._objectsSerialization.set(object, serialization);
         }
     },
 
     getObjectSerialization: {
         value: function(object) {
-            return this._objectsSerialization[Object.hash(object)];
+            return this._objectsSerialization.get(object);
         }
     },
 
     isObjectSerialized: {
         value: function(object) {
-            return Object.hash(object) in this._objectsSerialization;
+            return this._objectsSerialization.has(object);
         }
     },
 
@@ -607,6 +661,12 @@ var MontageVisitor = Montage.specialize({
         }
     },
 
+    visitDate: {
+        value: function(malker, date, name) {
+            this.storeValue(this.builder.createDate(date), date, name);
+        }
+    },
+
     visitNumber: {
         value: function(malker, number, name) {
             this.storeValue(this.builder.createNumber(number), number, name);
@@ -675,7 +735,7 @@ var MontageVisitor = Montage.specialize({
                     }
 
                     if (
-                        typeof visitor[methodName] === "function" && 
+                        typeof visitor[methodName] === "function" &&
                             methodName.substr(0, 5) === "visit"
                     ) {
                         if (typeof customObjectVisitors[methodName] === "undefined") {
@@ -683,7 +743,7 @@ var MontageVisitor = Montage.specialize({
                         } else {
                             return new Error("Visitor '" + methodName + "' is already registered.");
                         }
-                    }   
+                    }
                 }
             }
 

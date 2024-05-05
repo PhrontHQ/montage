@@ -1,10 +1,10 @@
 /*global require, exports*/
 
 /**
- * @module montage/composer/press-composer
- * @requires montage/core/core
- * @requires montage/composer/composer
- * @requires montage/core/event/mutable-event
+ * @module mod/composer/press-composer
+ * @requires mod/core/core
+ * @requires mod/composer/composer
+ * @requires mod/core/event/mutable-event
  */
 var Montage = require("../core/core").Montage,
     Composer = require("./composer").Composer,
@@ -338,9 +338,9 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
     surrenderPointer: {
         value: function (pointer, component) {
             var shouldSurrender = this.callDelegateMethod(
-                "shouldComposerSurrenderPointerToComponent", 
-                this, 
-                pointer, 
+                "shouldComposerSurrenderPointerToComponent",
+                this,
+                pointer,
                 component
             );
 
@@ -364,31 +364,27 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
 
     capturePointerdown: {
         value: function (event) {
-            if (event.pointerType === "touch" || (window.MSPointerEvent && event.pointerType === window.MSPointerEvent.MSPOINTER_TYPE_TOUCH)) {
-                this.captureTouchstart(event);
-
-            } else if (event.pointerType === "mouse" || (window.MSPointerEvent && event.pointerType === window.MSPointerEvent.MSPOINTER_TYPE_MOUSE)) {
+            if (event.pointerType === "mouse" || (window.MSPointerEvent && event.pointerType === window.MSPointerEvent.MSPOINTER_TYPE_MOUSE)) {
                 this.captureMousedown(event);
+            } else {
+                this.captureTouchstart(event);
             }
         }
     },
 
     handlePointerup: {
         value: function (event) {
-            if (event.pointerType === "touch" || (window.MSPointerEvent && event.pointerType === window.MSPointerEvent.MSPOINTER_TYPE_TOUCH)) {
-                this.handleTouchend(event);
-
-            } else if (event.pointerType === "mouse" || (window.MSPointerEvent && event.pointerType === window.MSPointerEvent.MSPOINTER_TYPE_MOUSE)) {
+            if (event.pointerType === "mouse" || (window.MSPointerEvent && event.pointerType === window.MSPointerEvent.MSPOINTER_TYPE_MOUSE)) {
                 this.handleMouseup(event);
+            } else {
+                this.handleTouchend(event);
             }
         }
     },
 
     handlePointercancel: {
         value: function (event) {
-            if (event.pointerType === "touch" || (window.MSPointerEvent && event.pointerType === window.MSPointerEvent.MSPOINTER_TYPE_TOUCH)) {
-                this.handleTouchcancel(event);
-            }
+            this.handleTouchcancel(event);
         }
     },
 
@@ -424,7 +420,7 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
             if (event.pointerId === this._observedPointer)  {
                 target = event.target;
 
-            } else if (this._changedTouchisObserved(event.changedTouches) !== false) {
+            } else if (event.changedTouches && this._changedTouchisObserved(event.changedTouches) !== false) {
                 // We need to keep the last element reached by a touchmove because we can't just rely on the position
                 // given by the touchEnd because in some cases, hiding the android keyboard for example, could result
                 // to change the press composer's element position between a touchStart and a touchEnd event. Therefore,
@@ -509,7 +505,7 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
 
     handleTouchcancel: {
         value: function (event) {
-            if (this._observedPointer === null || event.pointerId === this._observedPointer || this._changedTouchisObserved(event.changedTouches) !== false) {
+            if (this._observedPointer === null || event.pointerId === this._observedPointer || (event.changedTouches && this._changedTouchisObserved(event.changedTouches) !== false)) {
                 if (this.component.eventManager.isPointerClaimedByComponent(this._observedPointer, this)) {
                     this._dispatchPressCancel(event);
                 }
@@ -745,7 +741,7 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
 
             var wheelEventName = typeof window.onwheel !== "undefined" || typeof window.WheelEvent !== "undefined" ?
                 "wheel" : "mousewheel";
-            
+
             if (this.shawdowRoot) {
                 this.shawdowRoot.addEventListener(wheelEventName, this, true);
                 this.shawdowRoot.addEventListener("scroll", this, true);
@@ -795,7 +791,7 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
                     // no mouse events are fired
                     // http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#initiate-the-drag-and-drop-operation
                     this._element.removeEventListener("dragstart", this, false);
-                    
+
 
                 } else {
                     if (this.shawdowRoot) {
@@ -812,7 +808,7 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
 
             var wheelEventName = typeof window.onwheel !== "undefined" || typeof window.WheelEvent !== "undefined" ?
                 "wheel" : "mousewheel";
-            
+
             if (this.shawdowRoot) {
                 this.shawdowRoot.removeEventListener(wheelEventName, this, true);
                 this.shawdowRoot.removeEventListener("scroll", this, true);
@@ -898,7 +894,7 @@ var PressComposer = exports.PressComposer = Composer.specialize(/** @lends Press
                     // Knowing that, the simulated mouse events are not dispatched by the event manager, but they are still
                     // walking the dom. An issue could happen here when the positioning of elements is changing (z-index)
                     // after the press event has been raised, which could result to giving the focus to a wrong element.
-                    // @example: @see press-composer.info
+                    // @example: @see press-composer.mod/teach
                     //@todo: should be deprecated when browsers will support PointerEvents.
                     var dispatchSafePressCallBack = function (mouseDownEvent) {
                         if (touchEndTargetElement === mouseDownEvent.target ||

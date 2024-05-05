@@ -1,5 +1,5 @@
 /**
- * @module montage/core/serialization/serializer/montage-serializer
+ * @module mod/core/serialization/serializer/montage-serializer
  */
 
 var Montage = require("../../core").Montage,
@@ -7,6 +7,7 @@ var Montage = require("../../core").Montage,
     MontageBuilder = require("./montage-builder").MontageBuilder,
     MontageLabeler = require("./montage-labeler").MontageLabeler,
     MontageVisitor = require("./montage-visitor").MontageVisitor,
+    Bindings = require("../bindings");
     logger = require("../../logger").logger("montage-serializer");
 
 var MontageSerializer = Montage.specialize({
@@ -17,7 +18,7 @@ var MontageSerializer = Montage.specialize({
     _serializationIndentation: {value: 2},
     _malker: { value: null },
     legacyMode: { value: false },
-
+    _hasSerialized: { value: false },
     constructor: {
         value: function (legacyMode) {
             this.legacyMode = !!legacyMode;
@@ -68,6 +69,12 @@ var MontageSerializer = Montage.specialize({
 
             this._labeler.initWithObjects(objects);
 
+            if(this._hasSerialized) {
+                this._builder.init();
+                this._malker.cleanup();
+                this._visitor.cleanup();
+            }
+
             for (var label in objects) {
                 if (Object.hasOwnProperty.call(objects, label)) {
                     this._malker.visit(objects[label]);
@@ -80,6 +87,7 @@ var MontageSerializer = Montage.specialize({
                 )
             );
 
+            this._hasSerialized = true;
             return serializationString;
         }
     },
@@ -112,10 +120,13 @@ var MontageSerializer = Montage.specialize({
     _formatSerializationReferencesRegExp: {
         value: /\{\s*("[#@]")\s*:\s*("[^"]+")\s*\}/gi
     },
+    _formatSerializationReferenceseplaceNewSubstr: {
+        value: "{$1: $2}"
+    },
     _formatSerializationReferences: {
         value: function(serialization) {
             return serialization.replace(
-                this._formatSerializationReferencesRegExp, "{$1: $2}");
+                this._formatSerializationReferencesRegExp, this._formatSerializationReferenceseplaceNewSubstr);
         }
     },
 
@@ -142,7 +153,7 @@ var MontageSerializer = Montage.specialize({
         return g1.toUpperCase();}
     },
 
-    _findObjectNameRegExp: {value: /([^\/]+?)(\.reel)?$/},
+    _findObjectNameRegExp: {value: /([^\/]+?)(\.reel|mod)?$/},
 
     getDefaultObjectNameForModuleId: {
         value: function (moduleId) {
@@ -159,3 +170,7 @@ exports.serialize = function (object, _require, legacyMode) {
     return new MontageSerializer(legacyMode).initWithRequire(_require)
         .serializeObject(object);
 };
+
+//deprecated
+MontageSerializer.defineSerializationUnit("bindings", Bindings.serializeObjectBindings);
+

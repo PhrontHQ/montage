@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <script type="text/mod-serialization">{
+        "owner": {
+            "values": {
+                "element": {"#": "owner"}
+            }
+        },
+
+        "title": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "title"},
+                "value": "Title"
+            }
+        },
+
+        "list": {
+            "prototype": "mod/ui/repetition.mod",
+            "values": {
+                "element": {"#": "list"}
+            }
+        },
+
+        "item": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "item"}
+            }
+        },
+
+        "rows": {
+            "prototype": "mod/ui/repetition.mod",
+            "values": {
+                "element": {"#": "rows"}
+            }
+        },
+
+        "row": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "row"}
+            }
+        },
+
+        "columns": {
+            "prototype": "mod/ui/repetition.mod",
+            "values": {
+                "element": {"#": "columns"}
+            }
+        },
+
+        "column": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "column"}
+            }
+        }
+    }</script>
+</head>
+<body>
+    <div data-mod-id="owner">
+
+        <!-- single element -->
+        <h1 data-mod-id="title" id="title"></h1>
+
+        <!-- simple composition -->
+        <ul data-mod-id="list" id="list">
+            <li>
+                <span data-mod-id="item" id="item"></span>
+            </li>
+        </ul>
+
+        <!-- deep composition -->
+        <ul data-mod-id="rows" id="rows">
+            <li>
+                <span data-mod-id="row" id="row"></span>
+                <ul data-mod-id="columns" id="columns">
+                    <li>
+                        <span data-mod-id="column" id="column"></span>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

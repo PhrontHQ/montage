@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+    <title>Main</title>
+    <meta charset="utf-8">
+
+    <script type="text/mod-serialization">
+        {
+            "owner": {
+                "values": {
+                    "element": {"#": "main"},
+                    "childMain": {"@": "mainB"}
+                }
+            },
+
+            "mainB": {
+                "prototype": "package-b/ui/main.mod",
+                "values": {
+                    "element": {"#": "mainB"}
+                }
+            }
+        }
+    </script>
+
+</head>
+<body>
+
+    <div data-mod-id="main">
+        Main A with child: <div data-mod-id="mainB"></div>
+    </div>
+
+</body>
+</html>

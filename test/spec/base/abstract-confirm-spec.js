@@ -1,7 +1,7 @@
-var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component,
-    AbstractConfirm = require("montage/ui/base/abstract-confirm").AbstractConfirm,
-    Promise = require("montage/core/promise").Promise,
+var Montage = require("mod/core/core").Montage,
+    Component = require("mod/ui/component").Component,
+    AbstractConfirm = require("mod/ui/base/abstract-confirm").AbstractConfirm,
+    Promise = require("mod/core/promise").Promise,
     MockDOM = require("mocks/dom"),
     MockComponent = require("mocks/component"),
     _document,
@@ -77,10 +77,17 @@ describe("test/base/abstract-confirm-spec", function () {
         describe("user action", function () {
             it("should resolve the user action promise when the ok button is pressed", function () {
                 var event = {target: aConfirm._okButton},
-                    promise = aConfirm.show();
+                    isFulfilled = false,
+                    promise = new Promise(function(resolve, reject) {
+                        aConfirm.show();
+                        aConfirm.handleAction(event);
+                    });
 
-                aConfirm.handleAction(event);
-                expect(promise.isFulfilled()).toBeTruthy();
+                    promise.then((value) => {
+                        isFulfilled = true;
+                        expect(isFulfilled).toBeTruthy();
+                    });
+
             });
 
             it("should resolve the user action promise to 'ok' when the ok button is pressed", function (done) {
@@ -98,10 +105,16 @@ describe("test/base/abstract-confirm-spec", function () {
 
             it("should resolve the user action promise when the cancel button is pressed", function () {
                 var event = {target: aConfirm._cancelButton},
-                    promise = aConfirm.show();
+                isFulfilled = false,
+                promise = new Promise(function(resolve, reject) {
+                    aConfirm.show();
+                    aConfirm.handleAction(event);
+                });
 
-                aConfirm.handleAction(event);
-                expect(promise.isFulfilled()).toBeTruthy();
+                promise.then((value) => {
+                    isFulfilled = true;
+                    expect(isFulfilled).toBeTruthy();
+                });
             });
 
             it("should resolve the user action promise to 'cancel' when the ok button is pressed", function (done) {

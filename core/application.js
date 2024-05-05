@@ -11,8 +11,12 @@
  */
 
 var Target = require("./target").Target,
+    Montage = require("./core").Montage,
     Template = require("./template"),
     MontageWindow = require("../window-loader/montage-window").MontageWindow,
+    Criteria = require("./criteria").Criteria,
+    DataQuery = require("../data/model/data-query").DataQuery,
+    IdentityManager = require("../data/service/identity-manager").IdentityManager,
     Slot;
 
 require("./dom");
@@ -30,40 +34,175 @@ var FIRST_LOAD_KEY_SUFFIX = "-is-first-load";
  * @class Application
  * @extends Target
  */
-var Application = exports.Application = Target.specialize( /** @lends Application.prototype # */ {
 
-    /**
-     * Provides a reference to the Montage event manager used in the
-     * application.
-     *
-     * @property {EventManager} value
-     * @default null
-     */
-    eventManager: {
-        value: null
-    },
+var Application = exports.Application = class Application extends Target {
 
-    /**
-     * Provides a reference to the parent application.
-     *
-     * @property {Application} value
-     * @default null
-     */
-    parentApplication: {
-        value: null
-    },
+    static {
 
-    name: {
-        value: null
-    },
+        Montage.defineProperties(this.prototype, {
+            /**
+             * Provides a reference to the parent application.
+             *
+             * @property {Application} value
+             * @default null
+             */
+            parentApplication: { value: null},
+            name: { value: null},
+            _isFirstLoad: { value: null}
+        });
+    }
 
-    _isFirstLoad: {
-        value: null
-    },
+    constructor() {
+        super();
+        if (
+            typeof window !== "undefined" &&
+                window.loadInfo && !this.parentApplication
+        ) {
+            this.parentApplication = window.loadInfo.parent.document.application;
+        }
 
-    isFirstLoad: {
-        get: function () {
-            return this._isFirstLoad;
+        IdentityManager.delegate = this;
+    }
+
+    _load(applicationRequire, callback) {
+        var rootComponent,
+            self = this;
+
+        this.name = applicationRequire.packageDescription.name;
+        this._loadApplicationContext();
+
+        // assign to the exports so that it is available in the deserialization of the template
+        exports.application = self;
+
+        return require.async("ui/component")
+        .then(function(exports) {
+            var authorizationPromise;
+
+            self.rootComponent = rootComponent = exports.__root__;
+            if (typeof document !== "undefined") {
+                rootComponent.element = document;
+
+                return Template.instantiateDocument(document, applicationRequire);
+            } else {
+                Promise.resolve(true);
+            }
+        })
+        .then(function(part) {
+
+            /*
+
+                TODO!!! Modify loading sequence to combine loader -> Authorization Panel -> Main
+
+                While bringing the login panel up when there's an UpfrontAuthorizationPolicy before loading Main
+                makes sense from both security and performance stand point, we shouldn't be skipping the loader.
+
+                We should deserialize the loader, set the authentication panel as loader's Main, show the AuthenticationManager panel,
+                and then bring the Main in
+            */
+
+            //URGENT: We need to further test that we don't already have a valid Authorization to use before authenticating.
+
+            var identityServices = IdentityManager.identityServices,
+                identityObjectDescriptors,
+                authenticationPromise,
+                //    userObjectDescriptor = this.
+                selfUserCriteria,
+                identityQuery;
+
+            //Temporarily Bypassing authentication:
+            if(identityServices && identityServices.length > 0) {
+                //Shortcut, there could be multiple one we need to flatten.
+                identityObjectDescriptors = identityServices[0].types;
+
+                if(identityObjectDescriptors.length > 0) {
+                    //selfUserCriteria = new Criteria().initWithExpression("identity == $", "self");
+                    identityQuery = DataQuery.withTypeAndCriteria(identityObjectDescriptors[0]);
+
+                    authenticationPromise = self.mainService.fetchData(identityQuery)
+                    .then(function(userIdenties) {
+                        self.identity = userIdenties[0];
+                    });
+
+                }
+            }
+            else {
+                //Needs to beef-up the case we have a first anonymous user who could come back later.
+                authenticationPromise = Promise.resolve(true);
+            }
+
+            return authenticationPromise;
+
+
+/*
+
+            if (typeof document !== "undefined") {
+                rootComponent.element = document;
+            }
+
+            return authorizationPromise.then(function(authorization) {
+                if (typeof document !== "undefined") {
+                    return Template.instantiateDocument(document, applicationRequire);
+                }
+            }, function(error) {
+                console.error(error);
+            });
+            */
+
+        })
+
+        .then(function (part) {
+            self.callDelegateMethod("willFinishLoading", self);
+            rootComponent.needsDraw = true;
+            if (callback) {
+                callback(self);
+            }
+            return self;
+        });
+    }
+
+
+
+    get isFirstLoad() {
+        return this._isFirstLoad;
+    }
+
+
+    //This should be replaced by a more robust user / session system with opt-in/delegate/configured
+    //from the outside.
+    _loadApplicationContext() {
+        if (this._isFirstLoad === null) {
+            var hasAlreadyBeenLoaded,
+                alreadyLoadedLocalStorageKey = this.name + FIRST_LOAD_KEY_SUFFIX;
+
+            if (typeof localStorage !== "undefined") {
+                localStorage.getItem(alreadyLoadedLocalStorageKey);
+
+                if (hasAlreadyBeenLoaded === null) {
+                    try {
+                        localStorage.setItem(alreadyLoadedLocalStorageKey, true);
+                    } catch (error) {
+                        //console.log("Browser is in private mode.");
+                    }
+                }
+            }
+
+            this._isFirstLoad = !hasAlreadyBeenLoaded;
+        }
+    }
+}
+
+// exports.Target = Montage.specialize( /** @lends Target.prototype */
+Montage.defineProperties(exports.Application.prototype,
+
+// var Application = exports.Application = Target.specialize( /** @lends Application.prototype # */
+{
+
+
+    url: {
+        get: function() {
+            return document && document.location
+                        ? new URL(document.location)
+                        :  null;
         }
     },
 
@@ -249,7 +388,7 @@ var Application = exports.Application = Target.specialize( /** @lends Applicatio
      * be relative to the main application
      *
      * @function
-     * @param {string} component, the path to the reel component to open in the
+     * @param {string} component, the path to the mod component to open in the
      * new window.
      * @param {string} name, the component main class name.
      * @param {Object} parameters, the new window parameters (accept same
@@ -257,7 +396,7 @@ var Application = exports.Application = Target.specialize( /** @lends Applicatio
      *
      * @example
      * var app = document.application;
-     * app.openWindow("docs/help.reel", "Help", "{width:300, height:500}");
+     * app.openWindow("docs/help.mod", "Help", "{width:300, height:500}");
      */
     openWindow: {
         value: function (component, name, parameters) {
@@ -344,7 +483,7 @@ var Application = exports.Application = Target.specialize( /** @lends Applicatio
                 }
             }
 
-            global.require.loadPackage({name: "montage"}).then(function (require) {
+            global.require.loadPackage({name: "mod"}).then(function (require) {
                 var newWindow = window.open(require.location + "window-loader/index.html", "_blank", stringParamaters);
                 newWindow.loadInfo = loadInfo;
             });
@@ -420,71 +559,7 @@ var Application = exports.Application = Target.specialize( /** @lends Applicatio
         }
     },
 
-    constructor: {
-        value: function Application() {
-            if (
-                typeof window !== "undefined" &&
-                    window.loadInfo && !this.parentApplication
-            ) {
-                this.parentApplication = window.loadInfo.parent.document.application;
-            }
-        }
-    },
 
-    _load: {
-        value: function (applicationRequire, callback) {
-            var rootComponent,
-                self = this;
-
-            this.name = applicationRequire.packageDescription.name;
-            this._loadApplicationContext();
-
-            // assign to the exports so that it is available in the deserialization of the template
-            exports.application = self;
-
-            return require.async("ui/component").then(function(exports) {
-
-                rootComponent = exports.__root__;
-
-                if (typeof document !== "undefined") {
-                    rootComponent.element = document;
-                    return Template.instantiateDocument(document, applicationRequire);
-                }
-
-            }).then(function (part) {
-                self.callDelegateMethod("willFinishLoading", self);
-                rootComponent.needsDraw = true;
-                if (callback) {
-                    callback(self);
-                }
-                return self;
-            });
-        }
-    },
-
-    _loadApplicationContext: {
-        value: function () {
-            if (this._isFirstLoad === null) {
-
-                var hasAlreadyBeenLoaded,
-                    alreadyLoadedLocalStorageKey = this.name + FIRST_LOAD_KEY_SUFFIX;
-
-                if (typeof localStorage !== "undefined") {
-                    localStorage.getItem(alreadyLoadedLocalStorageKey);
-                
-                    if (hasAlreadyBeenLoaded === null) {
-                        try {
-                            localStorage.setItem(alreadyLoadedLocalStorageKey, true);
-                        } catch (error) {
-                            //console.log("Browser is in private mode.");
-                        }
-                    }
-                }
-
-                this._isFirstLoad = !hasAlreadyBeenLoaded;
-            }
-        }
-    },
 
     /**
      * @private
@@ -513,15 +588,17 @@ var Application = exports.Application = Target.specialize( /** @lends Applicatio
     /**
      * @private
      */
-    _createPopupSlot: {value: function (zIndex) {
+    _createPopupSlot: {value: function (zIndex, className) {
         var slotEl = document.createElement('div');
         document.body.appendChild(slotEl);
         slotEl.style.zIndex = zIndex;
         slotEl.style.position = 'absolute';
+        slotEl.classList.add(className);
 
         var popupSlot = new Slot();
+        popupSlot.delegate = this;
         popupSlot.element = slotEl;
-        popupSlot.attachToParentComponent();
+        //popupSlot.attachToParentComponent();
         return popupSlot;
     }},
 
@@ -529,23 +606,26 @@ var Application = exports.Application = Target.specialize( /** @lends Applicatio
         value: function (type, content, callback) {
 
             var self = this;
-            require.async("ui/slot.reel/slot")
+            require.async("ui/slot.mod/slot")
             .then(function (exports) {
                 Slot = Slot || exports.Slot;
                 type = type || "custom";
-                var isSystemPopup = self._isSystemPopup(type), zIndex, popupSlot;
+                var isSystemPopup = self._isSystemPopup(type), zIndex, popupSlot, className;
                 self.popupSlots = self.popupSlots || {};
 
                 if(isSystemPopup) {
                     switch (type) {
                         case "alert":
                             zIndex = 19004;
+                            className = "mod-alert";
                             break;
                         case "confirm":
                             zIndex = 19003;
+                            className = "mod-confirm";
                             break;
                         case "notify":
                             zIndex = 19002;
+                            className = "mod-notify";
                             break;
                     }
                 } else {
@@ -556,15 +636,24 @@ var Application = exports.Application = Target.specialize( /** @lends Applicatio
                         self._zIndex = self._zIndex + 1;
                     }
                     zIndex = self._zIndex;
+                    className = self.name;
+                    className += "-";
+                    className += type;
                 }
 
                 popupSlot = self.popupSlots[type];
                 if (!popupSlot) {
-                    popupSlot = self.popupSlots[type] = self._createPopupSlot(zIndex);
+                    popupSlot = self.popupSlots[type] = self._createPopupSlot(zIndex, className);
                 }
+
+                if(!popupSlot.inDocument) {
+                    self.rootComponent.addChildComponent(popupSlot);
+                }
+
                 // use the new zIndex for custom popup
                 if(!isSystemPopup) {
-                    popupSlot.element.style.zIndex = zIndex;
+                  //Benoit: Modifying DOM outside of draw loop here, though it's early...
+                  popupSlot.element.style.zIndex = zIndex;
                 }
 
                 popupSlot.content = content;
@@ -584,6 +673,17 @@ var Application = exports.Application = Target.specialize( /** @lends Applicatio
         }
 
     }},
+
+    slotDidSwitchContent: {
+        value: function (slot) {
+            if(slot.content === null) {
+                slot.detachFromParentComponent();
+                //Benoit: can't believe we have to do that in 2 steps....
+                slot.element.parentNode.removeChild(slot.element);
+
+            }
+        }
+    },
 
     /**
      * @private

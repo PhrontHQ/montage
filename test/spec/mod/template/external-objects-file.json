@@ -1,0 +1,9 @@
+{
+    "text": {
+        "prototype": "mod/ui/text.mod",
+        "values": {
+            "element": {"#": "text"},
+            "value": "Hello, World!"
+        }
+    }
+}

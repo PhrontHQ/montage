@@ -49,7 +49,7 @@ var SelfSerializer = Montage.specialize.call(Object, {
         value: function (propertyName, value, type) {
             var builder = this._visitor.builder,
                 valuesObject = builder.top.getProperty("values");
-            
+
             builder.push(valuesObject);
             this._visitor.setProperty(this._malker, propertyName, value, type);
             builder.pop();
@@ -66,7 +66,7 @@ var SelfSerializer = Montage.specialize.call(Object, {
         value: function () {
             var builder = this._visitor.builder,
                 valuesObject = builder.top.getProperty("values");
-            
+
             builder.push(valuesObject);
             this._visitor.setSerializableObjectValues(this._malker, this._object);
             builder.pop();

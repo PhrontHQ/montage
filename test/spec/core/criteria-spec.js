@@ -1,7 +1,7 @@
 
-var Criteria = require("montage/core/criteria").Criteria;
-var serialize = require("montage/core/serialization/serializer/montage-serializer").serialize;
-var deserialize = require("montage/core/serialization/deserializer/montage-deserializer").deserialize;
+var Criteria = require("mod/core/criteria").Criteria;
+var serialize = require("mod/core/serialization/serializer/montage-serializer").serialize;
+var deserialize = require("mod/core/serialization/deserializer/montage-deserializer").deserialize;
 
 describe("core/criteria-spec", function () {
 
@@ -73,7 +73,7 @@ describe("core/criteria-spec", function () {
         var json = JSON.parse(serialization);
         expect(json).toEqual({
             root: {
-                prototype: "montage/core/criteria",
+                prototype: "mod/core/criteria",
                 values: {
                     expression: "a.b"
                 }
@@ -84,7 +84,7 @@ describe("core/criteria-spec", function () {
     it("should deserialize", function (done) {
         var serialization = {
                 "root": {
-                    "prototype": "montage/core/criteria",
+                    "prototype": "mod/core/criteria",
                     "values": {
                         "expression": "a.b"
                     }
@@ -106,6 +106,23 @@ describe("core/criteria-spec", function () {
     it("should compose with instance methods", function () {
         var criteria = new Criteria().initWithExpression("a").and("b");
         expect(criteria.evaluate({a: false, b: true})).toBe(false);
+    });
+
+    it("should compose multiple criteria with class methods", function () {
+        var a1Criteria = new Criteria().initWithExpression("a == $a", { a: "a1"}),
+            a2Criteria = new Criteria().initWithExpression("a == $a", { a: "a2"}),
+            a3Criteria = new Criteria().initWithExpression("a == $a", { a: "a3"}),
+            a4Criteria = new Criteria().initWithExpression("a == $a", { a: "a4"}),
+            a5Criteria = new Criteria().initWithExpression("a == $a", { a: "a5"});
+
+        var combinedCriteria = Criteria.or(a1Criteria, a2Criteria, a3Criteria, a4Criteria, a5Criteria);
+
+        expect(combinedCriteria.evaluate({a: "a1", b: true})).toBe(true);
+        expect(combinedCriteria.evaluate({a: "a2", b: true})).toBe(true);
+        expect(combinedCriteria.evaluate({a: "a3", b: true})).toBe(true);
+        expect(combinedCriteria.evaluate({a: "a4", b: true})).toBe(true);
+        expect(combinedCriteria.evaluate({a: "a5", b: true})).toBe(true);
+        expect(combinedCriteria.evaluate({a: "a6", b: true})).toBe(false);
     });
 
 });

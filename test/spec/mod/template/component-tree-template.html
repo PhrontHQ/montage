@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <script type="text/mod-serialization">{
+        "title": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "title"}
+            }
+        },
+
+        "rows": {
+            "prototype": "mod/ui/repetition.mod",
+            "values": {
+                "element": {"#": "rows"}
+            }
+        },
+
+        "columns": {
+            "prototype": "mod/ui/repetition.mod",
+            "values": {
+                "element": {"#": "columns"}
+            }
+        },
+
+        "text": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "text"},
+                "value": "Hello, World!"
+            }
+        }
+    }</script>
+</head>
+<body>
+    <p data-mod-id="title"></p>
+
+    <ul data-mod-id="rows">
+        <li>
+            <ul data-mod-id="columns">
+                <li>
+                    <span data-mod-id="text"></span>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</body>
+</html>

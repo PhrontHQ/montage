@@ -33,27 +33,27 @@ POSSIBILITY OF SUCH DAMAGE.
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <script type="text/javascript" src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">{
+    <script type="text/mod-serialization">{
 
         "test": {
             "prototype": "spec/ui/condition/test"
         },
         "outerCondition": {
-            "prototype": "montage/ui/condition.reel",
+            "prototype": "mod/ui/condition.mod",
             "values": {
                 "element": {"#": "outerCondition"},
                 "condition": {"<->": "@test.outerConditionValue"}
             }
         },
         "innerCondition": {
-            "prototype": "montage/ui/condition.reel",
+            "prototype": "mod/ui/condition.mod",
             "values": {
                 "element": {"#": "innerCondition"},
                 "condition": {"<->": "@test.innerConditionValue"}
             }
         },
         "application": {
-            "prototype": "montage/core/application",
+            "prototype": "mod/core/application",
             "values": {
                 "delegate" : {"@": "test"}
             }
@@ -64,9 +64,9 @@ POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
 
-    <div data-montage-id="outerCondition">
+    <div data-mod-id="outerCondition">
         Hey
-        <div data-montage-id="innerCondition">Sample</div>
+        <div data-mod-id="innerCondition">Sample</div>
     </div>
 
 </body>

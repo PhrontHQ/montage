@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
+var Montage = require("mod/core/core").Montage,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
 
 TestPageLoader.queueTest("substitution-test/substitution-test", function (testPage) {
     describe("ui/substitution-spec", function () {

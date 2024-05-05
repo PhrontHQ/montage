@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="caption.css">
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "owner"},
+                "captionCodeElement": {"#": "caption-code"}
+            }
+        },
+
+         "captionLabel": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "caption-label"},
+                "value": {"<-": "@owner.caption.label"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="owner" class="Caption">
+        <span data-mod-id="caption-code" class="Caption-color"></span>
+        <span data-mod-id="caption-label" class="Caption-label"></span>
+    </div>
+</body>
+</html>

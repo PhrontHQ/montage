@@ -1,4 +1,4 @@
-var MontageModule = require("montage"),
+var MontageModule = require("mod/core/core"),
     Montage = MontageModule.Montage,
     objectDescriptorModuleIdDescriptor = MontageModule._objectDescriptorModuleIdDescriptor,
     objectDescriptorDescriptor = MontageModule._objectDescriptorDescriptor;
@@ -20,7 +20,7 @@ exports.DataModel = Montage.specialize({
     },
 
 }, {
-    
+
     _lastId: {
         value: 0
     },

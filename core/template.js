@@ -1,5 +1,5 @@
 var Montage = require("./core").Montage,
-    Deserializer = require("core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+    Deserializer = require("./serialization/deserializer/montage-deserializer").MontageDeserializer,
     DocumentPart = require("./document-part").DocumentPart,
     DocumentResources = require("./document-resources").DocumentResources,
     Serialization = require("./serialization/serialization").Serialization,
@@ -8,6 +8,7 @@ var Montage = require("./core").Montage,
     URL = require("./mini-url"),
     logger = require("./logger").logger("template"),
     defaultEventManager = require("./event/event-manager").defaultEventManager,
+    currentEnvironment = require("./environment").currentEnvironment,
     defaultApplication;
 
 /**
@@ -15,9 +16,19 @@ var Montage = require("./core").Montage,
  * @extends Montage
  */
 var Template = Montage.specialize( /** @lends Template# */ {
-    _SERIALIZATION_SCRIPT_TYPE: {value: "text/montage-serialization"},
-    _ELEMENT_ID_ATTRIBUTE: {value: "data-montage-id"},
+    _OLD_SERIALIZATION_SCRIPT_TYPE: {value: "text/montage-serialization"},
+    _SERIALIZATION_SCRIPT_TYPE: {value: "text/mod-serialization"},
+    _SERIALIZATION_SCRIPT_TYPE_SELECTOR: {value: "script[type='text/mod-serialization'], script[type='text/montage-serialization']"},
+    _ELEMENT_ID_ATTRIBUTE: {value: "data-mod-id"},
+    __ELEMENT_ID_ATTRIBUTE_SELECTOR: {value: undefined},
+    _ELEMENT_ID_ATTRIBUTE_SELECTOR: {
+        get: function() {
+            return this.__ELEMENT_ID_ATTRIBUTE_SELECTOR || (this.__ELEMENT_ID_ATTRIBUTE_SELECTOR = `*[${this._ELEMENT_ID_ATTRIBUTE}], *[data-montage-id]`);
+        }
+    },
+
     PARAM_ATTRIBUTE: {value: "data-param"},
+    PARAM_ATTRIBUTE_SELECTOR: {value: "*[data-param]"},
 
     _require: {value: null},
     _resources: {value: null},
@@ -60,6 +71,12 @@ var Template = Montage.specialize( /** @lends Template# */ {
                         requires[label] = metadata[label].require;
                     }
                 }
+                /*
+                    This is to workaround possible dependency cycle, the module is loaded but may not have been assigned in first pass on file execution.
+                */
+                if(!Deserializer) {
+                    Deserializer = require("core/serialization/deserializer/montage-deserializer").MontageDeserializer;
+                }
                 deserializer = new Deserializer().init(this.objectsString,
                     this._require, requires);
                 this.__deserializer = deserializer;
@@ -68,11 +85,12 @@ var Template = Montage.specialize( /** @lends Template# */ {
             return deserializer;
         }
     },
-    getDeserializer: {
-        value: function () {
-            return this._deserializer;
-        }
-    },
+    //Unused anywhere
+    // getDeserializer: {
+    //     value: function () {
+    //         return this._deserializer;
+    //     }
+    // },
 
     _serialization: {
         value: null
@@ -126,7 +144,10 @@ var Template = Montage.specialize( /** @lends Template# */ {
             return this._document;
         },
         set: function (value) {
-            this._document = value;
+            if(value !== this._document) {
+                this._hasFoundParameters = undefined;
+                this._document = value;
+            }
         }
     },
 
@@ -250,8 +271,42 @@ var Template = Montage.specialize( /** @lends Template# */ {
                 .then(function (objectsString) {
                     self.objectsString = objectsString;
 
+                    Template.cacheTemplateForRequireModuleId(self, _require, moduleId);
+
                     return self;
+
                 });
+            });
+        }
+    },
+
+    /**
+     * Initializes the Template with the HTML document at the module id.
+     *
+     * @function
+     * @param {string} module The module of the HTML page to load.
+     * @returns {Promise} A promise for the proper initialization of the
+     *                    template.
+     */
+    initWithModule: {
+        value: function (module) {
+            var self = this;
+
+            this._require = module.require;
+
+            var _document = this.createHtmlDocumentWithModule(module),
+                baseUrl = module.directory;
+
+            self.document = _document;
+            self.setBaseUrl(baseUrl);
+
+            return self.getObjectsString(_document)
+            .then(function (objectsString) {
+                self.objectsString = objectsString;
+
+                Template.cacheTemplateForRequireModuleId(self, self._require, module.id);
+
+                return self;
             });
         }
     },
@@ -304,19 +359,26 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
             return this._instantiateObjects(templateObjects, fragment)
             .then(function (objects) {
-                var resources = self.getResources();
 
-                if (!resources.resourcesLoaded() && resources.hasResources()) {
-                    // Start preloading the resources as soon as possible, no
-                    // need to wait for them as the draw cycle will take care
-                    // of that when loading the stylesheets into the document.
-                    resources.loadResources(targetDocument);
+                if(targetDocument !== window.document) {
+                    var resources = self.getResources(),
+                    resourcePromise;
+
+                    if (!resources.resourcesLoaded() && resources.hasResources()) {
+                        // Start preloading the resources as soon as possible, no
+                        // need to wait for them as the draw cycle will take care
+                        // of that when loading the stylesheets into the document.
+                        resourcePromise = resources.loadResources(targetDocument);
+                    }
                 }
 
                 part.objects = objects;
                 self._invokeDelegates(part, instances);
                 part.stopActingAsTopComponent();
-                
+
+                return resourcePromise ? resourcePromise : self.resolvedPromise;
+            })
+            .then(function() {
                 return part;
             });
         }
@@ -390,13 +452,33 @@ var Template = Montage.specialize( /** @lends Template# */ {
      */
     _createTemplateObjects: {
         value: function (instances) {
-            var templateObjects = Object.create(instances || null);
+            /*
+                With stringent check in hasUserObject() in montage-interpreter.js using hasOwnProperty() if possible vs " in ", values in instances aren't found as lookup only happens in the object we extended off instances. So we're going to assign to instances directly rather than extends, if there were a conflict where instances contained an "application" or "template" property, it would have been overridden anyway by extending the object. We're adding a warning anyway if that's the case.
+            */
+            // var templateObjects = Object.create(instances || null);
+
+            // if (typeof defaultApplication === "undefined") {
+            //     defaultApplication = require("./application").application;
+            // }
+
+            // templateObjects.application = defaultApplication;
+            // templateObjects.template = this;
+
+
+            var templateObjects = instances ? instances : {};
 
             if (typeof defaultApplication === "undefined") {
                 defaultApplication = require("./application").application;
             }
 
+            if(templateObjects.application) {
+                console.warn("Template instances has an entry for 'application':",templateObjects.application,"that is overridden by defaultApplication");
+            }
             templateObjects.application = defaultApplication;
+
+            if(templateObjects.template) {
+                console.warn("Template instances has an entry for 'template':",templateObjects.template,"that is overridden by the current template");
+            }
             templateObjects.template = this;
 
             return templateObjects;
@@ -451,28 +533,49 @@ var Template = Montage.specialize( /** @lends Template# */ {
         }
     },
 
+    _hasFoundParameters: {
+        value: undefined
+    },
+    _emptyParameters: {
+        value: Object.freeze({})
+    },
+
     _getParameters: {
         value: function (rootElement) {
-            var elements = rootElement.querySelectorAll("*[" + this.PARAM_ATTRIBUTE + "]"),
-                elementsCount = elements.length,
-                element,
-                parameterName,
-                parameters = {};
+            if(this._hasFoundParameters === undefined || this._hasFoundParameters === true) {
 
-            for (var i = 0; i < elementsCount; i++) {
-                element = elements[i];
-                parameterName = this.getParameterName(element);
+                var elements = rootElement.querySelectorAll("*[" + this.PARAM_ATTRIBUTE + "]"),
+                elementsCount = elements.length;
 
-                if (parameterName in parameters) {
-                    throw new Error('The parameter "' + parameterName + '" is' +
-                        ' declared more than once in ' + this.getBaseUrl() +
-                        '.');
+                if(elementsCount) {
+
+                    this._hasFoundParameters = true;
+
+                    var element,
+                    parameterName,
+                    parameters = {};
+
+                    for (var i = 0; i < elementsCount; i++) {
+                        element = elements[i];
+                        parameterName = this.getParameterName(element);
+
+                        if (parameterName in parameters) {
+                            throw new Error('The parameter "' + parameterName + '" is' +
+                                ' declared more than once in ' + this.getBaseUrl() +
+                                '.');
+                        }
+
+                        parameters[parameterName] = element;
+                    }
+
+                    return parameters;
+                } else {
+                    this._hasFoundParameters = false;
+                    return this._emptyParameters;
                 }
-
-                parameters[parameterName] = element;
+            } else {
+                return this._emptyParameters;
             }
-
-            return parameters;
         }
     },
 
@@ -488,11 +591,10 @@ var Template = Montage.specialize( /** @lends Template# */ {
                 object,
                 owner = objects.owner || instances && instances.owner,
                 objectOwner,
-                objectLabel;
+                objectLabel,
+                i, keys, label;
 
-            /* jshint forin: true */
-            for (var label in objects) {
-            /* jshint forin: false */
+            for (i=0, keys = Object.keys(objects);(label = keys[i]); i++) {
 
                 // Don't call delegate methods on objects that were passed to
                 // the instantiation.
@@ -689,8 +791,7 @@ var Template = Montage.specialize( /** @lends Template# */ {
      */
     getInlineObjectsString: {
         value: function (doc) {
-            var selector = "script[type='" + this._SERIALIZATION_SCRIPT_TYPE + "']",
-                script = doc.querySelector(selector);
+            var script = doc.querySelector(this._SERIALIZATION_SCRIPT_TYPE_SELECTOR);
 
             if (script) {
                 return script.textContent;
@@ -784,7 +885,10 @@ var Template = Montage.specialize( /** @lends Template# */ {
                 clonedDocument.documentElement
             );
 
-            this.normalizeRelativeUrls(clonedDocument, baseURI);
+            /*
+                This doesn't seems to be needed, specs pass, but keeping around in case we didn't have a test for it and it ends up causing a regression
+            */
+            //this.normalizeRelativeUrls(clonedDocument, baseURI);
 
             return clonedDocument;
         }
@@ -803,6 +907,12 @@ var Template = Montage.specialize( /** @lends Template# */ {
             return _require.async(moduleId).then(function (exports) {
                 return self.createHtmlDocumentWithHtml(exports.content, exports.directory);
             });
+        }
+    },
+
+    createHtmlDocumentWithModule: {
+        value: function (module) {
+            return module ? this.createHtmlDocumentWithHtml(module.exports.content, module.exports.directory) : null;
         }
     },
 
@@ -1008,7 +1118,7 @@ var Template = Montage.specialize( /** @lends Template# */ {
                             break;
                         }
                     }
-                    
+
                     // Store all element ids of the argument, we need to create
                     // a serialization with the components that point to them.
                     argumentsElementIds.push.apply(argumentsElementIds,
@@ -1025,7 +1135,7 @@ var Template = Montage.specialize( /** @lends Template# */ {
                         /* jshint forin: false */
                             argumentElementsCollisionTable[key] = collisionTable[key];
                         }
-                    }   
+                    }
                 }
             }
 
@@ -1146,9 +1256,7 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
     getElementId: {
         value: function (element) {
-            if (element.getAttribute) {
-                return element.getAttribute(this._ELEMENT_ID_ATTRIBUTE);
-            }
+            return element.getAttribute ? (element.getAttribute(this._ELEMENT_ID_ATTRIBUTE) || element.getAttribute("data-montage-id")) : undefined;
         }
     },
 
@@ -1166,12 +1274,11 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
     _getElements: {
         value: function (rootNode) {
-            var selector = "*[" + this._ELEMENT_ID_ATTRIBUTE + "]",
-                elements,
+            var elements,
                 result = {},
                 elementId;
 
-            elements = rootNode.querySelectorAll(selector);
+            elements = rootNode.querySelectorAll(this._ELEMENT_ID_ATTRIBUTE_SELECTOR);
 
             for (var i = 0, element; (element = elements[i]); i++) {
                 elementId = this.getElementId(element);
@@ -1189,12 +1296,12 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
     _getChildrenElementIds: {
         value: function (rootNode) {
-            // XPath might do a better job here...should test.
-            var selector = "*[" + this._ELEMENT_ID_ATTRIBUTE + "]",
-                elements,
+
+            var elements,
                 elementIds = [];
 
-            elements = rootNode.querySelectorAll(selector);
+            // XPath might do a better job here...should test.
+            elements = rootNode.querySelectorAll(this._ELEMENT_ID_ATTRIBUTE_SELECTOR);
 
             for (var i = 0, element; (element = elements[i]); i++) {
                 elementIds.push(this.getElementId(element));
@@ -1220,9 +1327,8 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
     getElementById: {
         value: function (elementId) {
-            var selector = "*[" + this._ELEMENT_ID_ATTRIBUTE + "='" + elementId + "']";
-
-            return this.document.querySelector(selector);
+            return this.document.querySelector(`*[data-mod-id="${elementId}"], *[data-montage-id="${elementId}"]`);
+            // return this.document.querySelector("*[" + this._ELEMENT_ID_ATTRIBUTE + "='" + elementId + "']");
         }
     },
 
@@ -1282,6 +1388,12 @@ var Template = Montage.specialize( /** @lends Template# */ {
                             if (url !== "" && !absoluteUrlRegExp.test(url)) {
                                 node.setAttribute('href', URL.resolve(baseUrl, url));
                             }
+                        } else if (node.hasAttribute("data")) {
+                            // Stylesheets
+                            url = node.getAttribute('data');
+                            if (url !== "" && !absoluteUrlRegExp.test(url)) {
+                                node.setAttribute('data', URL.resolve(baseUrl, url));
+                            }
                         }
                     }
                 }
@@ -1321,6 +1433,13 @@ var Template = Montage.specialize( /** @lends Template# */ {
 
 }, {
 
+    cacheTemplateForRequireModuleId: {
+        value: function(template, _require, moduleId, _cacheKey) {
+            var cacheKey = _cacheKey || this._getTemplateCacheKey(moduleId, _require);
+            this._templateCache.moduleId[cacheKey] = template;
+        }
+    },
+
     _templateCache: {
         value: {
             moduleId: Object.create(null)
@@ -1346,6 +1465,8 @@ var Template = Montage.specialize( /** @lends Template# */ {
                 .initWithModuleId(moduleId, _require);
 
                 this._templateCache.moduleId[cacheKey] = template;
+            } else {
+                return Promise.resolve(template);
             }
 
             return template;
@@ -1353,7 +1474,7 @@ var Template = Montage.specialize( /** @lends Template# */ {
     },
 
     _NORMALIZED_TAG_NAMES: {
-        value: ["IMG", "image", "IFRAME", "link","script"]
+        value: ["IMG", "image", "object", "IFRAME", "link", "script"]
     },
 
     __NORMALIZED_TAG_NAMES_SELECTOR: {
@@ -1436,7 +1557,13 @@ var TemplateResources = Montage.specialize( /** @lends TemplateResources# */ {
                 template = this.template;
 
                 scripts = this._resources.scripts = [];
-                templateScripts = template.document.querySelectorAll("script");
+
+                /*
+                    getElementsByTagName() returns HTML Collection which is cached and returned, which is faster than querySelectorAll() that creates a Node List every time.
+                */
+
+                // templateScripts = template.document.querySelectorAll("script");
+                templateScripts = template.document.getElementsByTagName("script");
 
                 for (var i = 0, ii = templateScripts.length; i < ii; i++) {
                     script = templateScripts[i];
@@ -1451,21 +1578,173 @@ var TemplateResources = Montage.specialize( /** @lends TemplateResources# */ {
         }
     },
 
+    /*
+        uses <link rel="preload" href="https://cdnjs.cloudflare.com/somescript.js" as="script" type="text/javascript" crossorigin>
+
+        Similar to what's done in document-resources, and using it, but doing it here with links so it works cross origin
+    */
+
+    preloadScript: {
+        value: function (script, targetDocument) {
+            var documentResources = DocumentResources.getInstanceForDocument(targetDocument);
+
+            if(documentResources.isResourcePreloaded(script.src)) {
+                return Promise.resolve(script.src)
+            } else if (documentResources.isResourcePreloading(script.src)) {
+                return documentResources.getResourcePreloadedPromise(script.src);
+            } else {
+
+                var promise = new Promise(function(resolve, reject){
+
+                    var preloadLink = document.createElement("link");
+                    preloadLink.href = script.src;
+                    preloadLink.rel = "preload";
+                    preloadLink.as = "script";
+                    preloadLink.type = "text/javascript";
+                    preloadLink.crossOrigin = true;
+                    targetDocument.head.appendChild(preloadLink);
+
+                    var loadingTimeout;
+                    // We wait until all scripts are loaded, this is important
+                    // because templateDidLoad might need to access objects that
+                    // are defined in these scripts, the downsize is that it takes
+                    // more time for the template to be considered loaded.
+                    var scriptLoadedFunction = function scriptLoaded(event) {
+                        documentResources.setResourcePreloaded(script.src);
+                        preloadLink.removeEventListener("load", scriptLoaded, false);
+                        preloadLink.removeEventListener("error", scriptLoaded, false);
+
+                        clearTimeout(loadingTimeout);
+                        resolve(event);
+                    };
+
+                    preloadLink.addEventListener("load", scriptLoadedFunction, false);
+                    preloadLink.addEventListener("error", scriptLoadedFunction, false);
+
+                    // Setup the timeout to wait for the script until the resource
+                    // is considered loaded. The template doesn't fail loading just
+                    // because a single script didn't load.
+                    //Benoit: It is odd that we act as if everything was fine here...
+                    loadingTimeout = setTimeout(function () {
+                        documentResources.setResourcePreloaded(script.src);
+                        resolve();
+                    }, documentResources._SCRIPT_TIMEOUT);
+
+
+                });
+
+                documentResources.setResourcePreloadedPromise(script.src, promise);
+
+                return promise;
+
+            }
+
+        }
+    },
+
+    _loadSyncScripts: {
+        value: function (script, targetDocument, syncScriptPromises) {
+            var self = this,
+                previousPromise = syncScriptPromises[syncScriptPromises.length-1] || Promise.resolve(true);
+
+                if(false) {
+                //if(currentEnvironment.supportsLinkPreload) {
+
+            //Preload,
+            //require.read used XHR which doesn't work without CORS cooperation from server
+            // syncScriptPromises.push(require.read(script.src)
+            //     .then( function() {
+            //         return previousPromise
+            //         .then( function() {
+            //             self.loadScript(script, targetDocument);
+            //         }, function(sriptsWithSrcLoadError) {
+            //             return Promise.reject(sriptsWithSrcLoadError);
+            //         });
+            //     }, function(sriptsWithSrcLoadError) {
+            //         return Promise.reject(sriptsWithSrcLoadError);
+            //     }));
+
+            syncScriptPromises.push(this.preloadScript(script, targetDocument)
+                .then( function() {
+                    return previousPromise
+                    .then( function() {
+                        self.loadScript(script, targetDocument);
+                    }, function(sriptsWithSrcLoadError) {
+                        return Promise.reject(sriptsWithSrcLoadError);
+                    });
+                }, function(sriptsWithSrcLoadError) {
+                    return Promise.reject(sriptsWithSrcLoadError);
+                }));
+
+
+            } else {
+                //We have no choice but load/execute serially to respect the spec.
+                syncScriptPromises.push(previousPromise
+                    .then( function() {
+                        return self.loadScript(script, targetDocument);
+                    }, function(sriptsWithSrcLoadError) {
+                        return Promise.reject(sriptsWithSrcLoadError);
+                    })
+                );
+
+            }
+
+
+        }
+    },
     loadScripts: {
         value: function (targetDocument) {
             var scripts = this.getScripts(),
-                ii = scripts.length;
+                iScript,
+                ii = scripts.length,
+                self = this;
 
             if (ii) {
-                var promises = [];
+                var promises,
+                    asyncPromises,
+                    syncScriptPromises,
+                    inlineScripts = [];
 
                 for (var i = 0; i < ii; i++) {
-                    promises.push(
-                        this.loadScript(scripts[i], targetDocument)
-                    );
+                    if((iScript = scripts[i]).src) {
+                        //If async, we load & insert at once
+                        if(iScript.async) {
+                            (asyncPromises || (asyncPromises = [])).push(
+                                this.loadScript(iScript, targetDocument)
+                            );
+                        } else {
+                            this._loadSyncScripts(iScript, targetDocument, (syncScriptPromises || (syncScriptPromises = [])));
+                        }
+                    } else {
+                        inlineScripts.push(iScript);
+                        self = self || this;
+                    }
                 }
 
-                return Promise.all(promises);
+                if(asyncPromises && syncScriptPromises) {
+                    promises = asyncPromises.concat(syncScriptPromises);
+                } else {
+                    promises = asyncPromises || syncScriptPromises;
+                }
+
+                return Promise.all(promises)
+                    .then(
+                        function(resolvedScriptsWithSrc) {
+                            var inlineScriptsPromises = [];
+
+                            for (i = 0, ii=inlineScripts.length; i < ii; i++) {
+                                inlineScriptsPromises.push(
+                                    self.loadScript(inlineScripts[i], targetDocument)
+                                );
+                            }
+
+                            return Promise.all(inlineScriptsPromises);
+
+                        },
+                        function(sriptsWithSrcLoadError) {
+                            return sriptsWithSrcLoadError;
+                        }
+                    );
             }
 
             return this.resolvedPromise;
@@ -1504,18 +1783,21 @@ var TemplateResources = Montage.specialize( /** @lends TemplateResources# */ {
         }
     },
 
+    styleSelector: {
+        value: 'link[rel="stylesheet"], style'
+    },
+
     getStyles: {
         value: function () {
-            var styles = this._resources.styles,
-                template,
-                templateStyles,
-                styleSelector;
+            var styles = this._resources.styles;
 
             if (!styles) {
-                styleSelector = 'link[rel="stylesheet"], style';
+                var template,
+                    templateStyles;
+
                 template = this.template;
 
-                templateStyles = template.document.querySelectorAll(styleSelector);
+                templateStyles = template.document.querySelectorAll(this.styleSelector);
 
                 styles = Array.prototype.slice.call(templateStyles, 0);
                 this._resources.styles = styles;
@@ -1551,7 +1833,7 @@ var TemplateResources = Montage.specialize( /** @lends TemplateResources# */ {
                 documentResources = DocumentResources.getInstanceForDocument(targetDocument);
                 return documentResources.preloadResource(url);
             }
-            
+
             return this.resolvedPromise;
         }
     },
@@ -1575,16 +1857,12 @@ var TemplateResources = Montage.specialize( /** @lends TemplateResources# */ {
 // Used to create a DocumentPart from a document without a Template
 function instantiateDocument(_document, _require, instances) {
     var template = new Template(),
-        html = _document.documentElement.outerHTML,
         part = new DocumentPart(),
-        clonedDocument,
         templateObjects,
         rootElement = _document.documentElement;
 
     // Setup a template just like we'd do for a document in a template
-    clonedDocument = template.createHtmlDocumentWithHtml(html, _document.location.href);
-
-    return template.initWithDocument(clonedDocument, _require)
+    return template.initWithDocument(_document, _require)
     .then(function () {
         template.setBaseUrl(_document.location.href);
         // Instantiate it using the document given since we don't want to clone

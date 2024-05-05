@@ -1,5 +1,5 @@
-var Enumeration = require("montage/data/model/enumeration").Enumeration,
-    Montage = require("montage").Montage;
+var Enumeration = require("mod/data/model/enumeration").Enumeration,
+    Montage = require("mod/core/core").Montage;
 
 describe("An Enumeration", function() {
 

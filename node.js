@@ -1,12 +1,12 @@
 /*jshint node:true, browser:false */
-var FS = require("q-io/fs");
+var Require = require("./core/mr/require");
+var FS = (require) ("./core/promise-io/fs");
 var MontageBoot = require("./montage");
-var Require = require("mr");
 
-var URL = require("url");
-var htmlparser = require("htmlparser2");
+var URL = require("fast-url-parser");
+var htmlparser = (require) ("htmlparser2");
 var DomUtils = htmlparser.DomUtils;
-var PATH = require("path");
+var PATH = (require) ("path");
 
 function findPackage(path) {
     var directory = FS.directory(path);
@@ -54,15 +54,38 @@ exports.bootstrap = function () {
     });
 };
 
-MontageBoot.loadPackage = function (location, config) {
+MontageBoot.loadPackage = function (location, config, callback) {
 
-    if (location.slice(location.length - 1, location.length) !== "/") {
+    if (!location.endsWith("/")) {
         location += "/";
     }
 
     config = config || {};
-    config.overlays = ["node", "server", "montage"];
-    config.location = URL.resolve(Require.getLocation(), location);
+    config.overlays = config.overlays || ["node", "server", "mod"];
+    config.location = location;
+    // config.location = URL.resolve(Require.getLocation(), location);
+    // config.location = Require.getLocation();
+
+    //The equivalent is done in montage.js for the browser:
+    //install the linter, which loads on the first error
+    function lint(module) {
+        if(!lint.JSHINT) {
+            lint.JSHINT = require("jshint");
+        }
+        if (!lint.JSHINT.JSHINT(module.text,{esversion: 6})) {
+            console.warn("JSHint Error: "+module.location);
+            lint.JSHINT.JSHINT.errors.forEach(function (error) {
+                if (error) {
+                    console.warn("Problem at line "+error.line+" character "+error.character+": "+error.reason);
+                    if (error.evidence) {
+                        console.warn("    " + error.evidence);
+                    }
+                }
+            });
+        }
+    };
+    config.lint = lint;
+
 
     return Require.loadPackage(config.location, config);
 };
@@ -137,10 +160,9 @@ function parsePrototypeForModule(prototype) {
     return prototype.replace(/\[[^\]]+\]$/, "");
 }
 
-function collectSerializationDependencies(text, dependencies) {
-    var serialization = JSON.parse(text);
-    Object.keys(serialization).forEach(function (label) {
-        var description = serialization[label];
+function collectSerializationDependencies(serializationJSON, dependencies) {
+    Object.keys(serializationJSON).forEach(function (label) {
+        var description = serializationJSON[label];
         if (description.lazy) {
             return;
         }
@@ -158,11 +180,11 @@ function collectHtmlDependencies(dom, dependencies) {
     visit(dom, function (element) {
         if (DomUtils.isTag(element)) {
             if (element.name === "script") {
-                if (getAttribute(element, "type") === "text/montage-serialization") {
-                    collectSerializationDependencies(getText(element), dependencies);
+                if (getAttribute(element, "type") === "text/mod-serialization" || getAttribute(element, "type") === "text/montage-serialization") {
+                    collectSerializationDependencies(JSON.parse(getText(element)), dependencies);
                 }
             } else if (element.name === "link") {
-                if (getAttribute(element, "type") === "text/montage-serialization") {
+                if (getAttribute(element, "type") === "text/mod-serialization" || getAttribute(element, "type") === "text/montage-serialization") {
                     dependencies.push(getAttribute(element, "href"));
                 }
             }
@@ -177,6 +199,10 @@ function parseHtmlDependencies(text/*, location*/) {
     return dependencies;
 }
 
+var html_regex = /(.*\/)?(?=[^\/]+\.html$)/,
+    json_regex = /(?=[^\/]+\.json$)/,
+    mjson_regex = /(?=[^\/]+\.(?:mjson|meta)$)/,
+    reel_regex = /(.*\/)?([^\/]+)\.reel|mod\/\2$/;
 MontageBoot.TemplateLoader = function (config, load) {
     return function (moduleId, module) {
 
@@ -193,10 +219,10 @@ MontageBoot.TemplateLoader = function (config, load) {
             id = moduleId;
         }
 
-        var html = id.match(/(.*\/)?(?=[^\/]+\.html$)/);
-        var serialization = id.match(/(?=[^\/]+\.json$)/); // XXX this is not necessarily a strong indicator of a serialization alone
-        var meta = id.match(/(?=[^\/]+\.(?:mjson|meta)$)/);
-        var reelModule = id.match(/(.*\/)?([^\/]+)\.reel\/\2$/);
+        var html = id.match(html_regex);
+        var serialization = id.match(json_regex); // XXX this is not necessarily a strong indicator of a serialization alone
+        var meta = id.match(mjson_regex);
+        var reelModule = id.match(reel_regex);
         if (html) {
             return load(id, module)
             .then(function () {
@@ -206,7 +232,7 @@ MontageBoot.TemplateLoader = function (config, load) {
         } else if (serialization) {
             return load(id, module)
             .then(function () {
-                module.dependencies = collectSerializationDependencies(module.text, []);
+                module.dependencies = collectSerializationDependencies(module.json, []);
                 return module;
             });
         } else if (meta) {
@@ -222,7 +248,7 @@ MontageBoot.TemplateLoader = function (config, load) {
                     }
                 }, function (error) {
                     // not a problem
-                    // montage/ui/loader.reel/loader.html": Error: ENOENT: no such file or directory
+                    // mod/ui/loader.mod/loader.html": Error: ENOENT: no such file or directory
                     console.log(error.message);
                 });
             });
@@ -231,6 +257,21 @@ MontageBoot.TemplateLoader = function (config, load) {
         }
     };
 };
+
+if(!global.performance) {
+    Object.defineProperties(global,
+        {
+            _performance: {
+                value: undefined
+            },
+            performance: {
+                get: function() {
+                    return this._performance || (this._performance = require('perf_hooks').performance);
+                }
+            }
+        }
+    );
+}
 
 // add the TemplateLoader to the middleware chain
 Require.makeLoader = (function (makeLoader) {

@@ -1,6 +1,6 @@
 "use strict";
 
-var TestController = require("montage-testing/test-controller").TestController;
+var TestController = require("mod-testing/test-controller").TestController;
 
 exports.SegmentedBarTest = TestController.specialize({
     data: {

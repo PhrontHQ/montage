@@ -1,6 +1,6 @@
 /**
- * @module ./rotation-composer.reel
- * @requires montage/composer/composer
+ * @module ./rotation-composer.mod
+ * @requires mod/composer/composer
  */
 var Composer = require("./composer").Composer,
     TranslateComposer = require("./translate-composer").TranslateComposer;

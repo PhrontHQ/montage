@@ -29,15 +29,15 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
 /*global require,exports,describe,beforeEach,it,expect,waits,waitsFor,runs */
-var Montage = require("montage").Montage,
-    Localizer = require("montage/core/localizer"),
-    Promise = require("montage/core/promise").Promise,
-    Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer,
-    Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader,
-    Map = require("montage/collections/map"),
-    Bindings = require("montage/core/core").Bindings,
-    FrbBindings = require("montage/frb/bindings");
+var Montage = require("mod/core/core").Montage,
+    Localizer = require("mod/core/localizer"),
+    Promise = require("mod/core/promise").Promise,
+    Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer,
+    Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader,
+    Map = require("mod/core/collections/map"),
+    Bindings = require("mod/core/core").Bindings,
+    FrbBindings = require("mod/core/frb/bindings");
 
 var stripPP = function stripPrettyPrintting(str) {
     return str.replace(/\n\s*/g, "");
@@ -90,7 +90,7 @@ TestPageLoader.queueTest("fallback/fallback", {directory: module.directory}, fun
             it("does not serialize the default localizer", function (done) {
                 testSerializer({
                     target: {
-                        prototype: "montage/core/localizer[Message]",
+                        prototype: "mod/core/localizer[Message]",
                         values: {
                             key: "hello"
                         }
@@ -104,13 +104,13 @@ TestPageLoader.queueTest("fallback/fallback", {directory: module.directory}, fun
             xit("serializes an non-default localizer", function (done) {
                 var serialization = {
                         localizer: {
-                            prototype: "montage/core/localizer",
+                            prototype: "mod/core/localizer",
                             values: {
                                 locale: "en-x-test"
                             }
                         },
                         target: {
-                            prototype: "montage/core/localizer[Message]",
+                            prototype: "mod/core/localizer[Message]",
                             values: {
                                 key: "hello",
                                 localizer: {"@": "localizer"}
@@ -127,7 +127,7 @@ TestPageLoader.queueTest("fallback/fallback", {directory: module.directory}, fun
                         },
 
                         "localizer": {
-                            "prototype": "montage/core/localizer",
+                            "prototype": "mod/core/localizer",
                             "values": {
                                 "messages": null,
                                 "locale": "en-x-test",
@@ -161,7 +161,7 @@ TestPageLoader.queueTest("fallback/fallback", {directory: module.directory}, fun
             xit("creates a binding from the localizer to the object", function (done) {
                 var iframeRequire = testPage.iframe.contentWindow.mr;
 
-                iframeRequire.async("montage/core/core").then(function (exports) {
+                iframeRequire.async("mod/core/core").then(function (exports) {
                     var iframeBindings = exports.Bindings,
                         bindings;
 
@@ -277,7 +277,7 @@ TestPageLoader.queueTest("fallback/fallback", {directory: module.directory}, fun
                         },
                         expectedSerialization = {
                             "root": {
-                                "prototype": "montage/core/core[Montage]",
+                                "prototype": "mod/core/core[Montage]",
                                 "values": {
                                     "identifier": null
                                 },
@@ -320,7 +320,7 @@ TestPageLoader.queueTest("fallback/fallback", {directory: module.directory}, fun
                         },
                         expectedSerialization = {
                             "root": {
-                                "prototype": "montage/core/core[Montage]",
+                                "prototype": "mod/core/core[Montage]",
                                 "values": {
                                     "identifier": null
                                 },
@@ -369,7 +369,7 @@ TestPageLoader.queueTest("fallback/fallback", {directory: module.directory}, fun
                         },
                         expectedSerialization = {
                             "root": {
-                                "prototype": "montage/core/core[Montage]",
+                                "prototype": "mod/core/core[Montage]",
                                 "values": {
                                     "identifier": null
                                 },

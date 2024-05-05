@@ -1,4 +1,4 @@
-var DataOperation = require("montage/data/service/data-operation").DataOperation;
+var DataOperation = require("mod/data/service/data-operation").DataOperation;
 
 describe("A DataOperation", function() {
 

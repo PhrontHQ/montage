@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Main</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "owner"},
+                "_gallery": {"@": "gallery"},
+                "_isSliderActive": {"<-": "@slider.active"}
+            }
+        },
+        "index": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "index"},
+                "value": {"<-": "'Image ' + (@gallery.currentImageIndex + 1) + ' of ' + @gallery.images.length"}
+            }
+        },
+        "gallery": {
+            "prototype": "mod/ui/image-gallery.mod",
+            "values": {
+                "element": {"#": "gallery"}
+            }
+        },
+        "slider": {
+            "prototype": "ui/slider",
+            "values": {
+               "element": {"#": "slider"},
+               "_sliderThumbElement": {"#": "sliderKnob"},
+               "hasTemplate": false,
+               "min": 0,
+                "max": {"<-": "@gallery.images.length - 1"},
+                "value": {"<->": "@gallery.scroll"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="owner" class="Main">
+        <div data-mod-id="gallery" class="Main-gallery"></div>
+        <div data-mod-id="index" class="Main-index"></div>
+        <div class="Main-origin">Courtesy National Gallery of Art, Washington</div>
+        <div data-mod-id="slider" class="Main-slider">
+            <div data-mod-id="sliderTrack" class="Main-sliderTrack"></div>
+            <div data-mod-id="sliderKnob" class="Main-sliderKnob"></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,13 +1,13 @@
 // Consider proposal at https://rniwa.com/editing/undomanager.html
 /**
- @module montage/core/undo-manager
+ @module mod/core/undo-manager
  */
 
 var Montage = require("./core").Montage,
     Target = require("./target").Target,
     Promise = require("./promise").Promise,
-    Map = require("collections/map"),
-    List = require("collections/list");
+    Map = require("core/collections/map"),
+    List = require("core/collections/list");
 
 var UNDO_OPERATION = 0,
     REDO_OPERATION = 1;
@@ -650,7 +650,11 @@ var UndoManager = exports.UndoManager = Target.specialize( /** @lends UndoManage
 
             this._operationQueue.push(operationPromise);
 
-            return this._flushOperationQueue().thenReturn(deferredOperationPromise);
+            return this._flushOperationQueue()
+                .then(() => {
+                    return deferredOperationPromise;
+                });
+            // return this._flushOperationQueue().thenReturn(deferredOperationPromise);
         }
     },
 

@@ -1,5 +1,5 @@
-var Alias = require("montage/core/serialization/alias").Alias,
-    Promise = require("montage/core/promise").Promise;
+var Alias = require("mod/core/serialization/alias").Alias,
+    Promise = require("mod/core/promise").Promise;
 
 describe("serialization/alias-spec", function () {
     var alias;

@@ -2,7 +2,9 @@ var Montage = require("../../core").Montage,
     MontageReviver = require("./montage-reviver").MontageReviver,
     Promise = require("../../promise").Promise,
     deprecate = require("../../deprecate"),
-    Set = require("collections/set"),
+    Set = require("../../collections/set"),
+    ObjectCreate = Object.create,
+    ObjectKeys = Object.keys,
     ONE_ASSIGNMENT = "=",
     ONE_WAY = "<-",
     TWO_WAY = "<->";
@@ -47,26 +49,25 @@ var MontageInterpreter = Montage.specialize({
                 locationId,
                 locationDesc,
                 module,
-                promises = [];
+                promises = [],
+                i, keys, label;
 
-            for (var label in serialization) {
-                if (serialization.hasOwnProperty(label)) {
-                    object = serialization[label];
-                    locationId = object.prototype || object.object;
+            for (i =0, keys = ObjectKeys(serialization);(label = keys[i]); i++) {
+                object = serialization[label];
+                locationId = object.prototype || object.object;
 
-                    if (locationId) {
-                        if (typeof locationId !== "string") {
-                            throw new Error(
-                                "Property 'object' of the object with the label '" +
-                                label + "' must be a module id"
-                            );
-                        }
-                        locationDesc = MontageReviver.parseObjectLocationId(locationId);
-                        module = moduleLoader.getModule(
-                            locationDesc.moduleId, label);
-                        if (Promise.is(module)) {
-                            promises.push(module);
-                        }
+                if (locationId) {
+                    if (typeof locationId !== "string") {
+                        throw new Error(
+                            "Property 'object' of the object with the label '" +
+                            label + "' must be a module id"
+                        );
+                    }
+                    locationDesc = MontageReviver.parseObjectLocationId(locationId);
+                    module = moduleLoader.getModule(
+                        locationDesc.moduleId, label);
+                    if (Promise.is(module)) {
+                        promises.push(module);
                     }
                 }
             }
@@ -81,7 +82,7 @@ var MontageInterpreter = Montage.specialize({
 var idCount = 0;
 var MontageContext = Montage.specialize({
     _ELEMENT_ID_ATTRIBUTE: {value: "data-montage-id"},
-    _ELEMENT_ID_SELECTOR_PREFIX: {value: '*[data-montage-id="'},
+    // _ELEMENT_ID_SELECTOR_PREFIX: {value: '*[data-montage-id="'},
     _ELEMENT_ID_SELECTOR_SUFFIX: {value: '"]'},
     unitsToDeserialize: {value: null},
     _mjsonDependencies: {value: null},
@@ -96,6 +97,8 @@ var MontageContext = Montage.specialize({
     constructor: {
         value: function () {
             this.unitsToDeserialize = new Map();
+            this._objects = ObjectCreate(null);
+            return this;
         }
     },
 
@@ -103,16 +106,23 @@ var MontageContext = Montage.specialize({
         value: function (serialization, reviver, objects, element, _require, isSync) {
             this._reviver = reviver;
             this._serialization = serialization;
-            this._objects = Object.create(null);
 
             if (objects) {
-                this._userObjects = Object.create(null);
+                this._userObjects = objects;
+                /*
+                    #PERF
+                    Benoit Performance Improvement:
+                    this._userObjects is used for lookup, it's never changed,
+                    therefore there's no reason to create a new object,
+                    and loop over it to copy the data over, just use it.
+                */
+                // this._userObjects = Object.create(null);
 
-                /* jshint forin: true */
-                for (var label in objects) {
-                /* jshint forin: false */
-                    this._userObjects[label] = objects[label];
-                }
+                // /* jshint forin: true */
+                // for (var label in objects) {
+                // /* jshint forin: false */
+                //     this._userObjects[label] = objects[label];
+                // }
             }
 
             this._element = element;
@@ -132,50 +142,65 @@ var MontageContext = Montage.specialize({
 
     setObjectLabel: {
         value: function(object, label) {
-            this._objects[label] = object;
+            return (this._objects[label] = object);
         }
     },
 
+    // _getObject_build: {
+    //     value: function _getObject_build(label) {
+    //         // If no object has been set by the reviver we safe its
+    //         // return, it could be a value or a promise, we need to
+    //         // make sure the object won't be revived twice.
+    //         return this._objects[label] || (this._objects[label] = this._reviver.reviveRootObject(this._serialization[label], this, label));
+    //     }
+    // },
+
+    // _getObject_error: {
+    //     value: function getObject(label) {
+    //         var notFoundError = new Error("Object with label '" + label + "' was not found.");
+    //         if (this._isSync) {
+    //             throw notFoundError;
+    //         } else {
+    //             return Promise.reject(notFoundError);
+    //         }
+    //     }
+    // },
+
     getObject: {
-        value: function(label) {
-            var serialization = this._serialization,
-                reviver = this._reviver,
-                objects = this._objects,
-                object, notFoundError;
+        value: function getObject(label) {
 
-            if (label in objects) {
-                return objects[label];
-            } else if (label in serialization) {
-                object = reviver.reviveRootObject(serialization[label], this, label);
-                // If no object has been set by the reviver we safe its
-                // return, it could be a value or a promise, we need to
-                // make sure the object won't be revived twice.
-                if (!(label in objects)) {
-                    objects[label] = object;
-                }
+            // If no object has been set by the reviver we safe its
+            // return, it could be a value or a promise, we need to
+            // make sure the object won't be revived twice.
+            return this._objects[label] || (this._objects[label] = this._reviver.reviveRootObject(this._serialization[label], this, label));
 
-                return object;
-            } else {
-                notFoundError = new Error("Object with label '" + label + "' was not found.");
-                if (this._isSync) {
-                    throw notFoundError;
-                } else {
-                    return Promise.reject(notFoundError);
-                }
-            }
+            // return this._getObject_build(label);
+
+            // var objects = this._objects;
+
+            // var b = (label in objects)
+            // ? objects[label]
+            // : (label in this._serialization)
+            //     ? this._getObject_build(label)
+            //     : this._getObject_error(label);
+
+            // if(a != b) {
+            //     debugger;
+            // }
+
+            // return b;
         }
     },
 
     getObjects: {
-        value: function() {
-            var self = this,
-                serialization = this._serialization,
+        value: function getObjects() {
+            var serialization = this._serialization,
                 promises,
                 result,
                 objectKeys;
 
             if(serialization) {
-                objectKeys = Object.keys(serialization);
+                objectKeys = ObjectKeys(serialization);
                 for (var i=0, label;(label = objectKeys[i]); i++) {
                     result = this.getObject(label);
 
@@ -190,9 +215,24 @@ var MontageContext = Montage.specialize({
                 return this._isSync ? result : Promise.is(result) ? result : Promise.resolve(result);
             } else {
                 // We shouldn't get here if this._isSync is true
+                var self = this;
+
                 return Promise.all(promises).then(function() {
                     return self._invokeDidReviveObjects();
                 });
+            }
+        }
+    },
+
+    hasUserObjectForLabel: {
+        value: function(object, label) {
+            var userObjects = this._userObjects;
+
+            if (userObjects) {
+                return this.hasUserObject(label) && userObjects[label] === object;
+                //return label in userObjects && userObjects[label] === object;
+            } else {
+                return false;
             }
         }
     },
@@ -201,21 +241,20 @@ var MontageContext = Montage.specialize({
         value: function(label) {
             var userObjects = this._userObjects;
 
-            if (userObjects) {
-                return label in userObjects;
-            } else {
-                return false;
-            }
+            // return userObjects && ((userObjects.hasOwnProperty && userObjects.hasOwnProperty(label)) || label in userObjects);
+
+            return userObjects
+                ? userObjects.hasOwnProperty
+                    ? userObjects.hasOwnProperty(label)
+                    : label in userObjects
+                : false;
+                // return label in userObjects;
         }
     },
 
     getUserObject: {
         value: function(label) {
-            var userObjects = this._userObjects;
-
-            if (userObjects) {
-                return userObjects[label];
-            }
+            return (this._userObjects && this._userObjects[label]) || undefined;
         }
     },
 
@@ -253,47 +292,12 @@ var MontageContext = Montage.specialize({
 
     getElementById: {
         value: function (id) {
-            return this._element.querySelector(this._ELEMENT_ID_SELECTOR_PREFIX + id + this._ELEMENT_ID_SELECTOR_SUFFIX);
-        }
-    },
-
-    _classifyValuesToDeserialize: {
-        value: function (object, objectDesc) {
-            var values,
-                value,
-                keys,
-                bindings;
-
-
-            //This is where we support backward compatib
-             if((values = objectDesc.properties)) {
-                objectDesc.values = values;
-                delete objectDesc.properties;
-             }
-             else {
-                if((values = objectDesc.values)) {
-                    keys = Object.keys(values);
-                    bindings = objectDesc.bindings || (objectDesc.bindings = {});
-                    for (var i=0, key;(key = keys[i]);i++) {
-                        value = values[key];
-
-                        //An expression based property
-                        if ((typeof value === "object" && value &&
-                            Object.keys(value).length === 1 &&
-                            (ONE_WAY in value || TWO_WAY in value || ONE_ASSIGNMENT in value)) ||
-                            key.indexOf('.') > -1
-                        ) {
-                            bindings[key] = value;
-                            delete values[key];
-                        }
-                    }
-
-                }
-            }
-
-
-            return bindings;
-        }
+            //Adds support for legacy data-montage-id selector
+            return this._element.querySelector(`*[data-mod-id="${id}"], *[data-montage-id="${id}"]`);
+            // return this._element.querySelector(`*[data-mod-id="${id}"]`)
+            //|| this._element.querySelector(`*[data-montage-id="${id}"]`)
+            // || this._element.querySelector(this._ELEMENT_ID_SELECTOR_PREFIX + id + this._ELEMENT_ID_SELECTOR_SUFFIX);
+    }
     },
 
     getBindingsToDeserialize: {
@@ -310,12 +314,24 @@ var MontageContext = Montage.specialize({
             return this.__propertyToReviveForObjectLiteralValue || (this.__propertyToReviveForObjectLiteralValue = new WeakMap());
         }
     },
+    _propertyToReviveEmptySet: {
+        value: new Set()
+    },
     propertyToReviveForObjectLiteralValue: {
         value: function (objectLiteralValue) {
+
+            return ObjectKeys(objectLiteralValue);
+
             var  propertyToRevive;
-            if(!(propertyToRevive = this._propertyToReviveForObjectLiteralValue.get(objectLiteralValue))) {
-                this._propertyToReviveForObjectLiteralValue.set(objectLiteralValue,(propertyToRevive = new Set(Object.keys(objectLiteralValue))));
-            }
+            // if(!(propertyToRevive = this._propertyToReviveForObjectLiteralValue.get(objectLiteralValue))) {
+                propertyToRevive = ObjectKeys(objectLiteralValue);
+                if(propertyToRevive.length === 0) {
+                    propertyToRevive = this._propertyToReviveEmptySet;
+                } else {
+                    propertyToRevive = new Set(propertyToRevive);
+                }
+                // this._propertyToReviveForObjectLiteralValue.set(objectLiteralValue,propertyToRevive);
+            // }
             return propertyToRevive;
         }
     },
@@ -334,17 +350,48 @@ var MontageContext = Montage.specialize({
 
 
 
-    setBindingsToDeserialize: {
-        value: function (object, objectDesc) {
-                this._classifyValuesToDeserialize(object, objectDesc);
-        }
-    },
+    // setBindingsToDeserialize: {
+    //     value: function (object, objectDesc) {
+    //         var values;
+
+
+    //         //This is where we support backward compatib
+    //          if((values = objectDesc.properties)) {
+    //             objectDesc.values = values;
+    //             delete objectDesc.properties;
+    //          }
+    //          else {
+    //             if((values = objectDesc.values)) {
+    //                 var keys = ObjectKeys(values),
+    //                     bindings,
+    //                     value;
+
+    //                 for (var i=0, key;(key = keys[i]);i++) {
+    //                     value = values[key];
+
+    //                     //An expression based property
+    //                     if (value && (typeof value === "object" &&
+    //                         (ONE_WAY in value || TWO_WAY in value || ONE_ASSIGNMENT in value)) ||
+    //                         key.indexOf('.') > -1
+    //                     ) {
+    //                         (bindings || ( bindings = objectDesc.bindings || (objectDesc.bindings = {})))[key] = value;
+    //                         delete values[key];
+    //                     }
+    //                 }
+
+    //             }
+    //         }
+
+
+    //         return bindings;
+    //     }
+    // },
 
     setUnitsToDeserialize: {
         value: function (object, objectDesc, unitNames) {
 
             var moduleId = objectDesc.prototype || objectDesc.object,
-                isMJSONDependency = moduleId && (moduleId.endsWith(".mjson") || moduleId.endsWith(".meta")),
+                isMJSONDependency = moduleId && (moduleId.endsWith(".mjson")),
                 unitsDesc = this.unitsToDeserialize.get(object);
 
             if(isMJSONDependency) {
@@ -358,7 +405,7 @@ var MontageContext = Montage.specialize({
 
                     for(var i=0, iUniteName, countI = unitNames.length;(i<countI);i++) {
                         iUniteName = unitNames[i];
-                        if(objectDesc[iUniteName]) {
+                        if(unitsDescObjectDesc[iUniteName] && objectDesc[iUniteName]) {
                             Object.assign(unitsDescObjectDesc[iUniteName],objectDesc[iUniteName]);
                         }
                         if(!unitsDescUnitNames.has(iUniteName)) {

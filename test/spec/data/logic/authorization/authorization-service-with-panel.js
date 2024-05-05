@@ -1,6 +1,6 @@
-var DataService = require("montage/data/service/data-service").DataService,
+var DataService = require("mod/data/service/data-service").DataService,
     Authorization = require("spec/data/logic/authorization/authorization").Authorization,
-    Promise = require("montage/core/promise").Promise;
+    Promise = require("mod/core/promise").Promise;
 
 
 
@@ -28,7 +28,7 @@ exports.AuthorizationServiceWithPanel = DataService.specialize( /** @lends Autho
             this.didLogOut = true;
         }
     },
-    
+
     authorize: {
         value: function () {
             // return Promise.resolve(this.authorization);
@@ -38,7 +38,7 @@ exports.AuthorizationServiceWithPanel = DataService.specialize( /** @lends Autho
 
 
     authorizationPanel: {
-        value: "spec/data/ui/authorization/authorization-panel.reel"
+        value: "spec/data/ui/authorization/authorization-panel.mod"
     }
 
 });

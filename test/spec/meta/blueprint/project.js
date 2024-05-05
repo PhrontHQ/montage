@@ -1,6 +1,6 @@
 /* <copyright>
 s</copyright> */
-var Montage = require("montage").Montage;
+var Montage = require("mod/core/core").Montage;
 
 var BinderHelper = require("spec/meta/blueprint/modelhelper").BinderHelper;
 var model = BinderHelper.companyModel();

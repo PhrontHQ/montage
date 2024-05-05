@@ -1,10 +1,9 @@
-var Bindings = require("frb"),
-    stringify = require("frb/stringify"),
-    assign = require("frb/assign"),
-    evaluate = require("frb/evaluate"),
-    expand = require("frb/expand"),
-    Scope = require("frb/scope"),
-    Serializer = require("../serialization/serializer/montage-serializer").MontageSerializer,
+var Bindings = require("../frb/bindings"),
+    stringify = require("../frb/stringify"),
+    assign = require("../frb/assign"),
+    evaluate = require("../frb/evaluate"),
+    expand = require("../frb/expand"),
+    Scope = require("../frb/scope"),
     ONE_ASSIGNMENT = "=",
     ONE_WAY = "<-",
     TWO_WAY = "<->";
@@ -69,24 +68,24 @@ var serializeObjectBindings = exports.serializeObjectBindings = function (serial
     return hasBindings ? outputs : void 0;
 };
 
-//deprecated
-Serializer.defineSerializationUnit("bindings", serializeObjectBindings);
 
-var deserializeObjectBindings = exports.deserializeObjectBindings = function (deserializer, object, bindings) {
+var deserializeObjectBindings = exports.deserializeObjectBindings = function deserializeObjectBindings(deserializer, object, bindings) {
     var commonDescriptor = {
         components: deserializer
     },
         targetPath,
-        descriptor;
+        descriptor,
+        i, keys;
 
     /* jshint forin: true */
-    for (targetPath in bindings) {
+    //for (targetPath in bindings) {
+    for (i=0, keys = Object.keys(bindings); (targetPath = keys[i]); i++) {
     /* jshint forin: false */
 
         descriptor = bindings[targetPath];
 
         if (typeof descriptor !== "object") {
-            if (targetPath.indexOf('.') === -1) {
+            if (!targetPath.includes('.')) {
                 throw new Error("Binding descriptor must be an object, not " + typeof descriptor);
                 // TODO isolate the source document and produce a more useful error
             } else {
@@ -98,7 +97,7 @@ var deserializeObjectBindings = exports.deserializeObjectBindings = function (de
 
         if (ONE_ASSIGNMENT in descriptor) {
             var value = descriptor[ONE_ASSIGNMENT];
-            
+
             assign(
                 object,
                 targetPath,
@@ -108,7 +107,10 @@ var deserializeObjectBindings = exports.deserializeObjectBindings = function (de
                 deserializer
             );
         } else {
-            Bindings.defineBinding(object, targetPath, descriptor, commonDescriptor);
+            //TODO: use the API on object firt so it has an opportunity to know what's being bound to him.
+            object.defineBinding
+                ? object.defineBinding(targetPath, descriptor, commonDescriptor)
+                : Bindings.defineBinding(object, targetPath, descriptor, commonDescriptor);
         }
     }
 };

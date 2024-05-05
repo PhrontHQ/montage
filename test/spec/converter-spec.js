@@ -28,22 +28,22 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage;
-var Converter= require("montage/core/converter/converter").Converter,
-UpperCaseConverter = require("montage/core/converter/upper-case-converter").singleton,
-LowerCaseConverter = require("montage/core/converter/lower-case-converter").singleton,
-TrimConverter = require("montage/core/converter/trim-converter").singleton,
-NumberConverter = require("montage/core/converter/number-converter").NumberConverter,
-BytesConverter = require("montage/core/converter/bytes-converter").BytesConverter,
-InvertConverterModule = require("montage/core/converter/invert-converter"),
+var Montage = require("mod/core/core").Montage;
+var Converter= require("mod/core/converter/converter").Converter,
+UpperCaseConverter = require("mod/core/converter/upper-case-converter").singleton,
+LowerCaseConverter = require("mod/core/converter/lower-case-converter").singleton,
+TrimConverter = require("mod/core/converter/trim-converter").singleton,
+NumberConverter = require("mod/core/converter/number-converter").NumberConverter,
+BytesConverter = require("mod/core/converter/bytes-converter").BytesConverter,
+InvertConverterModule = require("mod/core/converter/invert-converter"),
 InvertConverter = InvertConverterModule.InvertConverter,
 InvertConverterSingleton = InvertConverterModule.singleton,
-DateConverter = require("montage/core/converter/date-converter").DateConverter,
-ExpressionConverter = require("montage/core/converter/expression-converter").ExpressionConverter,
-CamelCaseConverter = require("montage/core/converter/camel-case-converter").singleton,
-SnakeCaseConverter = require("montage/core/converter/snake-case-converter").singleton,
-KebabCaseConverter = require("montage/core/converter/kebab-case-converter").singleton,
-CurrencyConverter = require("montage/core/converter/currency-converter").CurrencyConverter;
+DateConverter = require("mod/core/converter/date-converter").DateConverter,
+ExpressionConverter = require("mod/core/converter/expression-converter").ExpressionConverter,
+CamelCaseConverter = require("mod/core/converter/camel-case-converter").singleton,
+SnakeCaseConverter = require("mod/core/converter/snake-case-converter").singleton,
+KebabCaseConverter = require("mod/core/converter/kebab-case-converter").singleton,
+CurrencyConverter = require("mod/core/converter/currency-converter").CurrencyConverter;
 
 describe("converter-spec", function () {
 
@@ -171,16 +171,21 @@ describe("converter-spec", function () {
 
     describe("Test formatting of file sizes and numbers representing bytes", function () {
         it("should format a number to friendly byte size", function () {
+            var value = 100;
+            var result = bytesConverter.convert(value);
+            expect(result).toBe('100B');
+        });
+        it("should format a number to friendly Megabyte size", function () {
             var value = 100200300;
             var result = bytesConverter.convert(value);
             expect(result).toBe('95.56MB');
         });
-        it("should format a number to friendly byte size", function () {
+        it("should format a number to friendly Kilobyte size", function () {
             var value = 1024;
             var result = bytesConverter.convert(value);
             expect(result).toBe('1KB');
         });
-        it("should format a number to friendly byte size", function () {
+        it("should format a number to friendly Gigabyte size", function () {
             var value = 2048000000;
             bytesConverter.decimals = 4;
             var result = bytesConverter.convert(value);

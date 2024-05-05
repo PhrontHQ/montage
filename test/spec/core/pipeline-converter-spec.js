@@ -1,9 +1,9 @@
-var PipelineConverter = require("montage/core/converter/pipeline-converter").PipelineConverter,
-    DateConverter = require("montage/core/converter/date-converter").DateConverter,
-    LowerCaseConverter = require("montage/core/converter/lower-case-converter").LowerCaseConverter,
-    UpperCaseConverter = require("montage/core/converter/upper-case-converter").UpperCaseConverter,
-    Converter = require("montage/core/converter/converter").Converter,
-    Promise = require("montage/core/promise").Promise;
+var PipelineConverter = require("mod/core/converter/pipeline-converter").PipelineConverter,
+    DateConverter = require("mod/core/converter/date-converter").DateConverter,
+    LowerCaseConverter = require("mod/core/converter/lower-case-converter").LowerCaseConverter,
+    UpperCaseConverter = require("mod/core/converter/upper-case-converter").UpperCaseConverter,
+    Converter = require("mod/core/converter/converter").Converter,
+    Promise = require("mod/core/promise").Promise;
 
 var AsynchronousConverter = Converter.specialize({
 

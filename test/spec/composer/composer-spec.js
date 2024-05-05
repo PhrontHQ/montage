@@ -1,6 +1,6 @@
-var Montage = require("montage").Montage;
-var TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
-var EventInfo = require("montage-testing/testpageloader").EventInfo;
+var Montage = require("mod/core/core").Montage;
+var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
+var EventInfo = require("mod-testing/testpageloader").EventInfo;
 
 TestPageLoader.queueTest("composer-serialization", {src: "spec/composer/composer-serialization-test-page.html", firstDraw: false}, function (testPage) {
     var test;
@@ -41,7 +41,7 @@ TestPageLoader.queueTest("composer-serialization-lazyload", {src: "spec/composer
             it("load method should not have been called", function () {
                 expect(test.simpleTestComposer._loadWasCalled).toBeFalsy();
             });
-            
+
             xit("load method should be called as the result of an activation event", function (done) {
                 testPage.mouseEvent(new EventInfo().initWithElementAndPosition(test.dynamicText, 0, 0), "mousedown", function () {
                     expect(test.simpleTestComposer._loadWasCalled).toBeTruthy();

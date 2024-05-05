@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="main.css">
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "main"}
+            }
+        },
+
+        "native": {
+            "prototype": "mod/ui/text-area.mod",
+            "values": {
+                "element": {"#": "text-area-native"}
+            }
+        }
+
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="main" class="Main">
+        <header>Teach TextArea Mod</header>
+
+        <section class="text-areas">
+            <textarea data-mod-id="text-area-native" class="text-area native"></textarea>
+
+            <!-- @benoit: add a custom one with content editable set to true ?-->
+        </section>
+    </div>
+</body>
+</html>

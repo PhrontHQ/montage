@@ -1,4 +1,4 @@
-var Set = require("montage/collections/set");
+var Set = require("mod/core/collections/set");
 
 var MockEvent = exports.MockEvent = function MockEvent() {};
 

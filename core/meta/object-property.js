@@ -1,10 +1,10 @@
 
 /**
- * @module montage/data/object-property
- * @requires montage/data/pledge
- * @requires montage/core/core
- * @requires montage/core/exception
- * @requires montage/core/logger
+ * @module mod/data/object-property
+ * @requires mod/data/pledge
+ * @requires mod/core/core
+ * @requires mod/core/exception
+ * @requires mod/core/logger
  */
 var Montage = require("../core").Montage,
     Exception = require("../exception").Exception,

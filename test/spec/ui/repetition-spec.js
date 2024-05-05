@@ -28,10 +28,10 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader,
-    Template = require("montage/core/template").Template,
-    Application = require("montage/core/application").application;
+var Montage = require("mod/core/core").Montage,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader,
+    Template = require("mod/core/template").Template,
+    Application = require("mod/core/application").application;
 
 TestPageLoader.queueTest("repetition/repetition", function (testPage) {
     describe("ui/repetition-spec", function () {
@@ -47,7 +47,7 @@ TestPageLoader.queueTest("repetition/repetition", function (testPage) {
         };
 
         beforeEach(function () {
-            application = testPage.global.mr("montage/core/application").application;
+            application = testPage.global.mr("mod/core/application").application;
             eventManager = application.eventManager;
             delegate = application.delegate;
         });
@@ -125,7 +125,7 @@ TestPageLoader.queueTest("repetition/repetition", function (testPage) {
 
         xit("should not serialize bindings in the iteration template", function () {
             var serialization = delegate.repetition1._iterationTemplate._ownerSerialization;
-            expect(serialization).toBe('{"owner":{"prototype":"montage/ui/repetition.reel","values":{"element":{"#":"list1"},"_isComponentExpanded":true,"ownerComponent":{"@":"__root__"}}},"__root__":{}}');
+            expect(serialization).toBe('{"owner":{"prototype":"mod/ui/repetition.mod","values":{"element":{"#":"list1"},"_isComponentExpanded":true,"ownerComponent":{"@":"__root__"}}},"__root__":{}}');
         });
 
         describe("The static repetition", function () {
@@ -259,7 +259,7 @@ TestPageLoader.queueTest("repetition/repetition", function (testPage) {
             });
 
             xit("[TODO] should create a repetition programmatically", function (done) {
-                var Repetition = testPage.global.mr("montage/ui/repetition.reel").Repetition,
+                var Repetition = testPage.global.mr("mod/ui/repetition.mod").Repetition,
                     repetition = new Repetition();
 
                 repetition.element = querySelector(".list12");
@@ -419,7 +419,7 @@ TestPageLoader.queueTest("repetition/repetition", function (testPage) {
                 console.log("***** should draw one>five iterations START");
                 delegate.list3Objects = [[{text: "iteration 1"}, {text: "iteration 2"}, {text: "iteration 3"}], [{text: "iteration 1"}, {text: "iteration 2"}, {text: "iteration 3"}, {text: "iteration 4"}, {text: "iteration 5"}]];
                 console.log("testPage.waitForComponentDraw(delegate.repetition4)");
-                
+
                 var expectationFunction = function () {
                     console.log("should draw one>five iterations –expectationFunction START");
                     expect(querySelectorAll(".list3 > li").length).toBe(2);
@@ -811,7 +811,7 @@ TestPageLoader.queueTest("repetition/repetition", function (testPage) {
                 var newTemplate = templateRepetition.innerTemplate;
 
                 repetition.innerTemplate = newTemplate;
-               
+
                 testPage.waitForComponentDraw(repetition).then(function () {
                     var content = repetition.element.children;
                     expect(content.length).toBe(3);

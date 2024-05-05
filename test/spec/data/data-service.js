@@ -1,8 +1,8 @@
-var DataService = require("montage/data/service/data-service").DataService,
-    DataObjectDescriptor = require("montage/data/model/data-object-descriptor").DataObjectDescriptor,
-    ModuleObjectDescriptor = require("montage/core/meta/module-object-descriptor").ModuleObjectDescriptor,
-    ModuleReference = require("montage/core/module-reference").ModuleReference,
-    RawDataService = require("montage/data/service/raw-data-service").RawDataService;
+var DataService = require("mod/data/service/data-service").DataService,
+    DataObjectDescriptor = require("mod/data/model/data-object-descriptor").DataObjectDescriptor,
+    ModuleObjectDescriptor = require("mod/core/meta/module-object-descriptor").ModuleObjectDescriptor,
+    ModuleReference = require("mod/core/module-reference").ModuleReference,
+    RawDataService = require("mod/data/service/raw-data-service").RawDataService;
 
 describe("A DataService", function() {
 

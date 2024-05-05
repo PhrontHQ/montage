@@ -1,0 +1,7 @@
+{
+	"name": "teach-modal-overlay-mod",
+	"private": true,
+	"dependencies": {
+		"mod": "../.."
+	}
+}

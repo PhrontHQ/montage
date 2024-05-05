@@ -1,7 +1,7 @@
-var Montage = require("montage").Montage,
-    Set = require("montage/collections/set"),
-    UndoManager = require("montage/core/undo-manager").UndoManager,
-    Promise = require("montage/core/promise").Promise,
+var Montage = require("mod/core/core").Montage,
+    Set = require("mod/core/collections/set"),
+    UndoManager = require("mod/core/undo-manager").UndoManager,
+    Promise = require("mod/core/promise").Promise,
     WAITS_FOR_TIMEOUT = 2500;
 
 var Roster = Montage.specialize( {
@@ -97,9 +97,9 @@ var Roster = Montage.specialize( {
                     deferredAddResolve = resolve;
                 });
             deferredAdd.resolve = deferredAddResolve;
-            
+
             this.members.add(member);
-            
+
             this.undoManager.register("Add Member", deferredAdd);
 
             return deferredAdd;
@@ -122,10 +122,8 @@ var Text = Montage.specialize({
     del: {
         value: function (isSlow) {
             var self = this;
-            var promise = Promise.resolve();
-            if(isSlow) {
-                promise.delay(20);
-            }
+            var promise = isSlow ? Promise.delay(20) : Promise.resolve();
+
             promise = promise.then(function () {
                 var c = self.text.charAt(self.text.length - 1);
                 self.text = self.text.substring(0, self.text.length - 1);

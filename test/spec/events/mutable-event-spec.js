@@ -28,9 +28,9 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage;
-var MutableEvent = require("montage/core/event/mutable-event").MutableEvent;
-var Target = require("montage/core/target").Target;
+var Montage = require("mod/core/core").Montage;
+var MutableEvent = require("mod/core/event/mutable-event").MutableEvent;
+var Target = require("mod/core/target").Target;
 
 describe("events/mutable-event-spec", function () {
 

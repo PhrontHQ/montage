@@ -1,8 +1,8 @@
 /**
- * @module ui/alert.reel
+ * @module ui/alert.mod
  */
 var Component = require("../component").Component,
-    ModalOverlay = require("../modal-overlay.reel").ModalOverlay,
+    ModalOverlay = require("../modal-overlay.mod").ModalOverlay,
     Promise = require("../../core/promise").Promise;
 
 /**
@@ -12,7 +12,7 @@ var Component = require("../component").Component,
 exports.AbstractAlert = Component.specialize(/** @lends AbstractAlert# */ {
     constructor: {
         value: function AbstractAlert() {
-            if (this.constructor === AbstractAlert) {
+            if (this.constructor === exports.AbstractAlert) {
                 throw new Error("AbstractAlert cannot be instantiated.");
             }
         }
@@ -64,7 +64,7 @@ exports.AbstractAlert = Component.specialize(/** @lends AbstractAlert# */ {
             }
         }
     },
-    
+
     resolveUserAction: {
         value: null
     },
@@ -108,10 +108,10 @@ exports.AbstractAlert = Component.specialize(/** @lends AbstractAlert# */ {
     /**
      * This promise is initially the promise at _nextMessagePromise and is
      * resolved at enterDocument time, this is when the overlay is available.
-     
+
      * Implemented with a getter to ensure that this property is not initialized
      * on the AbstractAlert but on the type that extends it.
-     
+
      */
      _nextMessagePromiseHandlerResolve: {
          value: null

@@ -1,5 +1,5 @@
-var Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer,
-    Visitor = require("montage/core/serialization/serializer/montage-visitor").MontageVisitor;
+var Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer,
+    Visitor = require("mod/core/serialization/serializer/montage-visitor").MontageVisitor;
 
 
 describe("visitor", function() {

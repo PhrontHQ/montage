@@ -48,7 +48,7 @@ module.exports = function(config) {
             included: false
         },
         {
-            pattern: 'ui/**/*.meta',
+            pattern: 'ui/**/*.mjson',
             included: false
         },
         {
@@ -80,10 +80,6 @@ module.exports = function(config) {
             included: false
         },
         {
-            pattern: 'test/**/*.meta',
-            included: false
-        },
-        {
             pattern: 'test/**/*.css',
             included: false
         },
@@ -96,7 +92,7 @@ module.exports = function(config) {
             included: false
         },
         {
-            pattern: 'node_modules/**(jshint|bluebird|mr|montage-testing)/**/*',
+            pattern: 'node_modules/**(jshint|bluebird|mr|mod-testing)/**/*',
             included: false
         }
     ],

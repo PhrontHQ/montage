@@ -4,14 +4,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Localization test</title>
     <script type="text/javascript" src="../../../../../montage.js"></script>
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "localizer": {
-            "object": "montage/core/localizer[defaultLocalizer]"
+            "object": "mod/core/localizer[defaultLocalizer]"
         },
 
         "missingKey": {
-            "prototype": "montage/ui/text.reel",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "missingKey"},
                 "value": "Pass"
@@ -24,7 +24,7 @@
         },
 
         "basic": {
-            "prototype": "montage/ui/text.reel",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "basic"}
             },
@@ -37,7 +37,7 @@
         },
 
         "resources": {
-            "prototype": "montage/ui/text.reel",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "resources"}
             },
@@ -50,14 +50,14 @@
         },
 
         "bindingInput": {
-            "prototype": "montage/ui/text.reel",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "bindingInput"},
                 "value": "World"
             }
         },
         "binding": {
-            "prototype": "montage/ui/text.reel",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "binding"},
                 "defaultValue": "fail"
@@ -74,7 +74,7 @@
         },
 
         "twoProperties": {
-            "prototype": "double.reel",
+            "prototype": "double.mod",
             "values": {
                 "element": {"#": "twoProperties"}
             },
@@ -85,7 +85,7 @@
         },
 
         "message": {
-            "prototype": "montage/core/localizer[Message]",
+            "prototype": "mod/core/localizer[Message]",
             "values": {
                 "key": "welcome",
                 "data.get('name')": {"<-": "@bindingInput.value"}
@@ -93,7 +93,7 @@
         },
 
         "messageRepetition": {
-            "prototype": "montage/ui/repetition.reel",
+            "prototype": "mod/ui/repetition.mod",
             "values": {
                 "element": {"#": "messageRepetition"},
                 "content": [
@@ -105,7 +105,7 @@
         },
 
         "repeatedMessageText": {
-            "prototype": "montage/ui/text.reel",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "repeatedMessageText"}
             },
@@ -120,7 +120,7 @@
         },
 
         "test": {
-            "prototype": "montage",
+            "prototype": "mod/core/core[Montage]",
             "values": {
                 "missingKey": {"@": "missingKey"},
                 "basic": {"@": "basic"},
@@ -132,7 +132,7 @@
             }
         },
         "application": {
-            "prototype": "montage/core/application",
+            "prototype": "mod/core/application",
             "values": {
                 "delegate": {"@": "test"}
             }
@@ -141,17 +141,17 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="missingKey">fail</div>
-    <div data-montage-id="basic">fail</div>
-    <div data-montage-id="resources">fail</div>
+    <div data-mod-id="missingKey">fail</div>
+    <div data-mod-id="basic">fail</div>
+    <div data-mod-id="resources">fail</div>
 
-    <input type="text" data-montage-id="bindingInput" value="World" />
-    <div data-montage-id="binding">fail</div>
-    <button data-montage-id="twoProperties">fail</button>
+    <input type="text" data-mod-id="bindingInput" value="World" />
+    <div data-mod-id="binding">fail</div>
+    <button data-mod-id="twoProperties">fail</button>
 
     <h2>Numbers:</h2>
-    <div data-montage-id="messageRepetition">
-        <div data-montage-id="repeatedMessageText"></div>
+    <div data-mod-id="messageRepetition">
+        <div data-mod-id="repeatedMessageText"></div>
     </div>
 
 </body>

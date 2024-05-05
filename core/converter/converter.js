@@ -2,8 +2,8 @@
  * Provides common conversion, validation, and formatting functions for
  * different types of values.
  *
- * @module montage/core/converter/converter
- * @requires montage/core/core
+ * @module mod/core/converter/converter
+ * @requires mod/core/core
  */
 var MontageModule = require("../core"),
     Montage = MontageModule.Montage,
@@ -23,7 +23,7 @@ var FUNCTION_CLASS = '[object Function]',
 var _toString = Object.prototype.toString;
 
 /**
- * @exports module:montage/core/converter#isNumber
+ * @exports module:mod/core/converter#isNumber
  * @function
  * @private
  */
@@ -34,7 +34,7 @@ exports.isNumber = isNumber;
 
 
 /**
- * @exports module:montage/core/converter#isDef
+ * @exports module:mod/core/converter#isDef
  * @function
  * @private
  */
@@ -83,6 +83,25 @@ var Converter = exports.Converter = Montage.specialize( /** @lends Converter# */
     allowPartialConversion: {
         value: true
     },
+
+    /**
+     * Specifies whether the converter can convert an array of the type of values it can handle individually .
+     * @type {boolean}
+     * @default false
+     */
+    canConvertValueArray: {
+        value: false
+    },
+
+    /**
+     * Specifies whether the converter can convert an array of the type of values it can handle individually .
+     * @type {boolean}
+     * @default false
+     */
+    canRevertValueArray: {
+        value: false
+    },
+
 
     /**
      * Converts values from the input domain into the output range.

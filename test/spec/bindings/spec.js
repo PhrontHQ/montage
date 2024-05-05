@@ -28,13 +28,13 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage,
-    Bindings = require("montage/core/core").Bindings,
-    Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer,
-    Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
-    MontageReviver = require("montage/core/serialization/deserializer/montage-reviver").MontageReviver,
-    Promise = require("montage/core/promise").Promise,
-    Component = require("montage/ui/component").Component;
+var Montage = require("mod/core/core").Montage,
+    Bindings = require("mod/core/core").Bindings,
+    Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer,
+    Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+    MontageReviver = require("mod/core/serialization/deserializer/montage-reviver").MontageReviver,
+    Promise = require("mod/core/promise").Promise,
+    Component = require("mod/ui/component").Component;
 
 var Alpha = Montage.specialize( {
 
@@ -1161,7 +1161,7 @@ describe("bindings/spec", function () {
                 serialization,
                 expectedSerialization = {
                     "root": {
-                        "prototype": "montage/core/core[Montage]",
+                        "prototype": "mod/core/core[Montage]",
                         "values": {
                             "foo": { "<-": "@montage.bar" },
                             "identifier": null

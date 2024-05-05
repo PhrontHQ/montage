@@ -1,6 +1,6 @@
-var DataService = require("montage/data/service/data-service").DataService,
+var DataService = require("mod/data/service/data-service").DataService,
     Authorization = require("spec/data/logic/authorization/authorization").Authorization,
-    Promise = require("montage/core/promise").Promise;
+    Promise = require("mod/core/promise").Promise;
 
 
 
@@ -14,7 +14,7 @@ exports.AuthorizationService = DataService.specialize( /** @lends AuthorizationS
             return this._authorization;
         }
     },
-    
+
     authorize: {
         value: function () {
             return this.promiseDescriptor.value;
@@ -55,7 +55,7 @@ exports.AuthorizationService = DataService.specialize( /** @lends AuthorizationS
                 descriptor;
            if (!this._promiseDescriptor) {
                 this._promiseDescriptor = this._makePromiseDescriptor();
-           } 
+           }
            return this._promiseDescriptor;
         }
     },
@@ -71,6 +71,6 @@ exports.AuthorizationService = DataService.specialize( /** @lends AuthorizationS
             this.promiseDescriptor.reject(new Error("Test AuthService Rejection"));
         }
     }
-    
+
 
 });

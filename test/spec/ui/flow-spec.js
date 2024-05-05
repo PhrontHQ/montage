@@ -1,5 +1,5 @@
-var TestPageLoader = require("montage-testing/testpageloader").TestPageLoader,
-    RangeController = require("montage/core/range-controller").RangeController;
+var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader,
+    RangeController = require("mod/core/range-controller").RangeController;
 
 function cleanTextContent(element) {
     return element.textContent.replace(/\s\s+/g, ' ').trim();
@@ -12,7 +12,7 @@ TestPageLoader.queueTest("flow/flow", function (testPage) {
             var flow,
                 flowRepetition,
                 rangeController;
-            
+
             function waitForFlowRepetition() {
                 var component = flow._repetition || flow;
 
@@ -210,7 +210,7 @@ TestPageLoader.queueTest("flow/flow", function (testPage) {
                         expect(rangeController.selection.toString()).toBe("(0)");
                         expect(flow.selection.toString()).toBe("(0)");
                         done();
-                    });    
+                    });
                 });
                 // it("changes in controller's selection should be reflected in flow's selection", function () {
                 // });

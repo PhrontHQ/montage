@@ -1,4 +1,4 @@
-var DataPropertyDescriptor = require("montage/data/model/data-property-descriptor").DataPropertyDescriptor;
+var DataPropertyDescriptor = require("mod/data/model/data-property-descriptor").DataPropertyDescriptor;
 
 describe("A DataPropertyDescriptor", function() {
 

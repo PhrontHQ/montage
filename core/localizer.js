@@ -1,27 +1,28 @@
     /*global require,exports */
 
 /**
- * @module montage/core/localizer
- * @requires montage/core/core
- * @requires montage/core/logger
- * @requires montage/core/deserializer
- * @requires montage/core/promise
- * @requires montage/core/messageformat
- * @requires montage/core/messageformat-locale
+ * @module mod/core/localizer
+ * @requires mod/core/core
+ * @requires mod/core/logger
+ * @requires mod/core/deserializer
+ * @requires mod/core/promise
+ * @requires mod/core/messageformat
+ * @requires mod/core/messageformat-locale
  */
-var Montage = require("./core").Montage,
+var core = require("./core"),
+    Montage = core.Montage,
     MessageFormat = require("./messageformat"),
     rootComponent = require("../ui/component").__root__,
     logger = require("./logger").logger("localizer"),
     Serializer = require("./serialization/serializer/montage-serializer").MontageSerializer,
     Deserializer = require("./serialization/deserializer/montage-deserializer").MontageDeserializer,
     Promise = require("./promise").Promise,
-    Bindings = require("./core").Bindings,
-    FrbBindings = require("frb/bindings"),
-    stringify = require("frb/stringify"),
-    expand = require("frb/expand"),
-    Map = require("collections/map"),
-    Scope = require("frb/scope");
+    Bindings = core.Bindings,
+    FrbBindings = require("core/frb/bindings"),
+    stringify = require("core/frb/stringify"),
+    expand = require("core/frb/expand"),
+    Map = require("core/collections/map"),
+    Scope = require("core/frb/scope");
 
 // Add all locales to MessageFormat object
 MessageFormat.locale = require("./messageformat-locale");
@@ -1165,7 +1166,7 @@ var Message = exports.Message = Montage.specialize( /** @lends Message.prototype
 
             var scope,
                 syntax = input.sourceSyntax;
-                
+
             if (input.source !== object) {
                 var reference = serializer.addObjectReference(input.source);
                 scope = new Scope({
@@ -1221,7 +1222,7 @@ var createMessageBinding = function (object, prop, key, defaultMessage, data, de
                     Bindings.defineBinding(dataMap, ".get('" + d + "')", property, {
                         components: deserializer
                     });
-                }   
+                }
             }
         }
 

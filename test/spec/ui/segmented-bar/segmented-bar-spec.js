@@ -1,6 +1,6 @@
 // "use strict"; // TODO: causes q to throw, will reinstate when q is replaced by bluebird
 
-var TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
+var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
 
 TestPageLoader.queueTest("segmented-bar-test", function (testPage) {
     describe("ui/segmented-bar/segmented-bar-spec", function () {
@@ -8,7 +8,7 @@ TestPageLoader.queueTest("segmented-bar-test", function (testPage) {
         var segmentElements;
         beforeEach(function () {
             segmentedBarComponent = testPage.getElementById("segmentedBar1").component;
-            segmentElements = testPage.querySelectorAll("[data-montage-id=segment1]");
+            segmentElements = testPage.querySelectorAll("[data-mod-id=segment1]");
         });
 
         afterEach(function () {
@@ -63,7 +63,7 @@ TestPageLoader.queueTest("segmented-bar-test", function (testPage) {
                 });
 
                 it("should not dispatchActionEvent when enabled === false", function (done) {
-                    segmentElements = testPage.querySelectorAll("[data-montage-id=segment2]");
+                    segmentElements = testPage.querySelectorAll("[data-mod-id=segment2]");
                     testPage.mouseEvent({target: segmentElements[0]}, "mousedown", function () {
                         testPage.mouseEvent({target: segmentElements[0]}, "mouseup", function () {
                             expect(_handler).not.toHaveBeenCalled();
@@ -84,12 +84,12 @@ TestPageLoader.queueTest("segmented-bar-test", function (testPage) {
             });
 
             it("should render with correct text label from RangeController", function () {
-                segmentElements = testPage.querySelectorAll("[data-montage-id=segment2]");
+                segmentElements = testPage.querySelectorAll("[data-mod-id=segment2]");
                 expect(segmentElements[3].component.templateObjects.text.element.textContent).toEqual("region4");
             });
 
             //it("should render with correct text label from TreeController", function () {
-            //    segmentElements = testPage.querySelectorAll("[data-montage-id=segment3]");
+            //    segmentElements = testPage.querySelectorAll("[data-mod-id=segment3]");
             //    expect(segmentElements[1].component.templateObjects.text.element.textContent).toEqual("CA");
             //});
 
@@ -98,7 +98,7 @@ TestPageLoader.queueTest("segmented-bar-test", function (testPage) {
             });
 
             it("should render with correct height in vertical orientation", function () {
-                segmentElements = testPage.querySelectorAll("[data-montage-id=segment4]");
+                segmentElements = testPage.querySelectorAll("[data-mod-id=segment4]");
                 expect(segmentElements[0].clientHeight).toEqual(96);
             });
         });

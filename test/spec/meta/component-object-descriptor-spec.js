@@ -1,12 +1,12 @@
 /* <copyright>
  </copyright> */
-var Montage = require("montage").Montage;
-var TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
-var Component = require("montage/ui/component").Component;
-var Selector = require("montage/core/selector").Selector;
-var ObjectDescriptor = require("montage/core/meta/object-descriptor").ObjectDescriptor;
-var Promise = require("montage/core/promise").Promise;
-var Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer;
+var Montage = require("mod/core/core").Montage;
+var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
+var Component = require("mod/ui/component").Component;
+var Selector = require("mod/core/selector").Selector;
+var ObjectDescriptor = require("mod/core/meta/object-descriptor").ObjectDescriptor;
+var Promise = require("mod/core/promise").Promise;
+var Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer;
 
 TestPageLoader.queueTest("component-object-descriptor-test/component-object-descriptor-test", function (testPage) {
     describe("meta/component-object-descriptor-spec", function () {

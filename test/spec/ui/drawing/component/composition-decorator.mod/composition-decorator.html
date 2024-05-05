@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Composition Decorator</title>
+    <script type="text/mod-serialization">{
+        "owner": {
+            "values": {
+                "element": {"#": "compositionDecorator"}
+            }
+        },
+
+        "decorator": {
+            "prototype": "spec/ui/drawing/component/decorator.mod",
+            "values": {
+                "element": {"#": "decorator"}
+            }
+        }
+    }</script>
+</head>
+<body>
+    <div data-mod-id="compositionDecorator">
+        <div class="composition-decoration">
+            <div data-mod-id="decorator">
+                <span data-param="*"></span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

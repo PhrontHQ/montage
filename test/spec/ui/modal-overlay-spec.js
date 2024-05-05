@@ -1,9 +1,9 @@
 /*global require,exports,describe,it,expect */
-var Montage = require("montage").Montage,
-    ModalOverlay = require("montage/ui/modal-overlay.reel").ModalOverlay,
-    Promise = require("montage/core/promise").Promise,
+var Montage = require("mod/core/core").Montage,
+    ModalOverlay = require("mod/ui/modal-overlay.mod").ModalOverlay,
+    Promise = require("mod/core/promise").Promise,
     MockDOM = require("mocks/dom"),
-    defaultEventManager = require("montage/core/event/event-manager").defaultEventManager;
+    defaultEventManager = require("mod/core/event/event-manager").defaultEventManager;
 
 describe("ui/modal-overlay-spec", function () {
     var aModalOverlay,
@@ -34,9 +34,15 @@ describe("ui/modal-overlay-spec", function () {
 
     describe("show", function () {
         it("should return a fullfilled promise for the first overlay", function () {
-            var promise = aModalOverlay.show();
+            var isFulfilled = false,
+            promise = new Promise(function(resolve, reject) {
+                aModalOverlay.show();
+            });
 
-            expect(promise.isFulfilled()).toBe(true);
+            promise.then((value) => {
+                isFulfilled = true;
+                expect(isFulfilled).toBeTruthy();
+            });
         });
 
         it("should show the first overlay", function () {
@@ -47,9 +53,19 @@ describe("ui/modal-overlay-spec", function () {
 
         it("should return an unfulfilled promise when another overlay is shown", function () {
             anotherModalOverlay.show();
-            var promise = aModalOverlay.show();
 
-            expect(promise.isFulfilled()).toBe(false);
+            var isFulfilled = false,
+            promise = new Promise(function(resolve, reject) {
+                aModalOverlay.show();
+            });
+
+            promise.then((value) => {
+                isFulfilled = true;
+            })
+            .finally(() => {
+                expect(isFulfilled).toBe(false);
+
+            });
         });
 
         it("should not show the overlay when another overlay is shown", function () {
@@ -131,7 +147,7 @@ describe("ui/modal-overlay-spec", function () {
             aModalOverlay.willDraw();
             aModalOverlay.draw();
 
-            expect(aModalOverlay.modalMaskElement.classList.contains("montage-ModalOverlay-modalMask--visible")).toBe(true);
+            expect(aModalOverlay.modalMaskElement.classList.contains(`${aModalOverlay.elementCSSClassName}-modalMask--visible`)).toBe(true);
         });
 
         it("should hide the modal mask", function () {
@@ -139,7 +155,7 @@ describe("ui/modal-overlay-spec", function () {
 
             aModalOverlay.draw();
 
-            expect(aModalOverlay.modalMaskElement.classList.contains("montage-ModalOverlay-modalMask--visible")).toBe(false);
+            expect(aModalOverlay.modalMaskElement.classList.contains(`${aModalOverlay.elementCSSClassName}-modalMask--visible`)).toBe(false);
         });
     });
 });

@@ -1,4 +1,4 @@
-var DataMapping = require("montage/data/service/data-mapping").DataMapping;
+var DataMapping = require("mod/data/service/data-mapping").DataMapping;
 
 describe("A DataMapping", function() {
 

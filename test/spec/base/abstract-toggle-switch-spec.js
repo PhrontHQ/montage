@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage;
-var AbstractToggleSwitch = require("montage/ui/base/abstract-toggle-switch").AbstractToggleSwitch;
+var Montage = require("mod/core/core").Montage;
+var AbstractToggleSwitch = require("mod/ui/base/abstract-toggle-switch").AbstractToggleSwitch;
 var MockDOM = require("mocks/dom");
 
 AbstractToggleSwitch.prototype.hasTemplate = false;
@@ -40,16 +40,16 @@ describe("test/base/abstract-toggle-switch-spec", function () {
 
             it("should add the corresponding class name to classList when enabled is false", function () {
                 aToggleSwitch.enabled = false;
-                expect(aToggleSwitch.classList.contains("montage--disabled")).toBe(true);
+                expect(aToggleSwitch.classList.contains("mod--disabled")).toBe(true);
             });
         });
 
         describe("checked", function () {
             it("should update classList to reflect when it is checked", function () {
                 aToggleSwitch.checked = false;
-                expect(aToggleSwitch.classList.contains("montage-ToggleSwitch--checked")).toBe(false);
+                expect(aToggleSwitch.classList.contains("mod-ToggleSwitch--checked")).toBe(false);
                 aToggleSwitch.checked = true;
-                expect(aToggleSwitch.classList.contains("montage-ToggleSwitch--checked")).toBe(true);
+                expect(aToggleSwitch.classList.contains("mod-ToggleSwitch--checked")).toBe(true);
             });
         });
     });

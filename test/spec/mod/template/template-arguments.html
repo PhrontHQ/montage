@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <script type="text/mod-serialization">{
+        "section": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "section"}
+            }
+        },
+
+        "foo": {
+            "prototype": "mod/ui/component",
+            "values": {
+                "element": {"#": "foo"},
+                "hasTemplate": false
+            }
+        },
+
+        "leftSide": {
+            "prototype": "mod/ui/component",
+            "values": {
+                "element": {"#": "leftSide"},
+                "hasTemplate": false
+            }
+        },
+
+        "rightSide": {
+            "prototype": "mod/ui/component",
+            "values": {
+                "element": {"#": "rightSide"},
+                "hasTemplate": false,
+                "value": {"<-": "@leftSide.value"}
+            }
+        },
+
+        "templateProperties": {
+            "prototype": "mod/ui/component",
+            "values": {
+                "element": {"#": "template-properties"}
+            }
+        },
+
+        "iterationItem": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "iterationItem"},
+                "value": {"<-": "@templateProperties:cell"}
+            }
+        }
+    }</script>
+</head>
+<body>
+    <div data-mod-id="list">
+        <h2>Section</h2>
+        <h3>Paragraph</h3>
+    </div>
+
+    <div data-mod-id="element-id-collision">
+        <h2 data-mod-id="repetition">Section</h2>
+        <h3>Paragraph</h3>
+    </div>
+
+    <div data-mod-id="multiple-elements-leftSide">
+        <h2>Left Side</h2>
+    </div>
+    <div data-mod-id="multiple-elements-rightSide">
+        <h2>Right Side</h2>
+    </div>
+
+    <div data-mod-id="multiple-elements-colliding-leftSide">
+        <h2 data-mod-id="leftSide">Left Side</h2>
+    </div>
+    <div data-mod-id="multiple-elements-colliding-rightSide">
+        <h2 data-mod-id="rightSide">Right Side</h2>
+    </div>
+
+    <div data-mod-id="objects-no-collision">
+        <h2 data-mod-id="section">Section</h2>
+        <h3>Paragraph</h3>
+    </div>
+
+    <div data-mod-id="objects-collision">
+        <h2 data-mod-id="foo">Section</h2>
+        <h3>Paragraph</h3>
+    </div>
+
+    <div data-mod-id="multiple-objects-leftSide">
+        <h2 data-mod-id="leftSide">Left Side</h2>
+    </div>
+    <div data-mod-id="multiple-objects-rightSide">
+        <h2 data-mod-id="rightSide">Right Side</h2>
+    </div>
+
+    <div data-mod-id="template-properties">
+        <h2 data-mod-id="iterationItem"></h2>
+    </div>
+</body>
+</html>

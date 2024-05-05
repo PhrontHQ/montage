@@ -1,0 +1,65 @@
+{
+    "eventManagerDescriptor": {
+        "prototype": "./meta/property-descriptor",
+        "values": {
+            "name": "eventManager",
+            "valueType": "object",
+            "valueDescriptor": {"@": "EventManagerDescriptor"},
+            "isSerializable": false
+        }
+    },
+    "EventManagerDescriptor": {
+        "object": "./event/event-manager.mjson"
+    },
+
+    "acceptsActiveTargetDescriptor": {
+        "prototype": "./meta/property-descriptor",
+        "values": {
+            "name": "acceptsActiveTarget",
+            "valueType": "boolean",
+            "isSerializable": false
+        }
+    },
+    "isActiveTargetDescriptor": {
+        "prototype": "./meta/property-descriptor",
+        "values": {
+            "name": "isActiveTarget",
+            "valueType": "boolean"
+        }
+    },
+    "nextTargetDescriptor": {
+        "prototype": "./meta/property-descriptor",
+        "values": {
+            "name": "nextTarget",
+            "valueType": "object",
+            "valueDescriptor": {"@": "root"},
+            "isSerializable": false
+
+        }
+    },
+    "root": {
+        "prototype": "./meta/module-object-descriptor",
+        "values": {
+            "name": "Target",
+            "propertyDescriptors": [
+                { "@": "eventManagerDescriptor" },
+                { "@": "acceptsActiveTargetDescriptor" },
+                { "@": "isActiveTargetDescriptor" },
+                { "@": "nextTargetDescriptor" }
+            ],
+            "propertyDescriptorGroups": {
+                "all": [
+                    { "@": "eventManagerDescriptor" },
+                    { "@": "acceptsActiveTargetDescriptor" },
+                    { "@": "isActiveTargetDescriptor" },
+                    { "@": "nextTargetDescriptor" }
+                ]
+            },
+            "propertyValidationRules": {},
+            "objectDescriptorModule": { "%": "./target.mjson" },
+            "exportName": "Target",
+            "module": { "%": "./target" },
+            "object":{ "@": "Target" }
+        }
+    }
+}

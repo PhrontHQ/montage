@@ -1,10 +1,10 @@
 /*global require, exports, window*/
 
 /**
- * @module montage/ui/base/abstract-slider.reel
- * @requires montage/ui/component
- * @requires montage/ui/native-control
- * @requires montage/composer/press-composer
+ * @module mod/ui/base/abstract-slider.mod
+ * @requires mod/ui/component
+ * @requires mod/ui/native-control
+ * @requires mod/composer/press-composer
  */
 
 var AbstractControl = require("./abstract-control").AbstractControl,
@@ -24,7 +24,7 @@ var AbstractSlider = exports.AbstractSlider = AbstractControl.specialize( /** @l
      */
     constructor: {
         value: function AbstractSlider() {
-            if (this.constructor === AbstractSlider) {
+            if (this.constructor === exports.AbstractSlider) {
                 throw new Error("AbstractSlider cannot be instantiated.");
             }
 
@@ -38,8 +38,8 @@ var AbstractSlider = exports.AbstractSlider = AbstractControl.specialize( /** @l
             this.addOwnPropertyChangeListener("axis", this);
             this.axis = "horizontal";
 
-            this.defineBinding( "classList.has('montage--disabled')", { "<-": "!enabled" });
-            this.defineBinding( "classList.has('montage-Slider--active')", { "<-": "active" });
+            this.defineBinding( "classList.has('mod--disabled')", { "<-": "!enabled" });
+            this.defineBinding( "classList.has('mod-Slider--active')", { "<-": "active" });
         }
     },
 
@@ -445,11 +445,11 @@ var AbstractSlider = exports.AbstractSlider = AbstractControl.specialize( /** @l
                 this._translateComposer.axis = this.axis;
             }
             if(this.axis === "vertical") {
-                this.classList.add("montage-Slider--vertical");
-                this.classList.remove("montage-Slider--horizontal");
+                this.classList.add("mod-Slider--vertical");
+                this.classList.remove("mod-Slider--horizontal");
             } else {
-                this.classList.remove("montage-Slider--vertical");
-                this.classList.add("montage-Slider--horizontal");
+                this.classList.remove("mod-Slider--vertical");
+                this.classList.add("mod-Slider--horizontal");
             }
         }
     },

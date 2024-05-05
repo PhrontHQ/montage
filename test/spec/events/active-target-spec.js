@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage;
-var TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
+var Montage = require("mod/core/core").Montage;
+var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
 
 TestPageLoader.queueTest("active-target-test/active-target-test", function (testPage) {
     describe("events/active-target-spec", function () {
@@ -14,7 +14,7 @@ TestPageLoader.queueTest("active-target-test/active-target-test", function (test
 
             describe("when interaction starts on a proximal target that accepts focus", function () {
                 beforeEach(function () {
-                    proximalElement = testDocument.querySelector("[data-montage-id=C0C0B0]");
+                    proximalElement = testDocument.querySelector("[data-mod-id=C0C0B0]");
                     proximalComponent = proximalElement.component;
                     eventManager = proximalComponent.eventManager;
 
@@ -93,11 +93,11 @@ TestPageLoader.queueTest("active-target-test/active-target-test", function (test
                 var activeElement, activeComponent;
 
                 beforeEach(function () {
-                    proximalElement = testDocument.querySelector("[data-montage-id=C0C0B0]");
+                    proximalElement = testDocument.querySelector("[data-mod-id=C0C0B0]");
                     proximalComponent = proximalElement.component;
                     proximalComponent.acceptsActiveTarget = false;
 
-                    activeElement = testDocument.querySelector("[data-montage-id=C0C0]");
+                    activeElement = testDocument.querySelector("[data-mod-id=C0C0]");
                     activeComponent = activeElement.component;
 
                     eventManager = proximalComponent.eventManager;
@@ -148,7 +148,7 @@ TestPageLoader.queueTest("active-target-test/active-target-test", function (test
                 var eventManager;
 
                 beforeEach(function () {
-                    var proximalElement = testDocument.querySelector("[data-montage-id=C0C0B0]");
+                    var proximalElement = testDocument.querySelector("[data-mod-id=C0C0B0]");
                     proximalComponent = proximalElement.component;
 
                     eventManager = proximalComponent.eventManager;
@@ -177,8 +177,8 @@ TestPageLoader.queueTest("active-target-test/active-target-test", function (test
             var testTarget, proximalComponent, eventManager;
 
             beforeEach(function () {
-                testTarget = testDocument.defaultView.mr("montage/core/target").Target;
-                var proximalElement = testDocument.querySelector("[data-montage-id=C0C0B0]");
+                testTarget = testDocument.defaultView.mr("mod/core/target").Target;
+                var proximalElement = testDocument.querySelector("[data-mod-id=C0C0B0]");
                 proximalComponent = proximalElement.component;
 
                 eventManager = proximalComponent.eventManager;
@@ -230,7 +230,7 @@ TestPageLoader.queueTest("active-target-test/active-target-test", function (test
             var eventManager, proximalElement, proximalComponent, nextTarget;
 
             beforeEach(function () {
-                proximalElement = testDocument.querySelector("[data-montage-id=C0C0B0]");
+                proximalElement = testDocument.querySelector("[data-mod-id=C0C0B0]");
                 proximalComponent = proximalElement.component;
                 nextTarget = proximalComponent.nextTarget;
                 eventManager = proximalComponent.eventManager;

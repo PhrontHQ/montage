@@ -1,7 +1,7 @@
 /**
- * @module montage/core/converter/date-converter
- * @requires montage/core/core
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/date-converter
+ * @requires mod/core/core
+ * @requires mod/core/converter/converter
  */
 var Montage = require("../core").Montage,
     Converter = require("./converter").Converter,
@@ -1967,8 +1967,8 @@ var Montage = require("../core").Montage,
             }
 
             var expression = !!(this.days && this.days !== null || this.orient || this.operator);
-            var temp; 
-            
+            var temp;
+
             var gap, mod, orient;
             orient = ((this.orient === "past" || this.operator === "subtract") ? -1 : 1);
 
@@ -2395,19 +2395,17 @@ var Montage = require("../core").Montage,
      * var d1 = Date.parse("7/1 10pm");
      */
     $D.parse = function (s) {
-        var r = null;
-        if (!s) {
-            return null;
+        var r = this._parse(s);
+        if(isNaN(r)) {
+            try {
+                r = $D.Grammar.start.call({}, s.replace(/^\s*(\S*(\s+\S+)*)\s*$/, "$1"));
+            } catch (e) {
+                return null;
+            }
+            return ((r[1].length === 0) ? r[0].valueOf() : NaN);
+        } else {
+            return r;
         }
-        if (s instanceof Date) {
-            return s;
-        }
-        try {
-            r = $D.Grammar.start.call({}, s.replace(/^\s*(\S*(\s+\S+)*)\s*$/, "$1"));
-        } catch (e) {
-            return null;
-        }
-        return ((r[1].length === 0) ? r[0] : null);
     };
 
     $D.getParseFunction = function (fx) {
@@ -2561,7 +2559,7 @@ var DateConverter = exports.DateConverter = Converter.specialize(/** @lends Date
     convert: {
         value: function (v) {
             var t = typeof v;
-            if (isDate(v) || t === "string" || t === "number") {
+            if (isDate(v) || (t === "string" && v.length) || t === "number") {
                 return formatDate(v, this.pattern);
             }
             return v;

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="press-composer-layers.css">
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "owner"},
+                "overlay": {"@": "overlay"}
+            }
+        },
+
+        "showOverlay": {
+            "prototype": "mod/ui/button.mod",
+            "values": {
+                "element": {"#": "show-overlay-button"},
+                "label": "Show Overlay"
+            }
+        },
+
+        "textField": {
+            "prototype": "mod/ui/text-field.mod",
+            "values": {
+                "element": {"#": "text-field"}
+            }
+        },
+
+        "overlay": {
+            "prototype": "mod/ui/overlay.mod",
+            "values": {
+                "element": {"#": "overlay"},
+                "position" : {
+                    "left" : 105,
+                    "top" : 100
+                }
+            }
+        },
+
+        "dismissOverlay": {
+            "prototype": "mod/ui/button.mod",
+            "values": {
+                "element": {"#": "dismiss-overlay-button"},
+                "label": "Hide Overlay"
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="owner" class="PressComposerLayers">
+        <button data-mod-id="show-overlay-button">Show Overlay</button>
+        <input data-mod-id="text-field" type="text" value="some text"/>
+
+        <div data-mod-id="overlay" class="PressComposerLayers-Overlay">
+            <button data-mod-id="dismiss-overlay-button">Show Overlay</button>
+        </div>
+    </div>
+</body>
+</html>

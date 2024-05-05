@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script type="text/mod-serialization">
+        {
+            "owner": {
+                "values": {
+                    "element": {"#": "main"}
+                }
+            },
+            "treeList": {
+                "prototype": "mod/ui/tree-list.mod",
+                "values": {
+                    "element": {"#": "treeList"},
+                    "isRootExpanded": true,
+                    "rowHeight": 26,
+                    "delegate": {"<-": "@owner"},
+                    "controller": {"<-": "@treeController"},
+                    "isSortable": true
+                }
+            },
+            "treeController": {
+                "prototype": "mod/core/tree-controller",
+                "values": {
+                    "data": {"<-": "@owner.root"}
+                }
+            },
+            "treeListItem": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "treeListItem"},
+                    "node": {"<-": "@treeList:iteration.object"},
+                    "value": {"<-": "@treeList:iteration.object.data.filename"},
+                    "classList.has('locked')": {"<-": "@treeList:iteration.object.data.locked"}
+                }
+            },
+
+            "expand": {
+                "prototype": "mod/ui/checkbox.mod",
+                "values": {
+                    "element": {"#": "expand"},
+                    "checked": {"<->": "@treeList:iteration.object.isExpanded"},
+                    "classList.has('hide')": {"<-": "!@treeList:iteration.object.data.isDirectory"}
+                }
+            },
+
+            "debugDraggingNode": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "debugDraggingNode"},
+                    "value": {"<-": "@treeList._draggingTreeNode.data.filename"}
+                }
+            },
+
+            "debugOverNode": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "debugOverNode"},
+                    "value": {"<-": "@treeList._treeNodeOver.data.filename"}
+                }
+            },
+
+            "debugDropNode": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "debugDropNode"},
+                    "value": {"<-": "@treeList._treeNodeWillAcceptDrop.data.filename"}
+                }
+            },
+
+            "debugPlaceholderPosition": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "debugPlaceholderPosition"},
+                    "value": {"<-": "@treeList._placerholderPosition == 0 ? 'before' : @treeList._placerholderPosition == 1 ? 'after' : ''"}
+                }
+            },
+
+            "isSortable": {
+                "prototype": "mod/ui/checkbox.mod",
+                "values": {
+                    "element": {"#": "isSortable"},
+                    "checked": {"<->": "!!@treeList.isSortable"}
+                }
+            },
+
+            "isRootVisible": {
+                "prototype": "mod/ui/checkbox.mod",
+                "values": {
+                    "element": {"#": "isRootVisible"},
+                    "checked": {"<->": "!!@treeList.isRootVisible"}
+                }
+            },
+
+            "lastActionReport": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "lastActionReport"},
+                    "value": {"<-": "@owner.lastActionReport"}
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div data-mod-id="main" class="Main">
+        <header>Teach TreeList Mod</header>
+        <section class="containers">
+            <div class="options-container container">
+                <h5>
+                    <span>Options</span>
+                </h5>
+                <p>
+                    <label>Is Sortable: </label>
+                    <input type="checkbox" data-mod-id="isSortable" />
+                </p>
+                <p>
+                    <label>Is Root Visible: </label>
+                    <input type="checkbox" data-mod-id="isRootVisible" />
+                </p>
+            </div>
+            <div class="tree-list-container container">
+                <h5>
+                    <span>Tree</span>
+                </h5>
+                <div class="tree-list-wrapper">
+                    <div data-mod-id="treeList" class="tree-list">
+                        <div class="tree-list-row">
+                            <input type="checkbox" data-mod-id="expand" class="expand" />
+                            <span data-mod-id="treeListItem"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="debug-container container">
+                <h5>
+                    <span>Debug</span>
+                </h5>
+                <p>
+                    <span>Dragging Node: </span>
+                    <span data-mod-id="debugDraggingNode" class="debug-value"></span>
+                </p>
+                <p>
+                    <span>Over Node: </span>
+                    <span data-mod-id="debugOverNode" class="debug-value"></span>
+                </p>
+                <p>
+                    <span>Placeholder Position: </span>
+                    <span data-mod-id="debugPlaceholderPosition" class="debug-value"></span>
+                </p>
+                <p>
+                    <span>Drop Node: </span>
+                    <span data-mod-id="debugDropNode" class="debug-value"></span>
+                </p>
+                <p>
+                    <span>Last Action Report: </span>
+                    <pre data-mod-id="lastActionReport" class="debug-value"></pre>
+                </p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

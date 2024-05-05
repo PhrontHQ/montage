@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Foo Component</title>
+
+    <link rel="stylesheet" href="foo.css">
+
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "Foo"}
+            }
+        },
+        "text": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "text"},
+                "value": {"<-": "@owner.title"}
+            }
+        },
+        "data": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "data"},
+                "value": {"<-": "@owner.destinationData"}
+            }
+        },
+        "condition": {
+            "prototype": "mod/ui/condition.mod",
+            "values": {
+                "element": {"#": "condition"},
+                "condition": {"<-": "@owner.destinationData"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="Foo" class="foo absolute">
+        <h2 data-mod-id="text"></h2>
+        Data from source of the transition that lead to this component:
+        <div data-mod-id="condition">
+            <pre data-mod-id="data"></pre>
+        </div>
+    </div>
+</body>
+</html>

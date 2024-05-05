@@ -1,4 +1,4 @@
-var Montage = require("core/core").Montage;
+var Montage = require("../../core/core").Montage;
 
 /**
  * A DataIdentifier represents a universal identifier for an object managed by
@@ -24,9 +24,9 @@ var Montage = require("core/core").Montage;
  *
  * Note, a dataService's identifier is by default it's moduleId.
  *
- * "montage-data://[this.dataService.identifier]/[this.dataService.connectionDescriptor.name]/[this.objectDescriptor.name]/[this.primaryKey]
+ * "mod-data://[this.dataService.identifier]/[this.dataService.connectionDescriptor.name]/[this.objectDescriptor.name]/[this.primaryKey]
  *
- * "montage-data://twitter-service/production/user/14DS9ZT459EF44305UI
+ * "mod-data://twitter-service/production/user/14DS9ZT459EF44305UI
 
  * @class
  * @extends external:Montage
@@ -88,7 +88,27 @@ exports.DataIdentifier = Montage.specialize(/** @lends DataIdentifier.prototype 
     },
 
     _identifier: {
-        value: false
+        get: function() {
+            return this.url;
+        }
+    },
+
+    identifier: {
+        get: function() {
+            return this.url;
+        }
+    },
+
+    toString: {
+        value: function() {
+            return this.url;
+        }
+    },
+
+    valueOf: {
+        value: function() {
+            return this.url;
+        }
     },
 
     _url: {
@@ -103,10 +123,16 @@ exports.DataIdentifier = Montage.specialize(/** @lends DataIdentifier.prototype 
     url: {
         get: function () {
             if(!this._url) {
-                var _url = "montage-data://";
+                var _url = "mod-data://";
                 _url += this.dataService.identifier;
                 _url += "/";
-                _url += this.dataService.connectionDescriptor ? this.dataService.connectionDescriptor.name : "default";
+                _url += this.dataService.connection
+                            ? this.dataService.connection.identifier
+                                ? this.dataService.connection.identifier
+                                : this.dataService.connection.name
+                                    ? this.dataService.connection.name
+                                    : name
+                            : "default";
                 _url += "/";
                 _url += this.objectDescriptor.name;
                 _url += "/";

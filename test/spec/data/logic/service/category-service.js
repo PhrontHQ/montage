@@ -1,7 +1,10 @@
-var RawDataService = require("montage/data/service/raw-data-service").RawDataService,
+var RawDataService = require("mod/data/service/raw-data-service").RawDataService,
     CategoryNames = ["Action"];
 
 exports.CategoryService = RawDataService.specialize(/** @lends CategoryService.prototype */ {
+    supportsDataOperation: {
+        value: false
+    },
 
     fetchRawData: {
         value: function (stream) {

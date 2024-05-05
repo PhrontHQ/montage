@@ -1,8 +1,8 @@
-var Montage = require("montage/core/core").Montage,
-    MontageSerializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer,
+var Montage = require("mod/core/core").Montage,
+    MontageSerializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer,
     objects = require("spec/serialization/testobjects-v2").objects,
-    ModuleReference = require("montage/core/module-reference").ModuleReference,
-    Alias = require("montage/core/serialization/alias").Alias;
+    ModuleReference = require("mod/core/module-reference").ModuleReference,
+    Alias = require("mod/core/serialization/alias").Alias;
 
     function fakeGetSerializablePropertyNames(object, returnValues) {
         getSerializablePropertyNames = Montage.getSerializablePropertyNames;
@@ -20,7 +20,7 @@ var Montage = require("montage/core/core").Montage,
         var isElement = Element.isElement,
             element = {
                 getAttribute: function (attributeName) {
-                    if (attributeName === "data-montage-id") {
+                    if (attributeName === "data-mod-id") {
                         return id;
                     }
                 }
@@ -135,7 +135,7 @@ describe("spec/serialization/montage-serializer-element-spec", function () {
                 }
             };
 
-            object.setAttribute("data-montage-id", "id");
+            object.setAttribute("data-mod-id", "id");
 
             serialization = serializer.serializeObject(object);
 

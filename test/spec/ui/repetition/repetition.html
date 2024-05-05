@@ -33,13 +33,13 @@ POSSIBILITY OF SUCH DAMAGE.
 <head>
     <title>Repetition Spec</title>
     <script type="text/javascript" src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">{
+    <script type="text/mod-serialization">{
             "owner": {
                 "value": {}
             },
 
             "application": {
-                "prototype": "montage/core/application",
+                "prototype": "mod/core/application",
                 "values": {
                     "delegate": {"@": "repetitiontest1"}
                 }
@@ -101,158 +101,158 @@ POSSIBILITY OF SUCH DAMAGE.
                 }
             },
             "repetition1": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list1"},
                     "content": {"<-": "@repetitiontest1.list1Objects"}
                 }
             },
             "textfield1": {
-                "prototype": "spec/ui/repetition/textfield.reel[TextField]",
+                "prototype": "spec/ui/repetition/textfield.mod[TextField]",
                 "values": {
                     "element": {"#": "textfield1"},
                     "text": {"<-": "@repetition2:iteration.object.text"}
                 }
             },
             "repetition2": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list2"},
                     "content": {"<-": "@repetitiontest1.list2Objects"}
                 }
             },
             "textfield2": {
-                "prototype": "spec/ui/repetition/textfield.reel[TextField]",
+                "prototype": "spec/ui/repetition/textfield.mod[TextField]",
                 "values": {
                     "element": {"#": "textfield2"},
                     "text": {"<-": "@repetition3:iteration.object.text"}
                 }
             },
             "repetition3": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list3a"},
                     "content": {"<-": "@repetition4:iteration.object"}
                 }
             },
             "repetition4": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list3"},
                     "content": {"<-": "@repetitiontest1.list3Objects"}
                 }
             },
             "componenty1": {
-                "prototype": "spec/ui/repetition/componenty.reel[ComponentY]",
+                "prototype": "spec/ui/repetition/componenty.mod[ComponentY]",
                 "values": {
                     "element": {"#": "content3"}
                 }
             },
             "repetition6": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list4a"},
                     "content": {"<-": "@repetition5:iteration.object"}
                 }
             },
             "repetition5": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list4"},
                     "content": {"<-": "@repetitiontest1.list4Objects"}
                 }
             },
             "textfield3": {
-                "prototype": "spec/ui/repetition/textfield.reel[TextField]",
+                "prototype": "spec/ui/repetition/textfield.mod[TextField]",
                 "values": {
                     "element": {"#": "textfield4"},
                     "text": "X here"
                 }
             },
             "componentx1": {
-                "prototype": "spec/ui/repetition/componentx.reel[ComponentX]",
+                "prototype": "spec/ui/repetition/componentx.mod[ComponentX]",
                 "values": {
                     "element": {"#": "content4"},
                     "textfield": {"@": "textfield3"}
                 }
             },
             "repetition8": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list5a"},
                     "content": {"<-": "@repetition7:iteration.object"}
                 }
             },
             "repetition7": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list5"},
                     "content": {"<-": "@repetitiontest1.list5Objects"}
                 }
             },
             "componentrep1": {
-                "prototype": "spec/ui/repetition/componentrep.reel[ComponentRep]",
+                "prototype": "spec/ui/repetition/componentrep.mod[ComponentRep]",
                 "values": {
                     "element": {"#": "componentrep1"}
                 }
             },
             "componentrep2": {
-                "prototype": "spec/ui/repetition/componentrep.reel[ComponentRep]",
+                "prototype": "spec/ui/repetition/componentrep.mod[ComponentRep]",
                 "values": {
                     "element": {"#": "componentrep2"}
                 }
             },
             "componentrep3": {
-                "prototype": "spec/ui/repetition/componentrep.reel[ComponentRep]",
+                "prototype": "spec/ui/repetition/componentrep.mod[ComponentRep]",
                 "values": {
                     "element": {"#": "list6comp1"},
                     "listObjects": {"<-": "@repetition9:iteration.object.elements1"}
                 }
             },
             "componentrep4": {
-                "prototype": "spec/ui/repetition/componentrep.reel[ComponentRep]",
+                "prototype": "spec/ui/repetition/componentrep.mod[ComponentRep]",
                 "values": {
                     "element": {"#": "list6comp2"},
                     "listObjects": {"<-": "@repetition9:iteration.object.elements2"}
                 }
             },
             "repetition9": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list6"},
                     "content": {"<-": "@repetitiontest1.list6Objects"}
                 }
             },
             "textfield4": {
-                "prototype": "spec/ui/repetition/textfield.reel[TextField]",
+                "prototype": "spec/ui/repetition/textfield.mod[TextField]",
                 "values": {
                     "element": {"#": "textfield5"},
                     "text": {"<-": "@repetitiontest1.text"}
                 }
             },
             "componentx2": {
-                "prototype": "spec/ui/repetition/componentx.reel[ComponentX]",
+                "prototype": "spec/ui/repetition/componentx.mod[ComponentX]",
                 "values": {
                     "element": {"#": "content5"},
                     "textfield": {"@": "textfield4"}
                 }
             },
             "repetition10": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list7"},
                     "content": {"<-": "@repetitiontest1.list7Objects"}
                 }
             },
             "actioneventlistener1": {
-                "prototype": "montage/core/event/action-event-listener",
+                "prototype": "mod/core/event/action-event-listener",
                 "values": {
                     "handler": {"@": "repetitiontest1"},
                     "action": "listener"
                 }
             },
             "textfield5": {
-                "prototype": "spec/ui/repetition/textfield.reel[TextField]",
+                "prototype": "spec/ui/repetition/textfield.mod[TextField]",
                 "values": {
                     "element": {"#": "textfield6"}
                 },
@@ -266,34 +266,34 @@ POSSIBILITY OF SUCH DAMAGE.
                 ]
             },
             "repetition11": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list8"},
                     "content": {"<-": "@repetitiontest1.list8Objects"}
                 }
             },
             "textfield6": {
-                "prototype": "spec/ui/repetition/textfield.reel[TextField]",
+                "prototype": "spec/ui/repetition/textfield.mod[TextField]",
                 "values": {
                     "element": {"#": "textfield7"}
                 }
             },
             "repetition12": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list9"},
                     "content": {"<-": "@repetitiontest1.list9Objects"}
                 }
             },
             "componentz1": {
-                "prototype": "spec/ui/repetition/componentz.reel[ComponentZ]",
+                "prototype": "spec/ui/repetition/componentz.mod[ComponentZ]",
                 "values": {
                     "element": {"#": "componentz1"},
                     "text": "o1"
                 }
             },
             "componentz2": {
-                "prototype": "spec/ui/repetition/componentz.reel[ComponentZ]",
+                "prototype": "spec/ui/repetition/componentz.mod[ComponentZ]",
                 "values": {
                     "element": {"#": "componentz2"},
                     "text": "o2"
@@ -306,110 +306,110 @@ POSSIBILITY OF SUCH DAMAGE.
                 }
             },
             "repetition13": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list10"},
                     "content": {"<-": "@repetitiontest1.list10Objects"}
                 }
             },
             "repetitionController": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "repetitionController"},
                     "contentController": {"@": "simpleArrayController"}
                 }
             },
             "simpleArrayController": {
-                "prototype": "montage/core/range-controller",
+                "prototype": "mod/core/range-controller",
                 "values": {
                     "content": {"<-": "@repetitiontest1.simpleArrayControllerContent"}
                 }
              },
             "repetitionControllerText": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "repetitionControllerText"},
                     "value": "foo"
                 }
             },
             "repetition14": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list11"},
                     "content": [1, 2, 3]
                 }
             },
             "repetition14a": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list11a"},
                     "content": [1, 2, 3]
                 }
             },
             "repetition14b": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list11b"},
                     "content": [1, 2, 3]
                 }
             },
             "repetition14btemplate": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list11btemplate"},
                     "content": [1, 2, 3]
                 }
             },
             "text11b": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "text11b"},
                     "value": "Y"
                 }
             },
             "repetition15": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list13"},
                     "content": [1, 2, 3]
                 }
             },
             "repetition16": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list14"}
                 }
             },
             "slider": {
-                "prototype": "montage/ui/component",
+                "prototype": "mod/ui/component",
                 "values": {
                     "element": {"#": "slider"},
                     "hasTemplate": false
                 }
             },
             "repetition17": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list15"},
                     "content": []
                 }
             },
             "textfield8": {
-                "prototype": "spec/ui/repetition/textfield.reel[TextField]",
+                "prototype": "spec/ui/repetition/textfield.mod[TextField]",
                 "values": {
                     "element": {"#": "textfield8"},
                     "text": {"<-": "@repetition17:iteration.object"}
                 }
             },
             "repetition18": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list16"},
                     "content": [1, 2, 3]
                 }
             },
             "repetition19": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "list17"},
                     "content": [1, 2]
@@ -417,14 +417,14 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "listParameters": {
-                "prototype": "spec/ui/repetition/list-parameters.reel",
+                "prototype": "spec/ui/repetition/list-parameters.mod",
                 "values": {
                     "element": {"#": "listParameters"}
                 }
             },
 
             "listParametersText": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "listParametersText"},
                     "value": "Text"
@@ -432,14 +432,14 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "listParametersDecorator": {
-                "prototype": "spec/ui/repetition/list-parameters-decorator.reel",
+                "prototype": "spec/ui/repetition/list-parameters-decorator.mod",
                 "values": {
                     "element": {"#": "listParametersDecorator"}
                 }
             },
 
             "listParametersDecoratorText": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "listParametersDecoratorText"},
                     "value": "Text"
@@ -447,7 +447,7 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "listParametersDecoratorColliding": {
-                "prototype": "spec/ui/repetition/list-parameters-decorator.reel",
+                "prototype": "spec/ui/repetition/list-parameters-decorator.mod",
                 "values": {
                     "element": {"#": "listParametersDecoratorColliding"}
                 }
@@ -458,7 +458,7 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "listParametersDecoratorCollidingText": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "listParametersDecoratorCollidingText"},
                     "text": {"@": "text"}
@@ -466,14 +466,14 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "namedParameters": {
-                "prototype": "spec/ui/repetition/named-parameters.reel",
+                "prototype": "spec/ui/repetition/named-parameters.mod",
                 "values": {
                     "element": {"#": "namedParameters"}
                 }
             },
 
             "textfield9": {
-                "prototype": "spec/ui/repetition/textfield.reel[TextField]",
+                "prototype": "spec/ui/repetition/textfield.mod[TextField]",
                 "values": {
                     "element": {"#": "textfield9"},
                     "text": "left"
@@ -481,7 +481,7 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "textfield10": {
-                "prototype": "spec/ui/repetition/textfield.reel[TextField]",
+                "prototype": "spec/ui/repetition/textfield.mod[TextField]",
                 "values": {
                     "element": {"#": "textfield10"},
                     "text": "right"
@@ -489,7 +489,7 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "substitution": {
-                "prototype": "montage/ui/substitution.reel",
+                "prototype": "mod/ui/substitution.mod",
                 "values": {
                     "element": {"#": "substitution"},
                     "switchValue": "default"
@@ -497,7 +497,7 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "repetitionInSubstitution": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "repetitionInSubstitution"},
                     "content": [1, 2, 3]
@@ -505,7 +505,7 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "textInSubstitution": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "textInSubstitution"},
                     "value": {"<-": "@repetitionInSubstitution:iteration.object"}
@@ -513,14 +513,14 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "aliasRepetitionIteration": {
-                "prototype": "spec/ui/repetition/alias-repetition-iteration.reel",
+                "prototype": "spec/ui/repetition/alias-repetition-iteration.mod",
                 "values": {
                     "element": {"#": "aliasRepetitionIteration"}
                 }
             },
 
             "text100": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "text100"},
                     "value": {"<-": "@aliasRepetitionIteration:i.object"}
@@ -528,14 +528,14 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "aliasNestedRepetitionIteration": {
-                "prototype": "spec/ui/repetition/alias-nested-repetition-iteration.reel",
+                "prototype": "spec/ui/repetition/alias-nested-repetition-iteration.mod",
                 "values": {
                     "element": {"#": "aliasNestedRepetitionIteration"}
                 }
             },
 
             "text110": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "text110"},
                     "value": {"<-": "@aliasNestedRepetitionIteration:i.object + '-' + @aliasNestedRepetitionIteration:j.object"}
@@ -543,14 +543,14 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "aliasChainedRepetitionIteration": {
-                "prototype": "spec/ui/repetition/alias-chained-repetition-iteration.reel",
+                "prototype": "spec/ui/repetition/alias-chained-repetition-iteration.mod",
                 "values": {
                     "element": {"#": "aliasChainedRepetitionIteration"}
                 }
             },
 
             "text120": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "text120"},
                     "value": {"<-": "@aliasChainedRepetitionIteration:i.object"}
@@ -558,14 +558,14 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "aliasMixedRepetitionIteration": {
-                "prototype": "spec/ui/repetition/alias-mixed-repetition-iteration.reel",
+                "prototype": "spec/ui/repetition/alias-mixed-repetition-iteration.mod",
                 "values": {
                     "element": {"#": "aliasMixedRepetitionIteration"}
                 }
             },
 
             "aliasMixedRepetitionIterationText": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "aliasMixedRepetitionIterationText"},
                     "value": {"<-": "@aliasMixedRepetitionIteration:inner.object"}
@@ -573,7 +573,7 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "aliasMixedRepetitionIterationHeader": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "aliasMixedRepetitionIterationHeader"},
                     "value": {"<-": "@aliasMixedRepetitionIteration:header.object"}
@@ -581,7 +581,7 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "repetitionWithObjectAtCurrentIteration": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "repetitionWithObjectAtCurrentIteration"},
                     "content": ["a"]
@@ -589,7 +589,7 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "objectAtCurrentIteration": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "objectAtCurrentIteration"},
                     "value": {"<-": "@repetitionWithObjectAtCurrentIteration:iteration.object"}
@@ -597,7 +597,7 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "domRepetition": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "domRepetition"},
                     "content": [1, 2, 3],
@@ -606,14 +606,14 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "tableElementA": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "tableElementA"},
                     "value": {"<-": "@tableRepetition:iteration.object.a"}
                 }
             },
             "tableElementB": {
-                "prototype": "montage/ui/text.reel",
+                "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "tableElementB"},
                     "value": {"<-": "@tableRepetition:iteration.object.b"}
@@ -621,7 +621,7 @@ POSSIBILITY OF SUCH DAMAGE.
             },
 
             "tableRepetition": {
-                "prototype": "montage/ui/repetition.reel",
+                "prototype": "mod/ui/repetition.mod",
                 "values": {
                     "element": {"#": "tableRepetition"},
                     "content": [
@@ -635,41 +635,41 @@ POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
     <h2>Static Repetition</h2>
-    <ul data-montage-id="list1" class="list1">
+    <ul data-mod-id="list1" class="list1">
         <li>Hello Friend!</li>
     </ul>
 
     <h2>Component Repetition</h2>
-    <ul data-montage-id="list2" class="list2">
-        <li>Name: <span data-montage-id="textfield1" class="textfield1"></span></li>
+    <ul data-mod-id="list2" class="list2">
+        <li>Name: <span data-mod-id="textfield1" class="textfield1"></span></li>
     </ul>
 
     <h2>Nested Repetition</h2>
-    <ul data-montage-id="list3" class="list3">
+    <ul data-mod-id="list3" class="list3">
         <li>
             Inner List:
-            <ul data-montage-id="list3a" class="list3a">
-                <li><span data-montage-id="textfield2" class="textfield2"></span></li>
+            <ul data-mod-id="list3a" class="list3a">
+                <li><span data-mod-id="textfield2" class="textfield2"></span></li>
             </ul>
         </li>
     </ul>
 
     <h2>SCC Nested Repetition</h2>
-    <ul data-montage-id="list4" class="list4">
+    <ul data-mod-id="list4" class="list4">
         <li>
-            <ul data-montage-id="list4a" class="list4a">
-                <li><div data-montage-id="content3" class="content3"></div></li>
+            <ul data-mod-id="list4a" class="list4a">
+                <li><div data-mod-id="content3" class="content3"></div></li>
             </ul>
         </li>
     </ul>
 
     <h2>DCC Nested Repetition</h2>
-    <ul data-montage-id="list5" class="list5">
+    <ul data-mod-id="list5" class="list5">
         <li>
-            <ul data-montage-id="list5a" class="list5a">
+            <ul data-mod-id="list5a" class="list5a">
                 <li>
-                    <div data-montage-id="content4" class="content4">
-                        <span data-montage-id="textfield4" class="textfield4"></span>
+                    <div data-mod-id="content4" class="content4">
+                        <span data-mod-id="textfield4" class="textfield4"></span>
                     </div>
                 </li>
             </ul>
@@ -677,97 +677,97 @@ POSSIBILITY OF SUCH DAMAGE.
     </ul>
 
     <h2>Component Repetition 1</h2>
-    <div data-montage-id="componentrep1" class="componentrep1"></div>
+    <div data-mod-id="componentrep1" class="componentrep1"></div>
 
     <h2>Component Repetition 2</h2>
-    <div data-montage-id="componentrep2" class="componentrep2"></div>
+    <div data-mod-id="componentrep2" class="componentrep2"></div>
 
     <h2>Repetition With Components That Have Repetitions</h2>
-    <ul data-montage-id="list6" class="list6">
+    <ul data-mod-id="list6" class="list6">
         <li>
             Iteration
-            <span data-montage-id="list6comp1" class="list6comp1"></span>
-            <span data-montage-id="list6comp2" class="list6comp2"></span>
+            <span data-mod-id="list6comp1" class="list6comp1"></span>
+            <span data-mod-id="list6comp2" class="list6comp2"></span>
         </li>
     </ul>
 
     <h2>Binding Repetitions</h2>
-    <ul data-montage-id="list7" class="list7">
+    <ul data-mod-id="list7" class="list7">
         <li>
-            <div data-montage-id="content5" class="content5">
-                <span data-montage-id="textfield5" class="textfield5"></span>
+            <div data-mod-id="content5" class="content5">
+                <span data-mod-id="textfield5" class="textfield5"></span>
             </div>
         </li>
     </ul>
 
     <h2>ActionEventListener Repetitions</h2>
-    <ul data-montage-id="list8" class="list8">
+    <ul data-mod-id="list8" class="list8">
         <li>
             Iteration
-            <span data-montage-id="textfield6" class="textfield6"></span>
+            <span data-mod-id="textfield6" class="textfield6"></span>
         </li>
     </ul>
 
     <h2>Repetitions With Direct Components</h2>
-    <div data-montage-id="list9" class="list9">
-        <span data-montage-id="textfield7" class="textfield7"></span>
+    <div data-mod-id="list9" class="list9">
+        <span data-mod-id="textfield7" class="textfield7"></span>
     </div>
 
     <h2>Repetitions in the same Component but with different external objects</h2>
-    <div data-montage-id="componentz1" class="componentz1"></div>
-    <div data-montage-id="componentz2" class="componentz2"></div>
+    <div data-mod-id="componentz1" class="componentz1"></div>
+    <div data-mod-id="componentz2" class="componentz2"></div>
 
     <h2>Repetitions with async loadComponentTree components</h2>
-    <ul data-montage-id="list10" class="list10">
+    <ul data-mod-id="list10" class="list10">
         <li>
-            <span data-montage-id="componentslowload1" class="componentslowload1"></span>
+            <span data-mod-id="componentslowload1" class="componentslowload1"></span>
         </li>
     </ul>
 
     <h2>Repetitions with content controller</h2>
-    <ul data-montage-id="repetitionController" class="repetitionController">
-        <li data-montage-id="repetitionControllerText" class="repetitionControllerText"></li>
+    <ul data-mod-id="repetitionController" class="repetitionController">
+        <li data-mod-id="repetitionControllerText" class="repetitionControllerText"></li>
     </ul>
 
     <h2>Repetition with innerTemplate change</h2>
-    <ul data-montage-id="list11" class="list11">
+    <ul data-mod-id="list11" class="list11">
         <li>X</li>
     </ul>
 
-    <ul data-montage-id="list11a" class="list11a">
+    <ul data-mod-id="list11a" class="list11a">
         <li>X</li>
     </ul>
 
-    <ul data-montage-id="list11b" class="list11b">
+    <ul data-mod-id="list11b" class="list11b">
         <li>X</li>
     </ul>
-    <ul data-montage-id="list11btemplate" class="list11btemplate">
-        <li data-montage-id="text11b"></li>
+    <ul data-mod-id="list11btemplate" class="list11btemplate">
+        <li data-mod-id="text11b"></li>
     </ul>
 
     <h2>Repetition created programmatically</h2>
-    <ul class="list12" data-montage-id="list12">
+    <ul class="list12" data-mod-id="list12">
         <li>A</li>
     </ul>
 
     <h2>Repetition changed programmatically</h2>
-    <ul class="list13" data-montage-id="list13">
+    <ul class="list13" data-mod-id="list13">
         <li>B</li>
     </ul>
 
     <h2>Repetition changed after added to the draw list but before the draw</h2>
-    <div class="list14" data-montage-id="list14">
-        <span data-montage-id="slider"></span>
+    <div class="list14" data-mod-id="list14">
+        <span data-mod-id="slider"></span>
     </div>
 
-    <div class="list15" data-montage-id="list15">
-        <span data-montage-id="textfield8"></span>
+    <div class="list15" data-mod-id="list15">
+        <span data-mod-id="textfield8"></span>
     </div>
 
     <h2>Repetition with objects defined by value in the serialization</h2>
-    <ul class="list16" data-montage-id="list16">
+    <ul class="list16" data-mod-id="list16">
         <li>
-            <ul class="list17" data-montage-id="list17">
+            <ul class="list17" data-mod-id="list17">
                 <li>
                 </li>
             </ul>
@@ -775,77 +775,77 @@ POSSIBILITY OF SUCH DAMAGE.
     </ul>
 
     <h2>Iteration Template with parameters</h2>
-    <div data-montage-id="listParameters" class="listParameters">
-        <span data-montage-id="listParametersText"></span>
+    <div data-mod-id="listParameters" class="listParameters">
+        <span data-mod-id="listParametersText"></span>
     </div>
 
-    <div data-montage-id="listParametersDecorator" class="listParametersDecorator">
-        <span data-montage-id="listParametersDecoratorText"></span>
+    <div data-mod-id="listParametersDecorator" class="listParametersDecorator">
+        <span data-mod-id="listParametersDecoratorText"></span>
     </div>
 
-    <div data-montage-id="listParametersDecoratorColliding" class="listParametersDecoratorColliding">
-        <span data-montage-id="listParametersDecoratorCollidingText"></span>
+    <div data-mod-id="listParametersDecoratorColliding" class="listParametersDecoratorColliding">
+        <span data-mod-id="listParametersDecoratorCollidingText"></span>
     </div>
 
-    <div data-montage-id="namedParameters" class="namedParameters">
-        <span data-montage-id="textfield9" data-arg="leftSide"></span>
-        <span data-montage-id="textfield10" data-arg="rightSide"></span>
+    <div data-mod-id="namedParameters" class="namedParameters">
+        <span data-mod-id="textfield9" data-arg="leftSide"></span>
+        <span data-mod-id="textfield10" data-arg="rightSide"></span>
     </div>
 
     <h2>Repetition inside Substitution</h2>
 
-    <div data-montage-id="substitution">
+    <div data-mod-id="substitution">
         <div data-arg="default">
-            <div data-montage-id="repetitionInSubstitution">
-                <span data-montage-id="textInSubstitution" class="textInSubstitution"></span>
+            <div data-mod-id="repetitionInSubstitution">
+                <span data-mod-id="textInSubstitution" class="textInSubstitution"></span>
             </div>
         </div>
     </div>
 
     <h2>Template Properties Alias - repetition iteration</h2>
 
-    <div data-montage-id="aliasRepetitionIteration" class="aliasRepetitionIteration">
-        <div data-montage-id="text100" class="text100"></div>
+    <div data-mod-id="aliasRepetitionIteration" class="aliasRepetitionIteration">
+        <div data-mod-id="text100" class="text100"></div>
     </div>
 
     <h2>Template Properties Alias - repetition nested iteration</h2>
 
-    <div data-montage-id="aliasNestedRepetitionIteration" class="aliasNestedRepetitionIteration">
-        <div data-montage-id="text110" class="text110"></div>
+    <div data-mod-id="aliasNestedRepetitionIteration" class="aliasNestedRepetitionIteration">
+        <div data-mod-id="text110" class="text110"></div>
     </div>
 
     <h2>Template Properties Alias - chained alias</h2>
 
-    <div data-montage-id="aliasChainedRepetitionIteration" class="aliasChainedRepetitionIteration">
-        <div data-montage-id="text120" class="text120"></div>
+    <div data-mod-id="aliasChainedRepetitionIteration" class="aliasChainedRepetitionIteration">
+        <div data-mod-id="text120" class="text120"></div>
     </div>
 
     <h2>Template Properties Alias - alias used, defined and instantiated in different places</h2>
 
-    <div data-montage-id="aliasMixedRepetitionIteration" class="aliasMixedRepetitionIteration">
-        <span data-arg="inner" data-montage-id="aliasMixedRepetitionIterationText" class="innerText"></span>
-        <span data-arg="header" data-montage-id="aliasMixedRepetitionIterationHeader" class="header"></span>
+    <div data-mod-id="aliasMixedRepetitionIteration" class="aliasMixedRepetitionIteration">
+        <span data-arg="inner" data-mod-id="aliasMixedRepetitionIterationText" class="innerText"></span>
+        <span data-arg="header" data-mod-id="aliasMixedRepetitionIterationHeader" class="header"></span>
     </div>
 
     <h2>Using objectAtCurrentIteration should cause a deprecation warning</h2>
 
-    <div data-montage-id="repetitionWithObjectAtCurrentIteration" class="repetitionWithObjectAtCurrentIteration">
-        <div data-montage-id="objectAtCurrentIteration" class="objectAtCurrentIteration"></div>
+    <div data-mod-id="repetitionWithObjectAtCurrentIteration" class="repetitionWithObjectAtCurrentIteration">
+        <div data-mod-id="objectAtCurrentIteration" class="objectAtCurrentIteration"></div>
     </div>
 
     <h2>DOM Repetition</h2>
 
-    <ul data-montage-id="domRepetition">
+    <ul data-mod-id="domRepetition">
         <li>
             Item being repeated
         </li>
     </ul>
 
     <h2>Table Repetition</h2>
-    <table data-montage-id="tableRepetition">
+    <table data-mod-id="tableRepetition">
         <tr>
-            <td><span data-montage-id="tableElementA"></span></td>
-            <td><span data-montage-id="tableElementB"></span></td>
+            <td><span data-mod-id="tableElementA"></span></td>
+            <td><span data-mod-id="tableElementB"></span></td>
         </tr>
     </table>
 </body>

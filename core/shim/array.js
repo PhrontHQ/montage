@@ -1,7 +1,7 @@
 /**
  * Defines standardized shims to intrinsic `Array` object.
  * @see {external:Array}
- * @module montage/core/shim/array
+ * @module mod/core/shim/array
  */
 
 /**
@@ -41,7 +41,7 @@ Object.defineProperty(Array.prototype,"compact", {
     value: function () {
         var u, i=-1, j=-1,length=this.length;
         while(++j<length) {
-            if((this[j] !== u)) { 
+            if((this[j] !== u)) {
                 this[++i]=this[j];
             }
         }

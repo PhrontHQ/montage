@@ -1,7 +1,7 @@
 
-var Montage = require("montage").Montage,
-    RadioButtonController = require("montage/core/radio-button-controller").RadioButtonController,
-    AbstractRadioButton = require("montage/ui/base/abstract-radio-button").AbstractRadioButton;
+var Montage = require("mod/core/core").Montage,
+    RadioButtonController = require("mod/core/radio-button-controller").RadioButtonController,
+    AbstractRadioButton = require("mod/ui/base/abstract-radio-button").AbstractRadioButton;
 
 describe("core/radio-button-controller-spec", function () {
     var InputRadio = AbstractRadioButton.specialize( {}),

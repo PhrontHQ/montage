@@ -1,6 +1,6 @@
 /*global require,exports,describe,it,expect */
-var Montage = require("montage").Montage,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader,
+var Montage = require("mod/core/core").Montage,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader,
     BOOTSTRAPPING = 0,
     LOADING = 1,
     LOADED = 2;
@@ -59,7 +59,7 @@ TestPageLoader.queueTest("loader/loader-test", function (testPage) {
             var loader = test.templateObjects.owner,
                 main = loader._mainComponent;
 
-            expect(main.parentComponent).toBe(main.rootComponent);
+            expect(main.parentComponent).toBe(main.rootComponent.bodyComponent);
         });
     });
 });

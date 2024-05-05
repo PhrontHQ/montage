@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage;
-var AbstractToggleButton = require("montage/ui/base/abstract-toggle-button").AbstractToggleButton;
+var Montage = require("mod/core/core").Montage;
+var AbstractToggleButton = require("mod/ui/base/abstract-toggle-button").AbstractToggleButton;
 var MockDOM = require("mocks/dom");
 
 AbstractToggleButton.prototype.hasTemplate = false;
@@ -70,7 +70,7 @@ describe("test/base/abstract-toggle-button-spec", function () {
             it("should add the corresponding class name to classList when enabled is false", function () {
                 aToggleButton.enabled = false;
 
-                expect(aToggleButton.classList.contains("montage--disabled")).toBe(true);
+                expect(aToggleButton.classList.contains("mod--disabled")).toBe(true);
             });
         });
 
@@ -136,7 +136,7 @@ describe("test/base/abstract-toggle-button-spec", function () {
             it("should add the corresponding class name to classList when enabled is false", function () {
                 aToggleButton.pressed = true;
 
-                expect(aToggleButton.classList.contains("montage-ToggleButton--pressed")).toBe(true);
+                expect(aToggleButton.classList.contains("mod-ToggleButton--pressed")).toBe(true);
             });
         });
     });

@@ -1,10 +1,10 @@
 {
 	"name": "package",
     "mappings": {
-        "montage": "../../../../.."
+        "mod": "../../../../.."
     },
     "dependencies": {
         "dependency": "*",
-        "montage": "*"
+        "mod": "*"
     }
 }

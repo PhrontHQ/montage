@@ -3,7 +3,7 @@
 <head>
     <title>Montage Hello</title>
     <link rel="stylesheet" href="main.css">
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "owner": {
             "values": {
@@ -11,7 +11,7 @@
             }
         },
         "myData": {
-            "prototype": "montage/ui/text.reel",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "myData"},
                 "value": {"<-": "@owner.myData"}
@@ -21,8 +21,8 @@
     </script>
 </head>
 <body>
-    <div data-montage-id="owner" class="Main">
-        <span data-montage-id="myData"></span>
+    <div data-mod-id="owner" class="Main">
+        <span data-mod-id="myData"></span>
     </div>
 </body>
 </html>

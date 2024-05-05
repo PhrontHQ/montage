@@ -1,6 +1,6 @@
 /**
- * @module montage/core/event/action-event-listener
- * @requires montage/core/core
+ * @module mod/core/event/action-event-listener
+ * @requires mod/core/core
  */
 var Montage = require("../core").Montage;
 

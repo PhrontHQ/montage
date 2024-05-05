@@ -1,11 +1,11 @@
 /*global require, exports*/
 
 /**
- * @module montage/ui/base/abstract-image.reel
+ * @module mod/ui/base/abstract-image.mod
  */
 var Component = require("../component").Component,
     Url = require("../../core/mini-url"),
-    Map = require("collections/map");
+    Map = require("core/collections/map");
 
     if (typeof window !== "undefined") { // client-side
         Map = window.Map || Map;
@@ -21,7 +21,7 @@ exports.AbstractImage = Component.specialize( /** @lends AbstractImage# */ {
 
     constructor: {
         value: function AbstractImage() {
-            if(this.constructor === AbstractImage) {
+            if(this.constructor === exports.AbstractImage) {
                 throw new Error("AbstractImage cannot be instantiated.");
             }
 

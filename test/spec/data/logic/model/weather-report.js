@@ -1,6 +1,6 @@
-var Montage = require("montage").Montage,
-    ObjectDescriptor = require("montage/core/meta/object-descriptor").ObjectDescriptor,
-    ModuleReference = require("montage/core/module-reference").ModuleReference;
+var Montage = require("mod/core/core").Montage,
+    ObjectDescriptor = require("mod/core/meta/object-descriptor").ObjectDescriptor,
+    ModuleReference = require("mod/core/module-reference").ModuleReference;
 
 exports.WeatherReport = WeatherReport = Montage.specialize(/** @lends AreaBriefReport.prototype */ {
     temp: {

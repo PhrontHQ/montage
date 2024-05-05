@@ -1,8 +1,8 @@
-var Montage = require("montage/core/core").Montage,
-    MontageSerializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer,
+var Montage = require("mod/core/core").Montage,
+    MontageSerializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer,
     objects = require("spec/serialization/testobjects-v2").objects,
-    ModuleReference = require("montage/core/module-reference").ModuleReference,
-    Alias = require("montage/core/serialization/alias").Alias;
+    ModuleReference = require("mod/core/module-reference").ModuleReference,
+    Alias = require("mod/core/serialization/alias").Alias;
 
     function fakeGetSerializablePropertyNames(object, returnValues) {
         getSerializablePropertyNames = Montage.getSerializablePropertyNames;
@@ -15,7 +15,7 @@ var Montage = require("montage/core/core").Montage,
             }
         });
     }
-    
+
     function createFakeModuleReference(id, _require) {
         return new ModuleReference().initWithIdAndRequire(id, _require || require);
     }
@@ -39,6 +39,7 @@ describe("spec/serialization/montage-serializer-spec", function () {
         it("should serialize native types", function () {
             var object = {
                     string: "string",
+                    date: new Date('05 October 2011 14:48 UTC'),
                     number: 42,
                     regexp: /regexp/gi,
                     array: [1, 2, 3],
@@ -52,6 +53,7 @@ describe("spec/serialization/montage-serializer-spec", function () {
                 object: {
                     value: {
                         string: "string",
+                        date: "2011-10-05T14:48:00.000Z",
                         number: 42,
                         regexp: {"/": {source: "regexp", flags: "gi"}},
                         array: {"@": "array"},
@@ -65,6 +67,9 @@ describe("spec/serialization/montage-serializer-spec", function () {
                 },
                 string: {
                     value: "string"
+                },
+                date: {
+                    value: "2011-10-05T14:48:00.000Z"
                 },
                 number: {
                     value: 42
@@ -351,7 +356,7 @@ describe("spec/serialization/montage-serializer-spec", function () {
 
                 expectedSerialization = {
                     root: {
-                        value: {"%": "montage/core/module-reference"}
+                        value: {"%": "mod/core/module-reference"}
                     }
                 };
 

@@ -1,0 +1,92 @@
+{
+    "root": {
+        "prototype": "../../core/meta/module-object-descriptor",
+        "values": {
+            "name": "DataObject",
+            "propertyDescriptors": [
+                {"@": "originId"},
+                {"@": "isTemplate"},
+                {"@": "templateName"},
+                {"@": "templateDescription"},
+                {"@": "creationDate"},
+                {"@": "modificationDate"},
+                {"@": "publicationDate"}
+            ],
+            "objectDescriptorModule": {
+                "%": "./data-object.mjson"
+            },
+            "exportName": "DataObject",
+            "module": {
+                "%": "./data-object"
+            }
+        }
+    },
+
+    "originId": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "originId",
+            "valueType": "string",
+            "isSearchable": true,
+            "description": "The primaryKey from a different system a Data Object maay have come from originally"
+        }
+    },
+
+    "isTemplate": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "isTemplate",
+            "valueType": "boolean",
+            "defaultValue": false,
+            "isSearchable": true
+        }
+    },
+
+    "templateName": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "templateName",
+            "isLocalizable": true,
+            "isUnique": true,
+            "valueType": "string"
+        }
+    },
+
+    "templateDescription": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "templateDescription",
+            "isLocalizable": true,
+            "valueType": "string"
+        }
+    },
+
+    "creationDate": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "creationDate",
+            "valueDescriptor": {"@": "DateDescriptor"},
+            "mandatory": true,
+            "description": "The time a data object was created"
+        }
+    },
+    "modificationDate": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "modificationDate",
+            "valueDescriptor": {"@": "DateDescriptor"},
+             "mandatory": true
+       }
+    },
+   "publicationDate": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "publicationDate",
+            "valueDescriptor": {"@": "DateDescriptor"}
+        }
+    },
+    "DateDescriptor": {
+        "object": "../../core/date.mjson"
+    }
+
+}

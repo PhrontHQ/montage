@@ -28,9 +28,9 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage,
-    Point = require("montage/core/geometry/point").Point,
-    CubicBezier = require("montage/core/geometry/cubic-bezier").CubicBezier;
+var Montage = require("mod/core/core").Montage,
+    Point = require("mod/core/geometry/point").Point,
+    CubicBezier = require("mod/core/geometry/cubic-bezier").CubicBezier;
 
 describe("geometry/cubicbezier-spec",
 function () {

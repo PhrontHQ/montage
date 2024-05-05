@@ -41,10 +41,10 @@ POSSIBILITY OF SUCH DAMAGE.
     <script src="../../../../montage.js" data-package="../../../"></script>
     <!-- normalize for different browsers' positioning quirks, for "should return correct position" tests -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.2/normalize.min.css"/>
-    <script type="text/montage-serialization">
+    <script type="text/mod-serialization">
     {
         "application": {
-            "prototype": "montage/core/application",
+            "prototype": "mod/core/application",
             "values": {
                 "delegate": {"@": "test"}
             }
@@ -64,7 +64,7 @@ POSSIBILITY OF SUCH DAMAGE.
             }
         },
         "pageLoaded": {
-            "prototype": "montage/ui/text.reel",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "text"},
                 "value": "Loaded"
@@ -99,28 +99,28 @@ POSSIBILITY OF SUCH DAMAGE.
     </style>
 </head>
 <body>
-    <h1 data-montage-id="convertPoint1">Lorem Ipsum</h1>
+    <h1 data-mod-id="convertPoint1">Lorem Ipsum</h1>
 
-    <p data-montage-id="convertPoint2">Lorem Ipsum</p>
+    <p data-mod-id="convertPoint2">Lorem Ipsum</p>
 
-    <p data-montage-id="convertPoint3">Lorem Ipsum <a>dolor sit amet</a></p>
+    <p data-mod-id="convertPoint3">Lorem Ipsum <a>dolor sit amet</a></p>
 
-    <p data-montage-id="convertPoint4">Lorem Ipsum <a class="border">dolor sit amet</a></p>
+    <p data-mod-id="convertPoint4">Lorem Ipsum <a class="border">dolor sit amet</a></p>
 
     <p class="translate">
-        Lorem Ipsum <a data-montage-id="convertPoint5" class="border">dolor sit amet</a>
+        Lorem Ipsum <a data-mod-id="convertPoint5" class="border">dolor sit amet</a>
     </p>
 
     <p class="translate">
-        Lorem Ipsum <a data-montage-id="convertPoint6" class="border">dolor sit amet,<br>consectetur</a>
+        Lorem Ipsum <a data-mod-id="convertPoint6" class="border">dolor sit amet,<br>consectetur</a>
     </p>
 
     <p class="scale-rotate">
-        Lorem Ipsum <a class="border">dolor sit amet,<br><span data-montage-id="convertPoint7">consectetur</span></a>
+        Lorem Ipsum <a class="border">dolor sit amet,<br><span data-mod-id="convertPoint7">consectetur</span></a>
     </p>
 
-    <span data-montage-id="text" class="classOne"></span>
-    <svg data-montage-id="svg" class="classTwo" xmlns="http://www.w3.org/2000/svg" version="1.1" width="300"
+    <span data-mod-id="text" class="classOne"></span>
+    <svg data-mod-id="svg" class="classTwo" xmlns="http://www.w3.org/2000/svg" version="1.1" width="300"
          height="300">
         <defs>
             <linearGradient id="r-c9ca85a05ecd40fe8d826de7ae31fcc4" x1="0" y1="0" x2="1" y2="0">

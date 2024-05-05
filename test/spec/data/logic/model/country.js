@@ -1,4 +1,4 @@
-var Montage = require("montage").Montage;
+var Montage = require("mod/core/core").Montage;
 
 /**
  * @class ActionMovie
@@ -9,5 +9,5 @@ exports.Country = Montage.specialize({
     name: {
         value: undefined
     }
-    
+
 });

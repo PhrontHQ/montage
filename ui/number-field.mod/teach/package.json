@@ -1,0 +1,10 @@
+{
+    "name": "teach-number-field-mod",
+    "version": "0.1.0",
+    "dependencies": {
+        "mod": "*"
+    },
+    "mappings": {
+        "mod": "../../../"
+    }
+}

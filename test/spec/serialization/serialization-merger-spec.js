@@ -2,10 +2,10 @@
 Copyright (c) 2013, António Afonso
 All Rights Reserved.
 </copyright> */
-var Montage = require("montage").Montage,
-    SerializationMerger = require("montage/core/serialization/serialization").SerializationMerger,
-    Serialization = require("montage/core/serialization/serialization").Serialization,
-    MontageLabeler = require("montage/core/serialization/serializer/montage-labeler").MontageLabeler;
+var Montage = require("mod/core/core").Montage,
+    SerializationMerger = require("mod/core/serialization/serialization").SerializationMerger,
+    Serialization = require("mod/core/serialization/serialization").Serialization,
+    MontageLabeler = require("mod/core/serialization/serializer/montage-labeler").MontageLabeler;
 
 describe("reel/serialization/serialization-merger-spec", function () {
     var merger;
@@ -163,7 +163,7 @@ describe("reel/serialization/serialization-merger-spec", function () {
                             }
                         },
                         "object3": {
-                            "prototype": "montage/ui/component",
+                            "prototype": "mod/ui/component",
                             "values": {
                                 "value": {"@": "object2"}
                             }
@@ -177,7 +177,7 @@ describe("reel/serialization/serialization-merger-spec", function () {
                         },
 
                         "object3": {
-                            "prototype": "montage/ui/component",
+                            "prototype": "mod/ui/component",
                             "values": {
                                 "value": {"@": "object1"}
                             }
@@ -216,7 +216,7 @@ describe("reel/serialization/serialization-merger-spec", function () {
                             }
                         },
                         "object3": {
-                            "prototype": "montage/ui/component",
+                            "prototype": "mod/ui/component",
                             "values": {
                                 "value": {"@": "object2"}
                             }
@@ -234,7 +234,7 @@ describe("reel/serialization/serialization-merger-spec", function () {
                             }
                         },
                         "object3": {
-                            "prototype": "montage/ui/component",
+                            "prototype": "mod/ui/component",
                             "values": {
                                 "value": {"@": "object1"}
                             }
@@ -461,7 +461,7 @@ describe("reel/serialization/serialization-merger-spec", function () {
                 labeler.addLabel("object2");
 
                 SerializationMerger.mergeSerializations(serialization1, serialization2, delegate);
-                expect(serialization1.getSerializationObject().object2).toBeUndefined();  
+                expect(serialization1.getSerializationObject().object2).toBeUndefined();
             });
         });
     });
@@ -584,8 +584,8 @@ describe("reel/serialization/serialization-merger-spec", function () {
             foundCollisions = SerializationMerger._createCollisionTable(labels1, labels2, collisionTable, labeler);
             expect(foundCollisions).toBe(false);
         });
-    }); 
-    
+    });
+
 
     describe("creation of collision template", function () {
         it("template", function () {

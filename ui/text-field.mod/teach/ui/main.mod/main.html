@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="main.css">
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "main"}
+            }
+        },
+
+        "native": {
+            "prototype": "mod/ui/text-field.mod",
+            "values": {
+                "element": {"#": "text-field-native"}
+            }
+        }
+
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="main" class="Main">
+        <header>Teach TextField Mod</header>
+
+        <section class="text-fields">
+            <input type="text" data-mod-id="text-field-native" class="text-field native"/>
+
+            <!-- @benoit add a custom one with content editable set to true ?-->
+
+        </section>
+
+    </div>
+</body>
+</html>

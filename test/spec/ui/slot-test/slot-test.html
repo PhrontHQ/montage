@@ -34,164 +34,164 @@ POSSIBILITY OF SUCH DAMAGE.
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Slot Test</title>
     <script src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">{
+    <script type="text/mod-serialization">{
 
     "slot1": {
-        "prototype": "montage/ui/slot.reel",
+        "prototype": "mod/ui/slot.mod",
         "values": {
             "element": {"#": "slot"}
         }
     },
     "slider1": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "slider"}
         }
     },
     "dynamictext1": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "componentInPageWithElement"},
             "value": "This is a component in the page with an element"
         }
     },
     "dynamictext2": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "sliderValue"},
             "value": {"<-": "@slider1.value"}
         }
     },
     "dynamictext3": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "value": "Hey there, I'm the foo component!"
         }
     },
     "photoviewer1": {
-        "prototype": "spec/ui/slot-test/photo-viewer.reel",
+        "prototype": "spec/ui/slot-test/photo-viewer.mod",
         "values": {
             "photo": {"<-": "@test.currentMedia"}
         }
     },
     "videoviewer1": {
-        "prototype": "spec/ui/slot-test/video-viewer.reel",
+        "prototype": "spec/ui/slot-test/video-viewer.mod",
         "values": {
             "video": {"<-": "@test.currentMedia"}
         }
     },
     "slider2": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "value": 20
         }
     },
         "button1Composer": {
-            "prototype": "montage/composer/press-composer",
+            "prototype": "mod/composer/press-composer",
             "values": {
                 "component": {"@": "button1"},
                 "identifier": "componentWithNoElementButton"
             }
         },
     "button1": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "componentWithNoElementButton"},
             "identifier": "componentWithNoElementButton"
         }
     },
         "button2Composer": {
-            "prototype": "montage/composer/press-composer",
+            "prototype": "mod/composer/press-composer",
             "values": {
                 "component": {"@": "button2"},
                 "identifier": "componentInPageWithElementButton"
             }
         },
     "button2": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "componentInPageWithElementButton"},
             "identifier": "componentInPageWithElementButton"
         }
     },
         "button3Composer": {
-            "prototype": "montage/composer/press-composer",
+            "prototype": "mod/composer/press-composer",
             "values": {
                 "component": {"@": "button3"},
                 "identifier": "barButton"
             }
         },
     "button3": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "barButton"}
         }
     },
         "button4Composer": {
-            "prototype": "montage/composer/press-composer",
+            "prototype": "mod/composer/press-composer",
             "values": {
                 "component": {"@": "button4"},
                 "identifier": "bazButton"
             }
         },
     "button4": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "bazButton"},
             "identifier": "bazButton"
         }
     },
         "button5Composer": {
-            "prototype": "montage/composer/press-composer",
+            "prototype": "mod/composer/press-composer",
             "values": {
                 "component": {"@": "button5"},
                 "identifier": "quxButton"
             }
         },
     "button5": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "quxButton"},
             "identifier": "quxButton"
         }
     },
         "button6Composer": {
-            "prototype": "montage/composer/press-composer",
+            "prototype": "mod/composer/press-composer",
             "values": {
                 "component": {"@": "button6"},
                 "identifier": "emptyButton"
             }
         },
     "button6": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "emptyButton"},
             "identifier": "emptyButton"
         }
     },
         "button7Composer": {
-            "prototype": "montage/composer/press-composer",
+            "prototype": "mod/composer/press-composer",
             "values": {
                 "component": {"@": "button7"},
                 "identifier": "videoButton"
             }
         },
     "button7": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "videoButton"},
             "identifier": "videoButton"
         }
     },
         "button8Composer": {
-            "prototype": "montage/composer/press-composer",
+            "prototype": "mod/composer/press-composer",
             "values": {
                 "component": {"@": "button8"},
                 "identifier": "photoButton"
             }
         },
     "button8": {
-        "prototype": "montage/ui/text.reel",
+        "prototype": "mod/ui/text.mod",
         "values": {
             "element": {"#": "photoButton"},
             "identifier": "photoButton"
@@ -220,7 +220,7 @@ POSSIBILITY OF SUCH DAMAGE.
         }
     },
     "application": {
-        "prototype": "montage/core/application",
+        "prototype": "mod/core/application",
         "values": {
             "delegate": {"@": "test"}
         }
@@ -242,33 +242,33 @@ POSSIBILITY OF SUCH DAMAGE.
 </head>
 <body>
 
-<div data-montage-id="slotChooser">
-    <button class="button" data-montage-id="componentWithNoElementButton">Show Component With No Element (Text)</button>
-    <button class="button" data-montage-id="barButton">Show Bar Component in Slot</button>
-    <button class="button" data-montage-id="componentInPageWithElementButton">Show Component In Page With Element</button>
-    <button class="button" data-montage-id="bazButton">Show Baz Element in Slot</button>
-    <button class="button" data-montage-id="quxButton">Show Qux Element in Slot</button>
-    <button class="button" data-montage-id="emptyButton">Show Nothing in Slot</button>
+<div data-mod-id="slotChooser">
+    <button class="button" data-mod-id="componentWithNoElementButton">Show Component With No Element (Text)</button>
+    <button class="button" data-mod-id="barButton">Show Bar Component in Slot</button>
+    <button class="button" data-mod-id="componentInPageWithElementButton">Show Component In Page With Element</button>
+    <button class="button" data-mod-id="bazButton">Show Baz Element in Slot</button>
+    <button class="button" data-mod-id="quxButton">Show Qux Element in Slot</button>
+    <button class="button" data-mod-id="emptyButton">Show Nothing in Slot</button>
 
-    <button class="button" data-montage-id="videoButton">Switch to "video"</button>
-    <button class="button" data-montage-id="photoButton">Switch to "photo"</button>
+    <button class="button" data-mod-id="videoButton">Switch to "video"</button>
+    <button class="button" data-mod-id="photoButton">Switch to "photo"</button>
 </div>
 
-<div data-montage-id="slot">
+<div data-mod-id="slot">
     <div>Content inside the slot from the template</div>
 </div>
 
-<div data-montage-id="componentInPageWithElement"></div>
+<div data-mod-id="componentInPageWithElement"></div>
 
-<div data-montage-id="bazContent">This is some content initially outside the slot, but available to put inside the slot</div>
+<div data-mod-id="bazContent">This is some content initially outside the slot, but available to put inside the slot</div>
 
-<div data-montage-id="quxContent">
+<div data-mod-id="quxContent">
     <p>This is some content initially outside the slot, with a component inside, but available to put inside the slot</p>
 
-    <div data-montage-id="slider"></div>
+    <div data-mod-id="slider"></div>
 </div>
 
-<div data-montage-id="sliderValue"></div>
+<div data-mod-id="sliderValue"></div>
 
 </body>
 </html>

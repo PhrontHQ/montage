@@ -1,0 +1,16 @@
+.modalOverlay-mod-modalMask,
+.montage-ModalOverlay-modalMask {
+    display: none;
+    position: absolute;
+    z-index: 6999;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: gray;
+}
+
+.ModalOverlay-mod-modalMask--visible,
+.montage-ModalOverlay-modalMask--visible {
+    display: block;
+}

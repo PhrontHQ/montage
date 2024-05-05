@@ -28,21 +28,21 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
+var Montage = require("mod/core/core").Montage,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
 
 TestPageLoader.queueTest("ui/condition", {src: "spec/ui/condition/condition-test-page.html", firstDraw: false}, function (conditionTestPage) {
     describe("ui/condition-spec", function () {
         describe("condition with false condition and removal strategy hide", function () {
-            it("upon initial load content should have a class of montage-invisible", function () {
+            it("upon initial load content should have a class of mod-invisible", function () {
                 var conditionDiv = conditionTestPage.iframe.contentDocument.getElementsByClassName("fetchHide")[0];
-                expect(conditionDiv.classList.contains("montage-invisible")).toBeTruthy();
+                expect(conditionDiv.classList.contains("mod-invisible")).toBeTruthy();
             });
-            it("should remove montage-invisible class when condition becomes true", function (done) {
+            it("should remove mod-invisible class when condition becomes true", function (done) {
                 conditionTestPage.test.hideValue = true;
                 conditionTestPage.waitForDraw().then(function (){
                     var conditionDiv = conditionTestPage.iframe.contentDocument.getElementsByClassName("fetchHide")[0];
-                    expect(conditionDiv.classList.contains("montage-invisible")).toBeFalsy();
+                    expect(conditionDiv.classList.contains("mod-invisible")).toBeFalsy();
                     done();
                 });
             });

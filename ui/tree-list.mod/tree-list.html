@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="tree-list.css">
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "owner"},
+                "_placeholder": {"#": "placeholder"},
+                "_treeListWrapper": {"#": "treeListWrapper"},
+                "repetition": {"@": "repetition"},
+                "repetitionController": {"@": "repetitionController"}
+            }
+        },
+
+        "repetitionController": {
+            "prototype": "core/range-controller"
+        },
+
+        "repetition": {
+            "prototype": "ui/repetition.mod",
+            "values": {
+                "element": {"#": "repetition"},
+                "contentController": {"@": "repetitionController"}
+            }
+        },
+
+        ":iteration": {
+           "alias": "@repetition:iteration"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="owner" class="mod-TreeList">
+        <div data-mod-id="treeListWrapper" class="mod-TreeList-wrapper">
+            <div data-mod-id="repetition" class="mod-TreeList-repetition">
+                <div class="mod-TreeList-nodeWrapper">
+                    <div data-param="*"></div>
+                </div>
+            </div>
+        </div>
+        <div data-mod-id="placeholder" class="mod-TreeList-placeholder over"></div>
+    </div>
+</body>
+</html>

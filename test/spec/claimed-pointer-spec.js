@@ -28,9 +28,9 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 </copyright> */
-var Montage = require("montage").Montage;
-var Component = require("montage/ui/component").Component;
-var TestPageLoader = require("montage-testing/testpageloader").TestPageLoader;
+var Montage = require("mod/core/core").Montage;
+var Component = require("mod/ui/component").Component;
+var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
 
 TestPageLoader.queueTest("claimed-pointer-test/claimed-pointer-test", function (testPage) {
     var test;
@@ -45,7 +45,7 @@ TestPageLoader.queueTest("claimed-pointer-test/claimed-pointer-test", function (
 
         beforeEach(function () {
             var testWindow = testPage.iframe.contentWindow;
-            eventManager = testWindow.mr("montage/core/application").application.eventManager;
+            eventManager = testWindow.mr("mod/core/application").application.eventManager;
             eventManager.reset();
 
             componentA = testPage.test.componentA;

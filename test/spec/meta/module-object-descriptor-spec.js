@@ -1,21 +1,21 @@
-var ModuleObjectDescriptor = require("montage/core/meta/module-object-descriptor").ModuleObjectDescriptor;
-var ModuleReference = require("montage/core/module-reference").ModuleReference;
+var ModuleObjectDescriptor = require("mod/core/meta/module-object-descriptor").ModuleObjectDescriptor;
+var ModuleReference = require("mod/core/module-reference").ModuleReference;
 
-var Serializer = require("montage/core/serialization/serializer/montage-serializer").MontageSerializer;
-var Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
+var Serializer = require("mod/core/serialization/serializer/montage-serializer").MontageSerializer;
+var Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer;
 
 describe("meta/module-object-descriptor-spec", function () {
 
     var objectDescriptorSerialization = {
         "objectDescriptor_one_a": {
-            "prototype": "montage/core/meta/property-descriptor",
+            "prototype": "mod/core/meta/property-descriptor",
             "values": {
                 "name": "a",
                 "objectDescriptor": {"@": "root"}
             }
         },
         "root": {
-            "prototype": "montage/core/meta/module-object-descriptor",
+            "prototype": "mod/core/meta/module-object-descriptor",
             "values": {
                 "name": "One",
                 "propertyDescriptors": [
@@ -28,19 +28,19 @@ describe("meta/module-object-descriptor-spec", function () {
     };
 
     var objectDescriptorSerialization = {
-        "objectDescriptor_one_a": {
-            "prototype": "montage/core/meta/property-descriptor",
+        "One_a": {
+            "prototype": "mod/core/meta/property-descriptor",
             "values": {
                 "name": "a",
                 "objectDescriptor": {"@": "root"}
             }
         },
         "root": {
-            "prototype": "montage/core/meta/module-object-descriptor",
+            "prototype": "mod/core/meta/module-object-descriptor",
             "values": {
                 "name": "One",
                 "propertyDescriptors": [
-                    {"@": "objectDescriptor_one_a"}
+                    {"@": "One_a"}
                 ],
                 "maxAge": 240,
                 "module": {"%": "spec/meta/module-object-descriptor-spec"},
@@ -95,8 +95,8 @@ describe("meta/module-object-descriptor-spec", function () {
         describe("getObjectDescriptorWithModuleId", function () {
             it("caches the objectDescriptors", function (done) {
                 require.loadPackage({location: "spec/meta/blueprint/package"}).then(function (require) {
-                    return ModuleObjectDescriptor.getObjectDescriptorWithModuleId("thing.meta", require).then(function (objectDescriptor1) {
-                        return ModuleObjectDescriptor.getObjectDescriptorWithModuleId("thing.meta", require)
+                    return ModuleObjectDescriptor.getObjectDescriptorWithModuleId("thing.mjson", require).then(function (objectDescriptor1) {
+                        return ModuleObjectDescriptor.getObjectDescriptorWithModuleId("thing.mjson", require)
                         .then(function (objectDescriptor2) {
                             expect(objectDescriptor1).toBe(objectDescriptor2);
                         });
@@ -110,7 +110,7 @@ describe("meta/module-object-descriptor-spec", function () {
 
             it("correctly loads objectDescriptors with the same internal module ID cross package", function (done) {
                 require.loadPackage({location: "spec/meta/blueprint/package"}).then(function (require) {
-                    return ModuleObjectDescriptor.getObjectDescriptorWithModuleId("thing.meta", require)
+                    return ModuleObjectDescriptor.getObjectDescriptorWithModuleId("thing.mjson", require)
                         .then(function (objectDescriptor) {
                         expect(objectDescriptor.parent).not.toBe(objectDescriptor);
                     }, function (err) {

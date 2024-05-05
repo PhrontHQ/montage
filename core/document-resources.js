@@ -72,22 +72,30 @@ var DocumentResources = Montage.specialize({
 
     _populateWithDocument: {
         value: function (_document) {
-            var scripts = _document.querySelectorAll("script"),
-                forEach = Array.prototype.forEach;
 
-            forEach.call(scripts, function (script) {
-                if (script.src) {
-                    this._addResource(this.normalizeUrl(script.src));
+            /*
+                getElementsByTagName() returns HTML Collection which is cached and returned, which is faster than querySelectorAll() that creates a Node List every time.
+            */
+
+            //var scripts = _document.querySelectorAll("script"),
+            var scripts = _document.getElementsByTagName("script"),
+                i, countI;
+
+            for (i = 0, countI = scripts.length; i < countI; i++) {
+                if (scripts[i].src) {
+                    this._addResource(this.normalizeUrl(scripts[i].src));
                 }
-            }, this);
+            }
 
-            var links = _document.querySelectorAll("link");
+            var links = _document.getElementsByTagName("link");
+            //var links = _document.querySelectorAll("link");
 
-            forEach.call(links, function (link) {
-                if (link.rel === "stylesheet") {
-                    this._addResource(this.normalizeUrl(link.href));
+
+            for (i = 0, countI = links.length; i < countI; i++) {
+                if (links[i].rel === "stylesheet") {
+                    this._addResource(this.normalizeUrl(links[i].href));
                 }
-            }, this);
+            }
         }
     },
 
@@ -323,8 +331,7 @@ var DocumentResources = Montage.specialize({
                     req.send();
                     req.listener = resolve;
                 })
-                .bind(this)
-                .then(function loadHandler(event) {
+                .then((event) => {
                     this.setResourcePreloaded(url);
                     event.target.removeEventListener("load", event.target.listener);
                     event.target.removeEventListener("error", event.target.listener);

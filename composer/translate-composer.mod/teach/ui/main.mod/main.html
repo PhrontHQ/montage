@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "main"}
+            }
+        },
+
+        "cases": {
+            "prototype": "mod/ui/repetition.mod",
+            "values": {
+                "element": {"#": "cases"},
+                "isSelectionEnabled": true,
+                "content": {"<-": "@owner.configuration.cases"}
+            }
+        },
+
+        "case": {
+            "prototype": "mod/ui/component",
+            "values": {
+                "element": {"#": "case"},
+                "hasTemplate": false,
+                "case": {"<-": "@cases:iteration.object"}
+            }
+        },
+
+        "caseLabel": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "case-label"},
+                "value": {"<-": "@cases:iteration.object.label"}
+            }
+        },
+
+        "casesSubstitution": {
+            "prototype": "mod/ui/substitution.mod",
+            "values": {
+                "element": {"#": "cases-substitution"},
+                "switchValue": {"<-": "@cases.selection.0.arg"}
+            }
+        },
+
+        "draggableHitBox": {
+            "prototype": "../draggable-square.mod",
+            "values": {
+                "element": {"#": "drag-box"}
+            }
+        },
+
+        "outerDraggableHitBox": {
+            "prototype": "../draggable-square.mod",
+            "values": {
+                "element": {"#": "outer-drag-box"}
+            }
+        },
+
+        "innerDraggableHitBox": {
+            "prototype": "../draggable-square.mod",
+            "values": {
+                "element": {"#": "inner-drag-box"}
+            }
+        },
+
+        "captions": {
+            "prototype": "mod/ui/repetition.mod",
+            "values": {
+                "element": {"#": "captions"},
+                "isSelectionEnabled": true,
+                "content": {"<-": "@cases.selection.0.captions"}
+            }
+        },
+
+         "caption": {
+            "prototype": "../caption.mod",
+            "values": {
+                "element": {"#": "caption"},
+                "caption": {"<-": "@captions:iteration.object"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="main" class="TranslateComposer">
+        <nav data-mod-id="cases" class="TranslateComposer-cases">
+            <div data-mod-id="case" class="TranslateComposer-case">
+                <div data-mod-id="case-label" class="TranslateComposerCase-label"></div>
+            </div>
+        </nav>
+
+        <div data-mod-id="cases-substitution" class="TranslateComposer-substitution">
+            <div data-arg="drag-box">
+                <div data-mod-id="drag-box-axis"></div>
+                <div data-mod-id="drag-box"></div>
+            </div>
+
+            <div data-arg="nested-drag-box">
+                <div data-mod-id="nested-drag-box-axis"></div>
+                <div data-mod-id="outer-drag-box" class="OuterDragBox">
+                    <div data-mod-id="inner-drag-box"></div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div data-mod-id="captions" class="Captions">
+                <div data-mod-id="caption" class="Caption"></div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

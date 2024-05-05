@@ -1,6 +1,6 @@
 /**
- * @module montage/ui/window
- * @requires montage/core/core
+ * @module mod/ui/window
+ * @requires mod/core/core
  */
 var Montage = require("../core/core").Montage;
 
@@ -147,7 +147,7 @@ exports.MontageWindow = Montage.specialize( /** @lends MontageWindow.prototype #
                             }
                         } else {
                             theWindow.focused = false;
-                        }   
+                        }
                     }
                 }
             } else {

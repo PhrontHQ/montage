@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script type="text/mod-serialization">
+        {
+            "owner": {
+                "values": {
+                    "element": {"#": "main"},
+                    "cascadingList": {"@": "cascadingList"}
+                }
+            },
+
+            "cascadingList": {
+                "prototype": "mod/ui/cascading-list.mod",
+                "values": {
+                    "element": {"#": "cascadingList"},
+                    "delegate": {"<-": "@owner"},
+                    "root": {"<-": "@owner.root"},
+                    "shouldDispatchCascadingListEvents": true
+                },
+                "listeners": [
+                    {
+                        "type": "action",
+                        "listener": {"@": "owner"}
+                    }
+                ]
+            }
+        }
+    </script>
+</head>
+<body>
+    <div data-mod-id="main" class="Main">
+        <header>Teach Cascading List Mod</header>
+        <section>
+            <div data-mod-id="cascadingList"></div>
+        </section>
+    </div>
+</body>
+</html>

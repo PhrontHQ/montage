@@ -1,5 +1,5 @@
 /**
- * @module ui/alert.reel
+ * @module ui/alert.mod
  */
 var AbstractAlert = require("./abstract-alert").AbstractAlert,
     Promise = require("../../core/promise").Promise;
@@ -8,15 +8,16 @@ var AbstractAlert = require("./abstract-alert").AbstractAlert,
  * @class Alert
  * @extends Component
  */
-var AbstractConfirm = exports.AbstractConfirm = AbstractAlert.specialize(/** @lends AbstractAlert# */ {
 
-    constructor: {
-        value: function AbstractConfirm() {
-            if (this.constructor === AbstractConfirm) {
-                throw new Error("AbstractConfirm cannot be instantiated.");
-            }
+var AbstractConfirm = exports.AbstractConfirm = class AbstractConfirm extends AbstractAlert {
+    constructor() {
+        if (this.constructor === exports.AbstractConfirm) {
+            throw new Error("AbstractConfirm cannot be instantiated.");
         }
-    },
+    }
+}
+
+AbstractConfirm.addClassProperties({
 
     cancelButton: {
         value: null

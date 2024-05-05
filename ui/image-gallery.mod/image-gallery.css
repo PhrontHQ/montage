@@ -1,0 +1,15 @@
+.image-gallery-mod {
+    position: relative;
+    min-width: 1px;
+    min-height: 1px;
+}
+
+.image-gallery-mod-flow .montage-flow-Repetition > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: auto;
+    height: auto;
+}

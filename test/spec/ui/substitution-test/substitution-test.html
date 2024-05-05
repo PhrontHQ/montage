@@ -4,20 +4,20 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Substitution Test</title>
     <script src="../../../../montage.js" data-package="../../../"></script>
-    <script type="text/montage-serialization">{
+    <script type="text/mod-serialization">{
         "owner": {
             "prototype": "spec/ui/substitution-test/substitution-test"
         },
 
         "substitution1": {
-            "prototype": "montage/ui/substitution.reel",
+            "prototype": "mod/ui/substitution.mod",
             "values": {
                 "element": {"#": "substitution1"}
             }
         },
 
         "substitution2": {
-            "prototype": "montage/ui/substitution.reel",
+            "prototype": "mod/ui/substitution.mod",
             "values": {
                 "element": {"#": "substitution2"},
                 "switchValue": "one"
@@ -25,28 +25,28 @@
         },
 
         "substitution3": {
-            "prototype": "montage/ui/substitution.reel",
+            "prototype": "mod/ui/substitution.mod",
             "values": {
                 "element": {"#": "substitution3"}
             }
         },
 
         "one3": {
-            "prototype": "montage/ui/text.reel",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "one3"}
             }
         },
 
         "two3": {
-            "prototype": "montage/ui/text.reel",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "two3"}
             }
         },
 
         "text1": {
-            "prototype": "montage/ui/text.reel",
+            "prototype": "mod/ui/text.mod",
             "values": {
                 "element": {"#": "text1"},
                 "value": "Rogue Text"
@@ -54,14 +54,14 @@
         },
 
         "substitution4": {
-            "prototype": "montage/ui/substitution.reel",
+            "prototype": "mod/ui/substitution.mod",
             "values": {
                 "element": {"#": "substitution4"}
             }
         },
 
         "substitution5": {
-            "prototype": "montage/ui/substitution.reel",
+            "prototype": "mod/ui/substitution.mod",
             "values": {
                 "element": {"#": "substitution5"},
                 "switchValue": "one"
@@ -69,7 +69,7 @@
         },
 
         "substitution6": {
-            "prototype": "montage/ui/substitution.reel",
+            "prototype": "mod/ui/substitution.mod",
             "values": {
                 "element": {"#": "substitution6"},
                 "switchValue": "one"
@@ -77,14 +77,14 @@
         },
 
         "foo1": {
-            "prototype": "spec/ui/substitution-test/foo.reel",
+            "prototype": "spec/ui/substitution-test/foo.mod",
             "values": {
                 "element": {"#": "foo1"}
             }
         },
 
         "substitution7": {
-            "prototype": "montage/ui/substitution.reel",
+            "prototype": "mod/ui/substitution.mod",
             "values": {
                 "element": {"#": "substitution7"},
                 "switchValue": "one"
@@ -92,7 +92,7 @@
         },
 
         "foo2": {
-            "prototype": "spec/ui/substitution-test/foo.reel",
+            "prototype": "spec/ui/substitution-test/foo.mod",
             "values": {
                 "element": {"#": "foo2"}
             }
@@ -100,7 +100,7 @@
     }</script>
 </head>
 <body>
-    <div data-montage-id="substitution1">
+    <div data-mod-id="substitution1">
         <div data-arg="one">
             <h1 class="title1">Title 1</h1>
         </div>
@@ -109,7 +109,7 @@
         </div>
     </div>
 
-    <div data-montage-id="substitution2">
+    <div data-mod-id="substitution2">
         <div data-arg="one">
             <h1 class="title1">Title 1</h1>
         </div>
@@ -118,27 +118,27 @@
         </div>
     </div>
 
-    <div data-montage-id="substitution3">
-        <div data-arg="one" data-montage-id="one3" class="one"></div>
-        <div data-arg="two" data-montage-id="two3" class="two"></div>
+    <div data-mod-id="substitution3">
+        <div data-arg="one" data-mod-id="one3" class="one"></div>
+        <div data-arg="two" data-mod-id="two3" class="two"></div>
     </div>
 
-    <span data-montage-id="text1"></span>
-    <div data-montage-id="substitution4">
+    <span data-mod-id="text1"></span>
+    <div data-mod-id="substitution4">
     </div>
 
-    <div data-montage-id="substitution5">
+    <div data-mod-id="substitution5">
         <div data-arg="one" class="one"></div>
         <div data-arg="two" class="two"></div>
     </div>
 
-    <div data-montage-id="substitution6">
-        <div data-arg="one" data-montage-id="foo1"></div>
+    <div data-mod-id="substitution6">
+        <div data-arg="one" data-mod-id="foo1"></div>
         <div data-arg="two" class="two"></div>
     </div>
 
-    <div data-montage-id="substitution7">
-        <div data-arg="one" data-montage-id="foo2"></div>
+    <div data-mod-id="substitution7">
+        <div data-arg="one" data-mod-id="foo2"></div>
         <div data-arg="two"></div>
     </div>
 </body>

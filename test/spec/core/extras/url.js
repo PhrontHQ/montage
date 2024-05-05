@@ -1,8 +1,8 @@
-var Montage = require("montage").Montage,
-    URL = require("montage/core/mini-url");
+var Montage = require("mod/core/core").Montage,
+    URL = require("mod/core/mini-url");
 
 /*
-var MockDOM = require("mocks/dom"),    
+var MockDOM = require("mocks/dom"),
     _document = MockDOM.document();
 */
 // TODO MockDOM

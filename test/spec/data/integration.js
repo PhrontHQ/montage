@@ -1,4 +1,4 @@
-var Deserializer = require("montage/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+var Deserializer = require("mod/core/serialization/deserializer/montage-deserializer").MontageDeserializer,
     serialization = require("spec/data/logic/service/montage-data.mjson");
 
 

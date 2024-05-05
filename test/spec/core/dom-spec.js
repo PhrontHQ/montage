@@ -28,8 +28,8 @@
  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
  </copyright> */
-var TestPageLoader = require("montage-testing/testpageloader").TestPageLoader,
-    Point = require("montage/core/geometry/point").Point,
+var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader,
+    Point = require("mod/core/geometry/point").Point,
     convertPointFromNodeToPage = Point.convertPointFromNodeToPage,
     convertPointFromPageToNode = Point.convertPointFromPageToNode;
 

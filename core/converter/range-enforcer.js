@@ -1,13 +1,13 @@
 /**
- * @module montage/core/converter/range-enforcer
- * @requires montage/core/converter/converter
+ * @module mod/core/converter/range-enforcer
+ * @requires mod/core/converter/converter
  */
 var Converter = require("./converter").Converter;
 
 function _clamp(value) {
 
     return value <= this.min ? this.min : value >= this.max ? this.max : value;
-    
+
 }
 
 /**
@@ -32,5 +32,5 @@ var RangeEnforcer = exports.RangeEnforcer = Converter.specialize({
     revert: {
         value: _clamp
     }
-    
+
 });

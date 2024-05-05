@@ -1,6 +1,6 @@
-var Montage = require("montage").Montage,
-    Component = require("montage/ui/component").Component,
-    SwipeComposer = require("montage/composer/swipe-composer").SwipeComposer;
+var Montage = require("mod/core/core").Montage,
+    Component = require("mod/ui/component").Component,
+    SwipeComposer = require("mod/composer/swipe-composer").SwipeComposer;
 
 exports.Swipe = Montage.specialize( {
 
@@ -8,7 +8,8 @@ exports.Swipe = Montage.specialize( {
         value: function () {
             var dummyComponent = this.dummyComponent = new Component();
             dummyComponent.hasTemplate = false;
-            dummyComponent.element = document.body;
+            dummyComponent.element = document.createElement("div");
+            document.body.appendChild(dummyComponent.element);
             dummyComponent.element.style.height = "400px";
             dummyComponent.element.style.width = "400px";
             dummyComponent.attachToParentComponent();

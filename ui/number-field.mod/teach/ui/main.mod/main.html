@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="main.css">
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "main"}
+            }
+        },
+
+        "native": {
+            "prototype": "mod/ui/number-field.mod",
+            "values": {
+                "element": {"#": "number-field-native"}
+            }
+        }
+
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="main" class="Main">
+        <header>Teach Number Field Mod</header>
+
+        <section class="number-fields">
+            <input type="number" data-mod-id="number-field-native" class="number-field native" />
+
+            <!-- @benoit: add a custom one with content editable set to true or the one in digit ?-->
+        </section>
+    </div>
+</body>
+</html>

@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "montage/core/core[Montage]",
+        "prototype": "mod/core/core[Montage]",
         "values": {
             "name": "RootObjectDescriptor"
         }

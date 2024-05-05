@@ -1,5 +1,5 @@
-var Montage = require("montage").Montage,
-    TextInput = require("montage/ui/text-input").TextInput,
+var Montage = require("mod/core/core").Montage,
+    TextInput = require("mod/ui/text-input").TextInput,
     MockDOM = require("mocks/dom");
 
 describe("test/ui/text-input-spec", function () {
@@ -83,7 +83,7 @@ describe("test/ui/text-input-spec", function () {
             it("should add the corresponding class name to classList when enabled is false", function () {
                 aTextField.enabled = false;
 
-                expect(aTextField.classList.contains("montage--disabled")).toBe(true);
+                expect(aTextField.classList.contains("mod--disabled")).toBe(true);
             });
         });
     });

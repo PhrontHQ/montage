@@ -1,7 +1,7 @@
-var Montage = require("montage").Montage,
-    TestPageLoader = require("montage-testing/testpageloader").TestPageLoader,
-    Promise = require("montage/core/promise").Promise,
-    Application = require("montage/core/application").application;
+var Montage = require("mod/core/core").Montage,
+    TestPageLoader = require("mod-testing/testpageloader").TestPageLoader,
+    Promise = require("mod/core/promise").Promise,
+    Application = require("mod/core/application").application;
 
 TestPageLoader.queueTest("repetition/selection-test/selection-test", function (testPage) {
     describe("ui/repetition-selection-spec", function () {
@@ -152,7 +152,7 @@ TestPageLoader.queueTest("repetition/selection-test/selection-test", function (t
                 testPage.waitForDraw(2);
                 var addedIndex = nameController.content.length - 1;
                 expect(repetition.selectedIndexes).toEqual([addedIndex]);
-                
+
                 testPage.waitForDraw(2).then(function () {
                     var selectedListElement = querySelectorAll("ul>li")[addedIndex];
                     expect(selectedListElement.classList.contains("selected")).toBeTruthy();
@@ -191,7 +191,7 @@ TestPageLoader.queueTest("repetition/selection-test/selection-test", function (t
 
                     repetition.contentController.selection = [repetition.iterations[0].object];
                     expect(repetition.iterations[0].selected).toBeTruthy();
-                   
+
                     repetition.isSelectionEnabled = false;
                     for (i = 0; i < 6; i++) {
                         expect(repetition.iterations[i].selected).toBeFalsy();

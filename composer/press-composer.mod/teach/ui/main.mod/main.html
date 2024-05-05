@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "main"}
+            }
+        },
+
+        "cases": {
+            "prototype": "mod/ui/repetition.mod",
+            "values": {
+                "element": {"#": "cases"},
+                "isSelectionEnabled": true,
+                "content": {"<-": "@owner.configuration.cases"}
+            }
+        },
+
+        "case": {
+            "prototype": "mod/ui/component",
+            "values": {
+                "element": {"#": "case"},
+                "hasTemplate": false,
+                "case": {"<-": "@cases:iteration.object"}
+            }
+        },
+
+        "caseLabel": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "case-label"},
+                "value": {"<-": "@cases:iteration.object.label"}
+            }
+        },
+
+        "casesSubstitution": {
+            "prototype": "mod/ui/substitution.mod",
+            "values": {
+                "element": {"#": "cases-substitution"},
+                "switchValue": {"<-": "@cases.selection.0.arg"}
+            }
+        },
+
+        "hitBox": {
+            "prototype": "../square.mod",
+            "values": {
+                "element": {"#": "hit-box"},
+                "label": "Hit Me!"
+            }
+        },
+
+        "nestHitBox1": {
+            "prototype": "../square.mod",
+            "values": {
+                "element": {"#": "nest-hit-box-1"}
+            }
+        },
+
+        "nestHitBox2": {
+            "prototype": "../square.mod",
+            "values": {
+                "element": {"#": "nest-hit-box-2"}
+            }
+        },
+
+        "nestHitBox3": {
+            "prototype": "../square.mod",
+            "values": {
+                "element": {"#": "nest-hit-box-3"}
+            }
+        },
+
+        "draggableHitBox": {
+            "prototype": "../draggable-square.mod",
+            "values": {
+                "element": {"#": "drag-hit-box"}
+            }
+        },
+
+        "regularList": {
+            "prototype": "../list.mod",
+            "values": {
+                "element": {"#": "regular-list"},
+                "content": {"<-": "@owner.numbers"}
+            }
+        },
+
+        "regularListNumberLabel": {
+            "prototype": "mod/ui/text.mod",
+            "values": {
+                "element": {"#": "regular-list-number-label"},
+                "value": {"<-": "@regularList:iteration.object"}
+            }
+        },
+
+        "innerPressList": {
+            "prototype": "../list.mod",
+            "values": {
+                "element": {"#": "inner-press-list"},
+                "content": {"<-": "@owner.numbers"}
+            }
+        },
+
+        "innerPressListButton": {
+            "prototype": "mod/ui/button.mod",
+            "values": {
+                "element": {"#": "inner-press-list-number-label"},
+                "label": {"<-": "@innerPressList:iteration.object"}
+            }
+        },
+
+        "pressComposerLayers": {
+            "prototype": "../press-composer-layers.mod",
+            "values": {
+                "element": {"#": "press-composer-layers"}
+            }
+        },
+
+        "captions": {
+            "prototype": "mod/ui/repetition.mod",
+            "values": {
+                "element": {"#": "captions"},
+                "isSelectionEnabled": true,
+                "content": {"<-": "@cases.selection.0.captions"}
+            }
+        },
+
+        "caption": {
+            "prototype": "../caption.mod",
+            "values": {
+                "element": {"#": "caption"},
+                "caption": {"<-": "@captions:iteration.object"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="main" class="PressComposer">
+        <nav data-mod-id="cases" class="PressComposer-cases">
+            <div data-mod-id="case" class="PressComposer-case">
+                <div data-mod-id="case-label" class="PressComposerCase-label"></div>
+            </div>
+        </nav>
+
+        <div data-mod-id="cases-substitution" class="PressComposer-substitution">
+            <div data-mod-id="hit-box" data-arg="hit-box"></div>
+            <div data-arg="nest-hit-box">
+                <div data-mod-id="nest-hit-box-1">
+                    <div data-mod-id="nest-hit-box-2" class="NestBox">
+                        <div data-mod-id="nest-hit-box-3" class="NestBox"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div data-mod-id="drag-hit-box" data-arg="drag-hit-box"></div>
+            <div data-mod-id="regular-list" data-arg="regular-list">
+                <div data-mod-id="regular-list-number-label" class="Cell"></div>
+            </div>
+            <div data-mod-id="inner-press-list" data-arg="inner-press-list" class="InnerPressList">
+                <div class="Cell">
+                    <button data-mod-id="inner-press-list-number-label"></button>
+                </div>
+            </div>
+            <div data-mod-id="press-composer-layers" data-arg="press-composer-layers"></div>
+        </div>
+        <footer>
+            <div data-mod-id="captions" class="Captions">
+                <div data-mod-id="caption" class="Caption"></div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

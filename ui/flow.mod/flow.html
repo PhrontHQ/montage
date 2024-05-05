@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="flow.css">
+    <script type="text/mod-serialization">
+        {
+            "flowRepetition": {
+                "prototype": "ui/repetition.mod",
+                "values": {
+                    "element": {
+                        "#": "montage-flow-repetition"
+                    },
+                    "isSelectionEnabled": {"<-": "@owner.isSelectionEnabled"},
+                    "allowsMultipleSelection": {"<-": "@owner.allowsMultipleSelection"},
+                    "visibleIndexes": {"<-": "@owner._visibleIndexes"},
+                    "contentController": {"<-": "@owner.contentController"}
+                }
+            },
+            "flowTranslateComposer": {
+                "prototype": "ui/flow.mod/flow-translate-composer",
+                "values": {
+                    "flow": {"@": "owner"},
+                    "invertAxis": true,
+                    "allowFloats": true,
+                    "minScroll": 0,
+                    "maxScroll": {"<-": "@owner.length"},
+                    "_momentumDuration": {"<-": "@owner.momentumDuration"},
+                    "translateStride": {"<-": "@owner.stride"},
+                    "scrollingMode": {"<-": "@owner.scrollingMode"},
+                    "linearScrollingVector": {"<-": "@owner.linearScrollingVector"},
+                    "isLimitedToSingleStride": {"<-": "@owner.isLimitedToSingleStride"},
+                    "delegate": {"<-": "@owner"}
+                }
+            },
+            "slot": {
+                "prototype": "ui/slot.mod",
+                "values": {
+                    "element": {"#": "montage-flow-slot"},
+                    "content": {"<->": "@owner.slotContent"}
+                }
+            },
+            "owner": {
+                "values": {
+                    "element": {
+                        "#": "montage-flow"
+                    },
+                    "_repetition": {
+                        "@": "flowRepetition"
+                    },
+                    "_flowTranslateComposer": {
+                        "@": "flowTranslateComposer"
+                    },
+                    "_cameraElement": {
+                        "#": "montage-flow-camera"
+                    },
+                    "scroll": {"<->": "@flowTranslateComposer.scroll"},
+                    "selection": {"<->": "@flowRepetition.contentController.selection"},
+                    "selectedIndexes": {"<-": "@flowRepetition.selectedIndexes"},
+                    "activeIndexes": {"<-": "@flowRepetition.activeIndexes"},
+                    "draggedSlideIndex": {"<-": "@flowTranslateComposer._closerIndex"},
+                    "_firstIteration": {"<-": "@flowRepetition._drawnIterations.0"}
+                }
+            },
+            ":iteration": {
+               "alias": "@flowRepetition:iteration"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div data-mod-id="montage-flow" class="flow-mod montage-Flow">
+        <div data-mod-id="montage-flow-camera" class=" flow-mod-camera montage-Flow-camera">
+            <div data-mod-id="montage-flow-repetition" class="flow-mod-repetition montage-Flow-Repetition">
+                <div data-mod-id="wrapper">
+                    <div data-param="*"></div>
+                </div>
+            </div>
+            <div data-mod-id="montage-flow-slot" class="flow-mod-slot montage-Flow-Slot"></div>
+        </div>
+    </div>
+</body>
+</html>

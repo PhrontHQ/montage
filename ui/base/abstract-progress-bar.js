@@ -10,7 +10,7 @@ var AbstractControl = require("./abstract-control").AbstractControl;
 var AbstractProgressBar = exports.AbstractProgressBar = AbstractControl.specialize(/** @lends AbstractProgressBar# */ {
 
     constructor: {
-        value: function AbstractProgressBar() {
+        value: function exports.AbstractProgressBar() {
             if (this.constructor === AbstractProgressBar) {
                 throw new Error("AbstractProgressBar cannot be instantiated.");
             }
@@ -20,7 +20,7 @@ var AbstractProgressBar = exports.AbstractProgressBar = AbstractControl.speciali
 });
 
 
-AbstractProgressBar.addAttributes( /** @lends module:montage/base/ui/abstract-progress-bar.AbstractProgressBar# */ {
+AbstractProgressBar.addAttributes( /** @lends module:mod/base/ui/abstract-progress-bar.AbstractProgressBar# */ {
 
     /**
      The current value displayed but the progress control.
