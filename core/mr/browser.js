@@ -99,7 +99,7 @@ bootstrap("require/browser", function (require) {
         return location;
     };
 
-    Require.overlays = ["window", "browser", "montage"];
+    Require.overlays = ["window", "browser", "mod", "montage"];
 
     // Due to crazy variabile availability of new and old XHR APIs across
     // platforms, this implementation registers every known name for the event
@@ -483,8 +483,8 @@ bootstrap("require/browser", function (require) {
         } else {
             Loader = Require.XhrLoader;
         }
-        return Require.MappingsLoader(config,
-            Require.ModLoader(
+        return Require.ModLoader(config,
+            Require.MappingsLoader(
                 config,
                 Require.LocationLoader(
                     config,
@@ -495,5 +495,17 @@ bootstrap("require/browser", function (require) {
                 )
             )
         );
+        // return Require.MappingsLoader(config,
+        //     Require.ModLoader(
+        //         config,
+        //         Require.LocationLoader(
+        //             config,
+        //             Require.MemoizedLoader(
+        //                 config,
+        //                 Loader(config)
+        //             )
+        //         )
+        //     )
+        // );
     };
 });
