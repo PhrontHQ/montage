@@ -51,7 +51,7 @@
 }
 
 
-.PressComposerLayers-Overlay.mod-Overlay--visible {
+.PressComposerLayers-Overlay.overlay-mod--visible {
     opacity: 1;
     display: block;
     pointer-events: all;
