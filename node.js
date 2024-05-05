@@ -61,7 +61,7 @@ MontageBoot.loadPackage = function (location, config, callback) {
     }
 
     config = config || {};
-    config.overlays = config.overlays || ["node", "server", "montage"];
+    config.overlays = config.overlays || ["node", "server", "mod"];
     config.location = location;
     // config.location = URL.resolve(Require.getLocation(), location);
     // config.location = Require.getLocation();
@@ -248,7 +248,7 @@ MontageBoot.TemplateLoader = function (config, load) {
                     }
                 }, function (error) {
                     // not a problem
-                    // montage/ui/loader.mod/loader.html": Error: ENOENT: no such file or directory
+                    // mod/ui/loader.mod/loader.html": Error: ENOENT: no such file or directory
                     console.log(error.message);
                 });
             });
