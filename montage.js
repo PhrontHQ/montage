@@ -20,6 +20,7 @@
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define('montage', [], factory);
+        define('mod', [], factory);
     } else if (typeof module === 'object' && module.exports) {
         // Node. Does not work with strict CommonJS, but
         // only CommonJS-like environments that support module.exports,
@@ -286,7 +287,7 @@ if(globalThis.browser) {
                     /*
                         for now, we set the root of the content script's world as the root of the extension
                     */
-                    this._params.montageLocation = "node_modules/montage/";
+                    this._params.montageLocation = "node_modules/mod/";
                 } else {
 
                     // Find the <script> that loads us, so we can divine our
@@ -299,8 +300,8 @@ if(globalThis.browser) {
                             this._params.montageLocation = match[1];
                             montage = true;
                         }
-                        if (script.hasAttribute("data-montage-location")) {
-                            this._params.montageLocation = script.getAttribute("data-montage-location");
+                        if (script.hasAttribute("data-mod-location") || script.hasAttribute("data-montage-location")) {
+                            this._params.montageLocation = script.getAttribute("data-mod-location") || script.getAttribute("data-montage-location");
                             montage = true;
                         }
                         if (montage) {
@@ -374,8 +375,9 @@ if(globalThis.browser) {
 
                 if(!!root.classList) {
                     root.classList.add("montage-app-bootstrapping");
+                    root.classList.add("mod-app-bootstrapping");
                 } else {
-                    root.className = root.className + " montage-app-bootstrapping";
+                    root.className = root.className + " mod-app-bootstrapping montage-app-bootstrapping";
                 }
 
                 document._montageTiming = document._montageTiming || {};
@@ -717,11 +719,11 @@ if(globalThis.browser) {
                 //This allows us to add the objectDescriptorModule's id ("%") as a dependency upfront.
                 //A stronger version would analyze the whole file for the construct: {"%": "someModuleId"}.
                 //But this would impact performance for a use case that we don't need so far.
-                if(iDependency === "montage/core/meta/object-descriptor-reference") {
+                if(iDependency === "mod/core/meta/object-descriptor-reference") {
                     /*
                         We're adding the module of that referrence, typiacally serialized as:
                         "ObjectDescriptorReference": {
-                            "prototype": "montage/core/meta/object-descriptor-reference",
+                            "prototype": "mod/core/meta/object-descriptor-reference",
                             "properties": {
                                 "valueReference": {
                                     "objectDescriptor": "Object_Descriptor_Name",
@@ -756,7 +758,7 @@ if(globalThis.browser) {
                         jModule = _moduleIdWithoutExportSymbol(jKeyValue);
                         /*
                             We need to eliminate cases where the module refers to the current file,
-                            like the objectDescriptorModule property in serialized "montage/core/meta/module-object-descriptor"
+                            like the objectDescriptorModule property in serialized "mod/core/meta/module-object-descriptor"
                             This is not perfect but will do for now.
                         */
                         if(!(jModule.startsWith("./") && (base.endsWith(jModule.substring(1))))) {
@@ -783,7 +785,7 @@ if(globalThis.browser) {
         Template;
 
     exports.Compiler = function (config, compile) {
-        if(!exports.config && config.name === "mod") {
+        if(!exports.config && (config.name === "mod" || config.name === "montage")) {
             exports.config = config;
         }
         return function(module) {
@@ -796,7 +798,7 @@ if(globalThis.browser) {
             //         TemplatePromise = TemplatePromise ||
             //         (
             //             /* global.require is application's require */
-            //             TemplatePromise = global.require.async("montage/core/template")
+            //             TemplatePromise = global.require.async("mod/core/template")
             //         .then((exports) => {
             //             Template = exports.Template;
             //             return;
@@ -1033,7 +1035,7 @@ if(globalThis.browser) {
 
         MontageElement.prototype.getRootComponent = function () {
             if (!MontageElement.rootComponentPromise) {
-                MontageElement.rootComponentPromise = this.require.async("montage/ui/component")
+                MontageElement.rootComponentPromise = this.require.async("mod/ui/component")
                     .then(function (exports) {
                         return exports.__root__;
                     });
@@ -1188,9 +1190,15 @@ if(globalThis.browser) {
                 if ("autoPackage" in params) {
                     Require.injectPackageDescription(location, {
                         dependencies: {
+                            mod: "*"
+                        }
+                    }, config);
+                    Require.injectPackageDescription(location, {
+                        dependencies: {
                             montage: "*"
                         }
                     }, config);
+
                 } else {
                     // handle explicit package.json location
                     if (location.slice(location.length - 5) === ".json") {
