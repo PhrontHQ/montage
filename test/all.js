@@ -1,6 +1,6 @@
-console.log('montage-testing', 'Start');
+console.log('mod-testing', 'Start');
 
-module.exports = require("montage/testing/run").run(require, [
+module.exports = require("mod/testing/run").run(require, [
     // App
     {name: "spec/application-spec", node: false},
     // Internal
@@ -77,7 +77,7 @@ module.exports = require("montage/testing/run").run(require, [
     "spec/serialization/labeler-spec",
     "spec/serialization/reviver-spec",
     //deprecated
-    //"spec/serialization/interpreter-spec",
+    "spec/serialization/interpreter-spec",
     "spec/serialization/visitor-spec",
     "spec/serialization/serialization-extractor-spec",
     "spec/serialization/bindings-spec",
@@ -144,8 +144,8 @@ module.exports = require("montage/testing/run").run(require, [
     {name: "spec/meta/controller-object-descriptor-spec", node: false},
     {name: "spec/meta/event-descriptor-spec", node: false},
 ]).then(function () {
-    console.log('montage-testing', 'End');
+    console.log('mod-testing', 'End');
 }, function (err) {
-    console.log('montage-testing', 'Fail', err, err.stack);
+    console.log('mod-testing', 'Fail', err, err.stack);
     throw err;
 });
