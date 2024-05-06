@@ -786,7 +786,7 @@ var RangeController = exports.RangeController = Montage.specialize( /** @lends R
                      //    this.avoidsEmptySelection && !this.allowsMultipleSelection) {
                      //    // selection can't contain previous content value as content already changed
                      //    this.selection.add(this.content[this.content.length - 1]);
-                    }
+                    //}
                 }
             }
 
