@@ -283,7 +283,7 @@ if(globalThis.browser) {
             if (!this._params) {
                 this._params = {};
 
-                if(globalThis.browser.isContentScript) {
+                if(globalThis.browser && globalThis.browser.isContentScript) {
                     /*
                         for now, we set the root of the content script's world as the root of the extension
                     */
