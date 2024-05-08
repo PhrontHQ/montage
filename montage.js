@@ -345,7 +345,7 @@ if(globalThis.browser) {
                 resolve = this.makeResolve(),
                 montageLocation, appLocation;
 
-                montageLocation = montageLocation || resolve(((typeof browser !== undefined && browser.isContentScript) ? browser.runtime.getURL("") : global.location), params.montageLocation);
+                montageLocation = montageLocation || resolve(((typeof browser !== "undefined" && browser.isContentScript) ? browser.runtime.getURL("") : global.location), params.montageLocation);
                 if(params.package) {
                     appLocation = resolve(global.location, params.package);
                     //should be endsWith

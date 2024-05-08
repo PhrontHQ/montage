@@ -78,7 +78,7 @@ bootstrap("require/browser", function (require) {
     Require.getLocation = function() {
         if (!location) {
 
-            if(globalThis.browser.isContentScript) {
+            if(globalThis?.browser?.isContentScript) {
                 /*
                     If we're in an extension, the root of the extension is our main content script app:
 
