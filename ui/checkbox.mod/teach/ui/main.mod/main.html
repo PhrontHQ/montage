@@ -13,14 +13,16 @@
             "custom": {
                 "prototype": "mod/ui/checkbox.mod",
                 "values": {
-                    "element": {"#": "checkbox-custom"}
+                    "element": {"#": "checkbox-custom"},
+                    "checked": {"<->": "@owner.isCheckboxCustomChecked"}
                 }
             },
 
             "native": {
                 "prototype": "mod/ui/checkbox.mod",
                 "values": {
-                    "element": {"#": "checkbox-native"}
+                    "element": {"#": "checkbox-native"},
+                    "checked": {"<->": "@owner.isNativeCheckboxChecked"}
                 }
             }
         }

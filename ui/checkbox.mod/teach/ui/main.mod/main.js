@@ -1,6 +1,8 @@
 var Component = require("mod/ui/component").Component;
 
-exports.Main = Component.specialize(/** @lends Main# */ {
+exports.Main = class Main extends Component /** @lends Main# */ {
 
+    isCheckboxCustomChecked;
+    isNativeCheckboxChecked;
 
-});
+};
