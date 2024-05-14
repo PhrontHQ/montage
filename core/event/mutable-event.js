@@ -3,6 +3,8 @@
  @requires montage
  */
 var Montage = require("../core").Montage;
+const console = require('../extras/console').console;
+
 var wrapPropertyGetter = function (key, storageKey) {
         return function () {
             return this.hasOwnProperty(storageKey) ? this[storageKey] : this._event[key];
