@@ -303,6 +303,22 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
         }
     },
 
+    /**
+     * This property holds the rawClient typically used by client libraries provided by cloud vendor.
+     * Those libraries abstract the intricacies of authentication and avoid to use REST API directly.
+     * If advanced optimizaion were neded beyond those offered by such libraries, it's always possible
+     * to drop down a layer and attempt to do better.
+     *     *
+     * @property {Object}
+     */
+    _rawClient: {
+        value: undefined
+    },
+    rawClient: {
+        get: function () {
+            return this._rawClient;
+        }
+    },
 
 
 
