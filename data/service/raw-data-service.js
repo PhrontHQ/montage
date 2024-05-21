@@ -284,7 +284,7 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
         get: function () {
 
             if (!this._rawClientPromises) {
-                var promises = this._rawClientPromises = [];
+                this._rawClientPromises = [];
             }
             return this._rawClientPromises;
         }
@@ -317,7 +317,12 @@ exports.RawDataService = DataService.specialize(/** @lends RawDataService.protot
     rawClient: {
         get: function () {
             return this._rawClient;
-        }
+        },
+        set: function (value) {
+            if(value !== this._rawClient) {
+                this._rawClient = value;
+            }
+        },
     },
 
 
