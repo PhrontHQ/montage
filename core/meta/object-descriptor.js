@@ -140,20 +140,63 @@ ObjectDescriptor.addClassProperties({
 
             value = deserializer.getProperty("propertyDescriptors") || deserializer.getProperty("propertyBlueprints");
             if (value) {
-                this._ownPropertyDescriptors = value;
+                //In case an object is deserialized several times, we merge the propertyDescriptors
+                this._ownPropertyDescriptors 
+                    ? this._ownPropertyDescriptors.push.apply(this._ownPropertyDescriptors, value)
+                    : this._ownPropertyDescriptors = value;
             }
 
             value = deserializer.getProperty("propertyDescriptorGroups") || deserializer.getProperty("propertyBlueprintGroups");
             if (value) {
-                this._propertyDescriptorGroups = value;
+                let _propertyDescriptorGroups = this._propertyDescriptorGroups;
+                if(_propertyDescriptorGroups && Object.keys(_propertyDescriptorGroups) > 0) {
+                    for(let i=0, keys = Object.keys(value), countI = keys.length, iKey, iValue, oValue; (i<countI); i++) {
+                        iValue = value[iKey = keys[i]];
+                        oValue = _propertyDescriptorGroups[iKey];
+                        if(iValue && oValue) {
+                            //Merge
+                            if(iValue instanceof Array) {
+                                _propertyDescriptorGroups.push.apply(_propertyDescriptorGroups, iValue);
+                            } else {
+                                //Overwrite
+                                _propertyDescriptorGroups[iKey] = iValue;
+                            }
+                        } else {
+                            _propertyDescriptorGroups[iKey] = iValue;
+                        }
+                    }
+                } else {
+                    this._propertyDescriptorGroups = value;
+                }
             }
             value = deserializer.getProperty("eventDescriptors") || deserializer.getProperty("eventBlueprints");
             if (value) {
-                this._eventDescriptors = value;
+                this._eventDescriptors
+                    ? this._eventDescriptors.push.apply(this._eventDescriptors, value)
+                    : this._eventDescriptors = value;
             }
             value = deserializer.getProperty("propertyValidationRules");
             if (value) {
-                this._propertyValidationRules = value;
+                let _propertyValidationRules = this._propertyValidationRules;
+                if(_propertyValidationRules && Object.keys(_propertyValidationRules) > 0) {
+                    for(let i=0, keys = Object.keys(value), countI = keys.length, iKey, iValue, oValue; (i<countI); i++) {
+                        iValue = value[iKey = keys[i]];
+                        oValue = _propertyValidationRules[iKey];
+                        if(iValue && oValue) {
+                            //Merge
+                            if(iValue instanceof Array) {
+                                _propertyValidationRules.push.apply(_propertyValidationRules, iValue);
+                            } else {
+                                //Overwrite
+                                _propertyValidationRules[iKey] = iValue;
+                            }
+                        } else {
+                            _propertyValidationRules[iKey] = iValue;
+                        }
+                    }
+                } else {
+                    this._propertyValidationRules = value;
+                }
             }
             value = deserializer.getProperty("maxAge");
             if (value) {
@@ -161,7 +204,9 @@ ObjectDescriptor.addClassProperties({
             }
             value = deserializer.getProperty("userInterfaceDescriptorModules");
             if (value) {
-                this.userInterfaceDescriptorModules = value;
+                this.userInterfaceDescriptorModules
+                    ? this.userInterfaceDescriptorModules.push.apply(this.userInterfaceDescriptorModules, value)
+                    : this.userInterfaceDescriptorModules = value;
             }
         }
     },
