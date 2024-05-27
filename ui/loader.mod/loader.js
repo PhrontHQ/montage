@@ -352,7 +352,9 @@ exports.Loader = Component.specialize( /** @lends Loader.prototype # */ {
                 return self._mainLoadedCallback(exports);
             })
             .catch((error) => {
-                console.log("Please rename main.mod to main.mod")
+                if(error.message.includes("main.reel")) {
+                    console.log("Please rename main.mod to main.mod")
+                }
                 return global.require.async(self.legacyMainModule)
                 .then(function (exports) {
                     if (!(self.mainName in exports)) {
