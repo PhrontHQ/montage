@@ -176,6 +176,22 @@ if(typeof String.prototype.removeSuffix !== "function") {
 
 }
 
+
+
+
+if(typeof String.prototype.stringByAppendingPathComponent !== "function") {
+    Object.defineProperty(String.prototype, 'stringByAppendingPathComponent', {
+        value: function stringByAppendingPathComponent (pathComponent) {
+                return this.endsWith("/")
+                    ? `${this}${pathComponent}`
+                    : `${this}/${pathComponent}`
+        },
+        writable: true,
+        configurable: true
+    });
+}
+
+
 if(typeof String.prototype.stringByDeletingLastPathComponent !== "function") {
     Object.defineProperty(String.prototype, 'stringByDeletingLastPathComponent', {
         value: function stringByDeletingLastPathComponent () {
