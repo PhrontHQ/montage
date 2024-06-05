@@ -2,18 +2,18 @@
     "root": {
         "prototype": "../../../core/meta/module-object-descriptor",
         "values": {
-            "name": "Application",
+            "name": "UserPool",
             "propertyDescriptors": [
                 {"@": "name"},
-                {"@": "appClients"},
-                {"@": "webSocketSessions"}
+                {"@": "appClients"}
+
             ],
             "objectDescriptorModule": {
-                "%": "./application.mjson"
+                "%": "./user-pool.mjson"
             },
-            "exportName": "Application",
+            "exportName": "UserPool",
             "module": {
-                "%": "./application"
+                "%": "./user-pool"
             },
             "parent":{"@": "DataObjectDescriptor"}
         }
@@ -28,20 +28,6 @@
             "valueType": "string"
         }
     },
-    "webSocketSessions": {
-        "prototype": "../../../core/meta/property-descriptor",
-        "values": {
-            "name": "webSocketSessions",
-            "cardinality": -1,
-            "valueType": "object",
-            "valueDescriptor": {"@": "WebSocketSessionsDescriptor"},
-            "inversePropertyName": "app"
-       }
-    },
-    "WebSocketSessionsDescriptor": {
-        "object": "./web-socket-session.mjson"
-    },
-
     "appClients": {
         "prototype": "../../../core/meta/property-descriptor",
         "values": {
@@ -49,10 +35,9 @@
             "cardinality": -1,
             "valueType": "object",
             "valueDescriptor": {"@": "AppClientDescriptor"},
-            "inversePropertyName": "application"
-       }
+            "inversePropertyName": "userPool"
+        }
     },
-
     "AppClientDescriptor": {
         "object": "./app-client.mjson"
     }

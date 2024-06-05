@@ -1,0 +1,74 @@
+{
+    "root": {
+        "prototype": "../../../core/meta/module-object-descriptor",
+        "values": {
+            "name": "UserSession",
+            "propertyDescriptors": [
+                {"@": "identity"},
+                {"@": "environment"},
+                {"@": "connectionId"},
+                {"@": "connectionTimeRange"}
+            ],
+            "objectDescriptorModule": {
+                "%": "./user-session.mjson"
+            },
+            "exportName": "UserSession",
+            "module": {
+                "%": "./user-session"
+            },
+            "parent":{"@": "DataObjectDescriptor"}
+        }
+    },
+
+    "DataObjectDescriptor": {
+        "object": "../data-object.mjson"
+    },
+
+    "identity": {
+        "prototype": "../../../core/meta/property-descriptor",
+        "values": {
+            "name": "identity",
+            "valueType": "object",
+            "cardinality": 1,
+            "valueDescriptor": {"@": "identityDescriptor"}
+        }
+    },
+    "identityDescriptor": {
+        "object": "../identity.mjson"
+    }
+
+    "environment": {
+        "prototype": "../../../core/meta/property-descriptor",
+        "values": {
+            "name": "environment",
+            "valueType": "object",
+            "cardinality": 1,
+            "valueDescriptor": {"@": "environmentDescriptor"}
+       }
+    },
+    "environmentDescriptor": {
+        "object": "../../../core/environment.mjson"
+    }
+
+    "connectionId": {
+        "prototype": "../../../core/meta/property-descriptor",
+        "values": {
+            "name": "connectionId",
+            "valueType": "string"
+        }
+    },
+
+    "connectionTimeRange": {
+        "prototype": "../../../core/meta/property-descriptor",
+        "values": {
+            "name": "connectionTimeRange",
+            "valueType": "date",
+            "cardinality": 1,
+            "valueDescriptor": {"@": "rangeDescriptor"}
+        }
+    },
+    "rangeDescriptor": {
+        "object": "../../../core/range.mjson"
+    }
+   
+}

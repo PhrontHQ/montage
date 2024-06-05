@@ -36,7 +36,7 @@ exports.Application = DataObject.specialize(/** @lends Application.prototype */ 
     controllingParty: {
         value: undefined
     },
-    cognitoAppClient: {
+    appClients: {
         value: undefined
     },
     userPool: {
