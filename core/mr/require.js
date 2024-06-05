@@ -193,6 +193,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
 
     var EMPTY_STRING = "",
         SLASH = "/",
+        DOUBLE_SLASH = "//",
         DOT = ".",
         DOT_DOT = "..";
 
@@ -215,6 +216,11 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
             }
         }
         for (i = 0, ii = source.length; i < ii; i++) {
+            //To catch a typo/mistake like require('.//URL-impl.js')
+            if(source[i] === "" && id.includes(DOUBLE_SLASH)) {
+                source.splice(i,1);
+                ii--;
+            }
             resolveItem(source[i], target, _EMPTY_STRING, _DOT, _DOT_DOT);
         }
 
@@ -751,7 +757,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                     module.dependencies = module.dependencies || [];
                     Array.prototype.push.apply(module.dependencies, module.extraDependencies);
                 }
-                return;
+                return module;
 
         }
 
@@ -779,10 +785,11 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
 
                     // load the transitive dependencies using the magic of
                     // recursion.
+                    
                     var module = getModuleDescriptor(topId),
                         dependencies = module.dependencies;
 
-                    if (dependencies) {
+                    if (dependencies && dependencies.length) {
                         var scopedConfig = config,
                             i = 0,
                             countI = dependencies.length,
@@ -869,6 +876,22 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
         function executeModuleCompiler(module, config, topId, viaId) {
             // do not initialize modules that do not define a factory function
             if (module.factory === void 0) {
+
+                /*
+                    TODO: Cleanup. This is to workaround a bug caused by @protobufjs/inquire/index.js doing:
+
+                            var mod = eval("quire".replace(/^/,"re"))(moduleName); // eslint-disable-line no-eval
+
+                    which bypass require's static analysis and can only work in node as it's a synchronous call.
+                    This function is executed regardless of the environment, there shouldn't be any nodes-specific code here
+                    so this workaround needs to be re-factored in a way that it works by adding handling in the node-specific file only
+                    
+                    Tried to use config.load, but sone steps are async so it returns a promise that we can't deal with in this situation.
+                */
+               if(typeof config.nodeLoad === "function") {
+                    return config.nodeLoad(topId, module).exports;
+               }
+
                 throw new Error(
                     "Can't require module " + JSON.stringify(topId) +
                     " via " + JSON.stringify(viaId)
@@ -980,7 +1003,7 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
             // Main synchronously executing "require()" function
             var require = function require(id) {
                 //console.log(config.name +" - require("+id+")");
-                //return getExports(/*topId*/require.normalizeId(require.resolve(id, viaId), config), viaId);
+                
                 return require_getExports(/*topId*/require.resolve(id, viaId), viaId);
             };
             require.viaId = viaId;
@@ -1423,8 +1446,13 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
 
     Require.parseDependencies = function parseDependencies(factory) {
 
-        // Clear commented require calls
-        factory = factory.replace(commentsCombined, '');
+        if(!factory) {
+            return null;
+        }
+
+        // Clear commented require calls - This has side effects
+        // that causes some require in node that fail.
+        //factory = factory.replace(commentsCombined, '');
 
         var o = null, myArray;
         while ((myArray = requirePattern.exec(factory)) !== null) {
@@ -1824,14 +1852,22 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
             //             ? mappings[prefix]
             //             : null)))
             // ) {
-            if((aPackage = (mappings[(prefix = id.substring(0,id.indexOf("/")))] || mappings[(prefix = id)]))) {
+            if((aPackage = (mappings[(
+                    prefix = 
+                        /*id.startsWith("@")
+                        ? id.substring(0,id.indexOf("/", id.indexOf("/")+1))
+                        : */id.substring(0,id.indexOf("/"))
+                    )] 
+                    || mappings[(prefix = id)]))) {
                 return config.loadPackage(aPackage, config)
                     .then(function loadMapping(mappingRequire) {
                         var rest = id.slice(prefix.length + 1);
                         mappings[prefix].mappingRequire = mappingRequire;
                         module.mappingRedirect = rest;
                         module.mappingRequire = mappingRequire;
-                        return mappingRequire.deepLoad(rest, config.location);
+                    
+                        return mappingRequire.deepLoad(rest, mappingRequire.config.location);
+                        //return mappingRequire.deepLoad(rest, config.location);
                         /*
                             TODO/FixMe:
 

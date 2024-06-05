@@ -231,9 +231,12 @@ MontageBoot.TemplateLoader = function (config, load) {
             });
         } else if (serialization) {
             return load(id, module)
-            .then(function () {
-                module.dependencies = collectSerializationDependencies(module.json, []);
-                return module;
+            .then(function (value) {
+                const json = module.json || module.exports;
+                if(!module.mappingRedirect && json) {
+                    module.dependencies = collectSerializationDependencies(json, []);
+                }
+                return module;    
             });
         } else if (meta) {
             return load(id, module);

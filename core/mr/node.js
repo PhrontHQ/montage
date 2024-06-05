@@ -169,6 +169,10 @@ Require.Loader = function Loader(config, load) {
                 });
 
 
+            } else if(location.endsWith(".json")) {
+                module.type = "json";
+                module.text = text;
+                module.exports = JSON.parse(text);
             } else {
                 module.type = "javascript";
                 module.text = text;
@@ -187,7 +191,7 @@ Require.Loader = function Loader(config, load) {
 Require.Loader.supportsES6 = false;
 
 Require.NodeLoader = function NodeLoader(config) {
-    return function nodeLoad(location, module) {
+    return config.nodeLoad || (config.nodeLoad = function nodeLoad(location, module) {
         var id;
         if(NodeBuilInModules.indexOf(module.id) !== -1) {
             id = module.id;
@@ -199,7 +203,7 @@ Require.NodeLoader = function NodeLoader(config) {
         module.type = "native";
         module.exports = require(id);
         return module;
-    };
+    });
 };
 
 Require.makeLoader = function makeLoader(config) {
