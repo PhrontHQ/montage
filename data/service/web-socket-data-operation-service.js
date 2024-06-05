@@ -183,7 +183,8 @@ WebSocketDataOperationService.addClassProperties({
                         websocketURL;
 
                 if(global.location) {
-                    if(stage === "mod" || global.location.hostname === "127.0.0.1" || global.location.hostname === "localhost" || global.location.hostname.endsWith(".local") ) {
+                    if(currentEnvironment.isLocalModding) {
+                    // if(stage === "mod" || global.location.hostname === "127.0.0.1" || global.location.hostname === "localhost" || global.location.hostname.endsWith(".local") ) {
                         websocketURL = new URL(connection.websocketURL);
 
                         if(global.location.hostname === "localhost" && currentEnvironment.isAndroidDevice && websocketURL.hostname.endsWith(".local")) {
