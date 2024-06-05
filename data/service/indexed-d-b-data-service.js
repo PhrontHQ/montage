@@ -17,18 +17,25 @@ var PersistentDataService = require("data/service/persistent-data-service").Pers
  * @class
  * @extends RawDataService
  */
-exports.IndexedDBDataService = PersistentDataService.specialize(/** @lends PersistentDataService.prototype */ {
+const IndexedDBDataService = exports.IndexedDBDataService = class IndexedDBDataService extends PersistentDataService {/** @lends IndexedDBDataService */
+    constructor() {
+        super();
+    }
+}
 
-    /***************************************************************************
-     * Initializing
-     */
+// exports.IndexedDBDataService = PersistentDataService.specialize(/** @lends PersistentDataService.prototype */ {
 
-    constructor: {
-        value: function PersistentDataService() {
-            PersistentDataService.call(this);
-        }
-    },
+//     /***************************************************************************
+//      * Initializing
+//      */
 
+//     constructor: {
+//         value: function PersistentDataService() {
+//             PersistentDataService.call(this);
+//         }
+//     },
+
+IndexedDBDataService.addClassProperties({
     deserializeSelf: {
         value:function (deserializer) {
             this.super(deserializer);
@@ -38,7 +45,6 @@ exports.IndexedDBDataService = PersistentDataService.specialize(/** @lends Persi
     _db : {
         value: undefined
     },
-
 
     provideDatabaseForModel : {
         value: function(model) {

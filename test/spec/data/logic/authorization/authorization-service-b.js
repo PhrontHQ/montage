@@ -3,8 +3,14 @@ var DataService = require("mod/data/service/data-service").DataService,
     Promise = require("mod/core/promise").Promise;
 
 
+const AuthorizationServiceB = exports.AuthorizationServiceB = class AuthorizationServiceB extends DataService {/** @lends AuthorizationServiceB */
+    constructor() {
+        super();
+    }
+}
 
-exports.AuthorizationServiceB = DataService.specialize( /** @lends AuthorizationServiceB.prototype */ {
+// exports.AuthorizationServiceB = DataService.specialize( /** @lends AuthorizationServiceB.prototype */ {
+AuthorizationServiceB.addClassProperties({
 
     authorization: {
         get: function () {

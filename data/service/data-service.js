@@ -67,46 +67,97 @@ UserAuthenticationPolicy.OnFirstFetchAuthenticationPolicy = UserAuthenticationPo
  * @class
  * @extends external:Montage
  */
-DataService = exports.DataService = Target.specialize(/** @lends DataService.prototype */ {
+DataService = exports.DataService = class DataService extends Target {/** @lends DataService */
+    constructor() {
+        super();
 
-    /***************************************************************************
-     * Initializing
-     */
+        this.defineBinding("mainService", {"<-": "mainService", source: defaultEventManager.application});
 
-    constructor: {
-        value: function DataService() {
+        // exports.DataService.mainService = exports.DataService.mainService || this;
+        // if(this === DataService.mainService) {
+        //     // IdentityManager.mainService = DataService.mainService;
+        //     //this.addOwnPropertyChangeListener("userLocales", this);
+        //     this.addRangeAtPathChangeListener("userLocales", this, "handleUserLocalesRangeChange");
+        // }
 
-            this.defineBinding("mainService", {"<-": "mainService", source: defaultEventManager.application});
+        //Deprecated now
+        //this._initializeAuthorization();
 
-            // exports.DataService.mainService = exports.DataService.mainService || this;
-            // if(this === DataService.mainService) {
-            //     // IdentityManager.mainService = DataService.mainService;
-            //     //this.addOwnPropertyChangeListener("userLocales", this);
-            //     this.addRangeAtPathChangeListener("userLocales", this, "handleUserLocalesRangeChange");
-            // }
-
-            //Deprecated now
-            //this._initializeAuthorization();
-
-            if (this.providesAuthorization) {
-                exports.DataService.authorizationManager.registerAuthorizationService(this);
-            }
-
-            if(this.providesIdentity === true) {
-                IdentityManager.registerIdentityService(this);
-            }
-
-            this._initializeOffline();
-
-            this._thenableByOperationId = new Map();
-            //this._pendingOperationById = new Map();
-
-            // this._serializer = new MontageSerializer().initWithRequire(require);
-            // this._deserializer = new Deserializer();
-
-            //this.addOwnPropertyChangeListener("mainService", this);
+        if (this.providesAuthorization) {
+            exports.DataService.authorizationManager.registerAuthorizationService(this);
         }
-    },
+
+        if(this.providesIdentity === true) {
+            IdentityManager.registerIdentityService(this);
+        }
+
+        this._initializeOffline();
+
+        this._thenableByOperationId = new Map();
+        //this._pendingOperationById = new Map();
+
+        // this._serializer = new MontageSerializer().initWithRequire(require);
+        // this._deserializer = new Deserializer();
+
+        //this.addOwnPropertyChangeListener("mainService", this);
+
+    }
+
+    static {
+
+        // Montage.defineProperties(this.prototype, {
+        //     apiVersion: {
+        //         value: "FROM AWS, NECESSARY FOR GCP?"
+        //     }
+        // });
+    }
+
+}
+
+
+// DataService = exports.DataService = Target.specialize(/** @lends DataService.prototype */ {
+
+//     /***************************************************************************
+//      * Initializing
+//      */
+
+//     constructor: {
+//         value: function DataService() {
+
+//             this.defineBinding("mainService", {"<-": "mainService", source: defaultEventManager.application});
+
+//             // exports.DataService.mainService = exports.DataService.mainService || this;
+//             // if(this === DataService.mainService) {
+//             //     // IdentityManager.mainService = DataService.mainService;
+//             //     //this.addOwnPropertyChangeListener("userLocales", this);
+//             //     this.addRangeAtPathChangeListener("userLocales", this, "handleUserLocalesRangeChange");
+//             // }
+
+//             //Deprecated now
+//             //this._initializeAuthorization();
+
+//             if (this.providesAuthorization) {
+//                 exports.DataService.authorizationManager.registerAuthorizationService(this);
+//             }
+
+//             if(this.providesIdentity === true) {
+//                 IdentityManager.registerIdentityService(this);
+//             }
+
+//             this._initializeOffline();
+
+//             this._thenableByOperationId = new Map();
+//             //this._pendingOperationById = new Map();
+
+//             // this._serializer = new MontageSerializer().initWithRequire(require);
+//             // this._deserializer = new Deserializer();
+
+//             //this.addOwnPropertyChangeListener("mainService", this);
+//         }
+//     },
+
+DataService.addClassProperties({
+
 
     /**
      * A reference to the application's main service.

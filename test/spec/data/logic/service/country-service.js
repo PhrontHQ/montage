@@ -1,7 +1,12 @@
 var RawDataService = require("mod/data/service/raw-data-service").RawDataService,
     CountryNames = ["USA"];
 
-exports.CountryService = RawDataService.specialize(/** @lends CategoryService.prototype */ {
+// exports.CountryService = RawDataService.specialize(/** @lends CategoryService.prototype */ {
+const CountryService = exports.CountryService = class CountryService extends RawDataService {/** @lends CountryService */
+}
+
+CountryService.addClassProperties({
+
     supportsDataOperation: {
         value: false
     },

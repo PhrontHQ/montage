@@ -8,8 +8,6 @@ var DataService = require("./data-service").DataService,
     parse = require("../../core/frb/parse"),
     Scope = require("../../core/frb/scope"),
     deprecate = require("../../core/deprecate"),
-    parse = require("../../core/frb/parse"),
-    Scope = require("../../core/frb/scope"),
     compile = require("../../core/frb/compile-evaluator"),
     DataOrdering = require("../model/data-ordering").DataOrdering,
     DESCENDING = DataOrdering.DESCENDING,
@@ -48,42 +46,76 @@ require("../../core/collections/shim-object");
  * @class
  * @extends DataService
  */
-exports.RawDataService = DataService.specialize(/** @lends RawDataService.prototype */ {
+const RawDataService = exports.RawDataService = class RawDataService extends DataService {/** @lends RawDataService */
 
-    /***************************************************************************
-     * Initializing
-     */
+    constructor() {
+        super();
 
-    constructor: {
-        value: function RawDataService() {
-            this.super();
-            this._typeIdentifierMap = new Map();
-            this._descriptorToRawDataTypeMappings = new Map();
+        this._typeIdentifierMap = new Map();
+        this._descriptorToRawDataTypeMappings = new Map();
 
-            if (this.supportsDataOperation) {
-                this.addEventListener(DataOperation.Type.ReadUpdateOperation, this, false);
-                this.addEventListener(DataOperation.Type.ReadFailedOperation, this, false);
-                this.addEventListener(DataOperation.Type.ReadCompletedOperation, this, false);
+        if (this.supportsDataOperation) {
+            this.addEventListener(DataOperation.Type.ReadUpdateOperation, this, false);
+            this.addEventListener(DataOperation.Type.ReadFailedOperation, this, false);
+            this.addEventListener(DataOperation.Type.ReadCompletedOperation, this, false);
 
-                if (this.supportsTransaction) {
-                    this.addEventListener(DataOperationType.createTransactionOperation, this, false);
-                    this.addEventListener(DataOperationType.createTransactionCompletedOperation, this, false);
-                    this.addEventListener(DataOperationType.createTransactionFailedOperation, this, false);
-                    this.addEventListener(DataOperation.Type.BatchCompletedOperation, this, false);
-                    this.addEventListener(DataOperation.Type.BatchFailedOperation, this, false);
-                    this.addEventListener(DataOperation.Type.TransactionUpdatedOperation, this, false);
-                    this.addEventListener(DataOperation.Type.CommitTransactionProgressOperation, this, false);
-                    this.addEventListener(DataOperation.Type.CommitTransactionFailedOperation, this, false);
-                    this.addEventListener(DataOperation.Type.CommitTransactionCompletedOperation, this, false);
-                    this.addEventListener(DataOperation.Type.RollbackTransactionFailedOperation, this, false);
-                    this.addEventListener(DataOperation.Type.RollbackTransactionCompletedOperation, this, false);
-                }
-
-                this._pendingDataOperationById = new Map();
-                this._rawContextByTransaction = new WeakMap();
+            if (this.supportsTransaction) {
+                this.addEventListener(DataOperationType.createTransactionOperation, this, false);
+                this.addEventListener(DataOperationType.createTransactionCompletedOperation, this, false);
+                this.addEventListener(DataOperationType.createTransactionFailedOperation, this, false);
+                this.addEventListener(DataOperation.Type.BatchCompletedOperation, this, false);
+                this.addEventListener(DataOperation.Type.BatchFailedOperation, this, false);
+                this.addEventListener(DataOperation.Type.TransactionUpdatedOperation, this, false);
+                this.addEventListener(DataOperation.Type.CommitTransactionProgressOperation, this, false);
+                this.addEventListener(DataOperation.Type.CommitTransactionFailedOperation, this, false);
+                this.addEventListener(DataOperation.Type.CommitTransactionCompletedOperation, this, false);
+                this.addEventListener(DataOperation.Type.RollbackTransactionFailedOperation, this, false);
+                this.addEventListener(DataOperation.Type.RollbackTransactionCompletedOperation, this, false);
             }
+
+            this._pendingDataOperationById = new Map();
+            this._rawContextByTransaction = new WeakMap();
         }
-    },
+    }
+}
+
+// exports.RawDataService = DataService.specialize(/** @lends RawDataService.prototype */ {
+
+//     /***************************************************************************
+//      * Initializing
+//      */
+
+//     constructor: {
+//         value: function RawDataService() {
+//             this.super();
+//             this._typeIdentifierMap = new Map();
+//             this._descriptorToRawDataTypeMappings = new Map();
+
+//             if (this.supportsDataOperation) {
+//                 this.addEventListener(DataOperation.Type.ReadUpdateOperation, this, false);
+//                 this.addEventListener(DataOperation.Type.ReadFailedOperation, this, false);
+//                 this.addEventListener(DataOperation.Type.ReadCompletedOperation, this, false);
+
+//                 if (this.supportsTransaction) {
+//                     this.addEventListener(DataOperationType.createTransactionOperation, this, false);
+//                     this.addEventListener(DataOperationType.createTransactionCompletedOperation, this, false);
+//                     this.addEventListener(DataOperationType.createTransactionFailedOperation, this, false);
+//                     this.addEventListener(DataOperation.Type.BatchCompletedOperation, this, false);
+//                     this.addEventListener(DataOperation.Type.BatchFailedOperation, this, false);
+//                     this.addEventListener(DataOperation.Type.TransactionUpdatedOperation, this, false);
+//                     this.addEventListener(DataOperation.Type.CommitTransactionProgressOperation, this, false);
+//                     this.addEventListener(DataOperation.Type.CommitTransactionFailedOperation, this, false);
+//                     this.addEventListener(DataOperation.Type.CommitTransactionCompletedOperation, this, false);
+//                     this.addEventListener(DataOperation.Type.RollbackTransactionFailedOperation, this, false);
+//                     this.addEventListener(DataOperation.Type.RollbackTransactionCompletedOperation, this, false);
+//                 }
+
+//                 this._pendingDataOperationById = new Map();
+//                 this._rawContextByTransaction = new WeakMap();
+//             }
+//         }
+//     },
+RawDataService.addClassProperties({
 
     addMainServiceEventListeners: {
         value: function () {

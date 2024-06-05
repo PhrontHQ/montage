@@ -1,6 +1,10 @@
 var RawDataService = require("mod/data/service/raw-data-service").RawDataService;
 
-exports.PlotSummaryService = RawDataService.specialize(/** @lends PlotSummaryService.prototype */ {
+// exports.PlotSummaryService = RawDataService.specialize(/** @lends PlotSummaryService.prototype */ {
+const PlotSummaryService = exports.PlotSummaryService = class PlotSummaryService extends RawDataService {/** @lends PlotSummaryService */
+}
+
+PlotSummaryService.addClassProperties({
 
     fetchRawData: {
         value: function (stream) {

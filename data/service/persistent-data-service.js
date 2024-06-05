@@ -20,17 +20,24 @@ var RawDataService = require("data/service/raw-data-service").RawDataService,
  * @class
  * @extends RawDataService
  */
-exports.PersistentDataService = PersistentDataService = RawDataService.specialize(/** @lends PersistentDataService.prototype */ {
+const PersistentDataService = exports.PersistentDataService = class PersistentDataService extends RawDataService {/** @lends PersistentDataService */
+    constructor() {
+        super();
+    }
+}
+// exports.PersistentDataService = PersistentDataService = RawDataService.specialize(/** @lends PersistentDataService.prototype */ {
 
-    /***************************************************************************
-     * Initializing
-     */
+    // /***************************************************************************
+    //  * Initializing
+    //  */
 
-    constructor: {
-        value: function PersistentDataService() {
-            RawDataService.call(this);
-        }
-    },
+    // constructor: {
+    //     value: function PersistentDataService() {
+    //         RawDataService.call(this);
+    //     }
+    // },
+
+PersistentDataService.addClassProperties({
 
     deserializeSelf: {
         value:function (deserializer) {

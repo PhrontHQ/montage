@@ -34,25 +34,45 @@ var Identity = require("../../data/model/identity").Identity;
 * @class
 * @extends RawDataService
 */
-exports.WebSocketDataOperationService = WebSocketDataOperationService = RawDataService.specialize(/** @lends WebSocketDataOperationService.prototype */ {
-    constructor: {
-        value: function WebSocketDataOperationService() {
-            var self = this;
+const WebSocketDataOperationService = exports.WebSocketDataOperationService = class WebSocketDataOperationService extends RawDataService {/** @lends WebSocketDataOperationService */
+    constructor() {
+        super();
 
-            this._failedConnections = 0;
-            this.super();
+        this._failedConnections = 0;
 
-            this.addOwnPropertyChangeListener("mainService", this);
+        this.addOwnPropertyChangeListener("mainService", this);
 
-            //this._serializer = new MontageSerializer().initWithRequire(require);
-            this._serializer = new MontageSerializer().initWithRequire(global.require);
-            this._deserializer = new Deserializer();
+        //this._serializer = new MontageSerializer().initWithRequire(require);
+        this._serializer = new MontageSerializer().initWithRequire(global.require);
+        this._deserializer = new Deserializer();
 
-            this._readOperationQueue = [];
+        this._readOperationQueue = [];
 
-            return this;
-        }
-    },
+        return this;
+
+    }
+}
+
+// exports.WebSocketDataOperationService = WebSocketDataOperationService = RawDataService.specialize(/** @lends WebSocketDataOperationService.prototype */ {
+//     constructor: {
+//         value: function WebSocketDataOperationService() {
+//             var self = this;
+
+//             this._failedConnections = 0;
+//             this.super();
+
+//             this.addOwnPropertyChangeListener("mainService", this);
+
+//             //this._serializer = new MontageSerializer().initWithRequire(require);
+//             this._serializer = new MontageSerializer().initWithRequire(global.require);
+//             this._deserializer = new Deserializer();
+
+//             this._readOperationQueue = [];
+
+//             return this;
+//         }
+//     },
+WebSocketDataOperationService.addClassProperties({
 
     supportsTransaction: {
         value: true

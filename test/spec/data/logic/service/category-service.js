@@ -1,7 +1,12 @@
 var RawDataService = require("mod/data/service/raw-data-service").RawDataService,
     CategoryNames = ["Action"];
 
-exports.CategoryService = RawDataService.specialize(/** @lends CategoryService.prototype */ {
+// exports.CategoryService = RawDataService.specialize(/** @lends CategoryService.prototype */ {
+const CategoryService = exports.CategoryService = class CategoryService extends RawDataService {/** @lends CategoryService */
+}
+
+CategoryService.addClassProperties({
+
     supportsDataOperation: {
         value: false
     },

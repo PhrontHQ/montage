@@ -1,6 +1,5 @@
 var RawDataService = require("./raw-data-service").RawDataService,
-    DataOperation = require("./data-operation").DataOperation,
-    IdentityAuthorizationService;
+    DataOperation = require("./data-operation").DataOperation;
 
 
 /**
@@ -10,14 +9,22 @@ var RawDataService = require("./raw-data-service").RawDataService,
  *
  * Assess authorization for a DataIdentity
  */
-exports.IdentityAuthorizationService = IdentityAuthorizationService = RawDataService.specialize( /** @lends IdentityAuthorizationService.prototype */ {
+const IdentityAuthorizationService = exports.IdentityAuthorizationService = class IdentityAuthorizationService extends RawDataService {/** @lends IdentityAuthorizationService */
+    constructor() {
+        super();
+    }
+}
+
+IdentityAuthorizationService.addClassProperties({
+
+// exports.IdentityAuthorizationService = IdentityAuthorizationService = RawDataService.specialize( /** @lends IdentityAuthorizationService.prototype */ {
 
 
-    constructor: {
-        value: function IdentityAuthorizationService() {
-            this.super();
-        }
-    },
+//     constructor: {
+//         value: function IdentityAuthorizationService() {
+//             this.super();
+//         }
+//     },
     deserializedFromSerialization: {
         value: function (label) {
 

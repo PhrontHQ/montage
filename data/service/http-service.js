@@ -81,7 +81,14 @@ var HttpError = exports.HttpError = Montage.specialize({
  *
  * @extends RawDataService
  */
-var HttpService = exports.HttpService = RawDataService.specialize(/** @lends HttpService.prototype */ {
+var HttpService = exports.HttpService = class HttpService extends RawDataService {/** @lends DataService */
+    constructor() {
+        super();
+    }
+}
+
+// var HttpService = exports.HttpService = RawDataService.specialize(/** @lends HttpService.prototype */ {
+HttpService.addClassProperties({
 
     /***************************************************************************
      * Constants
