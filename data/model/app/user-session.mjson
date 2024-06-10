@@ -33,9 +33,10 @@
             "valueDescriptor": {"@": "identityDescriptor"}
         }
     },
+
     "identityDescriptor": {
         "object": "../identity.mjson"
-    }
+    },
 
     "environment": {
         "prototype": "../../../core/meta/property-descriptor",
@@ -46,9 +47,10 @@
             "valueDescriptor": {"@": "environmentDescriptor"}
        }
     },
+    
     "environmentDescriptor": {
         "object": "../../../core/environment.mjson"
-    }
+    },
 
     "connectionId": {
         "prototype": "../../../core/meta/property-descriptor",
