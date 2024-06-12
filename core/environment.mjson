@@ -1,8 +1,8 @@
 {
     "root": {
-        "object": "app-infrastructure-data.mod/data/main.mod/model/user-session.mjson",
+        "prototype": "core/meta/module-object-descriptor",
         "values": {
-            "name": "UserSession",
+            "name": "Environment",
             "propertyDescriptors": [
                 {"@": "userAgentIPAddress"},
                 {"@": "stage"},
@@ -38,7 +38,7 @@
     },
 
     "userAgentIPAddress": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "userAgentIPAddress",
             "valueType": "string"
@@ -46,84 +46,84 @@
     },
 
     "stage": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "stage",
             "valueType": "string"
         }
     },
     "isBrowser": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isBrowser",
             "valueType": "boolean"
         }
     },
     "isNode": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isNode",
             "valueType": "boolean"
         }
     },
     "isAWS": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isAWS",
             "valueType": "boolean"
         }
     },
     "userAgent": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "userAgent",
             "valueType": "string"
         }
     },
     "device": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "device",
             "valueType": "string"
         }
     },
     "supportsLinkPrefetch": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "supportsLinkPrefetch",
             "valueType": "boolean"
         }
     },
     "supportsLinkPreload": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "supportsLinkPreload",
             "valueType": "boolean"
         }
     },
     "supportsPointerEvents": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "supportsPointerEvents",
             "valueType": "boolean"
         }
     },
     "isApplePlatform": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isApplePlatform",
             "valueType": "boolean"
         }
     },
     "isIOSDevice": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isIOSDevice",
             "valueType": "boolean"
         }
     },
     "isAndroidDevice": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isAndroidDevice",
             "valueType": "boolean"
@@ -131,63 +131,63 @@
     },
 
     "isCordova": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isCordova",
             "valueType": "boolean"
         }
     },
     "isMobileDevice": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isMobileDevice",
             "valueType": "boolean"
         }
     },
     "isAndroidTablet": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isAndroidTablet",
             "valueType": "boolean"
         }
     },
     "isStandalone": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isStandalone",
             "valueType": "boolean"
         }
     },
     "platformName": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "platformName",
             "valueType": "string"
         }
     },
     "browserVersion": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "browserVersion",
             "valueType": "string"
         }
     },
     "browserName": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "browserName",
             "valueType": "string"
         }
     },
     "isWKWebView": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isWKWebView",
             "valueType": "boolean"
         }
     },
     "isUIWebView": {
-        "prototype": "mod/core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isUIWebView",
             "valueType": "boolean"
