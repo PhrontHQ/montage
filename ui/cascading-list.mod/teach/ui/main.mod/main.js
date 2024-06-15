@@ -2,24 +2,26 @@ var Component = require("mod/ui/component").Component,
     MockService = require('mod/test/mocks/data/services/mock-service').MockService,
     Employee = require('mod/test/mocks/data/models/employee').Employee;
 
-exports.Main = Component.specialize(/** @lends Main# */{
+var Main = exports.Main = class Main extends Component { /** @lends module:"ui/cascading-list.mod/teach/main.mod" */
+    constructor() {
+        super();
 
-    constructor: {
-        value: function () {
-            this.mockService = new MockService();
+        this.mockService = new MockService();
 
-            this.root = [
-                this.mockService.fetchEmployees(),
-                this.mockService.fetchDepartments(),
-                this.mockService.fetchStores(),
-                this.mockService.fetchCustomers(),
-                this.mockService.fetchSettings(),
-            ];
+        this.root = [
+            this.mockService.fetchEmployees(),
+            this.mockService.fetchDepartments(),
+            this.mockService.fetchStores(),
+            this.mockService.fetchCustomers(),
+            this.mockService.fetchSettings(),
+        ];
 
-            this.addEventListener('cascadingListPop', this, false);
-            this.addEventListener('cascadingListPush', this, false);
-        }
-    },
+        this.addEventListener('cascadingListPop', this, false);
+        this.addEventListener('cascadingListPush', this, false);
+}
+}
+
+Main.addClassProperties( {
 
     shouldListBeExpandable: {
         value: function (list, isExpandable, content) {

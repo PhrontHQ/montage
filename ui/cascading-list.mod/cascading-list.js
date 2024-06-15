@@ -30,13 +30,15 @@ var CascadingListContext = exports.CascadingListContext = Montage.specialize({
 
 });
 
-exports.CascadingList = Component.specialize({
+var CascadingList = exports.CascadingList = class CascadingList extends Component { /** @lends module:"mod/ui/native/cascading-list.mod".Button# */
+    constructor() {
+        super();
 
-    constructor: {
-        value: function () {
-            this.history = [];
-        }
-    },
+        this.history = [];
+    }
+}
+
+CascadingList.addClassProperties( {
 
     _currentColumnIndex: {
         value: 0
