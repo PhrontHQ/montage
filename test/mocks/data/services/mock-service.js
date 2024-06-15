@@ -1,4 +1,4 @@
-var Montage = require("mod/core/core").Montage,
+var Montage = require("../../../../core/core").Montage,
     Employee = require('../models/employee').Employee,
     Store = require('../models/store').Store,
     Settings = require('../models/settings').Settings,

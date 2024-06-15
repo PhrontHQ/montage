@@ -1,4 +1,4 @@
-var Montage = require("mod/core/core").Montage;
+var Montage = require("../../../../core/core").Montage;
 
 /**
  * @class Check

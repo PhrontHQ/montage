@@ -1,4 +1,4 @@
-var MontageModule = require("mod/core/core"),
+var MontageModule = require("../../../../core/core"),
     Montage = MontageModule.Montage,
     objectDescriptorModuleIdDescriptor = MontageModule._objectDescriptorModuleIdDescriptor,
     objectDescriptorDescriptor = MontageModule._objectDescriptorDescriptor;
