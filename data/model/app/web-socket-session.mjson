@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "../../../core/meta/module-object-descriptor",
+        "prototype": "core/meta/module-object-descriptor",
         "values": {
             "name": "WebSocketSession",
             "propertyDescriptors": [
@@ -24,14 +24,14 @@
         "object": "../data-object.mjson"
     },
     "id": {
-        "prototype": "../../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "id",
             "valueType": "string"
         }
     },
     "identity": {
-        "prototype": "../../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "identity",
             "cardinality": 1,
@@ -45,7 +45,7 @@
     },
 
     "connections": {
-        "prototype": "../../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "connections",
             "valueType": "object",
@@ -59,7 +59,7 @@
     },
 
     "app": {
-        "prototype": "../../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "app",
             "cardinality": 1,
@@ -73,7 +73,7 @@
     },
 
     "windows": {
-        "prototype": "../../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "windows",
             "valueType": "object",
