@@ -528,6 +528,39 @@ ObjectDescriptor.addClassProperties({
         }
     },
 
+    /**
+     * An ObjectDescriptor's nextTargets cached
+     * @property {Array} _nextTargets
+     */
+    _nextTargets: {
+        value: undefined
+    },    
+    nextTargets: {
+        get: function() {
+            if(!this._nextTargets) {
+                let nextTargets = this._nextTargets = [],
+                    nextTargetCandidate = this.parent,
+                    dataServices = this.eventManager.application.mainService.childServicesForType(this);
+
+                //Add all ObjectDescriptor parents
+                do {
+                    if(nextTargetCandidate) {
+                        nextTargets.push(nextTargetCandidate);
+                        nextTargetCandidate = nextTargetCandidate.parent;
+                    }
+                }
+                while (nextTargetCandidate);
+
+                //Add all Services handling this object:
+                nextTargets.push.apply(nextTargets, dataServices);    
+                nextTargets.push(this.eventManager.application.mainService);
+                nextTargets.push(this.eventManager.application);
+            }
+
+            return this._nextTargets;
+        }
+    },
+
 
     /**
      * Defines whether the object descriptor should use custom prototype for new

@@ -3646,41 +3646,48 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
         value: function (target) {
 
             if (!target) {
-                return [];
+                return this._emptyNextTargets;
+            } else if(target.nextTargets) {
+                return target.nextTargets;
+            } else {
+
+                var targetCandidate = target,
+                    application = this.application,
+                    eventPath = [],
+                    discoveredTargets = this._eventPathForTargetMap;
+
+                discoveredTargets.clear();
+
+                // Consider the target "discovered" for less specialized detection of cycles
+                discoveredTargets.set(target,true);
+
+                do {
+                    if (!discoveredTargets.has(targetCandidate)) {
+                        eventPath.push(targetCandidate);
+                        discoveredTargets.set(targetCandidate,true);
+                    }
+
+                    targetCandidate = targetCandidate.nextTarget;
+
+                    if (!targetCandidate || discoveredTargets.has(targetCandidate)) {
+                        targetCandidate = application;
+                    }
+
+                    if (targetCandidate && discoveredTargets.has(targetCandidate)) {
+                        targetCandidate = null;
+                    }
+                }
+                while (targetCandidate);
+
+                return eventPath;
             }
 
-            var targetCandidate = target,
-                application = this.application,
-                eventPath = [],
-                discoveredTargets = this._eventPathForTargetMap;
-
-            discoveredTargets.clear();
-
-            // Consider the target "discovered" for less specialized detection of cycles
-            discoveredTargets.set(target,true);
-
-            do {
-                if (!discoveredTargets.has(targetCandidate)) {
-                    eventPath.push(targetCandidate);
-                    discoveredTargets.set(targetCandidate,true);
-                }
-
-                targetCandidate = targetCandidate.nextTarget;
-
-                if (!targetCandidate || discoveredTargets.has(targetCandidate)) {
-                    targetCandidate = application;
-                }
-
-                if (targetCandidate && discoveredTargets.has(targetCandidate)) {
-                    targetCandidate = null;
-                }
-            }
-            while (targetCandidate);
-
-            return eventPath;
         }
     },
 
+    _emptyNextTargets: {
+        value: Object.freeze([])
+    },
     /**
      * Build the event target chain for the the specified DOM target
      * @private
@@ -3690,7 +3697,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
         value: function (target) {
 
             if (!target) {
-                return [];
+                return this._emptyNextTargets;
             }
 
             var targetCandidate = target,

@@ -104,7 +104,16 @@ exports.Target = class Target extends Montage {
              * @property {boolean} serializable
              * @property {Target} value
              */
-            nextTarget: {value: null, serializable: false}
+            nextTarget: {value: null, serializable: false},
+
+            /**
+             * Optional. If present, EventManager will call this, otherwise it will use nextTarget
+             * Returns all next targets on which listeners will be invoked, similar to 
+             * https://developer.mozilla.org/en-US/docs/Web/API/Event/composedPath
+             * @property {Array<Target>}
+             */
+            nextTargets: {value: undefined} 
+
         });
 
     }
@@ -218,6 +227,7 @@ exports.Target = class Target extends Montage {
             composer._isLoaded = false;
         }
     }
+
 
 }
 
