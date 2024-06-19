@@ -1181,15 +1181,31 @@ DataService.addClassProperties({
      * @argument {DataObjectDescriptor} type
      * @returns {Set.<DataService,number>}
      */
-    childServiceForType: {
+    childServicesForType: {
         value: function (type) {
             var services;
             type = type instanceof ObjectDescriptor ? type : this.objectDescriptorForType(type);
             services = this._childServicesByType.get(type) || this._childServicesByType.get(null);
-            return services && services[0] || null;
+            return services || null;
         }
     },
 
+    /**
+     * Get the first child service that can handle data of the specified type,
+     * or `null` if no such child service exists.
+     *
+     * @private
+     * @method
+     * @argument {DataObjectDescriptor} type
+     * @returns {Set.<DataService,number>}
+     */
+    childServiceForType: {
+        value: function (type) {
+            var services = this.childServicesForType(type);
+            return services && services[0] || null;
+        }
+    },
+    
 
     /***************************************************************************
      * Mappings
