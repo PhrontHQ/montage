@@ -948,12 +948,13 @@ function _super(...args) {
     try {
         return ((__super.call(this, /* callerFn - Figure out which function called us.*/ (( _super && _super.caller ) ? _super.caller : arguments.callee.caller))) || Function.noop).apply(this, arguments);
     } catch (error) {
-        if(error.name === "TypeError") {
+        const superFunction = (__super.call(this, /* callerFn - Figure out which function called us.*/ (( _super && _super.caller ) ? _super.caller : arguments.callee.caller)));
+
+        if(error.name === "TypeError" && superFunction.isClass) {
 
             //If there's no argument, we already did native super() in the class we build in .specialize()
             if(args.length > 0) {
-                const superFunction = (__super.call(this, /* callerFn - Figure out which function called us.*/ (( _super && _super.caller ) ? _super.caller : arguments.callee.caller))),
-                    className = this.constructor.name,
+                const className = this.constructor.name,
                     constructorParameterNames = getFunctionParameterNames(( _super && _super.caller ) ? _super.caller : arguments.callee.caller),
                     parentName = Object.getPrototypeOf(Object.getPrototypeOf(this)).constructor.name,
                     parentConstructorParameterNames = getFunctionParameterNames(superFunction),
