@@ -1,6 +1,4 @@
-var ExpressionDataMapping = require("./expression-data-mapping").ExpressionDataMapping,
-    defaultEventManager = require("./event/event-manager").defaultEventManager,
-    MutableEvent = require("./event/mutable-event").MutableEvent;
+var ExpressionDataMapping = require("./expression-data-mapping").ExpressionDataMapping;
 
 /**
  * Extends ExpressionDataMapping to add the ability to map a DataOperatin to an HTTP Request
