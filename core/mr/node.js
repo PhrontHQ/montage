@@ -195,7 +195,20 @@ Require.NodeLoader = function NodeLoader(config) {
         var id;
         if(NodeBuilInModules.indexOf(module.id) !== -1) {
             id = module.id;
-        } else {
+        } 
+        /*
+            FIXME:
+            For non built-in modules, this makes id == ""
+            which causees native require() bellow to fail
+            and causes an async deserialization to load the content
+            before successfully requiring it as a backup.
+            
+            This happens in deserializing deserialization coming via messages
+            on a WebSocket. If the that deserialization is synchronous, then there's
+            no current way to resolve/load on the fly a dependency that wasn't loaded 
+            ahead of time. This is needs to likely be fixed in the deserializer when in sync mode
+        */
+        else {
             id = location.slice(config.location.length);
             id = id.substr(0,id.lastIndexOf('.'));
             module.location = location;
