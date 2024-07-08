@@ -53,8 +53,8 @@
         "htmlparser2": "~3.0.5",
         "ical.js": "~1.4.0",
         "just-kebab-case": "^4.0.1",
-        "strange": "github:montagejs/js-strange#master",
-        "object-sizeof": "^1.5.2"
+        "object-sizeof": "^1.5.2",
+        "strange": "github:montagejs/js-strange#master"
     },
     "devDependencies": {
         "concurrently": "^3.4.0",
