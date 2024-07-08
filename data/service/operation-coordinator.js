@@ -437,6 +437,9 @@ exports.OperationCoordinator = Target.specialize(/** @lends OperationCoordinator
 
                 (deserializedOperation.type ===  DataOperation.Type.MergeOperation)
             ) {
+                /*
+                    TODO: add a timeout to ensure it doesn't hang blocked too long
+                */
                 resultOperationPromise = new Promise(function(resolve,reject) {
                     self._operationPromisesByReferrerId.set(deserializedOperation.id,[resolve,reject]);
                     defaultEventManager.handleEvent(deserializedOperation);
@@ -446,9 +449,21 @@ exports.OperationCoordinator = Target.specialize(/** @lends OperationCoordinator
                     //If Connect, we can't really return anything to the client, so we resolve now:
                     if(deserializedOperation.type === DataOperation.Type.ConnectOperation) {
                         resolve(true);
-                    };
+                    } 
+                    else if(!propagationPromise && self._operationPromisesByReferrerId.get(deserializedOperation.id)) {
+                        /*
+                            If propagationPromise, we know some listener is handling it in an async way
+                            and should resultOperationPromise should be resolved by a completed/failed matching operation.
 
-                    return propagationPromise;
+                            Otherwise, if there were any listener handling it in a sync way, it should also be resolved or rejected
+                            which we can verify by seeing if there's still the entry in _operationPromisesByReferrerId. 
+
+                            If it's gone, all good, if not, nothing happened, and we should resolve true
+                        */
+                       console.warn("no listener handled "+deserializedOperation.type+" DataOperation: ",deserializedOperation);
+                        resolve(true);
+                    }
+
                 });
 
                 return resultOperationPromise
