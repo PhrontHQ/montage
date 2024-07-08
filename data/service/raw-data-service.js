@@ -2690,6 +2690,25 @@ RawDataService.addClassProperties({
 
                 /*
                     Now we check if there's a known stream. If there's one, it's a local (as in memory space) and we map to the matching dataStream)
+                
+                    TODO: We need to move that out in order to support strategies involving
+                    multiple RawDataServices handling the same Data Objects Like :
+                        - sharding, fetching different aspect of data from different RawDataServices in parallel,
+                        each with a shard of the data. They would have to be equiped with a criteria describing the nature of the shard?
+
+                        - local fallback/cache, like an offline scenario, where the source of truth is in the cloud, but the app
+                        needs a local storage, which is the same use-case for on-device storage or on-promise
+
+                        - redundancy, maybe a data needs to be persisted both in a unified storage so some reads might be initialized from 
+                        and origin data source (API, DB, etc...) if missing in the unified storage, and changes also needs to both stored in the unified 
+                        storage but also propagated back to the origin data source.
+
+                        - othes?
+
+                    Also, the main service being the one that issues the fetch is best placed
+                    to actually add data to the matching stream by listening to readCompletedOperations,or not, depending
+                    on which RawDataService returns and the strategy involving the coordination of multiple RawDataServices returning results
+                    on handling the same data operation.
                 */
 
                 var stream = this.contextForPendingDataOperation(operation);
