@@ -1,5 +1,6 @@
 var RawDataService = require("./raw-data-service").RawDataService,
-    DataOperation = require("./data-operation").DataOperation;
+    DataOperation = require("./data-operation").DataOperation,
+    AuthorizationPolicy = require("./authorization-policy").AuthorizationPolicy;
 
 
 /**
@@ -50,9 +51,9 @@ IdentityAuthorizationService.addClassProperties({
 
                 Behind the AWS API Gateway using WebSockets, this can only be received following the execution of a connect's authorizer function.
             */
-            if(this.currentEnvironment.isNode) {
-                var authorizationPolicy = this.authorizationPolicy,
-                    identity = authorizeConnectionOperation.target,
+            if(this.accessPolicies && this.authorizationPolicy === AuthorizationPolicy.OnConnect) {
+                if(this.currentEnvironment.isNode) {
+                    var identity = authorizeConnectionOperation.target,
                     accessPoliciesEvaluation,
                     self = this,
                     allowedDataIdentities;
@@ -114,6 +115,10 @@ IdentityAuthorizationService.addClassProperties({
 
             }
 
+
+            }
+
+           
 
         }
     }
