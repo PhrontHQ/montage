@@ -289,10 +289,6 @@ RawDataService.addClassProperties({
         set: function (value) {
             if (value !== this._connectionIdentifier) {
                 this._connectionIdentifier = value;
-
-                /*
-                    The region where the database lives is in the resourceArn, no need to add it on top
-                */
                 this.connection = this.connectionForIdentifier(value);
             }
         }
