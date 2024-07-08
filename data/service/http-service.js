@@ -85,6 +85,55 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
     constructor() {
         super();
     }
+
+
+    handleReadOperation(readOperation) {
+
+        /*
+            Until we solve more efficiently (lazily) how RawDataServices listen for and receive data operations, we have to check wether we're the one to deal with this:
+        */
+        if(!this.handlesType(readOperation.target)) { 
+            return;
+        }
+
+        var objectDescriptor = readOperation.target,
+            mapping = objectDescriptor && this.mappingForObjectDescriptor(objectDescriptor),
+            // mapping = objectDescriptor && this.mappingForType(objectDescriptor),
+            fetchRequests = [],
+            i, iRequest,
+            responseOperation;
+
+        mapping.mapDataOperationToFetchRequests(readOperation, fetchRequests);
+
+        for(i=0; (iRequest = fetchRequests[i]); i++) {
+            fetch(iRequest)
+            .then((response) => {
+              if (response.status === 200) {
+                return response.json();
+              } else {
+                throw new Error("Something went wrong on API server with resonse: ",response);
+              }
+            })
+            .then((response) => {
+                var rawData = [];
+                mapping.mapFetchResponseToRawData(response, rawData);
+                console.debug("rawData: ",rawData);
+                responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
+                return responseOperation;
+            })
+            .catch((error) => {
+                responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
+                console.error(error);
+                return responseOperation;
+            })
+            .finally((value) => {
+                objectDescriptor.dispatchEvent(responseOperation);
+            })
+
+        }              
+        
+}
+
 }
 
 // var HttpService = exports.HttpService = RawDataService.specialize(/** @lends HttpService.prototype */ {

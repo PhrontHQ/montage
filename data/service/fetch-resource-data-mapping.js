@@ -1,4 +1,9 @@
-var ExpressionDataMapping = require("./expression-data-mapping").ExpressionDataMapping;
+const Montage = require("../../core/core").Montage,
+    ExpressionDataMapping = require("./expression-data-mapping").ExpressionDataMapping,
+    parse = require("../../core/frb/parse"),
+    compile = require("../../core/frb/compile-evaluator"),
+    assign = require("../../core/frb/assign"),
+    Scope = require("../../core/frb/scope");
 
 /**
  * Extends ExpressionDataMapping to add the ability to map a DataOperatin to an HTTP Request
@@ -31,7 +36,7 @@ exports.FetchResourceDataMapping = class FetchResourceDataMapping extends Expres
              * @property {EventManager} value
              * @default defaultEventManager
              */
-            fetchRequestMappingByCriteria: {value: undefined, serializable: true},
+            fetchRequestMappingByOperationType: {value: undefined, serializable: true},
 
             /**
              * Whether or not this target can accept user focus and become the
@@ -46,7 +51,6 @@ exports.FetchResourceDataMapping = class FetchResourceDataMapping extends Expres
              * @default false
              */
             fetchResponseMapping: {value: undefined, serializable: true}
-
         });
 
     }
@@ -60,12 +64,47 @@ exports.FetchResourceDataMapping = class FetchResourceDataMapping extends Expres
 
         super.deserializeSelf(deserializer);
 
-        this.fetchRequestMappingByCriteria = deserializer.getProperty("fetchRequestMappingByCriteria");
-        this.fetchResponseMapping = deserializer.getProperty("fetchResponseMapping");
+        this.fetchRequestMappingByOperationType = deserializer.getProperty("fetchRequestMappingByOperationType");
+        this.fetchResponseRawDataMappingExpressionByCriteria = deserializer.getProperty("fetchResponseRawDataMappingExpressionByCriteria");
 
     }
 
 
+    _buildFetchRequestMappingRulesFromRawRules(rawRules) {
+        let targetExpressions = rawRules ? Object.keys(rawRules) : null,
+            rules = [];
+
+        if(this.objectDescriptor && targetExpressions && targetExpressions.length) {
+            for (let i = 0, iTargetExpression, iRawRule, iRule; (iTargetExpression = targetExpressions[i]); ++i) {
+                iRawRule = rawRules[iTargetExpression];
+                iRule = this.makeRuleFromRawRule(iRawRule, iTargetExpression, true, true);
+                rules.push(iRule);
+            } 
+        }
+
+        return rules;
+    }lock
+
+    objectMappingRules() {
+        return this._objectMappingRules || this._initializeObjectMappingRules();
+    }
+
+    /*
+    _mapObjectMappingRules: {
+        value: function (rawRules) {
+            var propertyNames = rawRules ? Object.keys(rawRules) : null,
+                objectMappingRules = this.objectMappingRules, rawDataMappingRules = this.rawDataMappingRules,
+                propertyName, i;
+
+            //TODO Add path change listener for objectDescriptor to
+            //account for chance that objectDescriptor is added after the rules
+            if (this.objectDescriptor && propertyNames) {
+                for (i = 0; (propertyName = propertyNames[i]); ++i) {
+                    this._mapObjectMappingRuleForPropertyName(rawRules[propertyName], propertyName, objectMappingRules, rawDataMappingRules);
+                }
+            }
+        }
+    },
 
 
     /**
@@ -77,32 +116,104 @@ exports.FetchResourceDataMapping = class FetchResourceDataMapping extends Expres
      * @public
      * @argument {DataStream} dataStream
      */
-    mapDataOperationToFetchRequest(dataOperation, fetchRequestDescriptor) {
+    mapDataOperationToFetchRequests (dataOperation, fetchRequests) {
 
-        let fetchRequest = new Request(this.mapDataOperationToFetchRequestURL(dataOperation));
+        /*
+            First, loop on on criterias and evalutate dataOperation for each.
 
-        this.mapDataOperationToFetchRequestMethod(dataOperation, fetchRequest);
-        this.mapDataOperationToFetchRequestMethod(dataOperation, fetchRequest);
+            The dataOperation could be matching multiple criteria, which will mean multiple reuests to send
+            in order to fulfill the dataOperation
+        */
+        var fetchRequestMappingByCriteria = this.fetchRequestMappingByOperationType.get(dataOperation.type),
+            criteriaIterator = fetchRequestMappingByCriteria.keys(),
+            dataOperationScope = this._scope.nest(dataOperation),
+            iCriteria;
 
+
+
+        while ((iCriteria = criteriaIterator.next().value)) {
+
+            if(iCriteria.evaluate(dataOperation)) {
+                //We have a match, we need to evaluate the rules to 
+                let fetchRequestMappingRules = fetchRequestMappingByCriteria.get(iCriteria),
+                    j, jRule, jRuleEvaluationResult, iUrl, options, iRequest;
+
+                /*
+                    Current serialization is an object to simplify manual authoring, 
+                    but our API should be an array of mapping rules. So if we don't
+                    have an array, we do the work
+                */
+                if(!Array.isArray(fetchRequestMappingRules)) {
+                    fetchRequestMappingByCriteria.set(iCriteria, (fetchRequestMappingRules = this._buildFetchRequestMappingRulesFromRawRules(fetchRequestMappingRules)))
+                }
+
+                
+                for(j=0;(jRule = fetchRequestMappingRules[j]); j++) {
+
+                    jRuleEvaluationResult = jRule.evaluate(dataOperationScope);
+                    if(jRule.targetPath === "url") {
+                        iUrl = jRuleEvaluationResult;
+                    } else {
+                        assign( (options || (options = {})), jRule.targetPath, jRuleEvaluationResult, undefined /*parameters*/, undefined /*document*/, undefined /*components*/);
+                    }
+                }
+
+                if(!iUrl) {
+                    throw new Error("mapDataOperationToFetchRequests: no url found for dataOperation: ",+dataOperation, " and criteria: "+iCriteria);
+                } else {
+                    iRequest = new Request(iUrl, options);
+                    (fetchRequests || (fetchRequests = [])).push(iRequest);
+                }
+
+
+            }
+        }
+        return fetchRequests;
     }
 
-    /**
-     * Returns fetchRequestDescriptor conforming to the options object of a Request constructot .
-     * used in the Fetch API - 
-     * TODO: overrides to false as we should have that done by SQL
-     * when correct mapping from orderings to ORDER BY clause is done
-     *
-     * @public
-     * @argument {Response} fetchResponse
-     * @argument {Array} rawData
-     */
-    mapFetchResponseToRawData(fetchResponse, rawData) {
+    fetchResponseRawDataMappingFunctionForCriteria(aCriteria) {
+        let value = this.fetchResponseRawDataMappingExpressionByCriteria.get(aCriteria);
 
-        let fetchRequest = new Request(this.mapDataOperationToFetchRequestURL(dataOperation));
+        if(!value) {
+            throw new Error("No Fetch Response Mapping found for Criteria: "+ aCriteria);
+        }
 
-        this.mapDataOperationToFetchRequestMethod(dataOperation, fetchRequest);
-        this.mapDataOperationToFetchRequestMethod(dataOperation, fetchRequest);
+        if(typeof value !== "function") {
+            //We parse and compile the expression so we can evaluate it:
+            try {
+                value = compile(parse(value));
+            } catch(compileError) {
+                throw new Error("Fetch Response Mapping Expression Compile error: "+ compileError+", for Criteria: "+ aCriteria);
+            }
 
+            this.fetchResponseRawDataMappingExpressionByCriteria.set(aCriteria, value);
+        }
+
+        return value;
     }
 
+    mapFetchResponseToRawData(fetchReponse, rawData) {
+
+        /*
+            We need to find the criteria that led us to the current response:
+
+            fetchReponse -> fetchRequest -> criteria -> response mapping
+        */
+
+            let criteriaIterator = this.fetchResponseRawDataMappingExpressionByCriteria.keys(),
+                fetchReponseScope = this._scope.nest(fetchReponse),
+                iCriteria;
+
+        while ((iCriteria = criteriaIterator.next().value)) {
+
+            if(iCriteria.evaluate(fetchReponse)) {
+                //We have a match, we need to evaluate the rules to 
+                let fetchResponseRawDataMappingFunction = this.fetchResponseRawDataMappingFunctionForCriteria(iCriteria),
+                    result = fetchResponseRawDataMappingFunction(fetchReponseScope);
+
+                rawData.push(...result);
+            }
+        }
+    }
+    
 }
