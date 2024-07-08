@@ -172,6 +172,11 @@ var Model = exports.Model = Montage.specialize( /** @lends Model.prototype # */ 
     objectDescriptors: {
         get: function () {
             return this._objectDescriptors || (this._objectDescriptors = []);
+        },
+        set: function(value) {
+            if(value !== this._objectDescriptors) {
+                this._objectDescriptors = value;
+            }
         }
     },
 
