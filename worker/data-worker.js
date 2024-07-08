@@ -491,28 +491,31 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
             deserializedOperation,
             objectRequires,
             module,
-            isSync = true,
+            isSync = false,
             self = this;
 
             //console.log("serializedOperation: ",serializedOperation);
             this.deserializer.init(serializedOperation, this.require, objectRequires, module, isSync);
             try {
-                deserializedOperation = this.deserializer.deserializeObject();
+               var deserializedOperationPromise = this.deserializer.deserializeObject();
             } catch (ex) {
                 console.error("No deserialization for ",serializedOperation);
                 return Promise.reject("Unknown message: ",serializedOperation);
             }
 
-            if(Array.isArray(deserializedOperation)) {
-                console.log("message contains "+deserializedOperation.length+" operations");
-                for(var i=0, countI = deserializedOperation.length, promises = new Array(deserializedOperation.length); (i<countI); i++) {
-                    promises[i] = (this.handleOperation(deserializedOperation[i], event, context, callback));
-                }
-                return Promise.all(promises);
-            } else {
-                // console.log("message contains 1 operations");
-                return this.handleOperation(deserializedOperation, event, context, callback);
-            }
+            return deserializedOperationPromise.then((deserializedOperation) => {
+                if(Array.isArray(deserializedOperation)) {
+                    console.log("message contains "+deserializedOperation.length+" operations");
+                    for(var i=0, countI = deserializedOperation.length, promises = new Array(deserializedOperation.length); (i<countI); i++) {
+                        promises[i] = (this.handleOperation(deserializedOperation[i], event, context, callback));
+                    }
+                    return Promise.all(promises);
+                } else {
+                    // console.log("message contains 1 operations");
+                    return this.handleOperation(deserializedOperation, event, context, callback);
+                }    
+            });
+
         }
     },
 
