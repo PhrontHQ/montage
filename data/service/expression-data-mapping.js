@@ -534,7 +534,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
         get: function () {
             /*
                 If this.service programmatically creates a rawDataDescriptor for an ObjectDescriptor, it means that RawDataService loops over the ObjectDescriptor, and use the mapping to decide how the RawDataDescriptor should be, calling mapping.objectMappingRuleForPropertyName(), then this._initializeObjectMappingRuleForPropertyName(), ...
-                and we loop back here on .rawDataDescriptor via _makeRuleFromRawRule() -> ._defaultConverter() -> .rawDataDescriptor
+                and we loop back here on .rawDataDescriptor via makeRuleFromRawRule() -> ._defaultConverter() -> .rawDataDescriptor
 
                 All of this because we try to find a default converter using _converterForValueTypes() that does:
                             var converters = exports.ExpressionDataMapping.defaultConverters;
@@ -2473,12 +2473,12 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                 var rule;
 
                 if (this._shouldMapRule(rawRule, true)) {
-                    rule = this._makeRuleFromRawRule(rawRule, propertyName, true, true);
+                    rule = this.makeRuleFromRawRule(rawRule, propertyName, true, true);
                     objectMappingRules[rule.targetPath] = rule;
                 }
 
                 if (this._shouldMapRule(rawRule, false)) {
-                    rule = this._makeRuleFromRawRule(rawRule, propertyName, false, true);
+                    rule = this.makeRuleFromRawRule(rawRule, propertyName, false, true);
                     rawDataMappingRules[rule.targetPath] = rule;
                 }
             }
@@ -2539,11 +2539,11 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                 var rule;
 
                 if (this._shouldMapRule(rawRule, false)) {
-                    rule = this._makeRuleFromRawRule(rawRule, propertyName, false, false);
+                    rule = this.makeRuleFromRawRule(rawRule, propertyName, false, false);
                     objectMappingRules[rule.targetPath] = rule;
                 }
                 if (this._shouldMapRule(rawRule, true)) {
-                    rule = this._makeRuleFromRawRule(rawRule, propertyName, true, false);
+                    rule = this.makeRuleFromRawRule(rawRule, propertyName, true, false);
                     rawDataMappingRules[rule.targetPath] = rule;
 
                     //Let's add indexing for each of rule.requiremts properties if any.
@@ -2569,7 +2569,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
         }
     },
 
-    _makeRuleFromRawRule: {
+    makeRuleFromRawRule: {
         value: function (rawRule, propertyName, addOneWayBindings, isObjectMappingRule) {
             var propertyDescriptorName = !isObjectMappingRule && addOneWayBindings ? rawRule[ONE_WAY_BINDING] || rawRule[TWO_WAY_BINDING] : propertyName,
                 propertyDescriptor = this.objectDescriptor.propertyDescriptorForName(propertyDescriptorName),
