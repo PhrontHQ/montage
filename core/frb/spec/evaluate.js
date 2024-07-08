@@ -731,6 +731,13 @@ module.exports = [
     },
 
     {
+        path: "toMap().valuesArray()",
+        input: {a: {value: "a", description: "a desc"}, b: {value: "b", description: "b desc"}},
+        output: [{value: "a", description: "a desc"}, {value: "b", description: "b desc"}]
+    },
+
+
+    {
         path: "toMap().entriesArray()",
         input: {a: 10, b: 20},
         output: [['a', 10], ['b', 20]]
