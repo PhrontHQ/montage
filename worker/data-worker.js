@@ -260,25 +260,44 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
 
                 self.setEnvironmentFromEvent(event, context);
 
-                /*
-                    Only the event from connect has headers informations, the only moment when we can get accept-language
-                    So we need to catch it and store it as we create the connection in the DB.
 
-                    We'll have to start being able to create full-fledge DO for that. If we move saveChanges to DataService,
-                    we should be able to use the main service directly? Then the operations created should just be dispatched locally,
-                    by whom?
+                let authorizeConnectionOperationPromise;
 
-                    That's what shpould probably happen client side as well, where the opertions are dispatched locally and the caught by an object that just push them on the WebSocket.
-                */
-                return new Promise(function(resolve, reject) {
+                if(self.mainService.authorizationPolicy === AuthorizationPolicy.None) {
+                    /*
+                        There are no AuthorizationPolicies, so we authorize the connection
+                    */
+                    var authorizeConnectionCompletedOperation = new DataOperation();
+                    authorizeConnectionCompletedOperation.type = DataOperation.Type.AuthorizeConnectionCompletedOperation;
+                    authorizeConnectionCompletedOperation.referrerId = authorizeConnectionOperation.id;
+                    authorizeConnectionCompletedOperation.target = authorizeConnectionOperation.target;
+                    authorizeConnectionCompletedOperation.context = authorizeConnectionOperation.context;
+                    authorizeConnectionCompletedOperation.clientId = authorizeConnectionOperation.clientId;
+                    authorizeConnectionOperation.data = authorizeConnectionOperation.data;
 
-                    self.handleAuthorizePromiseResolve = resolve;
-                    self.handleAuthorizePromiseReject = reject;
+                    authorizeConnectionOperationPromise = Promise.resolve(authorizeConnectionCompletedOperation);
+                } else {
+                    /*
+                        Only the event from connect has headers informations, the only moment when we can get accept-language
+                        So we need to catch it and store it as we create the connection in the DB.
+
+                        We'll have to start being able to create full-fledge DO for that. If we move saveChanges to DataService,
+                        we should be able to use the main service directly? Then the operations created should just be dispatched locally,
+                        by whom?
+
+                        That's what shpould probably happen client side as well, where the opertions are dispatched locally and the caught by an object that just push them on the WebSocket.
+                    */
+                        authorizeConnectionOperationPromise = new Promise(function(resolve, reject) {
+
+                        self.handleAuthorizePromiseResolve = resolve;
+                        self.handleAuthorizePromiseReject = reject;
 
 
-                    return self.operationCoordinator.handleOperation(authorizeConnectionOperation, event, context, callback, this.apiGateway);
-                })
-                .then((authorizeConnectionCompletedOperation) => {
+                        return self.operationCoordinator.handleOperation(authorizeConnectionOperation, event, context, callback, this.apiGateway);
+                    })
+                }
+
+                return authorizeConnectionOperationPromise.then((authorizeConnectionCompletedOperation) => {
                     /*
                         Identity may have been modified by the authorization logic, so we need to re-serialize
                     */
