@@ -313,11 +313,23 @@ exports.OperationCoordinator = Target.specialize(/** @lends OperationCoordinator
                     */
                     if(operation.type.endsWith("CompletedOperation") || operation.type.endsWith("FailedOperation") || operation.type === DataOperation.Type.NoOp) {
                         //resolve
-                        self._operationPromisesByReferrerId.get(operation.referrerId)[0]();
+                        let handlerFunctions = self._operationPromisesByReferrerId.get(operation.referrerId);
+                        if(handlerFunctions) {
+                            handlerFunctions[0]();
+                            //Cleanup
+                            self._operationPromisesByReferrerId.delete(operation.referrerId);
+                        }
                     }
                 },function(error) {
-                    //reject
-                    self._operationPromisesByReferrerId.get(operation.referrerId)[1](error);
+                    let handlerFunctions = self._operationPromisesByReferrerId.get(operation.referrerId);
+
+                    if(handlerFunctions) {
+                        //reject
+                        handlerFunctions[1](error);
+                        //Cleanup
+                        self._operationPromisesByReferrerId.delete(operation.referrerId);
+                    }
+
                 });
             }
         }
