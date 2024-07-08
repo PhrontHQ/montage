@@ -597,7 +597,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
                 }
                 return element;
             } else {
-                throw new Error("Element with id '" + value["#"] + "' was not found.");
+                throw new Error("HTML Element with data-mod-id '" + value["#"] + "' was not found.");
             }
         }
     },
