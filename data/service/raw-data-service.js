@@ -299,8 +299,41 @@ RawDataService.addClassProperties({
      *
      * @type {DataConnection}
      */
-    connection: {
+    _connection: {
         value: undefined
+    },
+
+    connection: {
+        get: function() {
+            if(!this._connection) {
+
+                /*
+                    Adding a bit of logic since apparently an RDS Proxy must be in the same VPC as the database and although the database can be publicly accessible, the proxy can’t be.
+
+                    So in working locally we need to address the database cluster directly.
+
+                    -> https://www.stackovercloud.com/2020/06/30/amazon-rds-proxy-now-generally-available/
+                */
+
+                //If we have an connectionIdentifer, we go for it, otherwise we go for a stage-based logic
+                if(this.connectionIdentifer) {
+                    this.connection = this.connectionForIdentifier(this.connectionIdentifer);
+                }
+                else if(!this.currentEnvironment.isAWS) {
+                    this.connection = this.connectionForIdentifier(`local-${this.currentEnvironment.stage}`);
+                } else {
+                    this.connection = this.connectionForIdentifier(this.currentEnvironment.stage);
+                }
+            }
+            return this._connection;
+        },
+        set: function(value) {
+
+            if(value !== this._connection) {
+                this._connection = value;
+            }
+        }
+
     },
 
 
