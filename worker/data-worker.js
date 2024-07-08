@@ -177,7 +177,7 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
             // await sleep(6000)
 
             var isModStage = event.requestContext.stage === "mod",
-                base64EncodedSerializedSession = event.queryStringParameters.session,
+                base64EncodedSerializedSession = event.queryStringParameters?.session,
                 serializedSession,
                 identityPromise, authorizeConnectionOperation,
                 self = this;
