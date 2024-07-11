@@ -504,6 +504,20 @@ DataService.addClassProperties({
         value: undefined
     },
 
+
+
+    /**
+     * A DataService's next target is it's parent
+     * @property {boolean} serializable
+     * @property {Component} value
+     */    
+    nextTarget: {
+        serializable: false,
+        get: function() {
+            return this._parentService;
+        }
+    },
+    
     /**
      * Convenience read-only reference to the root of the service tree
      * containing this service. Most applications have only one root service,
