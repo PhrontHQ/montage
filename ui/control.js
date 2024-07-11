@@ -424,7 +424,7 @@ Control.addClassProperties(
     },
 
     /**
-     * sets value from the elemnt's value. if isFromInput is true, it means it came from a DOM event, therefore the element alreaady has that value, we're
+     * sets value from the element's value. if isFromInput is true, it means it came from a DOM event, therefore the element alreaady has that value, we're
      * just catching up.
      *   @private
      */
