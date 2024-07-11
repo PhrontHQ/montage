@@ -206,7 +206,8 @@ if(!useMr) {
                 }
             });
         }
-
+        //Per DOM specs on load events
+        worker.dispatchEventNamed("load", false /*canBubble*/, false /*cancelable*/, null);
         console.log("Phront Worker reporting for duty!");
 
         return worker;
