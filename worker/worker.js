@@ -16,6 +16,9 @@ exports.Worker = Target.specialize( /** @lends Worker.prototype */{
             this.eventManager = defaultEventManager;
             Montage.application = this;
             defaultEventManager.application = this;
+
+            this.defineBinding("identifier", {"<->": "name", source: this});
+
             this.cache = global.cache;
         }
     },
