@@ -2706,7 +2706,7 @@ RawDataService.addClassProperties({
                         - othes?
 
                     Also, the main service being the one that issues the fetch is best placed
-                    to actually add data to the matching stream by listening to readCompletedOperations,or not, depending
+                    to actually add data to the matching stream by listening to readCompletedOperations, or not, depending
                     on which RawDataService returns and the strategy involving the coordination of multiple RawDataServices returning results
                     on handling the same data operation.
                 */
