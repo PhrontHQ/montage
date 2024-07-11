@@ -83,10 +83,6 @@ exports.FetchResourceDataMapping = class FetchResourceDataMapping extends Expres
         }
 
         return rules;
-    }lock
-
-    objectMappingRules() {
-        return this._objectMappingRules || this._initializeObjectMappingRules();
     }
 
     /*
