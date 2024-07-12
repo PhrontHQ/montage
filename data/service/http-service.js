@@ -117,7 +117,7 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
             .then((response) => {
                 var rawData = [];
                 mapping.mapFetchResponseToRawData(response, rawData);
-                console.debug("rawData: ",rawData);
+                //console.debug("rawData: ",rawData);
                 responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
                 return responseOperation;
             })
