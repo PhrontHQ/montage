@@ -69,6 +69,7 @@ ObjectDescriptor.addClassProperties({
     serializeSelf: {
         value:function (serializer) {
             serializer.setProperty("name", this.name);
+            serializer.setProperty("description", this.description);
             if ((this._model) && (!this.model.isDefault)) {
                 serializer.setProperty("model", this._model, "reference");
             }
@@ -117,6 +118,10 @@ ObjectDescriptor.addClassProperties({
             value = deserializer.getProperty("name");
             if (value !== void 0) {
                 this._name = value;
+            }
+            value = deserializer.getProperty("description");
+            if (value !== void 0) {
+                this.description = value;
             }
             value = deserializer.getProperty("model") || deserializer.getProperty("binder");
             if (value) {
@@ -223,6 +228,18 @@ ObjectDescriptor.addClassProperties({
         value:function (deserializer, propertyName) {
             return deserializer.getProperty(propertyName) || this[propertyName] || Defaults[propertyName];
         }
+    },
+
+    /**
+     * Description of the concept/intention behind what an ObjectDescriptor is and does.
+     *
+     * Intended to document for people.
+     *
+     * @returns {string} this.description
+     */
+
+    description: {
+        value: undefined 
     },
 
     _name: {

@@ -24,6 +24,22 @@
             "helpKey": ""
         }
     },
+    "description": {
+        "prototype": "core/meta/property-descriptor",
+        "values": {
+            "name": "description",
+            "objectDescriptor": {
+                "@": "root"
+            },
+            "isLocalizable": true,
+            "cardinality": 1,
+            "mandatory": false,
+            "denyDelete": false,
+            "readOnly": false,
+            "valueType": "string",
+            "helpKey": ""
+        }
+    },
     "maxAge": {
         "prototype": "core/meta/property-descriptor",
         "values": {
