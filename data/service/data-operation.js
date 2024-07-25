@@ -544,10 +544,10 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
      /**
      * returns the data service associated with the operation
      *
-     * @type {Promnise}
+     * @type {RawDataService}
      */
 
-    dataService: {
+    rawDataService: {
         get: function() {
 
         }
