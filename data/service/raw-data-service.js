@@ -2406,6 +2406,7 @@ RawDataService.addClassProperties({
                 One way to do this is to replace every object in a criteria's parameters by it's data identifier.
                 Another is to serialize the criteria.
             */
+            readOperation.referrerId = readEvent.id;
             readOperation.type = DataOperation.Type.ReadOperation;
             readOperation.target = objectDescriptor;
             //readOperation.data = {};
