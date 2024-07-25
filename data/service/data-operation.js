@@ -231,7 +231,6 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
     constructor: {
         value: function DataOperation() {
             this.timeStamp = performance.now();
-            // this.id = uuid.generate();
             this.constructionIndex = exports.DataOperation.prototype.constructionSequence++;
             this._completionPromiseFunctionsByParticipant = new Map();
             exports.DataOperation.prototype.constructionSequence = this.constructionIndex;
