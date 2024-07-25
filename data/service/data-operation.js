@@ -3,7 +3,6 @@ var Montage = require("../../core/core").Montage,
     Criteria = require("../../core/criteria").Criteria,
     Error = require("../../core/extras/error").Error,
     Enum = require("../../core/enum").Enum,
-    uuid = require("../../core/uuid"),
     defaultEventManager = require("../../core/event/event-manager").defaultEventManager,
     Locale = require("../../core/locale").Locale,
     DataOperation,
@@ -488,21 +487,6 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
      *
      * @type {number}
      */
-    _id: {
-        value: undefined
-    },
-
-    id: {
-        get: function() {
-            return this._id || (this._id = uuid.generate());
-        },
-        set:  function(value) {
-            if(value !== this._id) {
-                this._id = value;
-            }
-        }
-    },
-
     identifier: {
         get: function() {
             return this.id;

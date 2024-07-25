@@ -2,8 +2,9 @@
  @module mod/core/event/mutable-event
  @requires montage
  */
-var Montage = require("../core").Montage;
-const console = require('../extras/console').console;
+ const Montage = require("../core").Montage,
+    uuid = require("../../core/uuid"),
+    console = require('../extras/console').console;
 
 var wrapPropertyGetter = function (key, storageKey) {
         return function () {
@@ -78,6 +79,22 @@ var wrapPropertyGetter = function (key, storageKey) {
             }
         },
 
+        _id: {
+            value: undefined
+        },
+    
+        id: {
+            get: function() {
+                return this._id || (this._id = uuid.generate());
+            },
+            set:  function(value) {
+                if(value !== this._id) {
+                    this._id = value;
+                }
+            }
+        },
+    
+    
         /**
          * @function
          */
