@@ -9,8 +9,11 @@
                 {"@": "templateName"},
                 {"@": "templateDescription"},
                 {"@": "creationDate"},
+                {"@": "creatorIdentity"},
                 {"@": "modificationDate"},
-                {"@": "publicationDate"}
+                {"@": "modifierIdentity"},
+                {"@": "publicationDate"},
+                {"@": "publisherIdentity"}
             ],
             "objectDescriptorModule": {
                 "%": "./data-object.mjson"
@@ -61,6 +64,10 @@
         }
     },
 
+    "DateDescriptor": {
+        "object": "../../core/date.mjson"
+    },
+
     "creationDate": {
         "prototype": "../../core/meta/property-descriptor",
         "values": {
@@ -70,6 +77,20 @@
             "description": "The time a data object was created"
         }
     },
+
+    "UserIdentityDescriptor": {
+        "object": "./app/user-identity.mjson"
+    },
+
+    "creatorIdentity": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "creatorIdentity",
+            "valueDescriptor": {"@": "UserIdentityDescriptor"},
+            "description": "The identity of the user or agent who created the object"
+        }
+    },
+
     "modificationDate": {
         "prototype": "../../core/meta/property-descriptor",
         "values": {
@@ -78,6 +99,17 @@
              "mandatory": true
        }
     },
+
+    "modifierIdentity": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "modifierIdentity",
+            "valueDescriptor": {"@": "UserIdentityDescriptor"},
+            "description": "The identity of the last user or agent who modified the object"
+        }
+    },
+
+
    "publicationDate": {
         "prototype": "../../core/meta/property-descriptor",
         "values": {
@@ -85,8 +117,15 @@
             "valueDescriptor": {"@": "DateDescriptor"}
         }
     },
-    "DateDescriptor": {
-        "object": "../../core/date.mjson"
+
+    "publisherIdentity": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "publisherIdentity",
+            "valueDescriptor": {"@": "UserIdentityDescriptor"},
+            "description": "The identity of the last user or agent who published the object"
+        }
     }
+
 
 }
