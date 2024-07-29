@@ -8,7 +8,7 @@
 [![Analytics](https://ga-beacon.appspot.com/UA-35717912-2/mod/mod)](https://github.com/mod/mod)
 
 
-Mod is a new type of application framework powered by standard web technologies. Designed with an eye toward maintainability and performance, Mod simplifies the development of rich HTML5 applications by providing modular components, real-time two-way data binding, object serialization with DOM mapping, event handling, a managed component draw cycle, CommonJS dependency management, and many more conveniences to help build robust single-page web applications.
+Mod is a new type of application stack powered by standard web technologies. It is designed with the ambition to ship moddable apps, giving the ability to non-coders and coders like, to mod it their own. eye toward maintainability and performance, Mod simplifies the development of rich HTML5 applications by providing modular components, real-time two-way data binding, object serialization with DOM mapping, event handling, a managed component draw cycle, CommonJS dependency management, full-stack Object Relational Meshing working client-side and in serverless-native workers in node.js. Those workwers have been deployed and used on AWS.
  
 ## Encapsulated Components
 
