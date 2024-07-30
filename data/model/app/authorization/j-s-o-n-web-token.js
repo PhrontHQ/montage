@@ -1,8 +1,8 @@
 /**
-    @module business-data.mod/data/main.mod/model/app/app-client
+    @module mod/data/model/app/authorization/j-s-o-n-web-token
 */
 
-var DataObject = require("../data-object").DataObject;
+var DataObject = require("../../data-object").DataObject;
 
 /**
  * @class JSONWebToken
@@ -10,9 +10,9 @@ var DataObject = require("../data-object").DataObject;
  *
  */
 
-exports.JSONWebToken = DataObject.specialize(/** @lends Application.prototype */ {
+exports.JSONWebToken = DataObject.specialize(/** @lends JSONWebToken.prototype */ {
     constructor: {
-        value: function JSONWebToken() {
+        value: function() {
             this.super();
             return this;
         }

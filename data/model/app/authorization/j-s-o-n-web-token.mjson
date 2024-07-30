@@ -1,6 +1,6 @@
 {
     "root": {
-        "prototype": "../../../core/meta/module-object-descriptor",
+        "prototype": "core/meta/module-object-descriptor",
         "values": {
             "name": "JSONWebToken",
             "propertyDescriptors": [
@@ -18,17 +18,17 @@
         }
     },
     "DataObjectDescriptor": {
-        "object": "../data-object.mjson"
+        "object": "../../data-object.mjson"
     },
     "header": {
-        "prototype": "../../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "header",
             "valueType": "object"
         }
     },
     "claims": {
-        "prototype": "../../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "claims",
             "cardinality": 1,
