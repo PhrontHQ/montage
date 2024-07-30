@@ -5,7 +5,7 @@ var Montage = require("../../core/core").Montage,
     DataService,
     AuthorizationManager = require("./authorization-manager").defaultAuthorizationManager,
     AuthorizationPolicy = require("./authorization-policy").AuthorizationPolicy,
-    UserAuthenticationPolicy = require("./user-authentication-policy").UserAuthenticationPolicy,
+    AuthenticationPolicy = require("./authentication-policy").AuthenticationPolicy,
     IdentityManager = require("./identity-manager").IdentityManager,
     DataObjectDescriptor = require("../model/data-object-descriptor").DataObjectDescriptor,
     Criteria = require("../../core/criteria").Criteria,
@@ -38,10 +38,10 @@ AuthorizationPolicyType.UpfrontAuthorizationPolicy = AuthorizationPolicy.UP_FRON
 AuthorizationPolicyType.OnDemandAuthorizationPolicy = AuthorizationPolicy.ON_DEMAND;
 AuthorizationPolicyType.OnFirstFetchAuthorizationPolicy = AuthorizationPolicy.ON_FIRST_FETCH;
 
-UserAuthenticationPolicy.NoAuthenticationPolicy = UserAuthenticationPolicy.NONE;
-UserAuthenticationPolicy.UpfrontAuthenticationPolicy = UserAuthenticationPolicy.UP_FRONT;
-UserAuthenticationPolicy.OnDemandAuthenticationPolicy = UserAuthenticationPolicy.ON_DEMAND;
-UserAuthenticationPolicy.OnFirstFetchAuthenticationPolicy = UserAuthenticationPolicy.ON_FIRST_FETCH;
+AuthenticationPolicy.NoAuthenticationPolicy = AuthenticationPolicy.NONE;
+AuthenticationPolicy.UpfrontAuthenticationPolicy = AuthenticationPolicy.UP_FRONT;
+AuthenticationPolicy.OnDemandAuthenticationPolicy = AuthenticationPolicy.ON_DEMAND;
+AuthenticationPolicy.OnFirstFetchAuthenticationPolicy = AuthenticationPolicy.ON_FIRST_FETCH;
 
 
 
@@ -294,9 +294,9 @@ DataService.addClassProperties({
                 this.authorizationPolicy = value;
             }
 
-            value = deserializer.getProperty("userAuthenticationPolicy");
+            value = deserializer.getProperty("authenticationPolicy");
             if (value) {
-                this.userAuthenticationPolicy = value;
+                this.authenticationPolicy = value;
             }
 
             value = deserializer.getProperty("performsAccessControl");
@@ -1444,13 +1444,13 @@ DataService.addClassProperties({
     },
 
     /**
-     * Returns the UserAuthenticationPolicyType used by a DataService. For enabling both
+     * Returns the AuthenticationPolicyType used by a DataService. For enabling both
      * system to co-exists for upgradability, there is no default here.
      * DataServices suclass have to provide it.
      *
      * @type {AuthorizationPolicyType}
      */
-    userAuthenticationPolicy: {
+    authenticationPolicy: {
         value: AuthorizationPolicyType.NoAuthorizationPolicy
     },
 
@@ -4681,8 +4681,8 @@ DataService.addClassProperties({
             if (childService) {
                 childService._fetchRawData(stream);
             } else {
-                //this is the new path for services with a userAuthenticationPolicy
-                if (this.userAuthenticationPolicy) {
+                //this is the new path for services with a authenticationPolicy
+                if (this.authenticationPolicy) {
                     var identityPromise,
                         shouldAuthenticate;
                     //If this is the service providing providesIdentity for the query's type: IdentityService for the Identity type required.

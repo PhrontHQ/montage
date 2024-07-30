@@ -13,7 +13,7 @@ var Montage = require("../../core/core").Montage;
  *     that offer data to both anonymous and authorized users.
  *
  */
-var UserAuthenticationPolicy = exports.UserAuthenticationPolicy = Montage.specialize({
+var AuthenticationPolicy = exports.AuthenticationPolicy = Montage.specialize({
 
     id: {
         value: undefined
@@ -28,7 +28,7 @@ var UserAuthenticationPolicy = exports.UserAuthenticationPolicy = Montage.specia
         }
     }
 });
-UserAuthenticationPolicy.ON_DEMAND = UserAuthenticationPolicy.withID("ON_DEMAND");
-UserAuthenticationPolicy.ON_FIRST_FETCH = UserAuthenticationPolicy.withID("ON_FIRST_FETCH");
-UserAuthenticationPolicy.NONE = UserAuthenticationPolicy.withID("NONE");
-UserAuthenticationPolicy.UP_FRONT = UserAuthenticationPolicy.withID("UP_FRONT");
+AuthenticationPolicy.ON_DEMAND = AuthenticationPolicy.withID("ON_DEMAND");
+AuthenticationPolicy.ON_FIRST_FETCH = AuthenticationPolicy.withID("ON_FIRST_FETCH");
+AuthenticationPolicy.NONE = AuthenticationPolicy.withID("NONE");
+AuthenticationPolicy.UP_FRONT = AuthenticationPolicy.withID("UP_FRONT");

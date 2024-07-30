@@ -1,4 +1,4 @@
-var RawDataService = require("./raw-data-service").RawDataService,
+    AuthenticationPolicy = require("./authentication-policy").AuthenticationPolicy,
     DataQuery = require("../model/data-query").DataQuery,
     Enumeration = require("../model/enumeration").Enumeration,
     Map = require("../../core/collections/map"),
