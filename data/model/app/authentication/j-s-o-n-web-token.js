@@ -10,6 +10,12 @@ var DataObject = require("../../data-object").DataObject;
  *
  */
 
+/*
+    Reasources
+    https://learn.microsoft.com/en-us/windows-server/identity/ad-fs/overview/ad-fs-openid-connect-oauth-flows-scenarios
+
+*/
+
 exports.JSONWebToken = DataObject.specialize(/** @lends JSONWebToken.prototype */ {
     constructor: {
         value: function() {
