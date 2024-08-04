@@ -42,6 +42,12 @@ var SelfDeserializer = Montage.specialize( {
         }
     },
 
+    properties: {
+        get: function () {
+            return this._objectDescriptorValues;
+        }
+    },
+
     hasProperty: {
         value: function (name) {
             return Object.hasOwn(this._objectDescriptorValues, name);
