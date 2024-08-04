@@ -336,6 +336,20 @@ RawDataService.addClassProperties({
 
     },
 
+    /*
+     * The current Connection's Token's ObjectDescriptor used to build 
+     * the DataQuery with identity's to get an accessToken
+     * 
+     * @type {DataConnection}
+     */
+
+    accessTokenDescriptor: {
+        get: function () {
+            return this.connection.accessTokenDescriptor;
+        }
+    },
+    
+    
 
     _rawClientPromises: {
         value: undefined
@@ -4166,6 +4180,13 @@ RawDataService.addClassProperties({
      *
      ***************************************************************************/
 
+    identityQuery: {
+        get: function () {
+            return this.connection.identityQuery;
+        }
+    },
+
+
     /**
      * The access token delivered once an identity has been authorized
      * to access a data service. Type stays open/abstract as it can take many forms
@@ -4178,24 +4199,24 @@ RawDataService.addClassProperties({
 
     _accessTokenBydentity: {
         get: function () {
-            return (this._accessTokenBydentity || (this._accessTokenBydentity = new WeakMap()));
+            return (this.__accessTokenBydentity || (this.__accessTokenBydentity = new Map()));
         }
     },
 
     accessTokenForIdentity: {
-        get: function (identity) {
+        value: function (identity) {
             return this._accessTokenBydentity.get(identity);
         }
     },
 
     registerAccessTokenForIdentity: {
-        get: function (accessToken, identity) {
+        value: function (accessToken, identity) {
             return this._accessTokenBydentity.set(identity, accessToken);
         }
     },
 
     unregisterAccessTokenForIdentity: {
-        get: function (identity, accessToken) {
+        value: function (identity, accessToken) {
             /*
                 TODO: Verify that accessToken is equal to this._accessTokenBydentity.get(identity) first?
             */
@@ -4203,6 +4224,11 @@ RawDataService.addClassProperties({
         }
     },
 
+    accessToken: {
+        get: function () {
+            return this.accessTokenForIdentity(this.identity);
+        }
+    },
 
 
     /***************************************************************************
