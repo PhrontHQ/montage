@@ -1,5 +1,10 @@
+const { identity } = require("../../core/collections/shim-function");
+
+const RawDataService = require("./raw-data-service").RawDataService,
     AuthenticationPolicy = require("./authentication-policy").AuthenticationPolicy,
+    Identity = require("../model/identity").Identity,
     DataQuery = require("../model/data-query").DataQuery,
+    Criteria = require("../../core/criteria").Criteria,
     Enumeration = require("../model/enumeration").Enumeration,
     Map = require("../../core/collections/map"),
     Montage = require("../../core/core").Montage,
@@ -87,6 +92,53 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
     }
 
 
+    /**
+     * Fetch an identity using an identityQuery expected to be set on the data service
+     *
+     * @type {Promise<Identity>}
+     */
+    fetchIdentity() {
+        if(!this.identityQuery) {
+            throw "Can't perform fetchIdentity() because this.identityQuery isn't available";
+        }
+
+        return this.mainService.fetchData(this.identityQuery)
+        .then(result => {
+            if(result.length === 1) {
+                /*
+                    It's a bit tricky to assume that here. An alternative would be to actually fetch an Identity,
+                    and equip SecretManager data services with the ability to handle Identity, and give them a mapping
+                    to how the raw data is stored in the secret. Let's get this working and clean it up later. 
+                */
+                let applicationIdentifier = result[0].value.applicationIdentifier,
+                    applicationCredentials =  result[0].value.applicationCredentials;
+
+                if(applicationIdentifier && applicationCredentials) {
+                    let identity = new Identity();
+
+                    identity.applicationIdentifier = applicationIdentifier;
+                    identity.applicationCredentials = applicationCredentials;
+
+                    this.identity = identity; 
+                    return this.identity;                          
+                } else {
+                    throw ("Unnable to ceate an idendity from fetched secret: "+ result);
+                }
+            } else {
+                throw ("Unnable to find a secret matching query " + this.identityQuery);
+
+            }
+        })
+        .catch(error => {
+            console.warn("fetchIdentity failed:", error);
+            return null;
+        })
+
+
+    }
+
+
+
     handleReadOperation(readOperation) {
 
         /*
@@ -96,7 +148,50 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
             return;
         }
 
-        var objectDescriptor = readOperation.target,
+        let authenticationPromise;
+        if(this.authenticationPolicy && this.authenticationPolicy === AuthenticationPolicy.UP_FRONT) {
+            let identityPromise;
+
+            if(!this.identity) {
+                identityPromise = this.fetchIdentity();
+            } else {
+                identityPromise = Promise.resolve(this.identity);
+            }
+
+            // console.debug("this.identity: ",this.identity);
+            authenticationPromise = identityPromise.then((result) => {
+                let identityCriteria = new Criteria().initWithExpression("identity == $", this.identity),
+                    tokenDataQuery = DataQuery.withTypeAndCriteria(this.accessTokenDescriptor, identityCriteria),
+                    tokenQueryDataStream;
+    
+                tokenQueryDataStream = this.mainService.fetchData(tokenDataQuery);
+        
+                return tokenQueryDataStream.then((result) => {
+                    if(result && result.length === 1) {
+                        let accessToken = result[0];
+                        this.registerAccessTokenForIdentity(accessToken, this.identity);
+
+                        return accessToken;
+                    } else {
+                        return null;
+                    }
+                });
+
+            })
+            .catch(error => {
+                let responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
+                console.error(error);
+                return responseOperation;
+            });
+
+        } else {
+            authenticationPromise = Promise.resolve(undefined);
+        }
+
+        authenticationPromise.then((accessToken) => {
+
+            // console.debug("accessToken: ",accessToken);
+            var objectDescriptor = readOperation.target,
             mapping = objectDescriptor && this.mappingForObjectDescriptor(objectDescriptor),
             // mapping = objectDescriptor && this.mappingForType(objectDescriptor),
             fetchRequests = [],
@@ -106,17 +201,24 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
         mapping.mapDataOperationToFetchRequests(readOperation, fetchRequests);
 
         for(i=0; (iRequest = fetchRequests[i]); i++) {
+            // console.debug("iRequest url: ",iRequest.url);
+            // console.debug("iRequest headers: ",iRequest.headers);
+            // console.debug("iRequest body: ",iRequest.body);
             fetch(iRequest)
             .then((response) => {
               if (response.status === 200) {
-                return response.json();
+                if(response.headers.get('content-type').includes("json")) {
+                    return response.json();
+                } else {
+                    return response.text();
+                }
               } else {
                 throw new Error("Something went wrong on API server with resonse: ",response);
               }
             })
-            .then((response) => {
+            .then((responseContent) => {
                 var rawData = [];
-                mapping.mapFetchResponseToRawData(response, rawData);
+                mapping.mapFetchResponseToRawData(responseContent, rawData);
                 //console.debug("rawData: ",rawData);
                 responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
                 return responseOperation;
@@ -131,6 +233,10 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
             })
 
         }              
+
+
+        });
+
         
 }
 
