@@ -28,6 +28,8 @@ exports.FetchResourceDataMapping = class FetchResourceDataMapping extends Expres
     static {
 
         Montage.defineProperties(this.prototype, {
+            _xWwwFormUrlencodedType: {value: 'application/x-www-form-urlencoded'},
+            _formData: {value: "form-data"},
 
             /**
              * Provides a reference to the Montage event manager used in the
@@ -154,10 +156,29 @@ exports.FetchResourceDataMapping = class FetchResourceDataMapping extends Expres
                     }
                 }
 
+                //Turn a JSON body to form if needed
+                if(options.method == "POST" && typeof options.body === "object") {
+                    let headers = options.headers,
+                        contentType = headers["content-type"] || headers["Content-Type"];
+                    if(contentType === this._xWwwFormUrlencodedType) {
+                        options.body = new URLSearchParams(options.body);
+                    } else if(contentType.includes(this._formData)) {
+                        let formData = new FormData(),
+                        body = options.body,
+                        bodyKeys = Object.keys(body);
+
+                        for(let i=0, countI = bodyKeys.length; (i < countI); i++) {
+                            formData.append(bodyKeys[i], body[bodyKeys[i]]);
+                        }
+                        options.body = formData;
+                    }
+                }
+
                 if(!iUrl) {
                     throw new Error("mapDataOperationToFetchRequests: no url found for dataOperation: ",+dataOperation, " and criteria: "+iCriteria);
                 } else {
                     iRequest = new Request(iUrl, options);
+                    console.debug("Request "+iUrl+"with  options: "+ JSON.stringify(options));
                     (fetchRequests || (fetchRequests = [])).push(iRequest);
                 }
 
@@ -207,7 +228,9 @@ exports.FetchResourceDataMapping = class FetchResourceDataMapping extends Expres
                 let fetchResponseRawDataMappingFunction = this.fetchResponseRawDataMappingFunctionForCriteria(iCriteria),
                     result = fetchResponseRawDataMappingFunction(fetchReponseScope);
 
-                rawData.push(...result);
+                    Array.isArray(result) 
+                        ? rawData.push(...result)
+                        : rawData.push(result);
             }
         }
     }
