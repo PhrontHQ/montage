@@ -304,7 +304,7 @@ DataService.addClassProperties({
                 this.performsAccessControl = value;
             }
 
-            value = deserializer.getProperty("authorizedIdenitiesNamedCriteria");
+            value = deserializer.getProperty("authorizedIdentiesNamedCriteria");
             if (value) {
                 this.authorizedIdenitiesNamedCriteria = value;
             }
@@ -1455,8 +1455,8 @@ DataService.addClassProperties({
     },
 
     /**
-     * The user identity for the data service. It could be an unauthenticated/
-     * anonymous user identity
+     * The identity for the data service. It could be an unauthenticated/
+     * anonymous identity, a user identity or an agent/application identity
      *
      * @type {Object}
      */
@@ -4622,6 +4622,13 @@ DataService.addClassProperties({
                         readEvent.type = ReadEvent.read;
                         readEvent.query = query;
                         readEvent.dataStream = stream;
+
+                        /*
+                            Prepare to listen for ReadOperation that will be dispatched by RawDataServices that 
+                            handle that Read Event, so we can know the data services that handled it
+                        */
+                        self.addEventListener(DataOperation.Type.ReadOperation, self, true);
+
                         query.type.dispatchEvent(readEvent);
                         if(readEvent.propagationPromise) {
                             readEvent.propagationPromise.finally(function() {
