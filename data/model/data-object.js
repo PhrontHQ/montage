@@ -24,6 +24,7 @@ exports.DataObject = class DataObject extends Target {
     static {
 
         Montage.defineProperties(this.prototype, {
+            
             /**
              * The primaryKey from a different system a Data Object maay have come from originally
              *
@@ -31,6 +32,14 @@ exports.DataObject = class DataObject extends Target {
              * @default null
              */
             originId: { value: undefined},
+
+            /**
+             * The description of what a data object is
+             *
+             * @property {String}
+             * @default undefined
+             */
+            description: { value: undefined},
 
             /**
              * The time a data object was created

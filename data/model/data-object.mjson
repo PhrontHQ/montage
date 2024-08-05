@@ -5,6 +5,7 @@
             "name": "DataObject",
             "propertyDescriptors": [
                 {"@": "originId"},
+                {"@": "description"},
                 {"@": "isTemplate"},
                 {"@": "templateName"},
                 {"@": "templateDescription"},
@@ -32,6 +33,16 @@
             "valueType": "string",
             "isSearchable": true,
             "description": "The primaryKey from a different system a Data Object maay have come from originally"
+        }
+    },
+
+    "description": {
+        "prototype": "mod/core/meta/property-descriptor",
+        "values": {
+            "name": "description",
+            "valueType": "string",
+            "isLocalizable": true,
+            "isSearchable": true
         }
     },
 
