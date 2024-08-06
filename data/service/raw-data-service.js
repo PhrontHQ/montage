@@ -1097,13 +1097,19 @@ RawDataService.addClassProperties({
                 dataIdentifier, dataIdentifierMap, primaryKey;
 
             if (rawDataPrimaryKeys && rawDataPrimaryKeys.length) {
+                rawDataPrimaryKeysValues = rawDataPrimaryKeysValues || [];
 
-                for (var i = 0, expression; (expression = rawDataPrimaryKeys[i]); i++) {
-                    rawDataPrimaryKeysValues = rawDataPrimaryKeysValues || [];
-                    rawDataPrimaryKeysValues[i] = expression(scope);
+                for (var i = 0, expression, expressionValue; (expression = rawDataPrimaryKeys[i]); i++) {
+                    expressionValue = expression(scope);
+                    if(typeof expressionValue === "object") {
+                        expressionValue = JSON.stringify(expressionValue);
+                    }
+                    rawDataPrimaryKeysValues[i] = expressionValue;
                 }
                 if (rawDataPrimaryKeysValues) {
-                    primaryKey = rawDataPrimaryKeysValues.join("/");
+                    primaryKey = rawDataPrimaryKeysValues.length === 1 
+                        ? rawDataPrimaryKeysValues[0]
+                        : rawDataPrimaryKeysValues.join("/");
                     // dataIdentifier = dataIdentifierMap.get(primaryKey);
                 }
 
