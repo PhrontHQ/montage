@@ -498,7 +498,7 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
      * client's OperationService. This clientId needs then to be passed per
      * operation to allow the server side to leverage it
      *
-     * @type {sting}
+     * @type {string}
      */
 
     clientId: {
