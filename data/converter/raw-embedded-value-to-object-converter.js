@@ -1,7 +1,7 @@
 var RawValueToObjectConverter = require("./raw-value-to-object-converter").RawValueToObjectConverter,
 Promise = require("../../core/promise").Promise;
 /**
- * @class RawEmbeddedRelationshipValueToObjectConverter
+ * @class RawEmbeddedValueToObjectConverter
  * @classdesc Converts a property value of raw data to the referenced object.
  * @extends RawValueToObjectConverter
  */
