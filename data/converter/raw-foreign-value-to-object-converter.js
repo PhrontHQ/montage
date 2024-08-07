@@ -29,6 +29,8 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
             this.super(serializer);
 
             serializer.setProperty("foreignDescriptorMappings", this.foreignDescriptorMappings);
+            serializer.setProperty("combinesFetchData", this.combinesFetchData);
+            
 
         }
     },
@@ -43,6 +45,10 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
                 this.foreignDescriptorMappings = value;
             }
 
+            value = deserializer.getProperty("combinesFetchData");
+            if (value !== undefined) {
+                this.combinesFetchData = value;
+            }
         }
     },
 
