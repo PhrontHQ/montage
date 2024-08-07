@@ -151,7 +151,7 @@ if(!useMr) {
 
     workerPromise = Promise.resolve(worker);
     console.log(mainTimer.runtimeMsStr());
-    console.log("Phront Worker reporting for duty!");
+    console.log("Mod Worker reporting for duty!");
 
 } else {
 
@@ -208,7 +208,7 @@ if(!useMr) {
         }
         //Per DOM specs on load events
         worker.dispatchEventNamed("load", false /*canBubble*/, false /*cancelable*/, null);
-        console.log("Phront Worker reporting for duty!");
+        console.log("Mod Worker reporting for duty!");
 
         return worker;
     });
