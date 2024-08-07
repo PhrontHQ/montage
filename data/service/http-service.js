@@ -158,39 +158,44 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
                 identityPromise = Promise.resolve(this.identity);
             }
 
-            // console.debug("this.identity: ",this.identity);
-            authenticationPromise = identityPromise.then((result) => {
-                let identityCriteria = new Criteria().initWithExpression("identity == $", this.identity),
-                    tokenDataQuery = DataQuery.withTypeAndCriteria(this.accessTokenDescriptor, identityCriteria),
-                    tokenQueryDataStream;
-    
-                tokenQueryDataStream = this.mainService.fetchData(tokenDataQuery);
-        
-                return tokenQueryDataStream.then((result) => {
-                    if(result && result.length === 1) {
-                        let accessToken = result[0];
-                        this.registerAccessTokenForIdentity(accessToken, this.identity);
+            if(!this.accessToken) {
 
-                        return accessToken;
-                    } else {
-                        return null;
-                    }
+                // console.debug("this.identity: ",this.identity);
+                authenticationPromise = identityPromise.then((result) => {
+                    let identityCriteria = new Criteria().initWithExpression("identity == $", this.identity),
+                        tokenDataQuery = DataQuery.withTypeAndCriteria(this.accessTokenDescriptor, identityCriteria),
+                        tokenQueryDataStream;
+        
+                    tokenQueryDataStream = this.mainService.fetchData(tokenDataQuery);
+            
+                    return tokenQueryDataStream.then((result) => {
+                        if(result && result.length === 1) {
+                            let accessToken = result[0];
+                            this.registerAccessTokenForIdentity(accessToken, this.identity);
+
+                            return accessToken;
+                        } else {
+                            return null;
+                        }
+                    });
+
+                })
+                .catch(error => {
+                    let responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
+                    console.error(error);
+                    return responseOperation;
                 });
 
-            })
-            .catch(error => {
-                let responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
-                console.error(error);
-                return responseOperation;
-            });
-
+            } else {
+                authenticationPromise = Promise.resolve(this.accessToken);
+            }
         } else {
-            authenticationPromise = Promise.resolve(undefined);
+            authenticationPromise = Promise.resolve();
         }
 
         authenticationPromise.then((accessToken) => {
 
-            // console.debug("accessToken: ",accessToken);
+            //if(accessToken?.accessToken) console.debug("accessToken: ",accessToken.accessToken);
             var objectDescriptor = readOperation.target,
             mapping = objectDescriptor && this.mappingForObjectDescriptor(objectDescriptor),
             // mapping = objectDescriptor && this.mappingForType(objectDescriptor),
@@ -213,7 +218,10 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
                     return response.text();
                 }
               } else {
-                throw new Error("Something went wrong on API server with resonse: ",response);
+                return response.text()
+                .then((responseContent) => {
+                    throw new Error("Request failed with error: " + responseContent);
+                });
               }
             })
             .then((responseContent) => {
