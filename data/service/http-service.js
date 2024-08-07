@@ -203,48 +203,58 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
             i, iRequest,
             responseOperation;
 
-        mapping.mapDataOperationToFetchRequests(readOperation, fetchRequests);
+        if(typeof mapping.mapDataOperationToFetchRequests === "function") {
+            mapping.mapDataOperationToFetchRequests(readOperation, fetchRequests);
+        }
 
-        for(i=0; (iRequest = fetchRequests[i]); i++) {
-            // console.debug("iRequest url: ",iRequest.url);
-            // console.debug("iRequest headers: ",iRequest.headers);
-            // console.debug("iRequest body: ",iRequest.body);
-            fetch(iRequest)
-            .then((response) => {
-              if (response.status === 200) {
-                if(response.headers.get('content-type').includes("json")) {
-                    return response.json();
+        if(fetchRequests.length > 0) {
+
+            for(i=0; (iRequest = fetchRequests[i]); i++) {
+                // console.debug("iRequest url: ",iRequest.url);
+                // console.debug("iRequest headers: ",iRequest.headers);
+                // console.debug("iRequest body: ",iRequest.body);
+                fetch(iRequest)
+                .then((response) => {
+                if (response.status === 200) {
+                    if(response.headers.get('content-type').includes("json")) {
+                        return response.json();
+                    } else {
+                        return response.text();
+                    }
                 } else {
-                    return response.text();
+                    return response.text()
+                    .then((responseContent) => {
+                        throw new Error("Request failed with error: " + responseContent);
+                    });
                 }
-              } else {
-                return response.text()
+                })
                 .then((responseContent) => {
-                    throw new Error("Request failed with error: " + responseContent);
-                });
-              }
-            })
-            .then((responseContent) => {
-                var rawData = [];
-                mapping.mapFetchResponseToRawData(responseContent, rawData);
-                //console.debug("rawData: ",rawData);
-                responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
-                return responseOperation;
-            })
-            .catch((error) => {
-                responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
-                console.error(error);
-                return responseOperation;
-            })
-            .finally((value) => {
-                objectDescriptor.dispatchEvent(responseOperation);
-            })
+                    var rawData = [];
+                    mapping.mapFetchResponseToRawData(responseContent, rawData);
+                    //console.debug("rawData: ",rawData);
+                    responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
+                    responseOperation.target.dispatchEvent(responseOperation);
+                    //return responseOperation;
+                })
+                .catch((error) => {
+                    responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
+                    console.error(error);
+                    responseOperation.target.dispatchEvent(responseOperation);
+                    //return responseOperation;
+                })
+                .finally((value) => {
+                    objectDescriptor.dispatchEvent(responseOperation);
+                })
 
-        }              
+            }              
+        } else {
+            let error = new Error("Mapping for "+ readOperation.target.name+ " lacks mapDataOperationToFetchRequests(readOperation, fetchRequests) method");
+            responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
+            responseOperation.target.dispatchEvent(responseOperation);
+        }
 
 
-        });
-
+    });
         
 }
 
