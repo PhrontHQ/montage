@@ -67,11 +67,12 @@ var Environment = exports.Environment = Montage.specialize({
         get: function() {
             if(this._stage === undefined) {
                 //Check if we have an argument:
-                let stageArgument;
+                let stageArgument,
+                    applicationURL;
                 if(this.isNode) {
                     stageArgument = process.argv[process.argv.indexOf("-s")+1] || process.argv[process.argv.indexOf("--stage")+1]
                 } else {
-                    let applicationURL = this.application.url;
+                    applicationURL = this.application.url;
                     stageArgument = applicationURL && applicationURL.searchParams.get("stage");
                 }
 
