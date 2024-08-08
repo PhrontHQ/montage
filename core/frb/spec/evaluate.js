@@ -707,6 +707,13 @@ module.exports = [
     },
 
     {
+        path: "trim()",
+        input: "a     ",
+        output: "a"
+    },
+
+
+    {
         path: "toString()",
         input: "Hello, World!",
         output: "Hello, World!"

@@ -168,6 +168,10 @@ exports.split = function (a, b) {
     return a && a.split(b || "");
 };
 
+exports.trim = function (a) {
+    return a && a.trim();
+};
+
 exports.range = function (stop) {
     var range = [];
     for (var start = 0; start < stop; start++) {

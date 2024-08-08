@@ -139,6 +139,9 @@ solve.semantics = {
         },
         split: function (target, source) {
             return this.invert(target, source, 'join');
+        },
+        trim: function (target, source) {
+            return this.reflect(target, source);
         }
     },
 
