@@ -608,7 +608,7 @@ ObjectDescriptor.addClassProperties({
                 if (!plusSet.has(descriptor) && all.has(descriptor)) {
                     index = this._propertyDescriptors.indexOf(descriptor);
                     this._propertyDescriptors.splice(index, 1);
-                    this._propertyDescriptorsTable.delete(descriptor.name);
+                    this.propertyDescriptorsByName.delete(descriptor.name);
                     descriptor._owner = null;
 
                     if(descriptor.isLocalizable) {
@@ -625,10 +625,10 @@ ObjectDescriptor.addClassProperties({
                 if (!minusSet.has(descriptor) && !all.has(descriptor)) {
                     if (descriptor.owner === this) {
                         this._propertyDescriptors.push(descriptor);
-                        this._propertyDescriptorsTable.set(descriptor.name,  descriptor);
-                    } else if (!this._propertyDescriptorsTable.has(descriptor.name)) {
+                        this.propertyDescriptorsByName.set(descriptor.name,  descriptor);
+                    } else if (!this.propertyDescriptorsByName.has(descriptor.name)) {
                         this._propertyDescriptors.push(descriptor);
-                        this._propertyDescriptorsTable.set(descriptor.name,  descriptor);
+                        this.propertyDescriptorsByName.set(descriptor.name,  descriptor);
                     }
                     descriptor._owner = descriptor._owner || this;
 
@@ -674,12 +674,12 @@ ObjectDescriptor.addClassProperties({
                 if (isReady) {
                     this._propertyDescriptorsAreCached = true;
                     this._propertyDescriptors = [];
-                    this._propertyDescriptorsTable.clear();
+                    this.propertyDescriptorsByName.clear();
                     for (i = 0, n = ownDescriptors.length; i < n; ++i) {
                         descriptor = ownDescriptors[i];
                         descriptor._owner = this;
                         this._propertyDescriptors.push(descriptor);
-                        this._propertyDescriptorsTable.set(descriptor.name,  descriptor);
+                        this.propertyDescriptorsByName.set(descriptor.name,  descriptor);
 
                         if(descriptor.isLocalizable) {
 
@@ -760,7 +760,7 @@ ObjectDescriptor.addClassProperties({
                 descriptor, i;
 
             for (i = 0; (descriptor = parentPropertyDescriptors[i]); ++i) {
-                if (!this._propertyDescriptorsTable.has(descriptor.name)) {
+                if (!this.propertyDescriptorsByName.has(descriptor.name)) {
                     descriptors.push(descriptor);
                 }
             }
@@ -785,13 +785,13 @@ ObjectDescriptor.addClassProperties({
         }
     },
 
-    _propertyDescriptorsTable: {
+    propertyDescriptorsByName: {
         get: function () {
-            if (!this.__propertyDescriptorsTable) {
-                this.__propertyDescriptorsTable = new Map();
+            if (!this._propertyDescriptorsByName) {
+                this._propertyDescriptorsByName = new Map();
             }
             this._preparePropertyDescriptorsCache();
-            return this.__propertyDescriptorsTable;
+            return this._propertyDescriptorsByName;
         }
     },
 
@@ -804,7 +804,7 @@ ObjectDescriptor.addClassProperties({
     */
     propertyDescriptorNamesIterator: {
         get: function() {
-            return this._propertyDescriptorsTable.keys();
+            return this.propertyDescriptorsByName.keys();
         }
     },
 
@@ -953,9 +953,9 @@ ObjectDescriptor.addClassProperties({
      */
     propertyDescriptorForName: {
         value: function (name) {
-            var propertyDescriptor = this._propertyDescriptorsTable.get(name);
+            var propertyDescriptor = this.propertyDescriptorsByName.get(name);
             // if (propertyDescriptor === undefined) {
-            //     this._propertyDescriptorsTable.set(name, exports.UnknownPropertyDescriptor);
+            //     this.propertyDescriptorsByName.set(name, exports.UnknownPropertyDescriptor);
             // } else if (propertyDescriptor === exports.UnknownPropertyDescriptor) {
             //     propertyDescriptor = null;
             // }
