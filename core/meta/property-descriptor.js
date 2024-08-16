@@ -162,6 +162,9 @@ exports.PropertyDescriptor = Montage.specialize( /** @lends PropertyDescriptor# 
             this._setPropertyWithDefaults(serializer, "isSerializable", this.isSerializable);
             this._setPropertyWithDefaults(serializer, "isSearchable", this.isSearchable);
             this._setPropertyWithDefaults(serializer, "isOrdered", this.isOrdered);
+            if(this.hasOwnProperty("_isDerived")) {
+                this._setPropertyWithDefaults(serializer, "isDerived", this._isDerived);
+            }
 
             if(this.dataOrderings) {
                 serializer.setProperty("dataOrderings", this.dataOrderings);
@@ -214,6 +217,11 @@ exports.PropertyDescriptor = Montage.specialize( /** @lends PropertyDescriptor# 
             this._overridePropertyWithDefaults(deserializer, "isSerializable");
             this._overridePropertyWithDefaults(deserializer, "isSearchable");
             this._overridePropertyWithDefaults(deserializer, "isOrdered");
+
+            value = deserializer.getProperty("isDerived");
+            if (value !== void 0) {
+                this._isDerived = value;
+            }
 
             value = deserializer.getProperty("dataOrderings");
             if (value !== void 0) {
@@ -410,11 +418,28 @@ exports.PropertyDescriptor = Montage.specialize( /** @lends PropertyDescriptor# 
 
     /**
      * @type {boolean}
+     * 
+     * Indicates that a property is derived from other properties. If the propertyDescriptor has
+     * a definition (expression), then it is derived, but it could also be derived by an external biding
+     * or a custom property setter / getter in code, for which we still needs to know that it's derived 
+     * to handle ot properly through the data cycle.
+     * 
      * @default false
      */
+    _isDerived: {
+        value: undefined
+    },
+
     isDerived: {
         get: function () {
-            return !!this.definition;
+            return this._isDerived === undefined
+                ? !!this.definition
+                : this._isDerived
+        },
+        set: function(value) {
+            if(value !== this._isDerived) {
+                this._isDerived = value;
+            }
         }
     },
 
