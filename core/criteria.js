@@ -394,9 +394,9 @@ var Criteria = exports.Criteria = Montage.specialize({
      * @returns {boolean} - boolean wether the criteri qualifies a value on propertyName.
      */
 
-    qualifiesPropertyName: {
+    doesQualifyPropertyName: {
         value: function(propertyName) {
-            console.warn("qualifiesPropertyName() implementation missing");
+            console.warn("doesQualifyPropertyName() implementation missing");
         }
     },
 
