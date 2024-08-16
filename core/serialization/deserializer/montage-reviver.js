@@ -780,7 +780,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
                     }
                     // TODO: For now we need this because we need to set
                     // isDeserilizing before calling didCreate.
-                    object = (typeof object === "function") ? new object() : ObjectCreate(object);
+                    object = (typeof object === "function") && object !== Error ? new object() : ObjectCreate(object);
 
                 }
                 object.isDeserializing = true;
