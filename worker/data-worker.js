@@ -316,11 +316,11 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
                         return self.responseForEventAuthorization(event, serializedAuthorizedIdentity, true, context);
                     });
 
-                }).catch((error) => {
+                }).catch((errorOperation) => {
                     var serializedAuthorizedIdentity = self._serializer.serializeObject(identity);
 
-                    console.error("this.operationCoordinator.handleOperation error:",error);
-                    return self.responseForEventAuthorization(event, serializedAuthorizedIdentity, false, error);
+                    console.error("handleAuthorize() failed because error: ",errorOperation.data);
+                    return self.responseForEventAuthorization(event, serializedAuthorizedIdentity, false, errorOperation);
 
                     // callback(failedResponse(500, JSON.stringify(err)))
                 });
