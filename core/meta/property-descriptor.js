@@ -695,6 +695,40 @@ exports.PropertyDescriptor = Montage.specialize( /** @lends PropertyDescriptor# 
     },
 
     /**
+     * Specifies the defaultValue a property should have, regardless of the . Being a value it's expected to be javascript type,
+     * or another object that can typically be serialized in the same serialization as as the property descriptor,
+     * or derived from an expression traversing other serialized object's property.
+     *
+     * I can be set programmatically from the outside though it's not been the typical use-case.
+     *
+     * @default undefined
+     */
+    _defaultFalsyValue: {
+        value: undefined
+    },
+    _defaultFalsyValueForType: {
+        value: function(type) {
+            return type === "string"
+                ? ""
+                : type === "number"
+                    ? 0
+                    : type === "boolean"
+                        ? false
+                        : null;
+        }
+    },
+
+    defaultFalsyValue: {
+        get: function() {
+            return this._defaultFalsyValue === undefined 
+            ? (this._defaultFalsyValue = this._defaultFalsyValueForType(this.type))
+            : this._defaultFalsyValue;
+        }
+    },
+    
+    
+
+    /**
      * a defaultExpression is meant to provide a way to get a default value by evaluating an expression in the context of an instance's own state.
      * This opens the door to have a fallback strategy for defaults, maybe there's one value on the instance, but if not, there might be one or more
      * place in the data graph where one can be found. The expression is expected to evaluate to a value compatible with the type of the property.
