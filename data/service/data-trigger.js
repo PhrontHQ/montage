@@ -279,7 +279,7 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
             */
             // if(!this._service.rootService._objectsBeingMapped.has(object)
             // ) {
-                if(shouldFetch !== false && this._getValueStatus(object) !== null && !this.propertyDescriptor.definition && !this._service.isObjectCreated(object)) {
+            if(shouldFetch !== false && this._getValueStatus(object) !== null && (!this.propertyDescriptor.definition || !this.propertyDescriptor.isDerived) && !this._service.isObjectCreated(object)) {
 
 
                 /*
@@ -291,7 +291,10 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
 
 
                 // Start an asynchronous fetch of the property's value if necessary.
-                this.getObjectProperty(object);
+                this.getObjectProperty(object)
+                .catch((error) => {
+                    console.error("getObjectProperty error: ",error);
+                });
             }
 
             //}
