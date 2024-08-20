@@ -122,69 +122,72 @@ exports.FetchResourceDataMapping = class FetchResourceDataMapping extends Expres
             The dataOperation could be matching multiple criteria, which will mean multiple reuests to send
             in order to fulfill the dataOperation
         */
-        var fetchRequestMappingByCriteria = this.fetchRequestMappingByOperationType.get(dataOperation.type),
-            criteriaIterator = fetchRequestMappingByCriteria.keys(),
-            dataOperationScope = this._scope.nest(dataOperation),
-            iCriteria;
+        let fetchRequestMappingByCriteria;
+        
+       if(fetchRequestMappingByCriteria = this.fetchRequestMappingByOperationType?.get(dataOperation.type)) {
+            let criteriaIterator = fetchRequestMappingByCriteria.keys(),
+                dataOperationScope = this._scope.nest(dataOperation),
+                iCriteria;
 
 
+            while ((iCriteria = criteriaIterator.next().value)) {
 
-        while ((iCriteria = criteriaIterator.next().value)) {
+                if(iCriteria.evaluate(dataOperation)) {
+                    //We have a match, we need to evaluate the rules to 
+                    let fetchRequestMappingRules = fetchRequestMappingByCriteria.get(iCriteria),
+                        j, jRule, jRuleEvaluationResult, iUrl, options, iRequest;
 
-            if(iCriteria.evaluate(dataOperation)) {
-                //We have a match, we need to evaluate the rules to 
-                let fetchRequestMappingRules = fetchRequestMappingByCriteria.get(iCriteria),
-                    j, jRule, jRuleEvaluationResult, iUrl, options, iRequest;
-
-                /*
-                    Current serialization is an object to simplify manual authoring, 
-                    but our API should be an array of mapping rules. So if we don't
-                    have an array, we do the work
-                */
-                if(!Array.isArray(fetchRequestMappingRules)) {
-                    fetchRequestMappingByCriteria.set(iCriteria, (fetchRequestMappingRules = this._buildFetchRequestMappingRulesFromRawRules(fetchRequestMappingRules)))
-                }
-
-                
-                for(j=0;(jRule = fetchRequestMappingRules[j]); j++) {
-
-                    jRuleEvaluationResult = jRule.evaluate(dataOperationScope);
-                    if(jRule.targetPath === "url") {
-                        iUrl = jRuleEvaluationResult;
-                    } else {
-                        assign( (options || (options = {})), jRule.targetPath, jRuleEvaluationResult, undefined /*parameters*/, undefined /*document*/, undefined /*components*/);
+                    /*
+                        Current serialization is an object to simplify manual authoring, 
+                        but our API should be an array of mapping rules. So if we don't
+                        have an array, we do the work
+                    */
+                    if(!Array.isArray(fetchRequestMappingRules)) {
+                        fetchRequestMappingByCriteria.set(iCriteria, (fetchRequestMappingRules = this._buildFetchRequestMappingRulesFromRawRules(fetchRequestMappingRules)))
                     }
-                }
 
-                //Turn a JSON body to form if needed
-                if(options.method == "POST" && typeof options.body === "object") {
-                    let headers = options.headers,
-                        contentType = headers["content-type"] || headers["Content-Type"];
-                    if(contentType === this._xWwwFormUrlencodedType) {
-                        options.body = new URLSearchParams(options.body);
-                    } else if(contentType.includes(this._formData)) {
-                        let formData = new FormData(),
-                        body = options.body,
-                        bodyKeys = Object.keys(body);
+                    
+                    for(j=0;(jRule = fetchRequestMappingRules[j]); j++) {
 
-                        for(let i=0, countI = bodyKeys.length; (i < countI); i++) {
-                            formData.append(bodyKeys[i], body[bodyKeys[i]]);
+                        jRuleEvaluationResult = jRule.evaluate(dataOperationScope);
+                        if(jRule.targetPath === "url") {
+                            iUrl = jRuleEvaluationResult;
+                        } else {
+                            assign( (options || (options = {})), jRule.targetPath, jRuleEvaluationResult, undefined /*parameters*/, undefined /*document*/, undefined /*components*/);
                         }
-                        options.body = formData;
                     }
+
+                    //Turn a JSON body to form if needed
+                    if(options.method == "POST" && typeof options.body === "object") {
+                        let headers = options.headers,
+                            contentType = headers["content-type"] || headers["Content-Type"];
+                        if(contentType === this._xWwwFormUrlencodedType) {
+                            options.body = new URLSearchParams(options.body);
+                        } else if(contentType.includes(this._formData)) {
+                            let formData = new FormData(),
+                            body = options.body,
+                            bodyKeys = Object.keys(body);
+
+                            for(let i=0, countI = bodyKeys.length; (i < countI); i++) {
+                                formData.append(bodyKeys[i], body[bodyKeys[i]]);
+                            }
+                            options.body = formData;
+                        }
+                    }
+
+                    if(!iUrl) {
+                        throw new Error("mapDataOperationToFetchRequests: no url found for dataOperation: ",+dataOperation, " and criteria: "+iCriteria);
+                    } else {
+                        iRequest = new Request(iUrl, options);
+                        console.debug("Request "+iUrl+" with  options: "+ JSON.stringify(options));
+                        (fetchRequests || (fetchRequests = [])).push(iRequest);
+                    }
+
+
                 }
-
-                if(!iUrl) {
-                    throw new Error("mapDataOperationToFetchRequests: no url found for dataOperation: ",+dataOperation, " and criteria: "+iCriteria);
-                } else {
-                    iRequest = new Request(iUrl, options);
-                    console.debug("Request "+iUrl+" with  options: "+ JSON.stringify(options));
-                    (fetchRequests || (fetchRequests = [])).push(iRequest);
-                }
-
-
             }
         }
+
         return fetchRequests;
     }
 
