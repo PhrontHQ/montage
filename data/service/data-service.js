@@ -927,7 +927,12 @@ DataService.addClassProperties({
 
     __makePrototypeForType: {
         value: function (childService, objectDescriptor, constructor) {
-            var prototype = Object.create(constructor?.prototype || (typeof objectDescriptor === "function") ? objectDescriptor : Object),
+            var prototype = Object.create(
+                constructor?.prototype
+                    ?  constructor.prototype
+                    : (typeof objectDescriptor === "function") 
+                        ? objectDescriptor 
+                        : Object),
             mapping = childService.mappingForType(objectDescriptor),
             /*
                 FIXME
