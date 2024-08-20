@@ -147,8 +147,11 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
         if(!this.handlesType(readOperation.target)) { 
             return;
         }
+        var objectDescriptor = readOperation.target,
+            mapping = objectDescriptor && this.mappingForObjectDescriptor(objectDescriptor),
+            authenticationPromise, 
+            responseOperation;
 
-        let authenticationPromise;
         if(this.authenticationPolicy && this.authenticationPolicy === AuthenticationPolicy.UP_FRONT) {
             let identityPromise;
 
@@ -158,8 +161,17 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
                 identityPromise = Promise.resolve(this.identity);
             }
 
-            if(!this.accessToken) {
+            /*
+                if we don't have a token or if it's expired (this.accessToken.remainingValidityDuration is negative), 
+                or about to (under 2000ms / 2s left on its validity) 
 
+                then we re-authenticate
+            */
+            if(!this.accessToken || this.accessToken.remainingValidityDuration < 2000) {
+
+                if(this.accessToken) {
+                    console.log(this.name+" renewing access token that is about to expire: "+this.accessToken.remainingValidityDuration+"ms left")
+                }
                 // console.debug("this.identity: ",this.identity);
                 authenticationPromise = identityPromise.then((result) => {
                     let identityCriteria = new Criteria().initWithExpression("identity == $", this.identity),
@@ -196,17 +208,19 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
         authenticationPromise.then((accessToken) => {
 
             //if(accessToken?.accessToken) console.debug("accessToken: ",accessToken.accessToken);
-            var objectDescriptor = readOperation.target,
-            mapping = objectDescriptor && this.mappingForObjectDescriptor(objectDescriptor),
             // mapping = objectDescriptor && this.mappingForType(objectDescriptor),
-            fetchRequests = [],
-            i, iRequest,
-            responseOperation;
+            var fetchRequests = [],
+            i, iRequest;
 
         if(typeof mapping.mapDataOperationToFetchRequests === "function") {
             mapping.mapDataOperationToFetchRequests(readOperation, fetchRequests);
         }
-
+        else {
+            let error = new Error("No Mapping for "+ readOperation.target.name+ " lacks mapDataOperationToFetchRequests(readOperation, fetchRequests) method");
+            responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
+            responseOperation.target.dispatchEvent(responseOperation);
+        }
+        
         if(fetchRequests.length > 0) {
 
             for(i=0; (iRequest = fetchRequests[i]); i++) {
@@ -221,15 +235,22 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
                     } else {
                         return response.text();
                     }
-                } else {
+                } else if( response.status === 401) {
+                    console.log("Token has expired?",response);
+                    throw new Error("Token has expired");
+                  }                
+                else {
                     return response.text()
                     .then((responseContent) => {
+                        if(responseContent === "") {
+                            console.log(response);
+                        }
                         throw new Error("Request failed with error: " + responseContent);
                     });
                 }
                 })
                 .then((responseContent) => {
-                    var rawData = [];
+                    let rawData = [];
                     mapping.mapFetchResponseToRawData(responseContent, rawData);
                     //console.debug("rawData: ",rawData);
                     responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
@@ -237,6 +258,7 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
                     //return responseOperation;
                 })
                 .catch((error) => {
+                    console.log("error.response is ", error.response);
                     responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
                     console.error(error);
                     responseOperation.target.dispatchEvent(responseOperation);
@@ -248,12 +270,50 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
 
             }              
         } else {
-            let error = new Error("Mapping for "+ readOperation.target.name+ " lacks mapDataOperationToFetchRequests(readOperation, fetchRequests) method");
-            responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
-            responseOperation.target.dispatchEvent(responseOperation);
+            let criteriaParameters = readOperation.criteria.parameters,
+                qualifiedProperties = readOperation.criteria.qualifiedProperties,
+                rawData = [];
+
+            if(readOperation.data.readExpressions && readOperation.data.readExpressions.length > 0 && qualifiedProperties.length == 1) {
+                /*
+                    The test obove is for a query initiated by mod's data-triggers to resolve values of one object at a time and that qualifiedProperties only is the priary key.
+                    So far mod supports a single primary key, that can be an object.
+
+                    We should more carefully use the syntax to match the property to it's value
+                */
+               let readExpressions = readOperation.data.readExpressions,
+                    rawDataObject = {};
+
+                rawData.push(rawDataObject);
+               //Set the primary key:
+               rawDataObject[qualifiedProperties[0]] = criteriaParameters;
+               
+               console.warn("No Mapping found for readOperation on "+ readOperation.target.name+ " for "+ readExpressions);
+               //console.warn("No Mapping found for readOperation on "+ readOperation.target.name+ " for "+ readExpressions+" and criteria: ",readOperation.criteria);
+                for(let i = 0, countI = readExpressions.length, iReadExpression, iPropertyDescriptor; (i < countI); i++ ) {
+                    iReadExpression = readExpressions[i]
+                    iPropertyDescriptor = objectDescriptor.propertyDescriptorNamed(iReadExpression);
+                    rawDataObject[iReadExpression] = iPropertyDescriptor.defaultFalsyValue;
+                }
+                responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
+                responseOperation.target.dispatchEvent(responseOperation);
+
+            } else {
+                let error = new Error("No Mapping found for readOperation on "+ readOperation.target.name+ " with criteria: "+JSON.stringify(readOperation.criteria));
+            
+                responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
+                responseOperation.target.dispatchEvent(responseOperation);
+            }
+
         }
 
 
+    })
+    .catch((error) => {
+        responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
+        console.error(error);
+        responseOperation.target.dispatchEvent(responseOperation);
+        //return responseOperation;
     });
         
 }
