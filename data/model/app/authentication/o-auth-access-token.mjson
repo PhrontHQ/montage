@@ -52,12 +52,19 @@
             "description": "How long the access token is valid (in seconds)."
        }
     },
+    "computeValidityRange": {
+        "object":"./o-auth-access-token-compute-validity-range"
+    },
     "validityRange": {
         "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "validityRange",
             "valueType": "date",
             "collectionValueType": "range",
+            "definition": {
+                "args": ["validityDuration"],
+                "compute": {"@": "computeValidityRange"}
+            },
             "description": "How long the access token is valid (in seconds)."
        }
     },
@@ -99,6 +106,11 @@
             "name": "refreshTokenValidityRange",
             "valueType": "date",
             "collectionValueType": "range",
+            "isDerived": true,
+            "definition": {
+                "args": ["refreshTokenValidityDuration"],
+                "compute": {"@": "computeValidityRange"}
+            },
             "description": "How long the access token is valid (in seconds)."
        }
     }

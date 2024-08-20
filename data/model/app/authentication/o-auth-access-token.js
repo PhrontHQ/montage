@@ -1,9 +1,8 @@
 /**
-    @module mod/data/model/app/authorization/j-s-o-n-web-token
+    @module mod/data/model/app/authentication/o-auth-access-token
 */
 
-var DataObject = require("../../data-object").DataObject;
-
+const DataObject = require("../../data-object").DataObject;
 /**
  * @class OAuthAccessToken
  * @extends DataObject
@@ -17,16 +16,46 @@ var DataObject = require("../../data-object").DataObject;
 */
 
 exports.OAuthAccessToken = DataObject.specialize(/** @lends OAuthAccessToken.prototype */ {
-    constructor: {
-        value: function() {
-            this.super();
-            return this;
-        }
-    },
-    header: {
+    accessToken: {
         value: undefined
     },
-    claims: {
+    tokenType: {
+        value: undefined
+    },
+    validityDuration: {
+        value: undefined
+    },
+
+    /**
+     * Returns the number of millisecond for which a token is valid.
+     * If that number is negative, it's expired.
+     *
+     * @property
+     * @readonly
+     * @returns {Number} Arrat of relevant propertyDescriptors
+     */
+    remainingValidityDuration: {
+        get: function() {
+            return this.validityRange.end.valueOf() - Date.now();
+        }
+    },
+
+    validityRange: {
+        value: undefined
+    },
+    scope: {
+        value: undefined
+    },
+    refreshToken: {
+        value: undefined
+    },
+    idToken: {
+        value: undefined
+    },
+    refreshTokenValidityDuration: {
+        value: undefined
+    },
+    refreshTokenValidityRange: {
         value: undefined
     }
 });
