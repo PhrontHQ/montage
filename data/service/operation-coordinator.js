@@ -452,7 +452,7 @@ exports.OperationCoordinator = Target.specialize(/** @lends OperationCoordinator
                     } 
                     else if(!propagationPromise && self._operationPromisesByReferrerId.get(deserializedOperation.id)) {
                         /*
-                            If propagationPromise, we know some listener is handling it in an async way
+                            If propagationPromise, we know some listener is handling it in an async way that impact propagation
                             and should resultOperationPromise should be resolved by a completed/failed matching operation.
 
                             Otherwise, if there were any listener handling it in a sync way, it should also be resolved or rejected
@@ -460,7 +460,7 @@ exports.OperationCoordinator = Target.specialize(/** @lends OperationCoordinator
 
                             If it's gone, all good, if not, nothing happened, and we should resolve true
                         */
-                       console.warn("no listener handled "+deserializedOperation.type+" DataOperation: ",deserializedOperation);
+                       //console.warn("no listener handled "+deserializedOperation.type+" DataOperation: ",deserializedOperation);
                         resolve(true);
                     }
 
