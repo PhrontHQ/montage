@@ -29,7 +29,7 @@ var MutableEvent = require("../../core/event/mutable-event").MutableEvent,
  *
  */
 
-transactionEventTypes = [
+const transactionEventTypes = [
 
     "transactionCreate",
     "transactionCreateStart", /*alternative: transactionStartComplete*/
