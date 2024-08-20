@@ -372,7 +372,7 @@ RawDataService.addClassProperties({
     rawClientPromise: {
         get: function () {
             if (!this._rawClientPromise) {
-                this._rawClientPromise = Promise.all(this.rawClientPromises);
+                this._rawClientPromise = Promise.all(this.rawClientPromises).then(() => { return this.rawClient;});
             }
             return this._rawClientPromise;
         }
@@ -927,10 +927,20 @@ RawDataService.addClassProperties({
                 result = result.then(function () {
                     // console.log(object.dataIdentifier.objectDescriptor.name +" addOneRawData id:"+rawData.id+"  MAPPING PROMISE RESOLVED -> stream.addData(object)");
 
+                    /*
+                        Attempt to put in place something when an object is first fetched.
+                        This would only tell the object itself, but we want to enable expernal 
+                    */
+                    // if(!isUpdateToExistingObject) {
+                    //     object.awakeFromFetch?.();
+                    // }
                     stream.addData(object);
                     return object;
                 });
             } else {
+                // if(!isUpdateToExistingObject) {
+                //     object.awakeFromFetch?.();
+                // }
                 stream.addData(object);
                 result = Promise.resolve(object);
             }
@@ -1091,7 +1101,7 @@ RawDataService.addClassProperties({
     primaryKeyForTypeRawData: {
         value: function (type, rawData) {
             var mapping = this.mappingForType(type),
-                rawDataPrimaryKeys = mapping ? mapping.rawDataPrimaryKeyExpressions : null,
+                rawDataPrimaryKeys = mapping ? mapping.rawDataPrimaryKeyCompiledExpressions : null,
                 scope = new Scope(rawData),
                 rawDataPrimaryKeysValues,
                 dataIdentifier, dataIdentifierMap, primaryKey;
@@ -1137,7 +1147,7 @@ RawDataService.addClassProperties({
                 return this.dataIdentifierForTypePrimaryKey(type, primaryKey);
             } else {
                 var mapping = this.mappingForType(type);
-                if(mapping && mapping.rawDataPrimaryKeyExpressions) {
+                if(mapping && mapping.rawDataPrimaryKeyCompiledExpressions) {
                 throw "-dataIdentifierForTypeRawData(): Primary key missing for type '"+type.name+", rawData "+JSON.stringify(rawData);
                 }
             }

@@ -12,7 +12,8 @@ var DataMapping = require("./data-mapping").DataMapping,
     Set = require("../../core/collections/set"),
     deprecate = require("../../core/deprecate"),
     RawForeignValueToObjectConverter = require("../converter/raw-foreign-value-to-object-converter").RawForeignValueToObjectConverter,
-    DataOperation = require("./data-operation").DataOperation;
+    DataOperation = require("./data-operation").DataOperation,
+    SyntaxInOrderIterator = require("../../core/frb/syntax-iterator").SyntaxInOrderIterator;
 
 var ONE_WAY_BINDING = "<-";
 var TWO_WAY_BINDING = "<->";
@@ -356,16 +357,29 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
         }
     },
 
-    rawDataPrimaryKeyExpressions: {
+    rawDataPrimaryKeyExpressionSyntaxes: {
         get: function () {
-            if (!this._rawDataPrimaryKeyExpressions && this.rawDataPrimaryKeys) {
-                this._rawDataPrimaryKeyExpressions = this.rawDataPrimaryKeys.map(
+            if (!this._rawDataPrimaryKeyExpressionSyntaxes && this.rawDataPrimaryKeys) {
+                this._rawDataPrimaryKeyExpressionSyntaxes = this.rawDataPrimaryKeys.map(
                     function (key) {
-                        return compile(parse(key));
+                        return parse(key);
                     }
                 );
             }
-            return this._rawDataPrimaryKeyExpressions;
+            return this._rawDataPrimaryKeyExpressionSyntaxes;
+        }
+    },
+
+    rawDataPrimaryKeyCompiledExpressions: {
+        get: function () {
+            if (!this._rawDataPrimaryKeyCompiledExpressions && this.rawDataPrimaryKeys) {
+                this._rawDataPrimaryKeyCompiledExpressions = this.rawDataPrimaryKeyExpressionSyntaxes.map(
+                    function (expressionSyntax) {
+                        return compile(expressionSyntax);
+                    }
+                );
+            }
+            return this._rawDataPrimaryKeyCompiledExpressions;
         }
     },
 
@@ -2658,27 +2672,102 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
         value: undefined
     },
 
+    /*
+        Expanding this to suppport single property primary keys - id
+        As well as a plain JavaScript object whose property/values represent a compound primary key
+    */
+
     _rawDataPrimaryKeyCriteriaSyntax: {
         get: function() {
             if(!this.__rawDataPrimaryKeyCriteriaSyntax) {
-                var rawDataPrimaryKeys = this.rawDataPrimaryKeys,
-                    i, iKey, countI, expression = "";
 
-                for(i=0, countI = rawDataPrimaryKeys.length; (i<countI); i++) {
-                    iKey = rawDataPrimaryKeys[i];
-                    if(expression.length > 0) {
-                        expression += " && ";
+
+                var iterator = new SyntaxInOrderIterator(this.rawDataPrimaryKeyExpressionSyntaxes[0]),
+                parentSyntax, currentSyntax, firstArgSyntax, secondArgSyntax, expression = "";
+
+                while ((currentSyntax = iterator.next().value)) {
+
+                    if(currentSyntax.type === "property") {
+                        let iKey = currentSyntax.args[1].type === "literal" 
+                            ? currentSyntax.args[1].value
+                            : currentSyntax.args[0].value;
+
+                        expression += `${iKey} == $${iKey}`;
+                        this.__rawDataPrimaryKeyCriteriaSyntax = parse(expression);
+                        break;
+
+                    } else if(currentSyntax.type === "record") {
+                        let recordKeys = Object.keys(currentSyntax.args);
+
+                        for(let i=0, iKey, countI = recordKeys.length; (i<countI); i++) {
+                            iKey = recordKeys[i];
+                            if(expression.length > 0) {
+                                expression += " && ";
+                            }
+                            expression += `${iKey} == $.${iKey}`;        
+                        }
+
+                        this.__rawDataPrimaryKeyCriteriaSyntax = parse(expression);
+                        break;
+
+                    } else if(currentSyntax.type === "value") {
+                        continue;
+                    
+                    } else {
+                        throw ("Raw primary expression syntax is unsupported:",this.rawDataPrimaryKeys);
                     }
-                    expression += `${iKey} == $${iKey}`;
-                }
 
-                this.__rawDataPrimaryKeyCriteriaSyntax = parse(expression);
+                }
             }
             return  this.__rawDataPrimaryKeyCriteriaSyntax;
         }
     },
 
+
+    
     rawDataPrimaryKeyCriteriaForObject: {
+        value: function(object) {
+            var rawDataPrimaryKeyExpressions = this.rawDataPrimaryKeys,
+                rawDataPrimaryKeyCompiledExpressions = this.rawDataPrimaryKeyCompiledExpressions,
+                isObjectCreated = this.service.isObjectCreated(object),
+                snapshot = !isObjectCreated && this.service.snapshotForObject(object),
+                criteriaParameters,
+                i, iCompiledExpression, iExpression, iKeyRawRule, countI;
+
+            /*
+                If the object has been fetched, we should have the values in the snapshot, otherwise if they are natural primiary keys, we might be able to get them by mapping back
+            */
+           for(i=0, countI = rawDataPrimaryKeyCompiledExpressions.length; (i<countI); i++) {
+                if(!isObjectCreated && snapshot) {
+                    iCompiledExpression = rawDataPrimaryKeyCompiledExpressions[i];
+                    let propertyScope = this._scope.nest(snapshot);
+
+                    criteriaParameters = iCompiledExpression(propertyScope);
+                    //(criteriaParameters || (criteriaParameters = {}))[iKey] = snapshot[iKey];
+                } else {
+                    if(countI === 1 && object.dataIdentifier) {
+                        assign((criteriaParameters || (criteriaParameters = {})), rawDataPrimaryKeyExpressions[i], object.dataIdentifier.primaryKey);
+                    } else {
+                        iKeyRawRule = this.rawDataMappingRuleForPropertyName(rawDataPrimaryKeyExpressions[i]);
+                        if(iKeyRawRule) {
+                            this.__mapObjectToRawDataProperty(object, (criteriaParameters || (criteriaParameters = {})), rawDataPrimaryKeyExpressions[i], iKeyRawRule, snapshot);
+                        }
+                    }
+                }
+            }
+
+            if(criteriaParameters) {
+                return new Criteria().initWithSyntax(this._rawDataPrimaryKeyCriteriaSyntax, criteriaParameters);
+            } else {
+                return null;
+            }
+
+
+        }
+    },
+
+
+    _rawDataPrimaryKeyCriteriaForObject: {
         value: function(object) {
             var rawDataPrimaryKeys = this.rawDataPrimaryKeys,
                 isObjectCreated = this.service.isObjectCreated(object),
