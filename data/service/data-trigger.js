@@ -863,7 +863,9 @@ Object.defineProperties(exports.DataTrigger, /** @lends DataTrigger */ (DataTrig
                 trigger._objectPrototype = prototype;
                 trigger.propertyDescriptor = descriptor;
                 trigger._isGlobal = descriptor.isGlobal;
-                if (descriptor.definition) {
+
+                var definition = descriptor.definition;
+                if (definition) {
                     /*
                         As we create the binding for a definition like "propertyA.propertyB", we will endup doing fetchObjectProperty for propertyA, and later calling propertyB on the result of fetching propertyA. This is highly inneficient and we need to find a way to fetch propertyA with a readExpression of propertyB.
 
@@ -871,20 +873,57 @@ Object.defineProperties(exports.DataTrigger, /** @lends DataTrigger */ (DataTrig
 
                         Every property change observer/listener is an opportunity to collect what "comes next", but it's only available on defineBinding, as after it's dynamically added once instances are in memory which is too late.
                     */
-
-
-                    var propertyDescriptor = {
-                        get: function (shouldFetch) {
-                            if (!this.getBinding(descriptor.name)) {
-                                /*
-                                    This allows us to eventually fetch directly the equivalent of the expression and set it directly.
-                                */
-                                this.defineBinding(descriptor.name, {"<-": "_"+descriptor.name+" || ("+descriptor.definition+")"});
+                    var propertyDescriptor;
+                    if(typeof definition === "string") {
+                        propertyDescriptor = {
+                            get: function (shouldFetch) {
+                                if (!this.getBinding(descriptor.name)) {
+                                    /*
+                                        This allows us to eventually fetch directly the equivalent of the expression and set it directly.
+                                    */
+                                    this.defineBinding(descriptor.name, {"<-": "_"+descriptor.name+" || ("+definition+")"});
+                                }
+                                return trigger._getValue(this,shouldFetch);
+                                // return (trigger||(trigger = DataTrigger._createTrigger(service, objectDescriptor, prototype, name,descriptor)))._getValue(this);
                             }
-                            return trigger._getValue(this,shouldFetch);
-                            // return (trigger||(trigger = DataTrigger._createTrigger(service, objectDescriptor, prototype, name,descriptor)))._getValue(this);
-                        }
-                    };
+                        };    
+                    } else if(typeof definition === "object") {
+                        propertyDescriptor = {
+                            get: function (shouldFetch) {
+                                if (!this.getBinding(trigger._privatePropertyName)) {
+
+                                    /*
+                                        This allows us to eventually fetch directly the equivalent of the expression and set it directly.
+                                    */
+                                    // this.defineBinding(descriptor.name, {"<-": "_"+descriptor.name});
+                                    this.defineBinding(trigger._privatePropertyName, {
+                                        source: this,
+                                        args: definition.args,
+                                        compute: definition.compute
+                                    });
+
+                                    /*
+                                        Once the binding is in place, redefine the getter to just return the private property,
+                                        avoiding to have to test this.getBinding(trigger._privatePropertyName) every time...
+                                    */
+                                    Montage.defineProperty(this, descriptor.name, {
+                                        get: function (shouldFetch) {
+                                            return trigger._getValue(this,shouldFetch);
+
+                                        }
+                                    });
+
+                                }
+                                return trigger._getValue(this,shouldFetch);
+                                // return (trigger||(trigger = DataTrigger._createTrigger(service, objectDescriptor, prototype, name,descriptor)))._getValue(this);
+                            }
+                        };    
+
+                    }
+
+
+
+
                     if(!descriptor.readonly) {
                         propertyDescriptor.set = function (value) {
                             trigger._setValue(this, value);
