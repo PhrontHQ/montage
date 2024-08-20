@@ -13,13 +13,13 @@ var MutableEvent = require("../../core/event/mutable-event").MutableEvent,
  *
  */
 
-transactionEventTypes = [
+const readEventTypes = [
     "read",
     "readProgress",
     "readComplete",
     "readFail"
  ];
- exports.ReadEventType = ReadEventType = new Enum().initWithMembersAndValues(transactionEventTypes,transactionEventTypes);
+ exports.ReadEventType = ReadEventType = new Enum().initWithMembersAndValues(readEventTypes,readEventTypes);
 
 
  ReadEvent = exports.ReadEvent = MutableEvent.specialize({
