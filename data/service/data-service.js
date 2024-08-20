@@ -1572,9 +1572,9 @@ DataService.addClassProperties({
                         if(iModuleId.endsWith(mjsonExtension)) {
                             iModuleId = iModuleId.removeSuffix(mjsonExtension);
                         }
-                        map.set(iModuleId,types[i]);
+                        map.set(iModuleId,iType);
                     } else {
-                        map.set(iType.module.id,types[i]);
+                        map.set(iType.module.id,iType);
                     }
                 }
 
