@@ -119,8 +119,9 @@ exports.URLSearchParamIdentityService = URLSearchParamIdentityService = Identity
                 this._identity.scope = [this.identityQuery];
             }
 
-            this.addRawData(stream, [this._identity]);
-            this.rawDataDone(stream);
+            /* This bypass typicall rawData level since we create an object here */
+            stream.addData([this._identity]);
+            stream.dataDone();
         }
     }
 }, {
