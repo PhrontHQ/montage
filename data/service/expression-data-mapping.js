@@ -2091,7 +2091,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                         or find a way to jut access the local state without triggering the fetch and just update it.
                     */
                    //We call the getter passing shouldFetch = false flag stating that it's an internal call
-                   var objectPropertyValue = Object.getPropertyDescriptor(object,propertyName).get(/*shouldFetch*/false);
+                   var objectPropertyValue = Object.getPropertyDescriptor(object,propertyName).get.call(object,/*shouldFetch*/false);
                     if(!Array.isArray(objectPropertyValue)) {
                         value = [value];
                         object[propertyName] = value;
