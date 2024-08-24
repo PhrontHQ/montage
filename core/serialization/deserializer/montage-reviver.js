@@ -567,6 +567,8 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
                             context
                         );
                         context.setUnitsToDeserialize(revivedValue, revivedUnits, MontageReviver._unitNames);
+                    } else {
+                        context.setUnitsToDeserialize(revivedValue, revivedUnits, MontageReviver._unitNames);
                     }
 
                     return revivedValue;
@@ -1364,28 +1366,26 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
                             to be the bindings and make sure we reset it to be the regular passed value object otherwise.
                         */
                         iValueContainer = bindings;
+
                 } else {
+                    
                     iValueContainer = value;
-                }
 
-                    // if (iValue === value) {
-                    //     // catch object property that point to its parent
-                    //     return value;
-                    // }
-
-                if(iValue !== (item = this.reviveValue(iValue, context))) {
-                    if (isNotSync && _PromiseIs(item)) {
-                        item = item.then((_createAssignValueFunction || (_createAssignValueFunction = this._createAssignValueFunction))(iValueContainer, propertyName));
-
-                        !firstPromise
-                            ? firstPromise = item
-                            : !promises
-                                ? promises = [firstPromise, item]
-                                : promises.push(item);
-
-                    } else {
-                        iValueContainer[propertyName] = item;
+                    if(iValue !== (item = this.reviveValue(iValue, context))) {
+                        if (isNotSync && _PromiseIs(item)) {
+                            item = item.then((_createAssignValueFunction || (_createAssignValueFunction = this._createAssignValueFunction))(iValueContainer, propertyName));
+    
+                            !firstPromise
+                                ? firstPromise = item
+                                : !promises
+                                    ? promises = [firstPromise, item]
+                                    : promises.push(item);
+    
+                        } else {
+                            iValueContainer[propertyName] = item;
+                        }
                     }
+    
                 }
 
             }
