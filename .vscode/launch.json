@@ -77,6 +77,13 @@
             "program": "${workspaceFolder}/core/date/tools/compile-zones.js"
         },
         {
+            "type": "node-terminal",
+            "name": "Run Script: peggy-build-frb-parser",
+            "request": "launch",
+            "command": "npm run peggy-build-frb-parser",
+            "cwd": "${workspaceFolder}"
+        },    
+        {
             "type": "node",
             "request": "launch",
             "name": "Run promise-io Jasmine Tests",
