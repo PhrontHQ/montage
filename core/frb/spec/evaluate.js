@@ -879,6 +879,13 @@ module.exports = [
         path: "!!isLoading + ''",
         input: {isLoading: undefined},
         output: "false"
+    },
+
+    {
+        path: "$path.map{^foo.add(this)}",
+        input: {foo: ["a", "b"]},
+        parameters: {path: ["c", "d"]},
+        output: [ true, true ]
     }
 
 ];
