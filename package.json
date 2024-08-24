@@ -73,7 +73,7 @@
         "karma-safari-launcher": "^1.0.0",
         "marked": "^3.0.7",
         "open": "0.0.5",
-        "peggy": "^1.2.0",
+        "peggy": "^4.0.3",
         "pegjs": "git://github.com/pegjs/pegjs.git",
         "xhr2": "^0.1.4"
     },
