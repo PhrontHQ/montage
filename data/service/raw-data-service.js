@@ -905,7 +905,7 @@ RawDataService.addClassProperties({
             dataIdentifier = this.dataIdentifierForTypeRawData(type, rawData),
 
             // if(!object) {
-            object = this.objectForTypeRawData(type, rawData, context);
+            object = this.objectForTypeRawData(type, rawData, dataIdentifier, context);
             // }
             // else {
             //     isUpdateToExistingObject = true;
@@ -1007,7 +1007,7 @@ RawDataService.addClassProperties({
 
 
             //Retrieves an existing object is responsible data service is uniquing, or creates one
-            object = this.getDataObject(type, rawData, context, dataIdentifier);
+            object = this.getDataObject(type, rawData, dataIdentifier, context);
 
             //Record snapshot before mapping
             this.recordSnapshot(dataIdentifier, rawData);
@@ -1029,15 +1029,14 @@ RawDataService.addClassProperties({
 
 
     objectForTypeRawData: {
-        value: function (type, rawData, context) {
+        value: function (type, rawData, dataIdentifier, context) {
             // var dataIdentifier = this.dataIdentifierForTypeRawData(type,rawData);
 
             // return this.rootService.objectForDataIdentifier(dataIdentifier) ||
-            //         this.getDataObject(type, rawData, context, dataIdentifier);
+            //         this.getDataObject(type, rawData, dataIdentifier, context);
 
 
-            var dataIdentifier = this.dataIdentifierForTypeRawData(type, rawData),
-                object = this.rootService.objectForDataIdentifier(dataIdentifier);
+            var object = this.rootService.objectForDataIdentifier(dataIdentifier);
 
             //Consolidation, recording snapshot even if we already had an object
             //Record snapshot before we may create an object
@@ -1046,7 +1045,7 @@ RawDataService.addClassProperties({
 
             if (!object) {
                 //iDataIdentifier argument should be all we need later on
-                return this.getDataObject(type, rawData, context, dataIdentifier);
+                return this.getDataObject(type, rawData, dataIdentifier, context);
             }
             return object;
 
