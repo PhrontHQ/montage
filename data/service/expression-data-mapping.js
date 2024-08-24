@@ -2042,9 +2042,12 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
 
     _setObjectsValueForPropertyDescriptor: {
         value: function (objects, value, propertyDescriptor, shouldFlagObjectBeingMapped) {
-            var i, n;
-            for (i = 0, n = objects.length; i < n; i += 1) {
-                this._setObjectValueForPropertyDescriptor(objects[i], value, propertyDescriptor, shouldFlagObjectBeingMapped);
+            if(Array.isArray(objects)) {
+                for (var i = 0, n = objects.length; i < n; i += 1) {
+                    this._setObjectValueForPropertyDescriptor(objects[i], value, propertyDescriptor, shouldFlagObjectBeingMapped);
+                }    
+            } else {
+                this._setObjectValueForPropertyDescriptor(objects, value, propertyDescriptor, shouldFlagObjectBeingMapped);
             }
         }
     },
