@@ -2392,7 +2392,7 @@ DataService.addClassProperties({
      * @method
      * @argument {DataObjectDescriptor} type - The type of object to find or
      *                                         create.
-     * @argument {Object} data               - An object whose property values
+     * @argument {Object} rawData               - An object whose property values
      *                                         hold the object's raw data. That
      *                                         data will be used to determine
      *                                         the object's unique identifier.
@@ -2406,7 +2406,7 @@ DataService.addClassProperties({
      * object of the specified type.
      */
     getDataObject: {
-        value: function (type, data, context, dataIdentifier) {
+        value: function (type, rawData, dataIdentifier, context) {
             if (this.isRootService) {
                 var dataObject;
                 // TODO [Charles]: Object uniquing.
@@ -2420,7 +2420,7 @@ DataService.addClassProperties({
                 return dataObject;
             }
             else {
-                return this.rootService.getDataObject(type, data, context, dataIdentifier);
+                return this.rootService.getDataObject(type, rawData, dataIdentifier, context);
             }
 
         }
