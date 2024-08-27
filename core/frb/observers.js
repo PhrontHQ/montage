@@ -1,14 +1,16 @@
 
 require("../collections/shim"); // Function.noop
-var PropertyChanges = require("../collections/listen/property-changes");
 require("../collections/listen/array-changes");
-var SortedArray = require("../collections/sorted-array");
-var SortedSet = require("../collections/sorted-set");
-var Map = require("../collections/map");
-var Set = require("../collections/set");
-var Heap = require("../collections/heap");
-var Scope = require("./scope");
-var Operators = require("./operators");
+const PropertyChanges = require("../collections/listen/property-changes"),
+    SortedArray = require("../collections/sorted-array"),
+    SortedSet = require("../collections/sorted-set"),
+    Map = require("../collections/map"),
+    Set = require("../collections/set"),
+    Heap = require("../collections/heap"),
+    Scope = require("./scope"),
+    Operators = require("./operators"),
+    parse = require("./parse");
+
 
 // Simple stuff..."degenerate" even
 
@@ -1621,9 +1623,8 @@ function makeComputerObserver(observeArgs, compute, thisp) {
 
 exports.makePathObserver = makeExpressionObserver; // deprecated
 exports.makeExpressionObserver = makeExpressionObserver;
+var compileObserver;
 function makeExpressionObserver(observeInput, observeExpression) {
-    var parse = require("./parse");
-    var compileObserver = require("./compile-observer");
     return function expressionObserver(emit, scope) {
         emit = makeUniq(emit);
         return observeExpression(function replaceExpression(expression) {
@@ -1631,7 +1632,12 @@ function makeExpressionObserver(observeInput, observeExpression) {
             var syntax, observeOutput;
             try {
                 syntax = parse(expression);
-                observeOutput = compileObserver(syntax);
+                /*
+                    TODO: there's a cycle between observer.js requiring compile-observer.js
+                    and compile-observer.js rquiring observer.js. This resolution at invocation
+                    does take care of it, but it should be better solved by removing the cycle. 
+                */
+                observeOutput = (compileObserver || (compileObserver = require("./compile-observer")))(syntax);
             } catch (exception) {
                 return emit();
             }

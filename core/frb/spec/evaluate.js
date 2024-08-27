@@ -781,38 +781,38 @@ module.exports = [
     },
 
     {
-        path: "path('')",
+        path: "evaluate('')",
         input: 1,
         output: 1
     },
 
     {
-        path: "path(path)",
+        path: "evaluate(path)",
         input: {x: 2, y: 3, path: "x + y"},
         output: 5
     },
 
     {
-        path: "foo.path($path)",
+        path: "foo.evaluate($path)",
         input: {foo: {a: 10}},
         parameters: {path: "a"},
         output: 10
     },
 
     {
-        path: "path('(]')",
+        path: "evaluate('(]')",
         input: "i should not be",
         output: void 0
     },
 
     {
-        path: "path(())",
+        path: "evaluate(())",
         input: "(]",
         output: void 0
     },
 
     {
-        path: "path(())",
+        path: "evaluate(())",
         input: "(",
         output: void 0
     },
@@ -827,7 +827,7 @@ module.exports = [
     },
 
     {
-        path: "path(path)",
+        path: "evaluate(path)",
         input: {
             a: {b: 10},
             path: "a.b"

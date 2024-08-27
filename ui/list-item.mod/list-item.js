@@ -18,7 +18,7 @@ exports.ListItem = Component.specialize({
             this.defineBindings({
                 "_iconSrc": {
                     "<-": "data.defined() && userInterfaceDescriptor.defined() ? " +
-                        "(data.path(userInterfaceDescriptor.iconExpression || null) || " +
+                        "(data.evaluate(userInterfaceDescriptor.iconExpression || null) || " +
                         "path(userInterfaceDescriptor.iconExpression || null)) : iconSrc"
                 },
                 "_defaultIconComponenModule": {
@@ -31,17 +31,17 @@ exports.ListItem = Component.specialize({
                 },
                 "_label": {
                     "<-": "data.defined() && userInterfaceDescriptor.defined() ? " +
-                        "(data.path(userInterfaceDescriptor.nameExpression) || " +
+                        "(data.evaluate(userInterfaceDescriptor.nameExpression) || " +
                         "label) : (label || data)"
                 },
                 "_description": {
                     "<-": "data.defined() && userInterfaceDescriptor.defined() ? " +
-                        "(data.path(userInterfaceDescriptor.descriptionExpression) || " +
+                        "(data.evaluate(userInterfaceDescriptor.descriptionExpression) || " +
                         "description) : description"
                 },
                 "__value": {
                     "<-": "data.defined() && userInterfaceDescriptor.defined() ? " +
-                        "data.path(userInterfaceDescriptor.valueExpression) : _value"
+                        "data.evaluate(userInterfaceDescriptor.valueExpression) : _value"
                 },
                 "_defaultToggleComponentModule": {
                     "<-": "toggleComponentModule || _montageToogleComponentModule"

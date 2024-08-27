@@ -20,23 +20,23 @@ var CascadingListItem = exports.CascadingListItem = Component.specialize({
                 },
                 "headerLeftLabel": {
                     "<-": "isCollection ? " +
-                        "(object.path(userInterfaceDescriptor.cascadingListItemHeaderLeftCollectionNameExpression || \"''\") || " +
+                        "(object.evaluate(userInterfaceDescriptor.cascadingListItemHeaderLeftCollectionNameExpression || \"''\") || " +
                         "path(userInterfaceDescriptor.cascadingListItemHeaderLeftCollectionNameExpression || \"''\")) : " +
-                        "(object.path(userInterfaceDescriptor.cascadingListItemHeaderLeftNameExpression || \"''\") || " +
+                        "(object.evaluate(userInterfaceDescriptor.cascadingListItemHeaderLeftNameExpression || \"''\") || " +
                         "path(userInterfaceDescriptor.cascadingListItemHeaderLeftNameExpression || \"''\"))"
                 },
                 "headerMiddleLabel": {
                     "<-": "isCollection ? " +
-                        "(object.path(userInterfaceDescriptor.cascadingListItemHeaderMiddleCollectionNameExpression || " +
+                        "(object.evaluate(userInterfaceDescriptor.cascadingListItemHeaderMiddleCollectionNameExpression || " +
                         "userInterfaceDescriptor.collectionNameExpression || \"''\") || " +
                         "path(userInterfaceDescriptor.cascadingListItemHeaderMiddleCollectionNameExpression || " +
                         "userInterfaceDescriptor.collectionNameExpression || \"''\")) : " +
-                        "object.path(userInterfaceDescriptor.cascadingListItemHeaderMiddleNameExpression || " +
+                        "object.evaluate(userInterfaceDescriptor.cascadingListItemHeaderMiddleNameExpression || " +
                         "userInterfaceDescriptor.nameExpression || \"''\")"
                 },
                 "_headerRightLabelObjectExpression": {
                     "<-": "!isCollection ? " +
-                        "object.path(userInterfaceDescriptor.cascadingListItemHeaderRightNameExpression) : ''"
+                        "object.evaluate(userInterfaceDescriptor.cascadingListItemHeaderRightNameExpression) : ''"
                 },
                 "_headerRightLabelExpression": {
                     "<-": "!isCollection ? " +
@@ -47,29 +47,29 @@ var CascadingListItem = exports.CascadingListItem = Component.specialize({
                 },
                 "headerRightLabel": {
                     "<-": "isCollection ? " +
-                        "(object.path(userInterfaceDescriptor.cascadingListItemHeaderRightCollectionNameExpression || \"''\") || " +
+                        "(object.evaluate(userInterfaceDescriptor.cascadingListItemHeaderRightCollectionNameExpression || \"''\") || " +
                         "path(userInterfaceDescriptor.cascadingListItemHeaderRightCollectionNameExpression || \"''\")) : " +
                         "__headerRightLabelExpression"
                 },
                 "footerLeftLabel": {
                     "<-": "isCollection ? " +
-                        "(object.path(userInterfaceDescriptor.cascadingListItemFooterLeftCollectionNameExpression || \"''\") || " +
+                        "(object.evaluate(userInterfaceDescriptor.cascadingListItemFooterLeftCollectionNameExpression || \"''\") || " +
                         "path(userInterfaceDescriptor.cascadingListItemFooterLeftCollectionNameExpression || \"''\")) : " +
-                        "(object.path(userInterfaceDescriptor.cascadingListItemFooterLeftNameExpression || \"''\") || " +
+                        "(object.evaluate(userInterfaceDescriptor.cascadingListItemFooterLeftNameExpression || \"''\") || " +
                         "path(userInterfaceDescriptor.cascadingListItemFooterLeftNameExpression || \"''\"))"
                 },
                 "footerMiddleLabel": {
                     "<-": "isCollection ? " +
-                        "(object.path(userInterfaceDescriptor.cascadingListItemFooterMiddleCollectionNameExpression) || " +
+                        "(object.evaluate(userInterfaceDescriptor.cascadingListItemFooterMiddleCollectionNameExpression) || " +
                         "path(userInterfaceDescriptor.cascadingListItemFooterMiddleCollectionNameExpression || \"''\")) : " +
-                        "(object.path(userInterfaceDescriptor.cascadingListItemMiddleRightNameExpression || \"''\") || " +
+                        "(object.evaluate(userInterfaceDescriptor.cascadingListItemMiddleRightNameExpression || \"''\") || " +
                         "path(userInterfaceDescriptor.cascadingListItemFooterMiddleNameExpression || \"''\"))"
                 },
                 "footerRightLabel": {
                     "<-": "isCollection ? " +
-                        "(object.path(userInterfaceDescriptor.cascadingListItemFooterRightCollectionNameExpression || \"''\") || " +
+                        "(object.evaluate(userInterfaceDescriptor.cascadingListItemFooterRightCollectionNameExpression || \"''\") || " +
                         "path(userInterfaceDescriptor.cascadingListItemFooterRightCollectionNameExpression || \"''\")) : " +
-                        "(object.path(userInterfaceDescriptor.cascadingListItemFooterRightNameExpression || \"''\") || " +
+                        "(object.evaluate(userInterfaceDescriptor.cascadingListItemFooterRightNameExpression || \"''\") || " +
                         "path(userInterfaceDescriptor.cascadingListItemFooterRightNameExpression || \"''\"))"
                 }
             });

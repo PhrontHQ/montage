@@ -14,7 +14,7 @@
                 "prototype": "mod/ui/text.mod",
                 "values": {
                     "element": {"#": "message"},
-                    "value": {"<-": "(@owner.data.defined() && @owner.userInterfaceDescriptor.defined() ? @owner.data.path(@owner.userInterfaceDescriptor.nameExpression) : 'Hello') + ' Montage!'"}
+                    "value": {"<-": "(@owner.data.defined() && @owner.userInterfaceDescriptor.defined() ? @owner.data.evaluate(@owner.userInterfaceDescriptor.nameExpression) : 'Hello') + ' Montage!'"}
                 }
             }
 
