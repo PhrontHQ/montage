@@ -1983,7 +1983,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
      *                                     need to be populated in the raw data.
      */
     mapObjectToCriteriaSourceForProperty: {
-        value: function (object, data, propertyName) {
+        value: function (object, data, propertyName, supportsSyncResult) {
             var rawDataMappingRules = this.rawDataMappingRules,
                 // keys = this.rawDataMappingRules.keys(),
                 rule = this.objectMappingRuleForPropertyName(propertyName),
@@ -2006,7 +2006,11 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                     }
                 }
             }
-            return promises ? Promise.all(promises) : null;
+            return promises 
+                ? Promise.all(promises) 
+                : supportsSyncResult 
+                    ? null
+                    : Promise.resolveNull;
         }
     },
 
