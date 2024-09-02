@@ -589,7 +589,7 @@ exports.Duration = Montage.specialize( /** @lends Duration */ {
                 !this.seconds) {
                 return 'PT0S';
             }
-            var isPostgreSQLIntervalCompatibility = !!options.postgreSQLIntervalCompatibility;
+            var isPostgreSQLIntervalCompatibility = !!options?.postgreSQLIntervalCompatibility;
             return [
                 !isPostgreSQLIntervalCompatibility ? this.isNegative && '-' : "",
                 'P',
