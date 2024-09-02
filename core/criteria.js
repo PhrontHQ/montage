@@ -769,7 +769,24 @@ var Criteria = exports.Criteria = Montage.specialize({
         value: function(syntax,parameters) {
             return (new this).initWithSyntax(syntax,parameters);
         }
+    },
+    _thatEvaluatesToTrue: {
+        value: undefined
+    },
+    thatEvaluatesToTrue: {
+        get: function() {
+            return this._thatEvaluatesToTrue || (this._thatEvaluatesToTrue = new Criteria().initWithExpression("true"))
+        }
+    },
+    _thatEvaluatesToFalse: {
+        value: undefined
+    },
+    thatEvaluatesToFalse: {
+        get: function() {
+            return this._thatEvaluatesToFalse || (this._thatEvaluatesToFalse = new Criteria().initWithExpression("false"))
+        }
     }
+
 
 });
 
