@@ -170,6 +170,8 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
             if(!this.accessToken || this.accessToken.remainingValidityDuration < 2000) {
 
                 if(this.accessToken) {
+                    //Clear the cache
+                    this.mainService.unregisterReadOnlyDataObject(this.accessToken);
                     console.log(this.name+" renewing access token that is about to expire: "+this.accessToken.remainingValidityDuration+"ms left")
                 }
                 // console.debug("this.identity: ",this.identity);
@@ -178,6 +180,7 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
                         tokenDataQuery = DataQuery.withTypeAndCriteria(this.accessTokenDescriptor, identityCriteria),
                         tokenQueryDataStream;
         
+                    tokenDataQuery.identity = this.identity;
                     tokenQueryDataStream = this.mainService.fetchData(tokenDataQuery);
             
                     return tokenQueryDataStream.then((result) => {
@@ -270,11 +273,11 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
 
             }              
         } else {
-            let criteriaParameters = readOperation.criteria.parameters,
-                qualifiedProperties = readOperation.criteria.qualifiedProperties,
+            let criteriaParameters = readOperation?.criteria?.parameters,
+                qualifiedProperties = readOperation?.criteria?.qualifiedProperties,
                 rawData = [];
 
-            if(readOperation.data.readExpressions && readOperation.data.readExpressions.length > 0 && qualifiedProperties.length == 1) {
+            if(readOperation.data.readExpressions && readOperation.data.readExpressions.length > 0 && qualifiedProperties?.length == 1) {
                 /*
                     The test obove is for a query initiated by mod's data-triggers to resolve values of one object at a time and that qualifiedProperties only is the priary key.
                     So far mod supports a single primary key, that can be an object.
@@ -308,13 +311,13 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
         }
 
 
-    })
-    .catch((error) => {
-        responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
-        console.error(error);
-        responseOperation.target.dispatchEvent(responseOperation);
-        //return responseOperation;
-    });
+        })
+        .catch((error) => {
+            responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
+            console.error(error);
+            responseOperation.target.dispatchEvent(responseOperation);
+            //return responseOperation;
+        });
         
 }
 

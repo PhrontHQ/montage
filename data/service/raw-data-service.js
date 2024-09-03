@@ -924,7 +924,7 @@ RawDataService.addClassProperties({
             result = this._mapRawDataToObject(rawData, object, context, readExpressions);
 
             if (this._isAsync(result)) {
-                result = result.then(function () {
+                result = result.then( () => {
                     // console.log(object.dataIdentifier.objectDescriptor.name +" addOneRawData id:"+rawData.id+"  MAPPING PROMISE RESOLVED -> stream.addData(object)");
 
                     /*
@@ -935,6 +935,11 @@ RawDataService.addClassProperties({
                     //     object.awakeFromFetch?.();
                     // }
                     stream.addData(object);
+
+                    if(!isUpdateToExistingObject && object.isReadOnly) {
+                        this.mainService.registerReadOnlyDataObject(object);
+                    }
+
                     return object;
                 });
             } else {
@@ -942,6 +947,11 @@ RawDataService.addClassProperties({
                 //     object.awakeFromFetch?.();
                 // }
                 stream.addData(object);
+
+                if(!isUpdateToExistingObject && object.isReadOnly) {
+                    this.mainService.registerReadOnlyDataObject(object);
+                }
+
                 result = Promise.resolve(object);
             }
 
@@ -2334,7 +2344,7 @@ RawDataService.addClassProperties({
             var dataOperationRegistration = this._pendingDataOperationById.get(dataOperation.referrerId);
             return dataOperationRegistration
                 ? dataOperationRegistration.dataOperation
-                : undefined;
+                : null;
         }
     },
 

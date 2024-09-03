@@ -2827,6 +2827,52 @@ DataService.addClassProperties({
         }
     },
 
+    __readOnlyDataObjectsByObjectDescriptors: {
+        value: undefined
+    },
+
+    _readOnlyDataObjectsByObjectDescriptors: {
+        get: function() {
+            return this.__readOnlyDataObjectsByObjectDescriptors || (this.__readOnlyDataObjectsByObjectDescriptors = new Map())
+        }
+    },
+
+    _readOnlyDataObjectsFoObjectDescriptor: {
+        value: function(objectDescriptor) {
+            var result;
+            return this._readOnlyDataObjectsByObjectDescriptors.get(objectDescriptor) || (this._readOnlyDataObjectsByObjectDescriptors.set(objectDescriptor, (result = [])) && result);
+        }
+    },
+    registerReadOnlyDataObject: {
+        value: function(dataObject) {
+            this._readOnlyDataObjectsFoObjectDescriptor(dataObject.objectDescriptor).push(dataObject);
+        }
+    },
+    unregisterReadOnlyDataObject: {
+        value: function(dataObject) {
+            if(dataObject) {
+
+                let readOnlyDataObjectsRegisteredForObjectDescriptor = this?.__readOnlyDataObjectsByObjectDescriptors(dataObject.objectDescriptor);
+
+                if(readOnlyDataObjectsRegisteredForObjectDescriptor) {
+                    let index = readOnlyDataObjectsRegisteredForObjectDescriptor.indexOf(dataObject);
+
+                    if(index !== -1) {
+                        readOnlyDataObjectsRegisteredForObjectDescriptor.splice(index,1);
+            
+                    }
+                }
+            }
+        }
+    },
+
+    readOnlyDataObjectsRegisteredForObjectDescriptor: {
+        value: function(objectDescriptor) {
+            var result;
+            return this?.__readOnlyDataObjectsByObjectDescriptors?.get(objectDescriptor);
+        }
+    },
+
     /**
      * A set of the data objects modified by the user after they were fetched.
      *     *
@@ -4542,6 +4588,76 @@ DataService.addClassProperties({
      * Fetching Data
      */
 
+
+    /*
+        DataStream cache:
+
+        Map: ObjectDescriptor -> Map: criteriaExpression -> Map: JSON.stringify(criteria.parameters) -> Promise
+    */
+    _dataStreamByObjectDescriptorByCriteriaExpressionByCriteriaParameters: {
+        value: new Map()
+    },
+
+    _dataStreamMapForObjectDescriptor: {
+        value: function(objectDescriptor) {
+            var map = this._dataStreamByObjectDescriptorByCriteriaExpressionByCriteriaParameters.get(objectDescriptor);
+            if(!map) {
+                map = new Map();
+                this._dataStreamByObjectDescriptorByCriteriaExpressionByCriteriaParameters.set(objectDescriptor,map);
+            }
+            return map;
+        }
+    },
+
+    _dataStreamMapForObjectDescriptorCriteria: {
+        value: function(objectDescriptor, criteria) {
+            var objectDescriptorMap = this._dataStreamMapForObjectDescriptor(objectDescriptor),
+                criteriaExpressionMap = objectDescriptorMap.get(criteria.expression);
+            if(!criteriaExpressionMap) {
+                criteriaExpressionMap = new Map();
+                objectDescriptorMap.set(criteria.expression,criteriaExpressionMap);
+            }
+            return criteriaExpressionMap;
+        }
+    },
+
+    _criteriaParametersReplacer: {
+        value: function(key, value) {
+            return typeof value === "object"
+                ? value?.dataIdentifier 
+                    ? value.dataIdentifier 
+                    : value.toString()
+                : value;
+        }
+    },
+
+    registeredDataStreamMapForObjectDescriptorCriteria: {
+        value: function(objectDescriptor, criteria = Criteria.thatEvaluatesToTrue) {
+            var criteriaExpressionMap = this._dataStreamMapForObjectDescriptorCriteria(objectDescriptor,criteria),
+                parametersKey = typeof criteria.parameters === "string" ? criteria.parameters : JSON.stringify(criteria.parameters, this._criteriaParametersReplacer);
+
+            return criteriaExpressionMap.get(parametersKey);
+        }
+    },
+
+    registerDataStreamForObjectDescriptorCriteria: {
+        value: function(dataStream, objectDescriptor, criteria = Criteria.thatEvaluatesToTrue) {
+            var criteriaExpressionMap = this._dataStreamMapForObjectDescriptorCriteria(objectDescriptor,criteria),
+                parametersKey = typeof criteria.parameters === "string" ? criteria.parameters : JSON.stringify(criteria.parameters, this._criteriaParametersReplacer);
+
+            return criteriaExpressionMap.set(parametersKey,dataStream);
+        }
+    },
+    unregisterDataStreamForObjectDescriptorCriteria: {
+        value: function(objectDescriptor, criteria = Criteria.thatEvaluatesToTrue) {
+            var criteriaExpressionMap = this._dataStreamMapForObjectDescriptorCriteria(objectDescriptor,criteria),
+            parametersKey = typeof criteria.parameters === "string" ? criteria.parameters : JSON.stringify(criteria.parameters, this._criteriaParametersReplacer);
+
+            return criteriaExpressionMap.delete(parametersKey);
+        }
+    },
+    
+
     /**
      * Fetch data from the service using its child services.
      *
@@ -4610,10 +4726,39 @@ DataService.addClassProperties({
             // make sure type is an object descriptor or a data object descriptor.
             query.type = this.objectDescriptorForType(query.type);
 
+
+
+            //Check if we already have a DataStream pending for that same query:
+            if(stream = this.registeredDataStreamMapForObjectDescriptorCriteria(query.type, query.criteria)) {
+                //console.debug("registeredDataStreamMapForObjectDescriptorCriteria found for "+query.type.name+", criteria:",query.criteria);
+                return stream;
+            }
+
             // Set up the stream.
             stream = stream || new DataStream();
             stream.query = query;
             stream.dataExpression = query.selectExpression;
+
+
+            //Now before going further, quick check to see if we may have local read-only objects fitting the bill
+            let readOnlyDataObjectsRegisteredForObjectDescriptor = this.readOnlyDataObjectsRegisteredForObjectDescriptor(query.type);
+            if(readOnlyDataObjectsRegisteredForObjectDescriptor) {
+                let result = readOnlyDataObjectsRegisteredForObjectDescriptor.filter(criteria.predicateFunction);
+                if(result && result.length > 0) {
+                    stream.addData(result);
+
+                    let dataDoneTimeputId = setTimeout(() => {
+                        clearTimeout(dataDoneTimeputId);
+                        dataDoneTimeputId = null;
+                        stream.dataDone();
+                    }, 0);
+                }
+            }
+
+
+
+            //Register it:
+            this.registerDataStreamForObjectDescriptorCriteria(stream, query.type, query.criteria);
 
             this._dataServiceByDataStream.set(stream, this._childServiceRegistrationPromise.then(function() {
 
@@ -4686,6 +4831,13 @@ DataService.addClassProperties({
                     return service;
                 }
             }));
+
+            //Ensure we clean up after all client processing the DataStream are done
+            //Don't like creating a dummy array though...
+            Promise.allSettled([stream]).then((results) => {
+                this.unregisterDataStreamForObjectDescriptorCriteria(stream, query.type, query.criteria);
+            });
+              
             // Return the passed in or created stream.
             return stream;
         }
@@ -4718,7 +4870,10 @@ DataService.addClassProperties({
                         stream.query = streamQuery;
                     }
                     else {
-                        if(!this.identity) {
+                        if(stream.query.identity) {
+                            identityPromise = Promise.resolve(stream.query.identity);
+                        }
+                        else if(!this.identity) {
                             if(this.identityPromise) {
                                 identityPromise = this.identityPromise;
                             }
@@ -4759,7 +4914,7 @@ DataService.addClassProperties({
                             identityPromise = Promise.resolve(true);
                         }
 
-                        identityPromise.then(function (authorization) {
+                        identityPromise.then(function (identity) {
                             var streamSelector = stream.query;
                             stream.query = self.mapSelectorToRawDataQuery(streamSelector);
                             self.fetchRawData(stream);
