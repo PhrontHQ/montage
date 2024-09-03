@@ -754,9 +754,16 @@ Object.defineProperties(exports.DataTrigger, /** @lends DataTrigger */ (DataTrig
             propertyDescriptors = Object.keys(type.propertyDescriptors),
                 trigger, iPropertyDescriptor, i;
             for (i = 0; (iPropertyDescriptor = propertyDescriptors[i]); ++i) {
-                trigger = this.addTrigger(service, type, prototype, iPropertyDescriptor);
-                if (trigger) {
-                    triggers[iPropertyDescriptor.name] = trigger;
+                /*
+                    If a property isn't serializable, then there's no point trying to get it,
+                    from any kind of storage, so no need for a DataTrigger for it.
+                */
+                if(iPropertyDescriptor.isSerializable !== false) {
+
+                    trigger = this.addTrigger(service, type, prototype, iPropertyDescriptor);
+                    if (trigger) {
+                        triggers[iPropertyDescriptor.name] = trigger;
+                    }
                 }
             }
             return triggers;
@@ -769,12 +776,18 @@ Object.defineProperties(exports.DataTrigger, /** @lends DataTrigger */ (DataTrig
                 propertyDescriptors = objectDescriptor.propertyDescriptors;
 
             if(propertyDescriptors) {
-                for (let i = 0, propertyDescriptor, trigger, name; (propertyDescriptor = propertyDescriptors[i]); i += 1) {
-                    name = propertyDescriptor.name;
-                    trigger = this.addTrigger(service, objectDescriptor, prototype, propertyDescriptor);
-                    if (trigger) {
-                        triggers[name] = trigger;
+                for (let i = 0, propertyDescriptor, trigger; (propertyDescriptor = propertyDescriptors[i]); i += 1) {
+                    /*
+                        If a property isn't serializable, then there's no point trying to get it,
+                        from any kind of storage, so no need for a DataTrigger for it.
+                    */ 
+                    if(propertyDescriptor.isSerializable !== false) {
+                        trigger = this.addTrigger(service, objectDescriptor, prototype, propertyDescriptor);
+                        if (trigger) {
+                            triggers[propertyDescriptor.name] = trigger;
+                        }
                     }
+
                 }    
             }
 
