@@ -114,7 +114,7 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
             var criteriaExpressionMap = this._fetchPromiseMapForObjectDescriptorCriteria(objectDescriptor,criteria),
                 parametersKey = typeof criteria.parameters === "string" ? criteria.parameters : JSON.stringify(criteria.parameters);
 
-            return fetchPromise = criteriaExpressionMap.get(parametersKey);
+            return criteriaExpressionMap.get(parametersKey);
         }
     },
 
