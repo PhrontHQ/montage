@@ -26,7 +26,7 @@ exports.DataObject = class DataObject extends Target {
         Montage.defineProperties(this.prototype, {
             
             /**
-             * The primaryKey from a different system a Data Object maay have come from originally
+             * The primaryKey from a different system a Data Object may have come from originally
              *
              * @property {Object}
              * @default null
@@ -94,6 +94,17 @@ exports.DataObject = class DataObject extends Target {
             //  * @default undefined
             //  */
             // publicationIdentity: { value: undefined}
+
+            /**
+             * states wether a data object is allowed to change. This has implication to prevent changes 
+             * - Object.freeze() and not tracking changes, as well as fetching those first from previous 
+             * fetch if they've been fetched already.
+             *
+             * @property {boolean}
+             * @default true
+             */
+            isReadOnly: { value: false},
+
         });
     }
 

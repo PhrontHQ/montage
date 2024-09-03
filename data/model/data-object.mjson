@@ -14,7 +14,8 @@
                 {"@": "modificationDate"},
                 {"@": "modifierIdentity"},
                 {"@": "publicationDate"},
-                {"@": "publisherIdentity"}
+                {"@": "publisherIdentity"},
+                {"@": "isReadOnly"}
             ],
             "objectDescriptorModule": {
                 "%": "./data-object.mjson"
@@ -136,7 +137,16 @@
             "valueDescriptor": {"@": "UserIdentityDescriptor"},
             "description": "The identity of the last user or agent who published the object"
         }
-    }
+    },
 
+    "isReadOnly": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "isReadOnly",
+            "valueType": "boolean",
+            "isSerializable": false,
+            "defaultValue": false
+        }
+    }
 
 }
