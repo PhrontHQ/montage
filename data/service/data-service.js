@@ -2274,7 +2274,7 @@ DataService.addClassProperties({
 
                 self._objectsBeingMapped.add(object);
 
-                result = mapping.mapObjectToCriteriaSourceForProperty(object, data, propertyName);
+                result = mapping.mapObjectToCriteriaSourceForProperty(object, data, propertyName, true);
                 if (this._isAsync(result)) {
                     return result.then(function() {
                         Object.assign(data, self.snapshotForObject(object));
