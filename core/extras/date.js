@@ -13,6 +13,121 @@ var Range = require("../range").Range;
  */
 
 
+if(!Date.hasOwnProperty("date")) {
+
+    Object.defineProperty(Date, "_watchTimeIntervalId", {
+        value: undefined,
+        writable: true,
+        enumerable: false,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Date, "_startMilliseconds", {
+        value: undefined,
+        writable: true,
+        enumerable: false,
+        configurable: true
+    });
+
+    Object.defineProperty(Date, "_watchTimeIntervalDelay", {
+        value: 20000,
+        writable: true,
+        enumerable: false,
+        configurable: true
+    });
+
+    /*
+        The delay we use in setInterval should be taking into account in which phase we are and what could make it change.
+        - For filling the form, it's known and set. If now is before this.patientMandatoryFormFillingTimeRange, then the next time we need to make an upate is on this.patientMandatoryFormFillingTimeRange.begin. So we should start then.
+
+        Ideas to improve as we refactor it in mod:
+        - better handle precision. If only minute is needed, set a timeout to the reminder of the next minute to come, then re-evalute and re-do a nother timeout, not an intervak
+
+        - pause the trackDateTimeIfNeeded() when the page is not visible and start it again when it becomes visible again.
+
+        - being able to stop tracking time after tracking it
+    */
+    Object.defineProperty(Date, "trackDateTimeIfNeeded", {
+
+        value: function() {
+            if(!this._watchTimeIntervalId) {
+
+                this._startMilliseconds = Date.now();
+                this.now = new Date();
+                this._watchTimeIntervalId = setInterval(() => {
+                    this.now = new Date();
+                },this._watchTimeIntervalDelay);
+            }
+        },
+        writable: true,
+        enumerable: false,
+        configurable: true
+    });
+
+    Object.defineProperty(Date, "_adjustDateTime", {
+        value: function(aDate) {
+            if(typeof this._minuteOffset === "number" && this.dateReference) {
+                var now = Date.now(),
+                    offsetFromStart = now - this._startMilliseconds,
+                    //Now apply the offsetFromStart to this appointmentTime
+                    adjustedNow = this.dateReference.dateByAdjustingComponentValues(/*year*/0, /*monthIndex*/0, /*day*/0, /*hours*/0, /*minutes*/this._minuteOffset, /*seconds*/0, /*milliseconds*/offsetFromStart);
+                    //console.log("adjustedNow: ",adjustedNow);
+                    return adjustedNow;
+            } else {
+                return aDate;
+            }
+        },
+        writable: true,
+        enumerable: false,
+        configurable: true
+    });
+
+    Object.defineProperty(Date, "dateReference", {
+        value: undefined,
+        writable: true,
+        enumerable: false,
+        configurable: true
+    });
+
+
+    /**
+     *  Returns a date object representing the current date and time.
+     *  If configuredm, that date can be manipulated to do time-shifting,
+     *  useful in apps dealing with business logic around time, 
+     *  like what to do is someones is late for appointments for example. 
+     *  It then helps to test logic by shifting "app time" in the past / future 
+     *  relative to an appointment's own time for example.
+     *  But also to deal with logic involving time on the client-side, for example 
+     *  a limited amount of time to benfit from a reduction, that's coming to an end 
+     *  and needs to be reminded to a user.
+     * 
+     *  A set of methods surrounds Date.date to help with those aspects.
+     *
+     *  @property external:Date#date
+     *  @returns {Date} - a date object representing the current date and time.
+    */
+    Object.defineProperty(Date, "_date", {
+        value: undefined,
+        writable: true,
+        enumerable: false,
+        configurable: true
+    });
+
+    Object.defineProperty(Date, "date", {
+        get: function() {
+            return this._date || this._adjustDateTime(new Date());
+        },
+        set: function(value) {
+            this._date = this._adjustDateTime(value);
+        },
+        enumerable: true,
+        configurable: true
+    });
+}
+
+
+
 
 /**
  *  Returns a date UnixTime, which is the number of seconds since the Unix Epoch.
