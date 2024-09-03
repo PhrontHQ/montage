@@ -222,6 +222,12 @@ DataStream = exports.DataStream = DataProvider.specialize(/** @lends DataStream.
             return this._promise.then(onFulfilled, onRejected);
         }
     },
+    
+    finally: {
+        value: function (onFinally) {
+            return this._promise.finally(onFinally);
+        }
+    },
 
 
     thenForEach: {
