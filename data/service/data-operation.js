@@ -1,6 +1,7 @@
 var Montage = require("../../core/core").Montage,
     MutableEvent = require("../../core/event/mutable-event").MutableEvent,
     Criteria = require("../../core/criteria").Criteria,
+    Scope = require("../../core/frb/scope"),
     Error = require("../../core/extras/error").Error,
     Enum = require("../../core/enum").Enum,
     defaultEventManager = require("../../core/event/event-manager").defaultEventManager,
@@ -531,8 +532,26 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
      */
 
     rawDataService: {
-        get: function() {
+        value: undefined
+    },
 
+    /**
+     * returns a Scope object useful to evaluate expressions in the context of mapping raw data to object.
+     *
+     * @type {RawDataService}
+     */
+
+    _scope: {
+        value: undefined
+    },
+    _createScope: {
+        value: function() {
+            return (this._scope = new Scope(this.rawDataService).nest(this));
+        }
+    },
+    scope: {
+        get: function() {
+            return this._scope || this._createScope();
         }
     },
 
