@@ -246,6 +246,17 @@ ObjectDescriptor.addClassProperties({
         value: null
     },
 
+    _toString: {
+        value: null
+    },
+
+    toString: {
+        value: function() {
+            return this._toString || (this._toString = `${this.objectDescriptorInstanceModule.require.packageDescription.name}/${this.objectDescriptorInstanceModule.id}`);
+        }
+    },
+
+
     /**
      * Name of the object. The name is used to define the property on the object.
      *
