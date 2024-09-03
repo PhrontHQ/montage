@@ -16,6 +16,9 @@ const DataObject = require("../../data-object").DataObject;
 */
 
 exports.OAuthAccessToken = DataObject.specialize(/** @lends OAuthAccessToken.prototype */ {
+    identity: {
+        value: undefined
+    },
     accessToken: {
         value: undefined
     },

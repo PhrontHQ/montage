@@ -4,6 +4,7 @@
         "values": {
             "name": "OAuthAccessToken",
             "propertyDescriptors": [
+                {"@": "identity"},
                 {"@": "accessToken"},
                 {"@": "tokenType"},
                 {"@": "validityDuration"},
@@ -27,6 +28,21 @@
     "DataObjectDescriptor": {
         "object": "../../data-object.mjson"
     },
+
+    "identity": {
+        "prototype": "core/meta/property-descriptor",
+        "values": {
+            "name": "identity",
+            "cardinality": 1,
+            "valueType": "object",
+            "valueDescriptor": {"@": "IdentityDescriptor"},
+            "description": "The identity for which the token was granted"
+       }
+    },
+    "IdentityDescriptor": {
+        "object": "../../identity.mjson"
+    },
+
     "accessToken": {
         "prototype": "core/meta/property-descriptor",
         "values": {
