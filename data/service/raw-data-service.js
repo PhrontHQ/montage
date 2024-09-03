@@ -902,7 +902,7 @@ RawDataService.addClassProperties({
 
             this._addRawDataPrimaryKeyValuesIfNeeded(rawData, type, stream.query);
 
-            dataIdentifier = this.dataIdentifierForTypeRawData(type, rawData),
+            dataIdentifier = this.dataIdentifierForTypeRawData(type, rawData, context),
 
             // if(!object) {
             object = this.objectForTypeRawData(type, rawData, dataIdentifier, context);
@@ -1098,10 +1098,10 @@ RawDataService.addClassProperties({
 
 
     primaryKeyForTypeRawData: {
-        value: function (type, rawData) {
+        value: function (type, rawData, dataOperation) {
             var mapping = this.mappingForType(type),
                 rawDataPrimaryKeys = mapping ? mapping.rawDataPrimaryKeyCompiledExpressions : null,
-                scope = new Scope(rawData),
+                scope = dataOperation?.scope.nest(rawData) || new Scope(rawData),
                 rawDataPrimaryKeysValues,
                 dataIdentifier, dataIdentifierMap, primaryKey;
 
@@ -1139,8 +1139,8 @@ RawDataService.addClassProperties({
     //This should belong on the
     //Gives us an indirection layer to deal with backward compatibility.
     dataIdentifierForTypeRawData: {
-        value: function (type, rawData) {
-            var primaryKey = this.primaryKeyForTypeRawData(type, rawData);
+        value: function (type, rawData, dataOperation) {
+            var primaryKey = this.primaryKeyForTypeRawData(type, rawData, dataOperation);
 
             if (primaryKey) {
                 return this.dataIdentifierForTypePrimaryKey(type, primaryKey);
