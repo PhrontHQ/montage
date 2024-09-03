@@ -2440,6 +2440,11 @@ RawDataService.addClassProperties({
             readOperation.target = objectDescriptor;
             readOperation.rawDataService = this;
 
+            if(query.identity) {
+                readOperation.identity = query.identity;
+            } else if(this.identity) {
+                readOperation.identity = this.identity;
+            }
             //readOperation.data = {};
 
             //Need to add a check to see if criteria may have more spefific instructions for "locale".
@@ -2685,6 +2690,10 @@ RawDataService.addClassProperties({
             var operation = new DataOperation();
 
             operation.referrerId = readOperation.id;
+            if(readOperation.identity) {
+                operation.identity = readOperation.identity;
+            }
+            // operation.referrer = readOperation;
             operation.target = readOperation.target;
             operation.rawDataService = this;
 
