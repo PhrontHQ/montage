@@ -23,6 +23,27 @@ describe("bind", function () {
 
     });
 
+    describe("<- with Promise", function () {
+        var source = {foo: {bar: {baz: Promise.resolve(10)}}};
+        var target = {foo: {bar: {baz: undefined}}};
+
+        var cancel = bind(target, "foo.bar.baz", {
+            "<-": "foo.bar.baz",
+            "source": source
+        });
+
+        it("initial", function () {
+            source.foo.bar.baz.then((value) => {
+                expect(value).toEqual(10);
+            });
+
+            target.foo.bar.baz.then((value) => {
+                expect(value).toEqual(10);
+            });
+        });
+
+    });
+
     describe("<->", function () {
 
         var object = {bar: 10};
