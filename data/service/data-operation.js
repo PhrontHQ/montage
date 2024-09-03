@@ -195,6 +195,7 @@ var Montage = require("../../core/core").Montage,
         "keepAliveOperation"
     ];
 
+    require("../../core/extras/date");
 
 
 exports.DataOperationType = DataOperationType = new Enum().initWithMembersAndValues(dataOperationTypes,dataOperationTypes);
@@ -473,6 +474,12 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
 
     completionPromise: {
         value: undefined
+    },
+
+    date: {
+        get: function() {
+            return Date.date;
+        }
     },
 
     /***************************************************************************
