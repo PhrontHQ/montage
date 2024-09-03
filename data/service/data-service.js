@@ -31,6 +31,7 @@ var Montage = require("../../core/core").Montage,
     TransactionEvent = require("../model/transaction-event").TransactionEvent;
 
     require("../../core/extras/string");
+    require("../../core/extras/date");
 
 var AuthorizationPolicyType = new Montage();
 AuthorizationPolicyType.NoAuthorizationPolicy = AuthorizationPolicy.NONE;
@@ -105,11 +106,16 @@ DataService = exports.DataService = class DataService extends Target {/** @lends
 
     static {
 
-        // Montage.defineProperties(this.prototype, {
-        //     apiVersion: {
-        //         value: "FROM AWS, NECESSARY FOR GCP?"
-        //     }
-        // });
+        Montage.defineProperties(this.prototype, {
+            // apiVersion: {
+            //     value: "FROM AWS, NECESSARY FOR GCP?"
+            // }
+            date: {
+                get: function() {
+                    return Date.date;
+                }
+            }
+        });
     }
 
 }
