@@ -4624,9 +4624,11 @@ DataService.addClassProperties({
     _criteriaParametersReplacer: {
         value: function(key, value) {
             return typeof value === "object"
-                ? value?.dataIdentifier 
-                    ? value.dataIdentifier 
-                    : value.toString()
+                ? value.constructor === Object
+                    ? JSON.stringify(value)
+                    : value?.dataIdentifier 
+                        ? value.dataIdentifier 
+                        : value.toString()
                 : value;
         }
     },
