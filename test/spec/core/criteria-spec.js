@@ -5,6 +5,11 @@ var deserialize = require("mod/core/serialization/deserializer/montage-deseriali
 
 describe("core/criteria-spec", function () {
 
+    it("should evaluate true for any input", function () {
+        var criteria = Criteria.thatEvaluatesToTrue;
+        expect(criteria.evaluate({a: {b: 10}})).toBe(true);
+    });
+
     it("should initialize with expression", function () {
         var criteria = new Criteria().initWithExpression("a.b");
         expect(criteria.evaluate({a: {b: 10}})).toBe(10);
@@ -33,7 +38,7 @@ describe("core/criteria-spec", function () {
 
     it("should create with expression", function () {
         var criteria = Criteria.withExpression("a.b");
-        expect(criteria.evaluate({a: {b: 10}})).toBe(10);
+        expect(criteria.evaluate({a: {b: 10}})).toBe(20);
     });
 
     it("should initialize with syntax", function () {
