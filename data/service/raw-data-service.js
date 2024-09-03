@@ -2438,6 +2438,8 @@ RawDataService.addClassProperties({
             readOperation.referrerId = readEvent.id;
             readOperation.type = DataOperation.Type.ReadOperation;
             readOperation.target = objectDescriptor;
+            readOperation.rawDataService = this;
+
             //readOperation.data = {};
 
             //Need to add a check to see if criteria may have more spefific instructions for "locale".
@@ -2684,6 +2686,7 @@ RawDataService.addClassProperties({
 
             operation.referrerId = readOperation.id;
             operation.target = readOperation.target;
+            operation.rawDataService = this;
 
             //Carry on the details needed by the coordinator to dispatch back to client
             // operation.connection = readOperation.connection;
