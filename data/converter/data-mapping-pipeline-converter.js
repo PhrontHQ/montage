@@ -1,5 +1,5 @@
 var PipelineConverter = require("core/converter/pipeline-converter").PipelineConverter,
-    Set = require("../collections/set");
+    Set = require("core/collections/set");
 
 /**
  * Converter that chains a series of converters together
@@ -43,7 +43,7 @@ exports.DataMappingPipelineConverter = PipelineConverter.specialize({
 
     currentRule: {
         get: function() {
-            return this_currentRule;
+            return this._currentRule;
         },
         set: function(value) {
             if(value !== this_currentRule) {
