@@ -264,7 +264,7 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
                     //return responseOperation;
                 })
                 .catch((error) => {
-                    console.log("error.response is ", error.response);
+                    console.log(this.name+" Fetch Request error: ", error);
                     responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
                     console.error(error);
                     responseOperation.target.dispatchEvent(responseOperation);
