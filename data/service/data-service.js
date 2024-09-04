@@ -6621,8 +6621,11 @@ DataService.addClassProperties({
             var createPromise = new Promise(function(resolve, reject) {
 
                 /*
-
-                    The reason we're creating anonymous event handlers like this is that we're missing the semantic of having a "RawObjectDescriptor" that should be the target of this operation, which would mean that we could implement handleCreateCompletedOperation() and handleCreateFailedOperation() ao handles propagation would deliver the relevant operations to us. So if a subclass needed to do something to handle a failure, it would only have to override the handleCreateFailedOperation() method, before callig super here that would then take care of the promise aspect.
+                    The reason we're creating anonymous event handlers like this is that we're missing the semantic of having a "RawObjectDescriptor" 
+                    that should be the target of this operation, which would mean that we could implement handleCreateCompletedOperation() and 
+                    handleCreateFailedOperation() to handles propagation would deliver the relevant operations to us. 
+                    So if a subclass needed to do something to handle a failure, it would only have to override the handleCreateFailedOperation() method, 
+                    before callig super here that would then take care of the promise aspect.
                 */
 
                 function createCompletedHandler(operation) {
@@ -6669,12 +6672,12 @@ DataService.addClassProperties({
     createStorageForObjectDescriptorIfNeeded: {
         value: function(type) {
             var objectDescriptor = this.objectDescriptorForType(type),
-                cache = this._objectDescriptorStoreExistsCache && this._objectDescriptorStoreExistsCache.has(objectDescriptor),
+                cachedValue = this._objectDescriptorStoreExistsCache && this._objectDescriptorStoreExistsCache.get(objectDescriptor),
                 self = this;
 
 
-            if(cache) {
-                return Promise.resolve(false);
+            if(cachedValue !== undefined) {
+                return Promise.is(cachedValue) ? cachedValue : Promise.resolve(cachedValue);
             } else {
 
                 var query = DataQuery.withTypeAndCriteria(objectDescriptor),
@@ -6709,6 +6712,8 @@ DataService.addClassProperties({
                         return Promise.reject(error);
                     }
                 });
+
+                this._objectDescriptorStoreExistsCache.set(objectDescriptor,queryPromise);
 
                 return queryPromise;
             }
