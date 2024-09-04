@@ -46,7 +46,7 @@ exports.DataMappingPipelineConverter = PipelineConverter.specialize({
             return this._currentRule;
         },
         set: function(value) {
-            if(value !== this_currentRule) {
+            if(value !== this._currentRule) {
                 for (let converters = this.converters, i = 0; (converters[i]); ++i) {
                     converters[i].currentRule = value;
                 }
