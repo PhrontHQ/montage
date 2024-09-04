@@ -47,8 +47,26 @@ exports.DataMappingPipelineConverter = PipelineConverter.specialize({
         },
         set: function(value) {
             if(value !== this._currentRule) {
+                this._currentRule = value;
                 for (let converters = this.converters, i = 0; (converters[i]); ++i) {
                     converters[i].currentRule = value;
+                }
+            }
+        }
+    },
+    _foreignDescriptor: {
+        value: undefined
+    },
+
+    foreignDescriptor: {
+        get: function() {
+            return this._foreignDescriptor;
+        },
+        set: function(value) {
+            if(value !== this._foreignDescriptor) {
+                this._foreignDescriptor = value;
+                for (let converters = this.converters, i = 0; (converters[i]); ++i) {
+                    converters[i].foreignDescriptor = value;
                 }
             }
         }
