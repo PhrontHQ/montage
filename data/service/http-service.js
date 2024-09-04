@@ -241,7 +241,10 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
                 } else if( response.status === 401) {
                     console.log("Token has expired?",response);
                     throw new Error("Token has expired");
-                  }                
+                } else if( response.status === 404) {
+                    console.log(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);
+                    throw new Error(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);
+                }
                 else {
                     return response.text()
                     .then((responseContent) => {
