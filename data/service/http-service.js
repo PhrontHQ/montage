@@ -219,7 +219,7 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
             mapping.mapDataOperationToFetchRequests(readOperation, fetchRequests);
         }
         else {
-            let error = new Error("No Mapping for "+ readOperation.target.name+ " lacks mapDataOperationToFetchRequests(readOperation, fetchRequests) method");
+            let error = new Error(this.name+": No Mapping for "+ readOperation.target.name+ " lacks mapDataOperationToFetchRequests(readOperation, fetchRequests) method");
             responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
             responseOperation.target.dispatchEvent(responseOperation);
         }
