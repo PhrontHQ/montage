@@ -4621,39 +4621,66 @@ DataService.addClassProperties({
         }
     },
 
+    makeCriteriaParametersReplacer: {
+        value: function() {
+
+        let isInitial = true;
+      
+        return (key, value) => {
+            if (isInitial) {
+                isInitial = false;
+                return value;
+            }
+            if (key === "") {
+                // Omit all properties with name "" (except the initial object)
+                return undefined;
+            }
+
+            return this._criteriaParametersReplacer(key, value);
+
+            };
+        }
+    },
+    
     _criteriaParametersReplacer: {
         value: function(key, value) {
             return typeof value === "object"
-                ? value.constructor === Object
-                    ? JSON.stringify(value)
+                ? key === ""
+                    ? JSON.stringify(value, this._criteriaParametersReplacer)
                     : value?.dataIdentifier 
                         ? value.dataIdentifier 
-                        : value.toString()
-                : value;
+                        : value.toString()  
+                : Array.isArray(value)
+                    ? value.map(this._criteriaParametersReplacer)
+                    : value;
         }
     },
 
     registeredDataStreamMapForObjectDescriptorCriteria: {
         value: function(objectDescriptor, criteria = Criteria.thatEvaluatesToTrue) {
             var criteriaExpressionMap = this._dataStreamMapForObjectDescriptorCriteria(objectDescriptor,criteria),
-                parametersKey = typeof criteria.parameters === "string" ? criteria.parameters : JSON.stringify(criteria.parameters, this._criteriaParametersReplacer);
+                parametersKey = typeof criteria.parameters === "string" ? criteria.parameters : JSON.stringify(criteria.parameters, this.makeCriteriaParametersReplacer());
 
             return criteriaExpressionMap.get(parametersKey);
         }
     },
 
-    registerDataStreamForObjectDescriptorCriteria: {
-        value: function(dataStream, objectDescriptor, criteria = Criteria.thatEvaluatesToTrue) {
-            var criteriaExpressionMap = this._dataStreamMapForObjectDescriptorCriteria(objectDescriptor,criteria),
-                parametersKey = typeof criteria.parameters === "string" ? criteria.parameters : JSON.stringify(criteria.parameters, this._criteriaParametersReplacer);
+    registerDataStream: {
+        value: function(dataStream) {
+            var objectDescriptor = dataStream.query.type,
+                criteria = dataStream.query.criteria || Criteria.thatEvaluatesToTrue,
+                criteriaExpressionMap = this._dataStreamMapForObjectDescriptorCriteria(objectDescriptor,criteria),
+                parametersKey = typeof criteria.parameters === "string" ? criteria.parameters : JSON.stringify(criteria.parameters, this.makeCriteriaParametersReplacer());
 
             return criteriaExpressionMap.set(parametersKey,dataStream);
         }
     },
-    unregisterDataStreamForObjectDescriptorCriteria: {
-        value: function(objectDescriptor, criteria = Criteria.thatEvaluatesToTrue) {
-            var criteriaExpressionMap = this._dataStreamMapForObjectDescriptorCriteria(objectDescriptor,criteria),
-            parametersKey = typeof criteria.parameters === "string" ? criteria.parameters : JSON.stringify(criteria.parameters, this._criteriaParametersReplacer);
+    unregisterDataStream: {
+        value: function(dataStream) {
+            var objectDescriptor = dataStream.query.type,
+                criteria = dataStream.query.criteria || Criteria.thatEvaluatesToTrue,
+                criteriaExpressionMap = this._dataStreamMapForObjectDescriptorCriteria(objectDescriptor,criteria),
+                parametersKey = typeof criteria.parameters === "string" ? criteria.parameters : JSON.stringify(criteria.parameters, this.makeCriteriaParametersReplacer());
 
             return criteriaExpressionMap.delete(parametersKey);
         }
