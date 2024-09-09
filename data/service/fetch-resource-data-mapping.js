@@ -179,7 +179,7 @@ exports.FetchResourceDataMapping = class FetchResourceDataMapping extends Expres
                         throw new Error("mapDataOperationToFetchRequests: no url found for dataOperation: ",+dataOperation, " and criteria: "+iCriteria);
                     } else {
                         iRequest = new Request(iUrl, options);
-                        console.debug("Request "+iUrl+" with  options: "+ JSON.stringify(options));
+                        //console.debug("Request "+iUrl+" with  options: "+ JSON.stringify(options));
                         (fetchRequests || (fetchRequests = [])).push(iRequest);
                     }
 
