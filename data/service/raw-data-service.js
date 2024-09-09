@@ -4253,7 +4253,7 @@ RawDataService.addClassProperties({
     },
 
     unregisterAccessTokenForIdentity: {
-        value: function (identity, accessToken) {
+        value: function (identity) {
             /*
                 TODO: Verify that accessToken is equal to this._accessTokenBydentity.get(identity) first?
             */
