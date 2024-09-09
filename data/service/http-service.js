@@ -167,12 +167,19 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
 
                 then we re-authenticate
             */
+        //    if(this.accessToken) {
+        //         console.debug("this.accessToken.remainingValidityDuration is "+ this.accessToken.remainingValidityDuration +" ms");
+        //    }
             if(!this.accessToken || this.accessToken.remainingValidityDuration < 2000) {
 
                 if(this.accessToken) {
+
+                    console.debug(this.name+" renewing access token that is about to expire: "+this.accessToken.remainingValidityDuration+"ms left")
+
                     //Clear the cache
                     this.mainService.unregisterReadOnlyDataObject(this.accessToken);
-                    console.log(this.name+" renewing access token that is about to expire: "+this.accessToken.remainingValidityDuration+"ms left")
+                    this.unregisterAccessTokenForIdentity(this.identity);
+
                 }
                 // console.debug("this.identity: ",this.identity);
                 authenticationPromise = identityPromise.then((result) => {
@@ -227,12 +234,13 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
         if(fetchRequests.length > 0) {
 
             for(i=0; (iRequest = fetchRequests[i]); i++) {
-                // console.debug("iRequest url: ",iRequest.url);
+                //console.debug("iRequest url: ",iRequest.url);
                 // console.debug("iRequest headers: ",iRequest.headers);
                 // console.debug("iRequest body: ",iRequest.body);
                 fetch(iRequest)
                 .then((response) => {
                 if (response.status === 200) {
+                    //console.log("Cache-Control: " + response.headers.get('Cache-Control') || response.headers.get('cache-control'));
                     if(response.headers.get('content-type').includes("json")) {
                         return response.json();
                     } else {
@@ -256,6 +264,8 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
                 }
                 })
                 .then((responseContent) => {
+                    //console.debug("responseContent: ",responseContent);
+
                     let rawData = [];
                     mapping.mapFetchResponseToRawData(responseContent, rawData);
                     //console.debug("rawData: ",rawData);
