@@ -2852,7 +2852,7 @@ DataService.addClassProperties({
         value: function(dataObject) {
             if(dataObject) {
 
-                let readOnlyDataObjectsRegisteredForObjectDescriptor = this?.__readOnlyDataObjectsByObjectDescriptors(dataObject.objectDescriptor);
+                let readOnlyDataObjectsRegisteredForObjectDescriptor = this.__readOnlyDataObjectsByObjectDescriptors?.(dataObject.objectDescriptor);
 
                 if(readOnlyDataObjectsRegisteredForObjectDescriptor) {
                     let index = readOnlyDataObjectsRegisteredForObjectDescriptor.indexOf(dataObject);
@@ -2869,7 +2869,7 @@ DataService.addClassProperties({
     readOnlyDataObjectsRegisteredForObjectDescriptor: {
         value: function(objectDescriptor) {
             var result;
-            return this?.__readOnlyDataObjectsByObjectDescriptors?.get(objectDescriptor);
+            return this.__readOnlyDataObjectsByObjectDescriptors?.get(objectDescriptor);
         }
     },
 
