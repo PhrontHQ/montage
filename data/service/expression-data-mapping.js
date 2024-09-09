@@ -1010,7 +1010,16 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
             }
 
             promises = this._mapRawDataPropertiesToObject(data, rawDataProperties, object, context, readExpressions, mappingScope, unmappedRequisitePropertyNames, promises);
-            promises = this._mapRawDataToObjectRequisiteProperties(data, object, context, readExpressions, mappingScope, unmappedRequisitePropertyNames, promises);
+            
+            /*
+                 This is causing problems: as partial aspects of the object are filled-in, the attempts to run mapping rules for object properties on raw data that doesn't contain
+                 the right raw properties, we end up with undefiend values, overriding previously successfully mapped ones.
+
+                 To avoid that, we'd need to only run a rule after we verified the raw data has the properties a rule expect to be there.
+            */
+            //promises = this._mapRawDataToObjectRequisiteProperties(data, object, context, readExpressions, mappingScope, unmappedRequisitePropertyNames, promises);
+
+
 
             // for(;(rawDataPropertyIteration < rawDataPropertyIterationCount); rawDataPropertyIteration++) {
             //     dataMatchingRules = this.mappingRulesForRawDataProperty(rawDataProperties[rawDataPropertyIteration]);
