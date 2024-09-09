@@ -33,9 +33,9 @@ var StringToTitleCaseConverter = exports.StringToTitleCaseConverter = Converter.
     },
 
     convert: {
-        value: function CamelCaseConverter_convert(str) {
+        value: function StringToTitleCaseConverter_convert(str) {
 
-          return str.split(wordSeparators)
+          return str.toLowerCase().split(wordSeparators)
           .map(function (current, index, array) {
             if (
               /* Check for small words */
