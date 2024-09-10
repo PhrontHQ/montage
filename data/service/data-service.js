@@ -4864,7 +4864,7 @@ DataService.addClassProperties({
             //Ensure we clean up after all client processing the DataStream are done
             //Don't like creating a dummy array though...
             Promise.allSettled([stream]).then((results) => {
-                this.unregisterDataStreamForObjectDescriptorCriteria(stream, query.type, query.criteria);
+                this.unregisterDataStream(stream);
             });
               
             // Return the passed in or created stream.
