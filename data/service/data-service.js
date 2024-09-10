@@ -4786,8 +4786,8 @@ DataService.addClassProperties({
 
 
 
-            //Register it:
-            this.registerDataStreamForObjectDescriptorCriteria(stream, query.type, query.criteria);
+            //Register it for possible reuse by other callers needing the same data:
+            this.registerDataStream(stream);
 
             this._dataServiceByDataStream.set(stream, this._childServiceRegistrationPromise.then(function() {
 
