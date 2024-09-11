@@ -47,5 +47,5 @@ mrRequire.loadPackage(PATH.join(__dirname, ".")).then(function (mr) {
     process.exit(exitCode);
 }).then(() => {
     return;
-);
+});
 
