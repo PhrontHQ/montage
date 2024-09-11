@@ -171,6 +171,15 @@ var Select = exports.Select =  Control.specialize(/** @lends module:"mod/ui/nati
                     "<-": "content.enumerate().filter{$_selection.has(.1)}.map{.0}"
                 }
             });
+
+            this.content.addRangeChangeListener(this, "content");
+
+        }
+    },
+
+    handleContentRangeChange: {
+        value: function (plus, minus, index) {
+                this.needsDraw = true;
         }
     },
 
