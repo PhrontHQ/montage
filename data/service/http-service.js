@@ -250,8 +250,15 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
                     console.log("Token has expired?",response);
                     throw new Error("Token has expired");
                 } else if( response.status === 404) {
-                    console.log(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);
-                    throw new Error(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);
+                    /*
+                        This is the case where the API is all path and therefore in case nothing is found, the response is logically a 404
+                    */
+                    if((new URL(response.url)).search === "") {
+                        return null;
+                    } else {
+                        console.log(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);
+                        throw new Error(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);    
+                    }
                 }
                 else {
                     return response.text()
