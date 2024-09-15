@@ -3903,7 +3903,7 @@ Component.addClassProperties(
                 var elementClassList = this.element.classList,
                     classList = this._classList;
 
-                for (var i = 0, ii = elementClassList.length, className; i < ii; i++) {
+                for (let i = 0, ii = elementClassList.length, className; i < ii; i++) {
                     className = elementClassList.item(i);
                     if (!classList.has(className)) {
                         elementClassList.remove(className);
@@ -3912,9 +3912,7 @@ Component.addClassProperties(
                     }
                 }
 
-                this._classList.forEach(function (cssClass) {
-                    elementClassList.add(cssClass);
-                });
+                elementClassList.add(...classList)
                 this._classListDirty = false;
             }
         }
@@ -3929,9 +3927,9 @@ Component.addClassProperties(
                 this._element = null;
             }
 
-            this.childComponents.forEach(function (component) {
-                component.dispose();
-            });
+            for (let childComponents = this.childComponents, i = 0, ii = childComponents.length; i < ii; i++) {
+                childComponents[i].dispose();
+            }
         }
     },
 
