@@ -1,5 +1,6 @@
 
 var Set = require("mod/core/collections/set");
+var CollectionsSet = require("mod/core/collections/collection-set");
 var describeCollection = require("./collection");
 var describeSet = require("./set");
 
@@ -8,6 +9,7 @@ if (Set._setupCollectionSet) {
 }
 
 describe("CollectionsSet-spec", function () {
+    var Set = CollectionsSet;
     describeCollection(Set, [1, 2, 3, 4], true);
     describeCollection(Set, [{id: 0}, {id: 1}, {id: 2}, {id: 3}], true);
     describeSet(Set);

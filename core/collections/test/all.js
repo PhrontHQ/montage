@@ -19,6 +19,7 @@ module.exports = require("mod-testing").run(require, [
 	"spec/multi-map-spec",
 	"spec/regexp-spec",
 	"spec/set-spec",
+	"spec/collection-set-spec",
 	"spec/shim-array-spec",
 	"spec/shim-functions-spec",
 	"spec/shim-object-spec",

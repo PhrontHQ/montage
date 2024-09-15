@@ -1,7 +1,7 @@
 "use strict";
 
 var Shim = require("./shim");
-var Set = require("./set").CollectionsSet;
+var Set = require("./collection-set").CollectionsSet;
 var GenericCollection = require("./generic-collection");
 var GenericSet = require("./generic-set");
 var PropertyChanges = require("./listen/property-changes");

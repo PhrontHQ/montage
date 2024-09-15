@@ -21,7 +21,7 @@ function LfuSet(values, capacity, equals, hash, getDefault) {
     getDefault = getDefault || Function.noop;
 
     // TODO
-    this.store = new Set(
+    this.store = new CollectionsSet(
         undefined,
         function valueEqual(a, b) {
             return equals(a.value, b.value);
@@ -235,7 +235,7 @@ LfuSet.prototype.FrequencyNode = FrequencyNode;
 
 function FrequencyNode(frequency, prev, next) {
     this.frequency = frequency;
-    this.values = new Set();
+    this.values = new CollectionsSet();
     this.prev = prev || this;
     this.next = next || this;
     if (prev) {
