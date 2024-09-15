@@ -38,7 +38,7 @@ describe("core/criteria-spec", function () {
 
     it("should create with expression", function () {
         var criteria = Criteria.withExpression("a.b");
-        expect(criteria.evaluate({a: {b: 10}})).toBe(20);
+        expect(criteria.evaluate({a: {b: 20}})).toBe(20);
     });
 
     it("should initialize with syntax", function () {
