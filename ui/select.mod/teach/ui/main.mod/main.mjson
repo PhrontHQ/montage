@@ -1,0 +1,44 @@
+{
+    "owner": {
+        "values": {
+            "element": {"#": "main"},
+            "selection1": {"<-": "@selectWithNoExternalRangeController.selection.0"},
+            "selection2": {"<-": "@selectWithOneItem.selection.0"}
+        }
+    },
+
+    "select-1-selection": {
+        "prototype": "mod/ui/text.mod",
+        "values": {
+            "element": {"#": "select-1-selection"},
+            "value": {"<-": "@selectWithNoExternalRangeController.selection.0.name"}
+        }
+    },
+
+    "selectWithNoExternalRangeController": {
+        "prototype": "mod/ui/select.mod",
+        "values": {
+            "element": {"#": "select-1"},
+            "content": [{"name": "Apple"}, {"name":"Banana"}, {"name":"Cherry"},{"name":"Date"} ],
+            "valuePropertyPath": "name"
+        }
+    },
+
+    "select-2-selection": {
+        "prototype": "mod/ui/text.mod",
+        "values": {
+            "element": {"#": "select-2-selection"},
+            "value": {"<-": "@selectWithOneItem.selection.0.name"}
+        }
+    },
+
+    "selectWithOneItem": {
+        "prototype": "mod/ui/select.mod",
+        "values": {
+            "element": {"#": "select-2"},
+            "content": [{"name": "Car"}],
+            "valuePropertyPath": "name"
+        }
+    }
+
+}
