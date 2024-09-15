@@ -81,6 +81,10 @@ if((global.Set !== void 0) && (typeof global.Set.prototype.values === "function"
         }
     };
 
+    GlobalSet.prototype.get = function (value) {
+        return this.has(value) ? value : undefined;
+    };
+
     //Backward compatibility:
     Object.defineProperty(GlobalSet.prototype,"length",{
         get: function() {
