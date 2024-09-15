@@ -1,9 +1,5 @@
 
-require("../collections/shim");
-var grammar = require("./grammar-peggy"),
-    //grammar = require("./grammar"),
-    Map = require("../collections/map");
-
+var grammar = require("./grammar-peggy");
 var memo = new Map(); // could be Dict
 
 module.exports = parse;
