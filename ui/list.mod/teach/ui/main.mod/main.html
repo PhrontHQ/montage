@@ -42,6 +42,14 @@
                 }
             },
 
+            "list1Selection": {
+                "prototype": "mod/ui/text.mod",
+                "values": {
+                    "element": {"#": "list1Selection"},
+                    "value": {"<-": "@list1.selection.0"}
+                }
+            },
+
             "list2": {
                 "prototype": "mod/ui/list.mod",
                 "values": {
@@ -108,7 +116,7 @@
             </p>
         </div>
 
-        <h4>List with default list item</h4>
+        <h4>List with default list item. Selection: <span data-mod-id="list1Selection"></span> </h4>
         <div data-mod-id="list1"></div>
 
         <h4>List with injected list item </h4>

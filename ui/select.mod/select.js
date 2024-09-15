@@ -57,6 +57,10 @@ var Select = exports.Select =  Control.specialize(/** @lends module:"mod/ui/nati
         value: function Select() {
             this.super();
 
+            this.defineBinding("_controllerOrganizedContent", {
+                "<-": "contentController.organizedContent"
+            });
+
             this._selectedIndexes = [];
             this._selectedIndexes.addRangeChangeListener(this, "selectedIndexes");
         }
@@ -65,7 +69,7 @@ var Select = exports.Select =  Control.specialize(/** @lends module:"mod/ui/nati
 
 
     handleSelectedIndexesRangeChange: {
-        value: function() {
+        value: function(plus, minus, index) {
             if(this.needsDraw === false) {
                 this.needsDraw = this._synching || !this._fromInput;
             }
@@ -106,24 +110,70 @@ var Select = exports.Select =  Control.specialize(/** @lends module:"mod/ui/nati
     An array of items to to assign to the component's
     <code>contentController</code> property, which is a RangeController.
 */
+
     content: {
+        get: function () {
+            if (this.contentController) {
+                return this.contentController.content;
+            }
+            return null;
+        },
+        set: function (value) {
+            this.contentController.content = value;
+        }
+    },
+
+    selection: {
+        get: function () {
+            if (this.contentController) {
+                return this.contentController.selection;
+            }
+            return null;
+        },
+        set: function (value) {
+            if(value != this.selection) {
+                this.selection.removeRangeChangeListener(this, "selection");
+                value.addRangeChangeListener(this, "selection");
+            }
+            this.contentController.selection = value;
+        }
+    },
+
+    handleSelectionRangeChange: {
+        value: function(plus, minus, index) {
+            console.debug("handleSelectionRangeChange: ", arguments);
+            if(this.needsDraw === false) {
+                this.needsDraw = true;
+            }
+        }
+    },
+
+
+
+    __controllerOrganizedContent: {value: null, enumerable: false},
+    _controllerOrganizedContent: {
         set: function(value) {
             //if(!Array.isArray(value)) {
             //    value = [value];
             //}
-            this._content = value;
 
-            if(!this.contentController) {
-                var contentController = new RangeController();
-                contentController.content = value;
-                contentController.selection = [];
-                this.contentController = contentController;
+            if(value !== this.__controllerOrganizedContent) {
+
+                if(this.__controllerOrganizedContent) {
+                    this.__controllerOrganizedContent.removeRangeChangeListener(this, "content");
+                }
+
+                this.__controllerOrganizedContent = value;
+
+                if(this.__controllerOrganizedContent) {
+                    this.__controllerOrganizedContent.addRangeChangeListener(this, "content");
+                }
             }
 
             this.needsDraw = true;
         },
         get: function() {
-            return this._content;
+            return this.__controllerOrganizedContent;
         }
     },
 
@@ -154,25 +204,30 @@ var Select = exports.Select =  Control.specialize(/** @lends module:"mod/ui/nati
 */
     contentController: {
         get: function() {
+            if (!this._contentController) {
+                this._contentController = new RangeController();
+                this._contentController.avoidsEmptySelection = true;
+            }
+
             return this._contentController;
         },
         set: function(value) {
-            if (this._contentController === value) {
-                return;
+            if (this._contentController !== value) {
+                this._contentController = value;
             }
 
-            this._contentController = value;
             value.allowsMultipleSelection = this.multiple;
 
-            Bindings.defineBindings(this, {
-                "content": {"<-": "_contentController.organizedContent"},
-                "_selection": {"<-": "_contentController.selection"},
-                "_selectedIndexes.rangeContent()": {
-                    "<-": "content.enumerate().filter{$_selection.has(.1)}.map{.0}"
-                }
-            });
+            if(value) {
+                Bindings.defineBindings(this, {
+                    "content": {"<-": "_contentController.organizedContent"},
+                    "_selection": {"<-": "_contentController.selection"},
+                    "_selectedIndexes.rangeContent()": {
+                        "<-": "content.enumerate().filter{$_selection.has(.1)}.map{.0}"
+                    }
+                });    
+            }
 
-            this.content.addRangeChangeListener(this, "content");
 
         }
     },
@@ -186,7 +241,7 @@ var Select = exports.Select =  Control.specialize(/** @lends module:"mod/ui/nati
     _getSelectedValuesFromIndexes: {
         value: function() {
             var selectedIndexes = this._selectedIndexes,
-                content = this._content,
+                content = this._controllerOrganizedContent,
                 arr,
                 length = selectedIndexes.length,
                 valuePath;
@@ -354,8 +409,12 @@ var Select = exports.Select =  Control.specialize(/** @lends module:"mod/ui/nati
 
     _refreshOptions: {
         value: function() {
-            var arr = this.content||[], len = arr.length, i, option;
-            var text, value;
+            var arr = this.content||[], len = arr.length, i, option,
+                text, value,
+                selection = this.selection,
+                selectionCount = this.selection?.length || 0,
+                selectedIndexes = [];
+
             for(i=0; i< len; i++) {
                 option = document.createElement('option');
                 if(typeof arr[i] === "string") {
@@ -371,17 +430,33 @@ var Select = exports.Select =  Control.specialize(/** @lends module:"mod/ui/nati
                 if (this._selectedIndexes && this._selectedIndexes.length > 0) {
                     if(this._selectedIndexes.indexOf(i) >= 0) {
                         option.setAttribute("selected", "true");
+                        selectedIndexes.push(i);
+                    }
+                } else if(selectionCount > 0) {
+                    //TODO: Optimize: with selectionIndexes? Not ideal to do indexOf here, but options aren't huge 
+                    if(selection.indexOf(arr[i]) !== -1) {
+                        option.setAttribute("selected", "true");
+                        selectedIndexes.push(i);
                     }
                 }
                 this.element.appendChild(option);
             }
 
+            /*
+                After Rendering we still have no item selected. It could be that there was null/undefined in the array:
+                We're selecting the first one.
+            */
+            if(len && selectedIndexes.length === 0) {
+                selection.splice(0,1,arr[0]);
+            }
+
             // Make sure we have the model synchronized with the changes in the
             // DOM.
-            if (this._selectedIndexes.length === 0 &&
-                this.element.selectedIndex >= 0) {
-                this._selectedIndexes[0] = this.element.selectedIndex;
-            }
+            // if (this._selectedIndexes.length === 0 &&
+            //     this.element.selectedIndex >= 0) {
+            //     this._setContentControllerSelectedIndexes([this.element.selectedIndex]);
+            //     //this._selectedIndexes[0] = this.element.selectedIndex;
+            // }
         }
     },
 
