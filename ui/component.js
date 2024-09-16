@@ -4743,13 +4743,17 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
     _stylesheets: {
         value: []
     },
+    _stylesheetsclassListScopes: {
+        value: []
+    },
 
     /**
      * @function
      */
-    addStylesheet: {
-        value: function (style) {
+    addStylesheetWithClassListScope: {
+        value: function (style, classListScope) {
             this._stylesheets.push(style);
+            this._stylesheetsclassListScopes.push(classListScope ? `.${this._stylesheets.join.call(classListScope,".")}` : undefined);
             this._needsStylesheetsDraw = true;
         }
     },
@@ -4763,8 +4767,16 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
                     ownerDocument = this.element.ownerDocument,
                     styles = resources.createStylesForDocument(ownerDocument);
 
+
+                /*  
+                    What we need to scope is a selector made of all the classes of the template's root element
+
+                    template.document.querySelector("[data-mod-id=owner]").classList
+
+                */
+
                 for (var i = 0, style; (style = styles[i]); i++) {
-                    this.addStylesheet(style);
+                    this.addStylesheetWithClassListScope(style, template.document.querySelector("[data-mod-id=owner]")?.classList);
                 }
                 this._addedStyleSheetsByTemplate.set(template,true);
             }
@@ -4783,14 +4795,15 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
      */
     drawStylesheets: {
         value: function () {
-            var documentResources = this._documentResources,
+                var documentResources = this._documentResources,
                 stylesheets = this._stylesheets,
+                stylesheetsclassListScopes = this._stylesheetsclassListScopes,
                 stylesheet,
                 documentHead = documentResources._document.head,
                 bufferDocumentFragment = this._bufferDocumentFragment;
 
             while ((stylesheet = stylesheets.shift())) {
-                documentResources.addStyle(stylesheet,bufferDocumentFragment);
+                documentResources.addStyle(stylesheet,bufferDocumentFragment, stylesheetsclassListScopes.shift());
             }
 
             documentHead.insertBefore(bufferDocumentFragment, documentHead.firstChild);

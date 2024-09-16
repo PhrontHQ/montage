@@ -107,8 +107,8 @@ var DocumentResources = Montage.specialize({
     },
 
     _addResource: {
-        value: function (url) {
-            this._resources[url] = true;
+        value: function (url, classListScope) {
+            this._resources[url] = classListScope || true;
         }
     },
 
@@ -240,6 +240,43 @@ var DocumentResources = Montage.specialize({
                 index = this._expectedStyles.indexOf(target.href);
                 if (index >= 0) {
                     this._expectedStyles.splice(index, 1);
+                    let classListScope;
+
+                    /*
+                        Adding CSS Scoping for components in dev mode. When we mop, we'll add it in the CSS. 
+                    
+                        target.ownerDocument is the page's document. We captured
+                        the Component's element's classes before we got here, in this._resources[target.href]
+
+                        @scope (.ComponentElementClass1.ComponentElementClass2) {
+                            -> All Component's CSS file's rules needs to be relocated here <-
+                        }
+                        target.ownerDocument.styleSheets, but we need the component's element's classList
+                    */
+                    
+                    if(classListScope = this._resources[target.href]) {
+                        let stylesheet = target.sheet,
+                            cssRules = stylesheet.cssRules,
+                            iStart = 0,
+                            scopeRule;
+
+                        console.log("classListScope: ",classListScope);
+
+                        //Insert the scope rule, after any CSSImportRule
+                        while(cssRules[iStart] instanceof CSSImportRule) {
+                            iStart++;
+                        }
+                    
+                        stylesheet.insertRule(`@scope (${classListScope}) {}`, iStart);
+                        scopeRule = stylesheet.cssRules[iStart];
+
+                        //Now loop on rules to move - re-create them as there's no other way :-( 
+                        for(let i = cssRules.length-1; (i>iStart) ; i--) {
+                            scopeRule.insertRule(cssRules[i].cssText);
+                            stylesheet.deleteRule(i);
+                        }
+                    }
+
                 }
                 target.removeEventListener("load", this, false);
                 target.removeEventListener("error", this, false);
@@ -248,7 +285,7 @@ var DocumentResources = Montage.specialize({
     },
 
     addStyle: {
-        value: function (element, DOMParent) {
+        value: function (element, DOMParent, classListScope) {
             var url = element.getAttribute("href"),
                 documentHead;
 
@@ -257,7 +294,7 @@ var DocumentResources = Montage.specialize({
                 if (this.hasResource(url)) {
                     return;
                 }
-                this._addResource(url);
+                this._addResource(url, classListScope);
                 this._expectedStyles.push(url);
                 if (!this._isPollingDocumentStyleSheets) {
                     // fixme: Quick workaround for IE 11. Need a better patch.
