@@ -5,6 +5,7 @@
 var Bindings = require("core/core").Bindings,
     RangeController = require("core/range-controller").RangeController,
     Control = require("ui/control").Control,
+    valueForExpression = require("../../core/frb/value-for-expression").valueForExpression;
     PressComposer = require("composer/press-composer").PressComposer;
 
 /**
@@ -420,8 +421,11 @@ var Select = exports.Select =  Control.specialize(/** @lends module:"mod/ui/nati
                 if(typeof arr[i] === "string") {
                     text = value = arr[i];
                 } else {
-                    text = arr[i][this.textPropertyPath || 'text'];
-                    value = arr[i][this.valuePropertyPath  || 'value'];
+                    //text = arr[i][this.textPropertyPath || 'text'];
+                    text = valueForExpression.call(arr[i], (this.textPropertyPath || 'text'));
+                    //value = arr[i][this.valuePropertyPath  || 'value'];
+                    value = valueForExpression.call(arr[i], (this.valuePropertyPath || 'value'));
+
                 }
 
                 option.value = value;
