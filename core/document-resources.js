@@ -260,7 +260,7 @@ var DocumentResources = Montage.specialize({
                             iStart = 0,
                             scopeRule;
 
-                        console.log("classListScope: ",classListScope);
+                        // console.log("classListScope: ",classListScope);
 
                         //Insert the scope rule, after any CSSImportRule
                         while(cssRules[iStart] instanceof CSSImportRule) {
