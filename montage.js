@@ -51,6 +51,14 @@
     // TODO make sure mop closure has it also cause it's mop role to expose
     global.global = global;
 
+
+    /*
+        To make all components containers:
+
+        document.styleSheets.insertRule("[data-mod-id] {container-type: size;}")
+    */
+
+
     /*
         To better desl with browser extensions:
     */
