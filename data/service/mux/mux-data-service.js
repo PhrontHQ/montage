@@ -1,8 +1,8 @@
 const RawDataService = require("../raw-data-service").RawDataService,
     //SyntaxInOrderIterator = (require)("mod/core/frb/syntax-iterator").SyntaxInOrderIterator,
-    Montage = require('mod/core/core').Montage,
-    DataOperation = require("mod/data/service/data-operation").DataOperation,
-    secretObjectDescriptor = require("mod/data/model/app/secret.mjson").montageObject;
+    Montage = require('core/core').Montage,
+    DataOperation = require("../data-operation").DataOperation,
+    secretObjectDescriptor = require("data/model/app/secret.mjson").montageObject;
 
 
 /**

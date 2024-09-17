@@ -1,6 +1,6 @@
 const PriorityDataService = require("./priority-data-service").PriorityDataService,
-    Montage = require('mod/core/core').Montage,
-    DataOperation = require("mod/data/service/data-operation").DataOperation;
+    Montage = require('core/core').Montage,
+    DataOperation = require("../data-operation").DataOperation;
 
 
 /**
