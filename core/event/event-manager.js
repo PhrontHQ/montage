@@ -3268,10 +3268,12 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
 
             mutableEventTarget = mutableEvent.target;
             if (isBrowser && (Element.isElement(mutableEventTarget) || mutableEventTarget instanceof Document || mutableEventTarget === window)) {
-                eventPath = this._eventPathForDomTarget(mutableEventTarget);
+                eventPath = this._eventPathForDomEvent(mutableEvent);
             } else {
-                eventPath = this._eventPathForTarget(mutableEventTarget);
+                eventPath = this._eventPathForEvent(mutableEvent);
             }
+            mutableEvent._composedPath = eventPath;
+
 
             // Let the delegate handle the event first
             if (this.delegate && typeof this.delegate.willDistributeEvent === "function") {
@@ -3288,9 +3290,12 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
 
             // Capture Phase Distribution
             mutableEvent.eventPhase = CAPTURING_PHASE;
-            // The event path we generate is from bottom to top, capture needs to traverse this backwards
+            /*
+                 The event path we generate is from bottom to top, capture needs to traverse this backwards
+                 As eventPath now includes the target, we need to stop at index 1 in capture, and start from in bubble
+            */
             i = eventPath.length;
-            while (!mutableEvent.immediatePropagationStopped && !mutableEvent.propagationStopped && (iTarget = eventPath[--i])) {
+            while (i>0 && !mutableEvent.immediatePropagationStopped && !mutableEvent.propagationStopped && (iTarget = eventPath[--i])) {
                 mutableEvent.currentTarget = iTarget;
 
                 promise = this._invokeTargetListenersForEventPhase(iTarget, mutableEvent, CAPTURING_PHASE, eventType, promise);
@@ -3307,10 +3312,13 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 promise = this._invokeTargetListenersForEventPhase(iTarget, mutableEvent, BUBBLING_PHASE, eventType, promise);
             }
 
-            // Bubble Phase Distribution
+            /*
+                 Bubble Phase Distribution
+                 As eventPath now includes the target, we need to stop at index 1 in capture, and start from in bubble
+            */
             if(eventBubbles) {
                 mutableEvent.eventPhase = BUBBLING_PHASE;
-                for (i = 0; !mutableEvent.immediatePropagationStopped && !mutableEvent.propagationStopped && (iTarget = eventPath[i]); i++) {
+                for (i = 1; !mutableEvent.immediatePropagationStopped && !mutableEvent.propagationStopped && (iTarget = eventPath[i]); i++) {
                     mutableEvent.currentTarget = iTarget;
 
                     promise = this._invokeTargetListenersForEventPhase(iTarget, mutableEvent, BUBBLING_PHASE, eventType, promise);
@@ -3641,14 +3649,15 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
      * Build the event target chain for the the specified Target
      * @private
      */
-    _eventPathForTarget: {
+    _eventPathForEvent: {
         enumerable: false,
-        value: function (target) {
+        value: function (event) {
+            let target = event.target;
 
             if (!target) {
-                return this._emptyNextTargets;
-            } else if(target.nextTargets) {
-                return target.nextTargets;
+                return this._emptyComposedPath;
+            } else if(target.composedPath) {
+                return target.composedPath;
             } else {
 
                 var targetCandidate = target,
@@ -3659,7 +3668,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 discoveredTargets.clear();
 
                 // Consider the target "discovered" for less specialized detection of cycles
-                discoveredTargets.set(target,true);
+                // discoveredTargets.set(target,true);
 
                 do {
                     if (!discoveredTargets.has(targetCandidate)) {
@@ -3685,19 +3694,20 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
         }
     },
 
-    _emptyNextTargets: {
+    _emptyComposedPath: {
         value: Object.freeze([])
     },
     /**
      * Build the event target chain for the the specified DOM target
      * @private
      */
-    _eventPathForDomTarget: {
+    _eventPathForDomEvent: {
         enumerable: false,
-        value: function (target) {
+        value: function (event) {
 
+            let target = event.target
             if (!target) {
-                return this._emptyNextTargets;
+                return this._emptyComposedPath;
             }
 
             var targetCandidate = target,
@@ -3708,10 +3718,8 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 eventPath = [];
 
             do {
-                // Don't include the target itself as the root of the event path
-                if (targetCandidate !== target) {
+                // Include the target itself as the root of the event's compsoedPath
                     eventPath.push(targetCandidate);
-                }
 
                 previousBubblingTarget = targetCandidate;
                 // use the structural DOM hierarchy until we run out of that and need

@@ -377,7 +377,20 @@ var wrapPropertyGetter = function (key, storageKey) {
             set: function (value) {
                 this._detail = value;
             }
-        }
+        },
+        _composedPath: {
+            value: void 0
+        },
+        /**
+         * @type {Property}
+         * @default {Element} null
+         */
+        composedPath: {
+            value: function () {
+                return this._composedPath;
+            }
+        },
+
 
     }, {
         wrapEvent: {

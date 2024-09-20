@@ -546,7 +546,7 @@ ObjectDescriptor.addClassProperties({
      * @property {Component} value
      */
     _nextTarget: {
-        value: false
+        value: undefined
     },
 
     nextTarget: {
@@ -557,35 +557,35 @@ ObjectDescriptor.addClassProperties({
     },
 
     /**
-     * An ObjectDescriptor's nextTargets cached
-     * @property {Array} _nextTargets
+     * An ObjectDescriptor's composedPath cached
+     * @property {Array} _composedPath
      */
-    _nextTargets: {
+    _composedPath: {
         value: undefined
     },    
-    nextTargets: {
+    composedPath: {
         get: function() {
-            if(!this._nextTargets) {
-                let nextTargets = this._nextTargets = [],
+            if(!this._composedPath) {
+                let composedPath = this._composedPath = [this],
                     nextTargetCandidate = this.parent,
-                    dataServices = this.eventManager.application.mainService.childServicesForType(this);
+                    dataServices = this.eventManager.application.mainService.descendantServicesForType(this);
 
                 //Add all ObjectDescriptor parents
                 do {
                     if(nextTargetCandidate) {
-                        nextTargets.push(nextTargetCandidate);
+                        composedPath.push(nextTargetCandidate);
                         nextTargetCandidate = nextTargetCandidate.parent;
                     }
                 }
                 while (nextTargetCandidate);
 
                 //Add all Services handling this object:
-                nextTargets.push.apply(nextTargets, dataServices);    
-                nextTargets.push(this.eventManager.application.mainService);
-                nextTargets.push(this.eventManager.application);
+                composedPath.push.apply(composedPath, dataServices);    
+                composedPath.push(this.eventManager.application.mainService);
+                composedPath.push(this.eventManager.application);
             }
 
-            return this._nextTargets;
+            return this._composedPath;
         }
     },
 

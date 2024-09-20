@@ -1216,6 +1216,68 @@ DataService.addClassProperties({
     },
 
     /**
+     * Get all descendant child services that can handle data of the specified type,
+     * or `null` if no such child service exists. They are ordered to be depth first, followed by their parent
+     *
+     * @private
+     * @method
+     * @argument {DataObjectDescriptor} type
+     * @returns {Set.<DataService,number>}
+     */
+
+    __descendantServicesByType: {
+        value: undefined
+    },
+    _descendantServicesByType: {
+        get: function () {
+            if (!this.__descendantServicesByType) {
+                this.__descendantServicesByType = new Map();
+            }
+            return this.__descendantServicesByType;
+        }
+    },
+
+    descendantServicesForType: {
+        value: function (type) {
+
+            var descendantServicesForType = this._descendantServicesByType.get(type);
+
+            if(!descendantServicesForType) {
+                var childServices = this.childServicesForType(type),
+                    countI = childServices?.length || 0;
+
+                if(countI > 0) {
+                    var i = 0, iChildService, iDescendantServicesForType;
+
+                    descendantServicesForType = [];
+
+                    do {
+                        iChildService =  childServices[i];
+    
+                        if(iChildService) {
+                            iDescendantServicesForType = iChildService.descendantServicesForType(type);
+                            if(iDescendantServicesForType) {
+                                descendantServicesForType.push.apply(descendantServicesForType, iDescendantServicesForType);    
+                            }
+                            descendantServicesForType.push(iChildService);
+
+                        }
+                        i++;
+                    }
+                    while (i < countI);
+    
+                } else {
+                    descendantServicesForType = null;
+                }
+
+                this._descendantServicesByType.set(type, descendantServicesForType);
+            }
+
+            return descendantServicesForType;
+        }
+    },
+    
+    /**
      * Get the first child service that can handle data of the specified type,
      * or `null` if no such child service exists.
      *

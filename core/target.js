@@ -112,7 +112,7 @@ exports.Target = class Target extends Montage {
              * https://developer.mozilla.org/en-US/docs/Web/API/Event/composedPath
              * @property {Array<Target>}
              */
-            nextTargets: {value: undefined} 
+            composedPath: {value: undefined} 
 
         });
 
