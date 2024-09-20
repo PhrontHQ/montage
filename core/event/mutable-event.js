@@ -389,8 +389,7 @@ var wrapPropertyGetter = function (key, storageKey) {
             value: function () {
                 return this._composedPath;
             }
-        },
-
+        }
 
     }, {
         wrapEvent: {
