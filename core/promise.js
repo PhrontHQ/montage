@@ -78,13 +78,20 @@ if(!Promise.resolveFalse) {
     });
 }
 
-Promise.withResolvers || (Promise.withResolvers = function withResolvers() {
-    var a, b, c = new this(function (resolve, reject) {
-      a = resolve;
-      b = reject;
+if(!Promise.withResolvers) {
+
+    /*
+        https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/withResolvers
+    */
+
+    Promise.withResolvers || (Promise.withResolvers = function withResolvers() {
+        var a, b, c = new this(function (resolve, reject) {
+        a = resolve;
+        b = reject;
+        });
+        return {resolve: a, reject: b, promise: c};
     });
-    return {resolve: a, reject: b, promise: c};
-  });
+}
 
 
 if(!Promise.timeout) {
