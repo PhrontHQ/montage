@@ -406,8 +406,8 @@ var Iteration = exports.Iteration = Montage.specialize( /** @lends Iteration.pro
                 childComponentsLeftToDraw--;
                 if (!childComponentsLeftToDraw) {
                     self.forEachElement(function (element) {
-                        repetition._iterationForElement.set(element, self);
-                    });
+                        repetition._iterationForElement.set(element, this);
+                    }, this);
                 }
             };
 
@@ -423,8 +423,8 @@ var Iteration = exports.Iteration = Montage.specialize( /** @lends Iteration.pro
                 }
             } else {
                 this.forEachElement(function (element) {
-                    repetition._iterationForElement.set(element, self);
-                });
+                    repetition._iterationForElement.set(element, this);
+                }, this);
             }
             this._elementsWillBeAddedToMap = true;
         }
@@ -517,6 +517,12 @@ var Iteration = exports.Iteration = Montage.specialize( /** @lends Iteration.pro
      * A utility method for applying changes to every element in this iteration
      * if it is on the document.  This may be safely called on a retracted
      * iteration with no effect.
+     * 
+     * Callbacks receive 3 arguments: 
+     *  - dom element
+     *  - index of dom element
+     *  - iteration obect
+     * 
      * @private
      */
     forEachElement: {
@@ -534,7 +540,7 @@ var Iteration = exports.Iteration = Montage.specialize( /** @lends Iteration.pro
                 child = child.nextSibling
             ) {
                 if (child.nodeType === 1) { // tags
-                    callback.call(thisp, child);
+                    callback.call(thisp, child, index, this);
                 }
             }
         }
@@ -1821,22 +1827,26 @@ var Repetition = exports.Repetition = Component.specialize(/** @lends Repetition
         }
     },
 
+    _addDirtyClassListIteration_forEach_callback: {
+        value: function (element, index, iteration) {
+            var component;
+            if (element && (component = element.component)) {
+                // If the element has a component then use the component's
+                // classList and let it handle drawing...
+                component.classList[iteration.active ? "add" : "remove"]("active");
+                component.classList[iteration.selected ? "add" : "remove"]("selected");
+                component.classList.remove("no-transition");
+            } else {
+                // ...otherwise we will handle the drawing of the classes
+                // on plain elements ourselves
+                this._dirtyClassListIterations.add(iteration);
+            }
+        }
+    },
+
     _addDirtyClassListIteration: {
         value: function (iteration) {
-            iteration.forEachElement(function (element) {
-                var component;
-                if (element && (component = element.component)) {
-                    // If the element has a component then use the component's
-                    // classList and let it handle drawing...
-                    component.classList[iteration.active ? "add" : "remove"]("active");
-                    component.classList[iteration.selected ? "add" : "remove"]("selected");
-                    component.classList.remove("no-transition");
-                } else {
-                    // ...otherwise we will handle the drawing of the classes
-                    // on plain elements ourselves
-                    this._dirtyClassListIterations.add(iteration);
-                }
-            }, this);
+            iteration.forEachElement(this._addDirtyClassListIteration_forEach_callback, this);
         }
     },
 
@@ -1924,12 +1934,28 @@ var Repetition = exports.Repetition = Component.specialize(/** @lends Repetition
      */
     _initialContentDrawn: {value: null},
 
+    _draw_forEachIterationElement_callback: {
+        value: function (element, index, iteration) {
+            // Only update classes that don't have a component, they
+            // are taken care of in _addDirtyClassListIteration
+            if (element.component) {
+                return;
+            }
+            element.classList[iteration.active ? "add" : "remove"]("active");
+            element.classList[iteration.selected ? "add" : "remove"]("selected");
+
+            // While we're at it, if the "no-transition" class has been
+            // added to this iteration, we will need to remove it in
+            // the next draw to allow the iteration to animate.
+            element.classList.remove("no-transition");
+        }
+    },
     /**
      * @private
      */
     draw: {
         value: function () {
-            var index;
+            var index, _draw_forEachIterationElement_callback = this._draw_forEachIterationElement_callback;
 
             if (!this._initialContentDrawn) {
                 this._drawInitialContent();
@@ -1960,24 +1986,12 @@ var Repetition = exports.Repetition = Component.specialize(/** @lends Repetition
             // it, which in turn schedules another draw and adds the iteration
             // back to the schedule.
             this._dirtyClassListIterations.clear();
-            iterations.forEach(function (iteration) {
-                if(iteration.isComponentTreeLoaded()) {
-                    iteration.forEachElement(function (element) {
-                        // Only update classes that don't have a component, they
-                        // are taken care of in _addDirtyClassListIteration
-                        if (element.component) {
-                            return;
-                        }
-                        element.classList[iteration.active ? "add" : "remove"]("active");
-                        element.classList[iteration.selected ? "add" : "remove"]("selected");
 
-                        // While we're at it, if the "no-transition" class has been
-                        // added to this iteration, we will need to remove it in
-                        // the next draw to allow the iteration to animate.
-                        element.classList.remove("no-transition");
-                    }, this);
+            for(let i=0, countI = iterations.length; ( i < countI); i++ ) {
+                if(iterations[i].isComponentTreeLoaded()) {
+                    iteration.forEachElement(_draw_forEachIterationElement_callback, this);
                 }
-            }, this);
+            }
         }
     },
 
