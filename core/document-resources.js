@@ -112,6 +112,14 @@ var DocumentResources = Montage.specialize({
         }
     },
 
+    cssScopeForResource: {
+        value: function (url) {
+            this._resources[url] !== true
+                ? this._resources[url]
+                : null;       
+        }
+    },
+
     hasResource: {
         value: function (url) {
             return url in this._resources;
@@ -254,7 +262,7 @@ var DocumentResources = Montage.specialize({
                         target.ownerDocument.styleSheets, but we need the component's element's classList
                     */
                     
-                    if(classListScope = this._resources[target.href]) {
+                    if(classListScope = this.cssScopeForResource(target.href)) {
                         let stylesheet = target.sheet,
                             cssRules = stylesheet.cssRules,
                             iStart = 0,
@@ -267,7 +275,7 @@ var DocumentResources = Montage.specialize({
                             iStart++;
                         }
                     
-                        stylesheet.insertRule(`@scope (${classListScope}) {}`, iStart);
+                        stylesheet.insertRule(`@scope (${classListScope}) to (${classListScope}) {}`, iStart);
                         scopeRule = stylesheet.cssRules[iStart];
 
                         //Now loop on rules to move - re-create them as there's no other way :-( 

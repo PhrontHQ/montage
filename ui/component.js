@@ -4776,8 +4776,12 @@ var RootComponent = Component.specialize( /** @lends RootComponent.prototype */{
                 */
 
                 for (var i = 0, style; (style = styles[i]); i++) {
-                    this.addStylesheetWithClassListScope(style, template.document.querySelector("[data-mod-id=owner]")?.classList);
-                }
+                        /*
+                            Flow is one component where the owner's element doesn't have data-mod-id="owner", but data-mod-id="montage-flow".
+                            So to avoid that we'll consider the root element the first direct child of the body that has a data-mod-id attribute
+                        */
+                        this.addStylesheetWithClassListScope(style, (template.document.querySelector("body > [data-mod-id]"))?.classList);
+                    }
                 this._addedStyleSheetsByTemplate.set(template,true);
             }
         }
