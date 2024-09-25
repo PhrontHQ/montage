@@ -192,9 +192,7 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
 
 
             if(base64EncodedSerializedSession) {
-                serializedSession = Buffer.from(base64EncodedSerializedSession, 'base64').toString('binary');
-                console.log("serializedSession: ", serializedSession);
-
+                serializedSession = Buffer.from(base64EncodedSerializedSession, 'base64').toString();
                 this.deserializer.init(serializedSession, this.require, /*objectRequires*/undefined, /*module*/undefined, /*isSync*/false);
                 try {
                     identityPromise = this.deserializer.deserializeObject();
