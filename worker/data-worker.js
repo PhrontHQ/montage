@@ -212,7 +212,7 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
 
             return identityPromise.then(function(session) {
 
-                //console.log("DataWorker handleAuthorize with identity:",identity);
+                console.log("DataWorker handleAuthorize with session:",session);
                 var identity = session?.identity,
                     identityObjectDescriptor;
 
@@ -222,6 +222,8 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
 
                         So we use an Anonymous identity singleton
                     */
+                    console.log("DataWorker handleAuthorize with no identity. mainService.authorizationPolicy is ",self.mainService.authorizationPolicy);
+
                     if(self.mainService.authorizationPolicy === AuthorizationPolicy.OnConnect) {
                         var authorizeConnectionFailedOperation = new DataOperation();
 
