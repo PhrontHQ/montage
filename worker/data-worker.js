@@ -176,6 +176,10 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
 
             // await sleep(6000)
 
+            console.log("event: ", event);
+            console.log("event?.queryStringParameters: ", event?.queryStringParameters);
+            console.log("event?.queryStringParameters?.session: ", event?.queryStringParameters?.session);
+
             var isModStage = event.requestContext.stage === "mod",
                 base64EncodedSerializedSession = event.queryStringParameters?.session,
                 serializedSession,
@@ -189,6 +193,8 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
 
             if(base64EncodedSerializedSession) {
                 serializedSession = Buffer.from(base64EncodedSerializedSession, 'base64').toString('binary');
+                console.log("serializedSession: ", serializedSession);
+
                 this.deserializer.init(serializedSession, this.require, /*objectRequires*/undefined, /*module*/undefined, /*isSync*/false);
                 try {
                     identityPromise = this.deserializer.deserializeObject();
