@@ -208,7 +208,8 @@ Require.NodeLoader = function NodeLoader(config) {
             no current way to resolve/load on the fly a dependency that wasn't loaded 
             ahead of time. This is needs to likely be fixed in the deserializer when in sync mode
         */
-        else {
+        else if(location.startsWith(config.location)) {
+
             id = location.slice(config.location.length);
             id = id.substr(0,id.lastIndexOf('.'));
             module.location = location;
