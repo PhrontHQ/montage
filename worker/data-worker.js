@@ -143,8 +143,8 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
 
             //console.log("userAgent: ",userAgent);
 
-            if(eventHeaderUserIp && eventHeaderUserIp !== userIp && sourceIp !== undefined) {
-                console.warn("eventHeaderUserIp is "+eventHeaderUserIp+" and sourceIp is "+sourceIp);
+            if(eventHeaderUserIp && eventHeaderUserIp !== userIp) {
+                console.warn("eventHeaderUserIp is "+eventHeaderUserIp+" and userIp is "+userIp);
             }
 
             currentEnvironment.stage = stage;
