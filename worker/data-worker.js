@@ -176,9 +176,9 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
 
             // await sleep(6000)
 
-            console.log("event: ", event);
-            console.log("event?.queryStringParameters: ", event?.queryStringParameters);
-            console.log("event?.queryStringParameters?.session: ", event?.queryStringParameters?.session);
+            // console.log("event: ", event);
+            // console.log("event?.queryStringParameters: ", event?.queryStringParameters);
+            // console.log("event?.queryStringParameters?.session: ", event?.queryStringParameters?.session);
 
             var isModStage = event.requestContext.stage === "mod",
                 base64EncodedSerializedSession = event.queryStringParameters?.session,
