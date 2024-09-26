@@ -505,7 +505,9 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             this.environment = currentEnvironment;
             this.isBrowser = currentEnvironment.isBrowser;
             //Faster to invoke on this then a global symbol like Element
-            this.isElement = Element.isElement;
+            this.isBrowser 
+                ? this.isElement = Element.isElement
+                : undefined;
             this._trackingTouchTimeoutIDs = new Map();
             // this._functionType = "function";
 
