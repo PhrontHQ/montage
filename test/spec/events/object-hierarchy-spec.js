@@ -579,23 +579,23 @@ TestPageLoader.queueTest("object-hierarchy-test/object-hierarchy-test", function
                 var foo = new Montage();
                 foo.nextTarget = null;
 
-                var path = eventManager._eventPathForTarget(foo);
+                var path = eventManager.eventPathForTarget(foo);
                 expect(path[0]).toBe(testApplication);
             });
 
-            it("should not include the target itself in the chain", function () {
+            it("should include the target itself in the chain", function () {
                 var foo = new Montage();
                 foo.nextTarget = foo;
 
-                var path = eventManager._eventPathForTarget(foo);
-                expect(path.indexOf(foo)).toBe(-1);
+                var path = eventManager.eventPathForTarget(foo);
+                expect(path.indexOf(foo)).toBe(0);
             });
 
             it("should always include the application when the chain ends due to a detected cycle", function () {
                 var foo = new Montage();
                 foo.nextTarget = foo;
 
-                var path = eventManager._eventPathForTarget(foo);
+                var path = eventManager.eventPathForTarget(foo);
                 expect(path[0]).toBe(testApplication);
             });
 

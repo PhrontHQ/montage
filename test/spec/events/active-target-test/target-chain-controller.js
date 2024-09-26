@@ -28,7 +28,7 @@ exports.TargetChainController = Montage.specialize( {
     organizedContent: {
         get: function () {
             if (!this._organizedContent) {
-                this._organizedContent = defaultEventManager._eventPathForTarget(this.content);
+                this._organizedContent = defaultEventManager.eventPathForTarget(this.content);
             }
             return this._organizedContent;
         }

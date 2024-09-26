@@ -20,7 +20,6 @@ var Montage = require("../core").Montage,
     Deserializer = require("../serialization/deserializer/montage-deserializer").MontageDeserializer,
     Map = require("../collections/map"),
     currentEnvironment = require("../environment").currentEnvironment,
-    isBrowser = currentEnvironment.isBrowser,
     Event_NONE = 0,
     Event_CAPTURING_PHASE =	1,
     Event_AT_TARGET	= 2,
@@ -504,6 +503,9 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             this._currentDispatchedTargetListeners = new Map();
             this._elementEventHandlerByElement = new WeakMap();
             this.environment = currentEnvironment;
+            this.isBrowser = currentEnvironment.isBrowser;
+            //Faster to invoke on this then a global symbol like Element
+            this.isElement = Element.isElement;
             this._trackingTouchTimeoutIDs = new Map();
             // this._functionType = "function";
 
@@ -3226,7 +3228,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                 targetEntry, targetEntryForEventType,
                 promise;
 
-            if(isBrowser) {
+            if(this.isBrowser) {
                 if(
                     (MontageElement && event.target instanceof MontageElement) ||
                     (event instanceof UIEvent && !this._shouldDispatchEvent(event))
@@ -3267,11 +3269,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             }
 
             mutableEventTarget = mutableEvent.target;
-            if (isBrowser && (Element.isElement(mutableEventTarget) || mutableEventTarget instanceof Document || mutableEventTarget === window)) {
-                eventPath = this._eventPathForDomEvent(mutableEvent);
-            } else {
-                eventPath = this._eventPathForEvent(mutableEvent);
-            }
+            eventPath = this.eventPathForTarget(mutableEventTarget);
             mutableEvent._composedPath = eventPath;
 
 
@@ -3295,7 +3293,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
                  As eventPath now includes the target, we need to stop at index 1 in capture, and start from in bubble
             */
             i = eventPath.length;
-            while (i>0 && !mutableEvent.immediatePropagationStopped && !mutableEvent.propagationStopped && (iTarget = eventPath[--i])) {
+            while (i>1 && !mutableEvent.immediatePropagationStopped && !mutableEvent.propagationStopped && (iTarget = eventPath[--i])) {
                 mutableEvent.currentTarget = iTarget;
 
                 promise = this._invokeTargetListenersForEventPhase(iTarget, mutableEvent, CAPTURING_PHASE, eventType, promise);
@@ -3349,7 +3347,7 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
             mutableEvent.eventPhase = Event_NONE;
             mutableEvent.currentTarget = null;
 
-            if(isBrowser) {
+            if(this.isBrowser) {
                 if (this._isStoringPointerEvents) {
                     this._pointerStorage.removeEvent(event);
                 }
@@ -3645,14 +3643,26 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
     _eventPathForTargetMap : {
         value: undefined
     },
+
+    eventPathForTarget: {
+        enumerable: false,
+        value: function (target) {
+
+            if (this.isBrowser && (this.isElement(target) || target instanceof Document || target === window)) {
+                return this._eventPathForDomTarget(target);
+            } else {
+                return this._eventPathForTarget(target);
+            }
+        }
+    },
+
     /**
      * Build the event target chain for the the specified Target
      * @private
      */
-    _eventPathForEvent: {
+    _eventPathForTarget: {
         enumerable: false,
-        value: function (event) {
-            let target = event.target;
+        value: function (target) {
 
             if (!target) {
                 return this._emptyComposedPath;
@@ -3701,11 +3711,10 @@ var EventManager = exports.EventManager = Montage.specialize(/** @lends EventMan
      * Build the event target chain for the the specified DOM target
      * @private
      */
-    _eventPathForDomEvent: {
+    _eventPathForDomTarget: {
         enumerable: false,
-        value: function (event) {
+        value: function (target) {
 
-            let target = event.target
             if (!target) {
                 return this._emptyComposedPath;
             }
