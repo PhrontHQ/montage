@@ -319,7 +319,7 @@ RawDataService.addClassProperties({
                 if(this.connectionIdentifer) {
                     this.connection = this.connectionForIdentifier(this.connectionIdentifer);
                 }
-                else if(!this.currentEnvironment.isAWS) {
+                else if(!this.currentEnvironment.isCloud) {
                     this.connection = this.connectionForIdentifier(`local-${this.currentEnvironment.stage}`);
                 } else {
                     this.connection = this.connectionForIdentifier(this.currentEnvironment.stage);

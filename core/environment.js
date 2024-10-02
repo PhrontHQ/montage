@@ -125,9 +125,6 @@ var Environment = exports.Environment = Montage.specialize({
         }
     },
 
-    _isAWS: {
-        value: undefined
-    },
 
     /**
      * Returns true if the code runs in AWS LAMBDA environment using the reserved environment variable
@@ -138,10 +135,37 @@ var Environment = exports.Environment = Montage.specialize({
      *
      * @property {Boolean} value
      */
-
+    _isAWS: {
+        value: undefined
+    },
     isAWS: {
         get: function() {
             return this._isAWS || (this._isAWS = ((typeof process !== 'undefined') && (typeof process.env.AWS_EXECUTION_ENV !== 'undefined')));
+        }
+    },
+
+
+    /**
+     * Returns true if the code runs in a Google Cloud environment using the reserved environment variable
+     *
+     * K_SERVICE
+     *
+     * more at https://cloud.google.com/run/docs/container-contract#services-env-vars
+     *
+     * @property {Boolean} value
+     */
+    _isGCP: {
+        value: undefined
+    },
+    isGCP: {
+        get: function() {
+            return this._isGCP || (this._isGCP = ((typeof process !== 'undefined') && (typeof process.env.K_SERVICE !== 'undefined')));
+        }
+    },
+
+    isCloud: {
+        get: function() {
+            return (this.isAWS || this._isGCP);
         }
     },
 
