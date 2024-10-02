@@ -2,7 +2,8 @@
     @module mod/data/model/model/object-store
 */
 
-var DataObject = require("./data-object").DataObject;
+var DataObject = require("./data-object").DataObject,
+    Montage = require("../../core/core").Montage;
 
 /**
  * @class ObjectStore
