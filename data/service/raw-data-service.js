@@ -289,6 +289,8 @@ RawDataService.addClassProperties({
             return this._connectionIdentifier;
         },
         set: function (value) {
+            console.log(this.name+" connectionIdentifier setter('"+value+"')");
+
             if (value !== this._connectionIdentifier) {
                 this._connectionIdentifier = value;
                 this.connection = this.connectionForIdentifier(value);
@@ -340,9 +342,11 @@ RawDataService.addClassProperties({
         },
         set: function(value) {
 
+            console.log(this.name+" connection setter A: value is ", value);
+
             if(value !== this._connection) {
                 this._connection = value;
-                console.log(this.name+" connection setter: this.connection is ",this._connection);
+                console.log(this.name+" connection setter B: this.connection is ",this._connection);
             }
         }
 
