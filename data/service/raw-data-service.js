@@ -197,6 +197,8 @@ RawDataService.addClassProperties({
 
             value = deserializer.getProperty("connection");
             if (value) {
+                console.log(this.name+" deserializeSelf: connection is ",value);
+
                 this.connection = value;
             }
 
@@ -324,11 +326,14 @@ RawDataService.addClassProperties({
                 //If we have an connectionIdentifer, we go for it, otherwise we go for a stage-based logic
                 if(this.connectionIdentifer) {
                     this.connection = this.connectionForIdentifier(this.connectionIdentifer);
+                    console.log(this.name+" connection getter: A this.connection is ",this.connection);
                 }
                 else if(!this.currentEnvironment.isCloud) {
                     this.connection = this.connectionForIdentifier(`local-${this.currentEnvironment.stage}`);
+                    console.log(this.name+" connection getter: B this.connection is ",this.connection);
                 } else {
                     this.connection = this.connectionForIdentifier(this.currentEnvironment.stage);
+                    console.log(this.name+" connection getter: C this.connection is ",this.connection);
                 }
             }
             return this._connection;
@@ -337,6 +342,7 @@ RawDataService.addClassProperties({
 
             if(value !== this._connection) {
                 this._connection = value;
+                console.log(this.name+" connection setter: this.connection is ",this._connection);
             }
         }
 
