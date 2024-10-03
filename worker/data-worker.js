@@ -168,6 +168,9 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
             //     console.log("setEnvironmentFromEvent: ",event, context);
             // }
 
+            console.warn("environment set from Event: ", currentEnvironment);
+
+
         }
     },
 

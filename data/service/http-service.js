@@ -98,6 +98,10 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
      * @type {Promise<Identity>}
      */
     fetchIdentity() {
+
+
+        console.warn("fetchIdentity() this.currentEnvironment is ", this.currentEnvironment);
+
         if(!this.identityQuery) {
             throw "Can't perform fetchIdentity() because this.identityQuery isn't available";
         }
