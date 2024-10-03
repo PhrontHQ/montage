@@ -315,6 +315,12 @@ RawDataService.addClassProperties({
                     -> https://www.stackovercloud.com/2020/06/30/amazon-rds-proxy-now-generally-available/
                 */
 
+                console.log(this.name+" connection getter: this.connectionIdentifer is ",this.connectionIdentifer);
+                console.log(this.name+" connection getter: this.currentEnvironment is ",this.currentEnvironment);
+                console.log(this.name+" connection getter: this.currentEnvironment.isGCP is ",this.currentEnvironment.isGCP);
+                console.log(this.name+" connection getter: this.currentEnvironment.isCloud is ",this.currentEnvironment.isCloud);
+                console.log(this.name+" connection getter: this.currentEnvironment.stage is ",this.currentEnvironment.stage);
+
                 //If we have an connectionIdentifer, we go for it, otherwise we go for a stage-based logic
                 if(this.connectionIdentifer) {
                     this.connection = this.connectionForIdentifier(this.connectionIdentifer);
