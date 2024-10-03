@@ -192,6 +192,7 @@ RawDataService.addClassProperties({
             */
             value = deserializer.getProperty("connectionIdentifier");
             if (value) {
+                console.log(this.name+" deserializeSelf: connectionIdentifier is ",value);
                 this.connectionIdentifier = value;
             }
 
@@ -309,6 +310,8 @@ RawDataService.addClassProperties({
 
     connection: {
         get: function() {
+            console.log(">>>>>> "+ this.name+" connection getter: this._connection is ",this._connection);
+
             if(!this._connection) {
 
                 /*

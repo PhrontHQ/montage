@@ -101,6 +101,9 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
 
 
         console.warn("fetchIdentity() this.currentEnvironment is ", this.currentEnvironment);
+        console.warn("fetchIdentity() this.hasOwnProperty('_connection') is ", this.hasOwnProperty('_connection'));
+        console.warn("fetchIdentity() Object.getOwnPropertyDescriptor(this, 'connection') is ", Object.getOwnPropertyDescriptor(this, 'connection'));
+
 
         if(!this.identityQuery) {
             throw "Can't perform fetchIdentity() because this.identityQuery isn't available";
