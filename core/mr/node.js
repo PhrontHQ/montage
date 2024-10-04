@@ -156,33 +156,41 @@ Require.Loader = function Loader(config, load) {
     const supportsES6 = Loader.supportsES6;
 
     return function (location, module) {
-        return config.read(location, module)
-        .then(function (text) {
-
-            if(supportsES6 && /*faster*/(text.includes("export ")) && /*eliminate if in quotes*/(text.match(Require.detect_ES6_export_regex))) {
-
-                return import(location).then(function(esModule) {
-                    module.type = Require.ES_MODULE_TYPE;
-                    module.exports = esModule;
-                    module.factory = emptyFactory;
-                    //module.factory.displayName = displayName;
-                });
-
-
-            } else if(location.endsWith(".json")) {
-                module.type = "json";
-                module.text = text;
-                module.exports = JSON.parse(text);
-            } else {
-                module.type = "javascript";
-                module.text = text;
-            }
-            //module.location is now possibly changed by read if it encounters the pattern of
-            //folder/index.js when it couldn't find folder.js, so we don't want to override that.
-            //module.location = location;
-        }, function (reason, error, rejection) {
-            return load(location, module);
-        });
+        
+        if(location.startsWith("node:")) {
+            module.type = "native";
+            module.exports = require(module.id);
+    
+            return Promise.resolve(module);
+        } else {
+            return config.read(location, module)
+            .then(function (text) {
+    
+                if(supportsES6 && /*faster*/(text.includes("export ")) && /*eliminate if in quotes*/(text.match(Require.detect_ES6_export_regex))) {
+    
+                    return import(location).then(function(esModule) {
+                        module.type = Require.ES_MODULE_TYPE;
+                        module.exports = esModule;
+                        module.factory = emptyFactory;
+                        //module.factory.displayName = displayName;
+                    });
+    
+    
+                } else if(location.endsWith(".json")) {
+                    module.type = "json";
+                    module.text = text;
+                    module.exports = JSON.parse(text);
+                } else {
+                    module.type = "javascript";
+                    module.text = text;
+                }
+                //module.location is now possibly changed by read if it encounters the pattern of
+                //folder/index.js when it couldn't find folder.js, so we don't want to override that.
+                //module.location = location;
+            }, function (reason, error, rejection) {
+                return load(location, module);
+            });    
+        }
     };
 };
 /*
