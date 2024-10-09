@@ -1,0 +1,52 @@
+{
+    "root": {
+        "prototype": "data/service/data-service",
+        "values": {
+            "name": "MainDataService",
+            "isUniquing": true,
+            "types": [
+                {"@": "Application"},
+                {"@": "UserPool"},
+                {"@": "AppClient"},
+                {"@": "UserSession"},
+                {"@": "Identity"},
+                {"@": "UserIdentity"},
+                {"@": "WebSocketSession"},
+                {"@": "WebSocketSessionConnection"}
+            ]
+        }
+    },
+
+    "Application": {
+        "object": "data/model/app/application.mjson"
+    },
+    
+    "UserPool": {
+        "object": "data/model/app/user-pool.mjson"
+    },
+
+    "AppClient": {
+        "object": "data/model/app/app-client.mjson"
+    },
+
+    "UserSession": {
+        "object": "data/model/app/user-session.mjson"
+    },
+
+    "Identity": {
+        "object": "data/model/app/user-identity.mjson"
+    },
+
+    "UserIdentity": {
+        "object": "data/model/app/user-identity.mjson"
+    },
+
+    "WebSocketSession": {
+        "object": "data/model/app/web-socket-session.mjson"
+    },
+
+    "WebSocketSessionConnection": {
+        "object": "data/model/app/web-socket-session-connection.mjson"
+    }
+
+}
