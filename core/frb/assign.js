@@ -13,6 +13,15 @@ function assign(target, path, value, parameters, document, components) {
     } else {
         syntax = path;
     }
+
+    /*
+        This is a rare case where we can't really do any assignment.
+        So we avoid an exception by adding a test
+    */
+    if(syntax.type === "value" || syntax.type === "litteral") {
+        return;
+    }
+
     var scope = new Scope(target);
     scope.parameters = parameters;
     scope.document = document;
