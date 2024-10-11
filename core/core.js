@@ -1254,6 +1254,65 @@ Montage.defineProperty(Montage.prototype, "version", {
 
 
 /**
+ * Indicates how a property is meant to be serialized, or not.
+ * This is an evolution to progressively remove the reliance on the additional
+ * serializable property set on JS PropertyDescritpors, and instead relay on setting in ObjectDescriptors
+ * property descriptors. The range of value is unusual as it is a blend of string and boolean....
+ * 
+ * Posible values: "reference" | "value" | "auto" | false,
+ * 
+ * @type {string | boolean} .
+ */
+
+Montage.defineProperty(Montage.prototype, "propertySerializability", {
+    value: function (propertyName) {
+        return this.objectDescriptor
+            ? this.objectDescriptor.propertyDescriptorNamed(propertyName)?.isSerializable
+            : Montage.getPropertyAttribute(this, propertyName, "serializable");
+    }
+});
+Montage.defineProperty(Montage, "propertySerializability", {
+    value: Montage.prototype.propertySerializability
+});
+
+
+Montage.defineProperty(Montage.prototype, "_buildSserializablePropertyNames", {
+    value: function() {
+
+        let _serializablePropertyNames,
+            legacySerializablePropertyNames = Montage.getSerializablePropertyNames(this);
+            
+        Montage.defineProperty(Object.getPrototypeOf(this), "_serializablePropertyNames", {
+            value: (_serializablePropertyNames = this.objectDescriptor
+                    ? this.objectDescriptor.serializablePropertyDescriptors.map((aPropertyDescriptor) => {
+                        let legacyIndex = legacySerializablePropertyNames.indexOf(aPropertyDescriptor.name);
+                        if(legacyIndex !== -1) {
+                            legacySerializablePropertyNames.splice(legacyIndex, 1);
+                        }
+                        return aPropertyDescriptor.name;
+                    })
+                    : legacySerializablePropertyNames)
+        });
+        return _serializablePropertyNames;
+    }
+});
+Montage.defineProperty(Montage, "_buildSserializablePropertyNames", {
+    value: Montage.prototype._buildSserializablePropertyNames
+});
+
+Montage.defineProperty(Montage.prototype, "serializablePropertyNames", {
+    get: function () {
+        return this.__proto__.hasOwnProperty("_serializablePropertyNames")
+            ? this._serializablePropertyNames
+            : this._buildSserializablePropertyNames();
+    }
+});
+Montage.defineProperty(Montage, "serializablePropertyNames", {
+    value: Montage.prototype.serializablePropertyNames
+});
+
+
+/**
  * Returns true if two objects are equal, otherwise returns false.
  * @function Montage#equals
  * @param {Object} anObject The object to compare for equality.
