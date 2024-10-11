@@ -6,7 +6,9 @@
             "propertyDescriptors": [
                  {"@": "applicationIdentifier"},
                  {"@": "applicationCredentials"},
-                 {"@": "scope"}
+                 {"@": "scope"},
+                 {"@": "webSocketSessions"}
+                 
             ],
             "objectDescriptorModule": {
                 "%": "./identity.mjson"
@@ -48,6 +50,18 @@
     },
     "queryDescriptor": {
         "object": "./data-query.mjson"
+    },
+    "WebSocketSession": {
+        "object": "./app/web-socket-session.mjson"
+    },
+    "webSocketSessions": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "webSocketSessions",
+            "cardinality": -1,
+            "valueType": "object",
+            "valueDescriptor": {"@": "WebSocketSession"}
+       }
     }
 
 }
