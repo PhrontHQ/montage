@@ -158,12 +158,12 @@ exports.FetchResourceDataMapping = class FetchResourceDataMapping extends Expres
                     }
 
                     //Turn a JSON body to form if needed
-                    if(options.method == "POST" && typeof options.body === "object") {
-                        let headers = options.headers,
-                            contentType = headers["content-type"] || headers["Content-Type"];
+                    if(options?.method == "POST" && typeof options?.body === "object") {
+                        let headers = options?.headers,
+                            contentType = headers && (headers["content-type"] || headers["Content-Type"]);
                         if(contentType === this._xWwwFormUrlencodedType) {
                             options.body = new URLSearchParams(options.body);
-                        } else if(contentType.includes(this._formData)) {
+                        } else if(contentType?.includes(this._formData)) {
                             let formData = new FormData(),
                             body = options.body,
                             bodyKeys = Object.keys(body);
