@@ -17,6 +17,8 @@
             "runtimeArgs": [
                 "${workspaceFolder}/node_modules/http-server/bin/http-server",
                 "--silent",
+                "-c", /* disable caching with -1 value */
+                "-1",
                 "-p",
                 "7979"
             ],
