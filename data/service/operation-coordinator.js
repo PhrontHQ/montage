@@ -20,7 +20,7 @@ exports.OperationCoordinator = Target.specialize(/** @lends OperationCoordinator
 
     constructor: {
         value: function OperationCoordinator(worker) {
-            this._serializer = new MontageSerializer().initWithRequire(require);
+            this._serializer = new MontageSerializer().initWithRequire(global.require);
             this._deserializer = new Deserializer();
 
             this._gatewayClientByClientId = new Map();
