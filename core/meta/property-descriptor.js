@@ -79,15 +79,23 @@ TODO:
 
     Intl.NumberFormat:
 
--   Also, we need to model for a toMany, wether it's unique, and if it is ordered. In most classic
+-   [DONE: isOrdered] Also, we need to model for a toMany, wether it's unique, and if it is ordered. In most classic
     to-many, order is irrelevant, but it sometimes can be.
+
+    [DONE: hasUniqueValues]
     Unique and ordered makes only sense when cardinality is > 1, or not?
 -   Unique can also means, like in a database, that the value of that property should be unique throughout a table.
     How do we express this as well, which would be helpful to know to set constraints appropriately.
 
+
+-   we need to express a unique constraints involving multiple property descriptors, on ObjectDescriptors
+
+-   But the use of (frb) expressions at the model opens a lot of possibilities for expressing business logic there:
+    - constraintExpressions: evaluated on an instance and should return true, could be per property descriptors, but also needs to be at the ObjectDescriptor if involving multiple properties
+    - cascadeDeleteExpressions: to express what kind of other things related to an object needs to go with it
+    - cascadeDenyExpressions: to express what would prevent an object be be able to be deleted
+
 */
-
-
 
 
 /**
