@@ -270,18 +270,24 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
             serializer.setProperty("clientId", this.clientId);
 
             if(this.target) {
-                if(Array.isArray(this.target)) {
-                    serializer.setProperty("targetModuleId", this.target.map((objectDescriptor) => {return typeof objectDescriptor === "string" ? objectDescriptor : objectDescriptor.module.id}));
-                } else {
-                    if(this.target.module) {
-                        serializer.setProperty("targetModuleId", this.target.module.id);
-                    } else {
-                        //This is not working as I thought it would yet
-                        //We use DataService.mainService as the target for transaction related operations. That should really be the model.
-                        //serializer.addObjectReference(this.target);
-                        serializer.setProperty("targetModuleId", null);
-                    }
-                }
+                serializer.setProperty("target", this.target);
+
+                // if(Array.isArray(this.target)) {
+                //     serializer.setProperty("targetModuleId", this.target.map((objectDescriptor) => {return typeof objectDescriptor === "string" ? objectDescriptor : objectDescriptor.module.id}));
+                //     // serializer.setProperty("targetModuleId", this.target.map((objectDescriptor) => {return typeof objectDescriptor === "string" ? objectDescriptor : serializer.serializationModuleIdForObject(objectDescriptor)}));
+                // } else {
+                //     let targetSerializationModuleId = serializer.serializationModuleIdForObject(this.target);
+
+                //     if(this.target.module) {
+                //         serializer.setProperty("targetModuleId", this.target.module.id);
+                //         // serializer.setProperty("targetModuleId", targetSerializationModuleId);
+                //     } else {
+                //         //This is not working as I thought it would yet
+                //         //We use DataService.mainService as the target for transaction related operations. That should really be the model.
+                //         //serializer.addObjectReference(this.target);
+                //         serializer.setProperty("targetModuleId", null);
+                //     }
+                // }
             } else if(this.targetModuleId) {
                 serializer.setProperty("targetModuleId", this.targetModuleId);
             }
