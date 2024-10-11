@@ -31,6 +31,13 @@ var ObjectDescriptor = exports.ObjectDescriptor = class ObjectDescriptor extends
         this._eventPropertyDescriptorsTable = new Map();
         this.defineBinding("eventDescriptors", {"<-": "_eventDescriptors.concat(parent.eventDescriptors)"});
         this.defineBinding("localizablePropertyNames", {"<-": "localizablePropertyDescriptors.name"});
+       
+        /**
+         * Returns all property descriptors that have isUnique set to true
+         * @property {Array<PropertyDescriptor>} value
+         */
+        this.defineBinding("uniquePropertyDescriptors", {"<-": "_ownPropertyDescriptors.filter{isUnique == true}.concat(parent.uniquePropertyDescriptors)"});
+        
     }
 }
 
