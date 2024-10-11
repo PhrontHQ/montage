@@ -82,7 +82,7 @@ var MontageWalker = exports.MontageWalker = Montage.specialize({
 
             //Happens often so let's do that first
             if (type === "MontageObject") {
-                this._visitCustomType(type, value, name);
+                this._visitCustomType(value, name, type);
             } else if (type === "object") {
                 this._visitObject(value, name);
             } else if (type === "array") {
@@ -102,21 +102,21 @@ var MontageWalker = exports.MontageWalker = Montage.specialize({
             } else if (type === "undefined") {
                 this._visitUndefined(name);
             } else {
-                this._visitCustomType(type, value, name);
+                this._visitCustomType(value, name, type);
             }
         }
     },
 
     _visitCustomType: {
-        value: function(type, object, name) {
-            this._callVisitorMethod("visit" + type, object, name);
+        value: function(object, name, type) {
+            this._callVisitorMethod(`visit${type}`, object, name);
         }
     },
 
     _enterCustomObject: {
         value: function(type, object, name) {
-            this._callVisitorMethod("enter" + type, object, name);
-            this._callVisitorMethod("exit" + type, object, name);
+            this._callVisitorMethod(`enter${type}`, object, name);
+            this._callVisitorMethod(`exit${type}`, object, name);
         }
     },
 
