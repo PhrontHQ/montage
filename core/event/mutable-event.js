@@ -4,6 +4,7 @@
  */
  const Montage = require("../core").Montage,
     uuid = require("../../core/uuid"),
+    Promise = require("../promise").Promise,
     console = require('../extras/console').console;
 
 var wrapPropertyGetter = function (key, storageKey) {
@@ -184,11 +185,14 @@ var wrapPropertyGetter = function (key, storageKey) {
         },
 
         /**
+         * A propagation promise is set by the event maanager when a listener returns a promise from handling the event.
+         * event propagates to the next listener when that promise is fullfilled. 
+         * 
          * @type {Property}
          * @default {Promise} null
          */
         propagationPromise: {
-            value: null
+            value: Promise.resolveUndefined
         },
 
 
