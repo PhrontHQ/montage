@@ -957,9 +957,11 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                     continue;
                 } else if (id1 === "") {
                     return name;
-                } else {
+                } else if(id1 === id2){
                     name += "/";
                     return (name += id1);
+                } else {
+                    return id1;
                 }
             }
             if (internal) {
