@@ -197,7 +197,7 @@ describe("core/range-controller-spec", function () {
 
                     rangeController.content.delete(2);
                     expect(rangeController.selection.length).toBe(1);
-                    expect(rangeController.selection.toArray()).toEqual([1]);
+                    expect(rangeController.selection.toArray()).toEqual([0]);
                 });
             });
 

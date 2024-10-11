@@ -157,7 +157,9 @@ TestPageLoader.queueTest("active-target-test/active-target-test", function (test
                 it("should return no activeTarget when encountering a self-referential cycle", function () {
                     var foo = new Montage();
                     foo.nextTarget = foo;
-                    expect(eventManager._findActiveTarget(foo)).toBeNull();
+                    var activeTarget = eventManager._findActiveTarget(foo);
+                    expect(activeTarget).toBeNull();
+                    console.log("done");
                 });
 
                 it("should return no activeTarget when encountering a distant cycle", function () {
