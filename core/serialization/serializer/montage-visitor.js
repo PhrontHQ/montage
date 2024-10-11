@@ -362,8 +362,8 @@ var MontageVisitor = Montage.specialize({
                 Mr
             */
             if(this._require.identify) {
-                return this._require.identify(objectInfo.moduleId,
-                    objectInfo.require);
+                return this._require.identify(objectInfo.moduleId, objectInfo.require);
+                //return this._require.identify(objectInfo.moduleId, objectInfo.require);
             }
             /*
                 Node
