@@ -235,6 +235,9 @@ RawDataService.addClassProperties({
         set: function (value) {
             if (value !== this._connectionDescriptor) {
                 this._connectionDescriptor = value;
+
+                //Reset potentually cached values
+                this._connection = null;
                 this._registeredConnectionsByIdentifier = null;
                 this.registerConnections(value);
             }
