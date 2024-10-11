@@ -175,6 +175,10 @@ if(!useMr) {
     mainPackageLocation: PATH.join(module.parent.filename, ".")
     })
     .then(function (mr) {
+
+        //Set the highest level - App/process level — require 
+        global.require = mr;
+
         //Inject current file:
         var currentMrModule = mr.inject("mod/worker/main", exports),
             computedModuleId = `${PATH.relative(module.path, mainModule.path)}/main.mjson`;
