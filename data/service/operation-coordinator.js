@@ -277,7 +277,7 @@ exports.OperationCoordinator = Target.specialize(/** @lends OperationCoordinator
                         return operation;
                     });
             } else {
-                return Promise.reject(new Error("can't send operation "+operation.type+"that is bigger serialized ("+operationDataKBSize+"kb) than MAX_PAYLOAD_SIZE ("+MAX_PAYLOAD_SIZE+"kb) - serialization: "+operationSerialization));
+                return Promise.reject(new Error("can't send operation "+operation.type+"that is bigger serialized ("+operationDataKBSize+"kb) than MAX_PAYLOAD_SIZE ("+this.MAX_PAYLOAD_SIZE+"kb) - serialization: "+operationSerialization));
             }
         }
     },
