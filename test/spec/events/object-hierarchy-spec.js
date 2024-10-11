@@ -580,7 +580,8 @@ TestPageLoader.queueTest("object-hierarchy-test/object-hierarchy-test", function
                 foo.nextTarget = null;
 
                 var path = eventManager.eventPathForTarget(foo);
-                expect(path[0]).toBe(testApplication);
+                expect(path[0]).toBe(foo);
+                expect(path[1]).toBe(testApplication);
             });
 
             it("should include the target itself in the chain", function () {
@@ -596,7 +597,7 @@ TestPageLoader.queueTest("object-hierarchy-test/object-hierarchy-test", function
                 foo.nextTarget = foo;
 
                 var path = eventManager.eventPathForTarget(foo);
-                expect(path[0]).toBe(testApplication);
+                expect(path[1]).toBe(testApplication);
             });
 
         });
