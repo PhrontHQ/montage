@@ -1333,7 +1333,7 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
                 firstPromise,
                 promises,
                 propertyNames = ObjectKeys(value),
-                i = 0,
+                i = 0, countI = propertyNames.length,
                 propertyName,
                 iValue,
                 iValueContainer = value,
@@ -1349,9 +1349,9 @@ var MontageReviver = exports.MontageReviver = Montage.specialize(/** @lends Mont
             //     delete value.properties;
             // }
 
-            while((propertyName = propertyNames[i++])) {
+            for(;(i<countI);i++) {
 
-                if((iValue = value[propertyName]) && ((typeof iValue === "object" && !_isArray(iValue) &&
+                if((iValue = value[(propertyName = propertyNames[i])]) && ((typeof iValue === "object" && !_isArray(iValue) &&
                     (ONE_WAY in iValue || TWO_WAY in iValue || ONE_ASSIGNMENT in iValue)) ||
                     propertyName.includes('.'))
                     ) {
