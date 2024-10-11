@@ -27,7 +27,7 @@ exports.WebSocketSessionConnection = Montage.specialize(/** @lends WebSocketSess
     /**
      * The WebSocket connectionId that’s created and provided by AWS API Gateway
      */
-    connectionId: {
+    serverConnectionId: {
         value: undefined
     },
 
@@ -35,8 +35,9 @@ exports.WebSocketSessionConnection = Montage.specialize(/** @lends WebSocketSess
      * The time range modeling the beginning and end of the session
      * @property {Range<Date>} value
      */
-    timeRange: {
-        value: undefined
+    existenceTimeRange: {
+        value: undefined,
+        serializable: true
     }
 
 });

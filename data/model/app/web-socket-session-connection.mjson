@@ -4,8 +4,8 @@
         "values": {
             "name": "WebSocketSessionConnection",
             "propertyDescriptors": [
-                {"@": "connectionId"},
-                {"@": "timeRange"}
+                {"@": "serverConnectionId"},
+                {"@": "existenceTimeRange"}
             ],
             "objectDescriptorModule": {
                 "%": "./web-socket-session-connection.mjson"
@@ -13,21 +13,25 @@
             "exportName": "WebSocketSessionConnection",
             "module": {
                 "%": "./web-socket-session-connection"
-            }
+            },
+            "parent":{"@": "DataObjectDescriptor"}
         }
     },
-    "connectionId": {
+    "DataObjectDescriptor": {
+        "object": "../data-object.mjson"
+    },
+    "serverConnectionId": {
         "prototype": "../../../core/meta/property-descriptor",
         "values": {
-            "name": "connectionId",
+            "name": "serverConnectionId",
             "valueType": "string",
             "isSearchable": true
         }
     },
-    "timeRange": {
+    "existenceTimeRange": {
         "prototype": "../../../core/meta/property-descriptor",
         "values": {
-            "name": "timeRange",
+            "name": "existenceTimeRange",
             "valueType": "date",
             "cardinality": 1,
             "valueDescriptor": {"@": "range_descriptor"}
