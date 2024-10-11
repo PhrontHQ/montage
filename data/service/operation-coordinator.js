@@ -32,10 +32,10 @@ exports.OperationCoordinator = Target.specialize(/** @lends OperationCoordinator
             this.mainService = mainService;
             this.application = defaultEventManager.application;
 
-            var phrontService = this.mainService.childServices[0];
+            //var phrontService = this.mainService.childServices[0];
 
 
-            phrontService.operationCoordinator = this;
+            //phrontService.operationCoordinator = this;
 
             // mainService.addEventListener(DataOperation.Type.ReadOperation,phrontService,false);
             // mainService.addEventListener(DataOperation.Type.UpdateOperation,phrontService,false);
