@@ -780,7 +780,7 @@ ObjectDescriptor.addClassProperties({
     },
 
     /**
-     * Returns all property descriptors that have their serializable property true
+     * Returns all property descriptors that have their serializable property not false
      *
      * @method
      * @returns {Array.<PropertyDescriptor>} Arrat of relevant propertyDescriptors
