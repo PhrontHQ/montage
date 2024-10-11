@@ -619,7 +619,11 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
     },
     referrer: {
         get: function() {
-            return this._referrer;
+            return this._referrer || (
+                this._referrer === null
+                    ? null
+                    : (this._referrer = this?.rawDataService?.referrerForDataOperation(this))
+            );
         },
         set: function(value) {
             if(value !== this._referrer) {
