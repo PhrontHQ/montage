@@ -3927,7 +3927,8 @@ Component.addClassProperties(
                 this._element = null;
             }
 
-            for (let childComponents = this.childComponents, i = 0, ii = childComponents.length; i < ii; i++) {
+            let childComponents = this.childComponents, i = 0;
+            while (childComponents[i]) {
                 childComponents[i].dispose();
             }
         }
