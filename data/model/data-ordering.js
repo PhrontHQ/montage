@@ -88,3 +88,31 @@ exports.DataOrdering = Montage.specialize(/** @lends DataOrdering.prototype */ {
     }
 
 });
+
+if(!Array.prototype.sortedArrayWithDataOrderings) {
+    Object.defineProperty(Array.prototype, "sortedArrayWithDataOrderings", {
+        value: function(dataOrderings) {
+            var expression = "";
+            //Build combined expression
+            for (var i=0,iDataOrdering, iExpression;(iDataOrdering = orderings[i]);i++) {
+                iExpression = iDataOrdering.expression;
+        
+                expression += `${expression.length ? "." : ""}sorted{${iExpression}}${iDataOrdering.order === DESCENDING ? ".reversed()" : ""} }`;
+        
+                // if (expression.length) {
+                //     expression += ".";
+                // }
+        
+                // expression += "sorted{";
+                // expression += iExpression;
+                // expression += "}";
+        
+                // if (iDataOrdering.order === DESCENDING) {
+                //     expression += ".reversed()";
+                // }
+            }
+            return evaluate(expression, this);
+        
+        }
+    });
+}
