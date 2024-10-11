@@ -16,9 +16,21 @@ var SelfSerializer = Montage.specialize.call(Object, {
         }
     },
 
+    _require: {
+        get: function() {
+            return this._visitor._require;
+        }
+    },
+
     getObjectLabel: {
         value: function (object) {
             return this._visitor.labeler.getObjectLabel(object);
+        }
+    },
+
+    serializationModuleIdForObject: {
+        value: function (object) {
+            return this._visitor.serializationModuleIdForObject(object);
         }
     },
 

@@ -322,8 +322,8 @@ var MontageVisitor = Montage.specialize({
         }
     },
 
-    setObjectType: {
-        value: function (object, builderObject) {
+    serializationModuleIdForObject: {
+        value: function(object) {
             var objectInfo = Montage.getInfoForObject(object),
                 wasLoadedFromMJSON = objectInfo.module.endsWith(".mjson"),
                 isInstance = objectInfo.isInstance,
@@ -331,7 +331,18 @@ var MontageVisitor = Montage.specialize({
                     ? this._require.config.name === objectInfo.require.config.name
                         ? objectInfo.module
                         :(objectInfo.require.config.name+"/"+objectInfo.module)
-                    : this.getObjectLocationId(object, objectInfo),
+                    : this.getObjectLocationId(object, objectInfo);
+
+            return locationId;
+        }
+    },
+
+    setObjectType: {
+        value: function (object, builderObject) {
+            var objectInfo = Montage.getInfoForObject(object),
+                wasLoadedFromMJSON = objectInfo.module.endsWith(".mjson"),
+                isInstance = objectInfo.isInstance,
+                locationId = this.serializationModuleIdForObject(object),
                 locationIdBuilderObject = this.builder.createString(locationId),
                 type = (isInstance && !wasLoadedFromMJSON) ? "prototype" : "object";
 
