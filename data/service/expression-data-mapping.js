@@ -1733,7 +1733,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                 return;
             }
             else if(object.propertySerializability(propertyName) /* if the value returned is undefined or false, we don't care */) {
-                throw new Error("No objectMappingRules found to map property "+propertyName+" of object,", object, "to raw data");
+                console.warn("ExpressionDataMapping.mapObjectPropertyToRawData(): No objectMappingRules found to map property '"+propertyName+"' of " + object.objectDescriptor.name);
             }
         }
     },
