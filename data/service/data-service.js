@@ -28,7 +28,8 @@ var Montage = require("../../core/core").Montage,
     ReadEvent = require("../model/read-event").ReadEvent,
     DataOperationErrorNames = require("./data-operation").DataOperationErrorNames,
     Transaction = require("../model/transaction").Transaction,
-    TransactionEvent = require("../model/transaction-event").TransactionEvent;
+    TransactionEvent = require("../model/transaction-event").TransactionEvent,
+    ObjectSroreDescriptor = require("../model/object-store.mjson").montageObject;
 
     require("../../core/extras/string");
     require("../../core/extras/date");
@@ -73,6 +74,7 @@ DataService = exports.DataService = class DataService extends Target {/** @lends
         super();
 
         this.defineBinding("mainService", {"<-": "mainService", source: defaultEventManager.application});
+        this.defineBinding("types", {"<-": "childServices.map{types}", source: this});
 
         // exports.DataService.mainService = exports.DataService.mainService || this;
         // if(this === DataService.mainService) {
@@ -216,6 +218,12 @@ DataService.addClassProperties({
                 // mainService.addEventListener(DataOperation.Type.RollbackTransactionOperation,this,false);
 
 
+                /*
+                    Prepare to listen for ReadOperation that will be dispatched by RawDataServices that 
+                    handle that Read Event, so we can know the data services that handled it
+                */
+                // self.addEventListener(DataOperation.Type.ReadOperation, self, true);
+
                 mainService.addEventListener(DataOperation.Type.NoOp,this,false);
                 mainService.addEventListener(DataOperation.Type.ReadFailedOperation,this,false);
                 mainService.addEventListener(DataOperation.Type.ReadCompletedOperation,this,false);
@@ -227,6 +235,8 @@ DataService.addClassProperties({
                 mainService.addEventListener(DataOperation.Type.DeleteCompletedOperation,this,false);
                 mainService.addEventListener(DataOperation.Type.CreateTransactionFailedOperation,this,false);
                 mainService.addEventListener(DataOperation.Type.CreateTransactionCompletedOperation,this,false);
+
+                
                 // mainService.addEventListener(DataOperation.Type.BatchCompletedOperation,this,false);
                 // mainService.addEventListener(DataOperation.Type.BatchFailedOperation,this,false);
                 // mainService.addEventListener(DataOperation.Type.TransactionUpdatedOperation,this,false);
@@ -344,9 +354,9 @@ DataService.addClassProperties({
         value: function (label) {
             if(Array.isArray(this._deserializedChildServices) && this._deserializedChildServices.length > 0) {
                 //var childServices = this._childServices;
-                if(!this._childServices) {
-                    this._childServices = [];
-                }
+                // if(!this._childServices) {
+                //     this._childServices = [];
+                // }
                 this.addChildServices(this._deserializedChildServices);
 
                 //Sets ourselve as application's main service
@@ -402,6 +412,11 @@ DataService.addClassProperties({
     types: {
         get: function () {
             return this._childServiceTypes;
+        },
+        set: function(value) {
+            if(value !== this._childServiceTypes) {
+                this._childServiceTypes = value;
+            }
         }
     },
 
@@ -442,6 +457,12 @@ DataService.addClassProperties({
                 this._isMainService = value;
                 if(value) {
                     this.addRangeAtPathChangeListener("userLocales", this, "handleUserLocalesRangeChange");
+
+                    /*
+                        Prepare to listen for ReadOperation that will be dispatched by RawDataServices that 
+                        handle that Read Event, so we can know the data services that handled it
+                    */
+                    this.application.addEventListener(DataOperation.Type.ReadOperation,this,true);
 
                     this.addEventListener(DataOperation.Type.NoOp,this,false);
                     this.addEventListener(DataOperation.Type.ReadFailedOperation,this,false);
@@ -597,12 +618,12 @@ DataService.addClassProperties({
             for(i=0, countI = childServices.length;(i<countI);i++) {
                 iChild = childServices[i];
 
-                if(this._childServices.indexOf(iChild) !== -1) {
+                if(this.childServices.has(iChild)) {
                     continue;
                 }
 
                 if((types = iChild.types)) {
-                    this._registerTypesForService(types,iChild);
+                    this.registerTypes(types);
 
                     // for(j=0, countJ = types.length;(j<countJ);j++ ) {
                     //     jType = types[j];
@@ -794,15 +815,23 @@ DataService.addClassProperties({
         value: function (child, types, mappings) {
             var self = this,
                 objectDescriptors;
-            return this._resolveAsynchronousTypes(types).then(function (descriptors) {
+            return this.loadThenRegisterTypes(types).then(function (descriptors) {
                 objectDescriptors = descriptors;
-                self._registerTypesForService(objectDescriptors,child);
                 return self._registerChildServiceMappings(child, mappings);
             }).then(function () {
                 return self._makePrototypeForTypes(child, objectDescriptors);
             }).then(function () {
                 self.addChildService(child, types);
                 return null;
+            });
+        }
+    },
+
+    loadThenRegisterTypes: {
+        value: function(types) {
+            return this._resolveAsynchronousTypes(types).then( (objectDescriptors) => {
+                this.registerTypes(objectDescriptors);
+                return objectDescriptors;
             });
         }
     },
@@ -824,8 +853,8 @@ DataService.addClassProperties({
         }
     },
 
-    _registerObjectDescriptorForService: {
-        value: function(jObjectDescriptor, service, moduleIdToObjectDescriptorMap) {
+    _registerObjectDescriptor: {
+        value: function(jObjectDescriptor, moduleIdToObjectDescriptorMap = this._moduleIdToObjectDescriptorMap) {
             var result = null;
 
             if(jObjectDescriptor.object) {
@@ -856,16 +885,16 @@ DataService.addClassProperties({
         }
     },
 
-    _registerTypesForService: {
-        value: function (types, service) {
+    registerTypes: {
+        value: function (types) {
             var map = this._moduleIdToObjectDescriptorMap, typesPromises,
-                j, countJ, jObjectDescriptor, jModule, jModuleId, jResult,
+                j, countJ, jObjectDescriptor, jResult,
                 self = this;
 
             for(j=0, countJ = types.length;(j<countJ);j++ ) {
                 jObjectDescriptor = types[j];
 
-                jResult = this._registerObjectDescriptorForService(jObjectDescriptor, service, map);
+                jResult = this._registerObjectDescriptor(jObjectDescriptor, map);
 
                 // jResult = this._makePrototypeForType(service, jObjectDescriptor);
                 if(jResult && Promise.is(jResult)) {
@@ -1873,8 +1902,18 @@ DataService.addClassProperties({
      */
     _getTriggersForObject: {
         value: function (object) {
-            var type = this._getObjectType(object);
-            return type && this._dataObjectTriggers.get(type);
+            var type = this._getObjectType(object),
+                triggers = type && this._dataObjectTriggers.get(type);
+            if(!triggers && this.handlesType(type)) {
+                
+            }
+            return triggers;
+        }
+    },
+
+    _triggerForObjectProperty: {
+        value: function (object, propertyName) {
+            return this._getTriggersForObject(object)?.[propertyName]
         }
     },
 
@@ -2505,6 +2544,11 @@ DataService.addClassProperties({
     identifier: {
         get: function() {
             return this._identifier || (this._identifier = Montage.getInfoForObject(this).moduleId);
+        },
+        set: function(value) {
+            if(value !== this._identifier) {
+                this._identifier = value;
+            }
         }
     },
 
@@ -2545,7 +2589,12 @@ DataService.addClassProperties({
      */
     recordDataIdentifierForObject: {
         value: function(dataIdentifier, object) {
-            if(this._dataIdentifierByObject.has(object) && this._dataIdentifierByObject.get(object) !== dataIdentifier) {
+            /*
+                When we have a SynchronizationDataService in-between MainService and RawDataOnes, dataIdentifier and 
+                    this._dataIdentifierByObject.get(object) are actually not the same. need to figure out why, but narrowing the test
+                to verify they have the same primaryKey should help for now.
+            */
+            if(this._dataIdentifierByObject.has(object) && this._dataIdentifierByObject.get(object).primaryKey !== dataIdentifier.primaryKey) {
                 throw new Error("recordDataIdentifierForObject when one already exists:"+JSON.stringify(object));
             }
             this._dataIdentifierByObject.set(object, dataIdentifier);
@@ -2828,6 +2877,7 @@ DataService.addClassProperties({
         }
     },
 
+
     registerCreatedDataObject: {
         value: function(dataObject) {
             var objectDescriptor = this.objectDescriptorForObject(dataObject),
@@ -2854,6 +2904,76 @@ DataService.addClassProperties({
         }
     },
 
+    /**
+     * This method makes the mainService aware of a dataObject that wasn't fetched. So
+     * beyond that we can't really know if it's new, as it doesn't exists in the a storage
+     * the matching data services encapsulate, or if it does and this might be more of a merge
+     * / update. It might be necessary to flag it to rawDataServcices somehow. A DB like PostgreSQL
+     * can probably deal with it by using INSERT ... ON CONFLICT (key) DO UPDATE (and ON CONFLICT (key) DO NOTHING), 
+     * i.e. upsert, or the more recent MERGE.
+     *     *
+     * @method {Set.<Object>}
+     * @argument {DataObject} dataObject
+     * @returns {void}
+
+     */
+    mergeDataObject: {
+        value: function(dataObject) {
+
+            if(this.isObjectCreated(dataObject)) {
+                return;
+            } else {
+
+                var objectDescriptor = this.objectDescriptorForObject(dataObject),
+                    createdDataObjects = this.createdDataObjects,
+                    value = createdDataObjects.get(objectDescriptor);
+
+                if(!value) {
+                    createdDataObjects.set(objectDescriptor, (value = new Set()));
+                    this.objectDescriptorsWithChanges.add(objectDescriptor);
+                }
+
+                if(!value.has(dataObject)) {
+                    let service = this.childServiceForType(objectDescriptor),
+                        //In case the object's primarykey is a public property 
+                        primaryKey = service.primaryKeyForTypeRawData(objectDescriptor, dataObject),
+                        prototype = this._getPrototypeForType(objectDescriptor),
+                        dataIdentifier = primaryKey 
+                            ? service.dataIdentifierForTypePrimaryKey(objectDescriptor, primaryKey)
+                            : service.dataIdentifierForNewDataObject(this.objectDescriptorForType(objectDescriptor));
+
+                    this.registerUniqueObjectWithDataIdentifier(dataObject, dataIdentifier);
+
+                    value.add(dataObject);
+
+                    //Need to fix the prototype if needed
+                    if(Object.getPrototypeOf(dataObject) !== prototype) {
+                        Object.setPrototypeOf(dataObject, prototype);
+                    }    
+
+                    //This is done in _createDataObject, is it needed here?
+                    this._setObjectType(dataObject, objectDescriptor);
+                    this._objectDescriptorForObjectCache.set(dataObject,objectDescriptor);
+
+                    //Build the changes we'll want to upsert
+                    this.registerMergedDataObjectChanges(dataObject);
+
+                    this.dispatchDataEventTypeForObject(DataEvent.merge, dataObject);
+                }
+            }
+
+        }
+    },
+
+    registerMergedDataObjectChanges: {
+        value: function(dataObject) {
+            // let dataObjectChanges = new Map();
+
+            // this.dataObjectChangesMap.set(object,dataObjectChanges);
+
+
+        }
+    },
 
     isObjectCreated: {
         value: function(object) {
@@ -3018,9 +3138,16 @@ DataService.addClassProperties({
      * @type {Map.<Object>}
      */
 
+    _buildChangesForDataObject: {
+        value: function(dataObject) {
+            let changesForDataObject = new Map();
+            this.dataObjectChanges.set(dataObject,changesForDataObject);
+            return changesForDataObject;
+        }
+    },
     changesForDataObject: {
         value: function (dataObject) {
-            return this.dataObjectChanges.get(dataObject);
+            return this.dataObjectChanges.get(dataObject) || this._buildChangesForDataObject(dataObject);
         }
     },
 
@@ -3363,7 +3490,7 @@ DataService.addClassProperties({
                 keyValue = changeEvent.keyValue,
                 addedValues = changeEvent.addedValues,
                 removedValues = changeEvent.removedValues,
-                changesForDataObject = this.dataObjectChanges.get(dataObject),
+                changesForDataObject = this.changesForDataObject(dataObject),
                 //WARNING TEST: THIS WAS REDEFINING THE PASSED ARGUMENT
                 //inversePropertyDescriptor,
                 self = this;
@@ -3384,10 +3511,11 @@ DataService.addClassProperties({
                 this.registerChangedDataObject(dataObject);
             }
 
-            if(!changesForDataObject) {
-                changesForDataObject = new Map();
-                this.dataObjectChanges.set(dataObject,changesForDataObject);
-            }
+            //Now handled in changesForDataObject
+                // if(!changesForDataObject) {
+                //     changesForDataObject = new Map();
+                //     this.dataObjectChanges.set(dataObject,changesForDataObject);
+                // }
 
 
             /*
@@ -4578,13 +4706,15 @@ DataService.addClassProperties({
     //     }
     // },
 
-    // handleReadFailedOperation: {
-    //     value: function (operation) {
-    //         var stream = this._thenableByOperationId.get(operation.referrerId);
-    //         this.rawDataError(stream,operation.data);
-    //         this._thenableByOperationId.delete(operation.referrerId);
-    //     }
-    // },
+    handleReadFailedOperation: {
+        value: function (operation) {
+            var stream = this._thenableByOperationId.get(operation.referrerId);
+            if(stream) {
+                this.rawDataError(stream,operation.data);
+                this._thenableByOperationId.delete(operation.referrerId);    
+            }
+        }
+    },
 
     // handleOperationCompleted: {
     //     value: function (operation) {
@@ -4747,7 +4877,87 @@ DataService.addClassProperties({
             return criteriaExpressionMap.delete(parametersKey);
         }
     },
-    
+
+    /*
+        DataStream cache:
+
+        Map: ObjectDescriptor -> Map: criteriaExpression -> Map: JSON.stringify(criteria.parameters) -> Promise
+    */
+    __rawDataServiceHandlersByReadEventId: {
+        value: undefined
+    },
+    _rawDataServiceHandlersByReadEventId: {
+        get: function() {
+            return this.__rawDataServiceHandlersByReadEventId || (this.__rawDataServiceHandlersByReadEventId = new Map())
+        }
+    },
+    registerReadEvent: {
+        value: function(readEvent) {
+            this._rawDataServiceHandlersByReadEventId.set(readEvent.id,undefined);
+        }
+    },
+
+
+    __rawDataServiceHandlersByReadOperation: {
+        value: undefined
+    },
+    _rawDataServiceHandlersByReadOperation: {
+        get: function() {
+            return this.__rawDataServiceHandlersByReadOperation || (this.__rawDataServiceHandlersByReadOperation = new Map())
+        }
+    },
+
+    registerRawDataServiceForReadOperation: {
+        value: function(rawDataService, readOperation) {
+            let handlers = this._rawDataServiceHandlersByReadOperation.get(readOperation);
+            if(!handlers) {
+                this._rawDataServiceHandlersByReadOperation.set(readOperation, (handlers = []));
+            }
+            handlers.push(rawDataService);
+
+            this.registerRawDataServiceHandlerForReadEventId(rawDataService, readOperation.referrerId);
+        }
+    },
+
+    registerRawDataServiceHandlerForReadEventId: {
+        value: function(rawDataService, readEventId) {
+            let handlers = this._rawDataServiceHandlersByReadEventId.get(readEventId);
+            if(!handlers) {
+                this._rawDataServiceHandlersByReadEventId.set(readEventId, (handlers = []));
+            }
+            handlers.push(rawDataService);
+        }
+    },
+    unregisterRawDataServiceHandlerForReadEventId: {
+        value: function(rawDataService, readEventId) {
+            let handlers = this._rawDataServiceHandlersByReadEventId.get(readEventId);
+            if(handlers) {
+                handlers.delete(rawDataService);
+            }
+        }
+    },
+    hasRegisteredRawDataServiceHandlerForReadEvent: {
+        value: function(readEvent) {
+            let handlers = this._rawDataServiceHandlersByReadEventId.get(readEvent.id);
+            return handlers && handlers.length > 0
+        }
+    },
+    unregisterReadEvent: {
+        value: function(readEvent) {
+
+            if(!this.hasRegisteredRawDataServiceHandlerForReadEvent(readEvent)) {
+                /*
+                    This means no RawDataService were able to handle that read. 
+                    We need to report am error
+                */
+                readEvent.dataStream.dataError(new Error("No RawDataService to handle query for "+readEvent.dataStream.query.type.name));
+            }
+
+            this._rawDataServiceHandlersByReadEventId.delete(readEvent.id);
+            ReadEvent.checkin(readEvent);
+        }
+    },
+
 
     /**
      * Fetch data from the service using its child services.
@@ -4870,19 +5080,15 @@ DataService.addClassProperties({
                         readEvent.query = query;
                         readEvent.dataStream = stream;
 
-                        /*
-                            Prepare to listen for ReadOperation that will be dispatched by RawDataServices that 
-                            handle that Read Event, so we can know the data services that handled it
-                        */
-                        self.addEventListener(DataOperation.Type.ReadOperation, self, true);
+                        self.registerReadEvent(readEvent);
 
                         query.type.dispatchEvent(readEvent);
                         if(readEvent.propagationPromise) {
-                            readEvent.propagationPromise.finally(function() {
-                                ReadEvent.checkin(readEvent);
+                            readEvent.propagationPromise.finally(() => {
+                                self.unregisterReadEvent(readEvent);
                             });
                         } else {
-                            ReadEvent.checkin(readEvent);
+                            self.unregisterReadEvent(readEvent);
                         }
                     } catch (e) {
                         stream.dataError(e);
@@ -6001,15 +6207,24 @@ DataService.addClassProperties({
         },
         set: function(value) {
             if(this._performsAccessControl !== value) {
-                if(this._performsAccessControl && !value) {
-                    this.application.removeEventListener(DataOperation.Type.ReadOperation,this,true);
-                }
+                /*
+                    We're now doing work unrelated to acces control in captureReadOperation, 
+                    so we don't need to do this here anymore
+                */
+                // if(this._performsAccessControl && !value) {
+                //     this.application.removeEventListener(DataOperation.Type.ReadOperation,this,true);
+                // }
                 this._performsAccessControl = value;
 
                 //Until we have a generic prepareForActivation
                 //Intended for access control: we capture at the highest level:
                 if(this.performsAccessControl) {
-                    this.application.addEventListener(DataOperation.Type.ReadOperation,this,true);
+                    
+                    /*
+                        We're now doing work unrelated to acces control in captureReadOperation, 
+                        so we don't need to do this here anymore
+                    */
+                    //this.application.addEventListener(DataOperation.Type.ReadOperation,this,true);
                     /*
                         To assess ObjectDescriptor-level access
                     */
@@ -6168,6 +6383,11 @@ DataService.addClassProperties({
     },
     captureReadOperation: {
         value: function(readOperation) {
+
+            if(readOperation.rawDataService) {
+                this.registerRawDataServiceForReadOperation(readOperation.rawDataService, readOperation);
+            }
+
             //console.log("captureReadOperation: "+readOperation.target.name+", criteria.expression: "+readOperation.criteria.expression+", criteria.parameters: "+JSON.stringify(readOperation.criteria.parameters), readOperation);
             if(this.performsAccessControl) {
                 var self = this,
@@ -6689,25 +6909,74 @@ DataService.addClassProperties({
         }
     },
 
-    createStorageOperationForObjectDescriptor: {
+    createObjectStoreOperationForObjectDescriptor: {
         value: function (objectDescriptor) {
             var iOperation = new DataOperation();
 
             iOperation.type = DataOperation.Type.CreateOperation;
-            iOperation.data = objectDescriptor.module.id;
-            iOperation.target = objectDescriptor;
+            iOperation.data = objectDescriptor;
+            iOperation.target = ObjectSroreDescriptor;
+            iOperation.rawDataService = this;
 
             return iOperation;
         }
     },
 
-    createStorageForObjectDescriptor: {
+    // responseOperationForCreateStorageOperation: {
+    //     value: function (createOperation, err, data) {
+
+    //     }
+    // },
+
+
+    /*
+        WIP: now that we use the ObjectStore object descriptor as the target for objectstore creation,
+        we can clean up. However, since the objectDescriptor is now the data of the CreateCompletedOperation,
+        if it fails, the data of the CreateFailedOperation would be the error. Right now, we just return the error
+        from the raw layer, but we can and should create our own Erro so we can pass the objectDescriptor
+    */
+    handleObjectStoreCreateCompletedOperation: {
+        value: function (operation) {
+            if(operation.rawDataService === this) {
+                this._objectDescriptorStoreExistsCache.set(operation.data,true);
+                operation.resolveCompletionPromise?.(operation);
+            }
+        }
+    },
+
+    handleObjectStoreCreateFailedOperation: {
+        value: function (operation) {
+            if(operation.rawDataService === this) {
+                this._objectDescriptorStoreExistsCache.set(operation.data.objectDescriptor, operation.data);
+                operation.rejectCompletionPromise?.(operation);
+           }
+
+        }
+    },
+
+    registerForObjectStoreCreateOperation: {
+        value: function() {
+            this.addEventListener(DataOperation.Type.CreateCompletedOperation, this, false);
+            this.addEventListener(DataOperation.Type.CreateFailedOperation, this, false);
+        }
+    },
+    unregisterForObjectStoreCreateOperation: {
+        value: function() {
+            this.removeEventListener(DataOperation.Type.CreateCompletedOperation, this, false);
+            this.removeEventListener(DataOperation.Type.CreateFailedOperation, this, false);
+        }
+    },
+
+    createObjectStoreForObjectDescriptor: {
         value: function (objectDescriptor) {
             //console.log("create "+objectDescriptor.name);
-            var iOperation = this.createStorageOperationForObjectDescriptor(objectDescriptor),
+            var iOperation = this.createObjectStoreOperationForObjectDescriptor(objectDescriptor),
                 self = this;
 
             var createPromise = new Promise(function(resolve, reject) {
+
+                iOperation.resolveCompletionPromise = resolve;
+                iOperation.rejectCompletionPromise = reject;
 
                 /*
                     The reason we're creating anonymous event handlers like this is that we're missing the semantic of having a "RawObjectDescriptor" 
@@ -6717,30 +6986,32 @@ DataService.addClassProperties({
                     before callig super here that would then take care of the promise aspect.
                 */
 
-                function createCompletedHandler(operation) {
-                    if(operation.referrerId === iOperation.id) {
-                        cleanupdHandlers();
-                        resolve(operation);
-                    }
-                };
+                // function createCompletedHandler(operation) {
+                //     if(operation.referrerId === iOperation.id) {
+                //         cleanupdHandlers();
+                //         self._objectDescriptorStoreExistsCache.set(objectDescriptor,true);
+                //         resolve(operation);
+                //     }
+                // };
 
-                function createFailedHandler(operation) {
-                    if(operation.referrerId === iOperation.id) {
-                        cleanupdHandlers();
-                        reject(operation.data);
-                    }
-                };
+                // function createFailedHandler(operation) {
+                //     if(operation.referrerId === iOperation.id) {
+                //         cleanupdHandlers();
+                //         self._objectDescriptorStoreExistsCache.set(objectDescriptor,operation.data);
+                //         reject(operation.data);
+                //     }
+                // };
 
-                function cleanupdHandlers() {
-                    self.removeEventListener(DataOperation.Type.CreateCompletedOperation,createCompletedHandler, false);
-                    self.removeEventListener(DataOperation.Type.createFailedHandler,createCompletedHandler, false);
-                };
+                // function cleanupdHandlers() {
+                //     self.removeEventListener(DataOperation.Type.CreateCompletedOperation,createCompletedHandler, false);
+                //     self.removeEventListener(DataOperation.Type.createFailedHandler,createCompletedHandler, false);
+                // };
 
-                self.addEventListener(DataOperation.Type.CreateCompletedOperation, createCompletedHandler, false);
+                self.registerForObjectStoreCreateOperation();
+                // self.addEventListener(DataOperation.Type.CreateCompletedOperation, createCompletedHandler, false);
+                // self.addEventListener(DataOperation.Type.CreateFailedOperation, createFailedHandler, false);
 
-                self.addEventListener(DataOperation.Type.CreateFailedOperation, createFailedHandler, false);
-
-                objectDescriptor.dispatchEvent(iOperation);
+                iOperation.target.dispatchEvent(iOperation);
 
             });
 
@@ -6758,7 +7029,7 @@ DataService.addClassProperties({
         }
     },
 
-    createStorageForObjectDescriptorIfNeeded: {
+    createObjectStoreForObjectDescriptorIfNeeded: {
         value: function(type) {
             var objectDescriptor = this.objectDescriptorForType(type),
                 cachedValue = this._objectDescriptorStoreExistsCache && this._objectDescriptorStoreExistsCache.get(objectDescriptor),
@@ -6782,21 +7053,22 @@ DataService.addClassProperties({
                     this._objectDescriptorStoreExistsCache.set(objectDescriptor,false);
                     return false;
                 },  (error) => {
-                    if((error.name === DataOperationErrorNames.ObjectStoreMissing)) {
+                    if((error.name === DataOperationErrorNames.ObjectDescriptorStoreMissing)) {
 
-                        return self.createStorageForObjectDescriptor(objectDescriptor)
+                        return self.createObjectStoreForObjectDescriptor(objectDescriptor)
                         .then(() => {
-                            // console.log("mainService.createStorageForObjectDescriptor("+objectDescriptor.name+") COMPLETED!");
-                            self._objectDescriptorStoreExistsCache.set(objectDescriptor,true);
+                            // console.log("mainService.createObjectStoreForObjectDescriptor("+objectDescriptor.name+") COMPLETED!");
+                            // self._objectDescriptorStoreExistsCache.set(objectDescriptor,true);
                             return true;
                         })
                         .catch((error) => {
-                            console.error("mainService.createStorageForObjectDescriptor("+objectDescriptor.name+") Error!",error);
-                            self._objectDescriptorStoreExistsCache.set(objectDescriptor,error);
+                            console.error("mainService.createObjectStoreForObjectDescriptor("+objectDescriptor.name+") Error!",error);
+                            // self._objectDescriptorStoreExistsCache.set(objectDescriptor,error);
                             return Promise.reject(error);
                         });
                     }
                     else {
+                        //That moved into createObjectStoreForObjectDescriptor(), we shouldn't keep that here
                         self._objectDescriptorStoreExistsCache.set(objectDescriptor,error);
                         return Promise.reject(error);
                     }

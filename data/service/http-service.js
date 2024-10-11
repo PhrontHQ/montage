@@ -100,9 +100,9 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
     fetchIdentity() {
 
 
-        console.warn("fetchIdentity() this.currentEnvironment is ", this.currentEnvironment);
-        console.warn("fetchIdentity() this.hasOwnProperty('_connection') is ", this.hasOwnProperty('_connection'));
-        console.warn("fetchIdentity() Object.getOwnPropertyDescriptor(this, 'connection') is ", Object.getOwnPropertyDescriptor(this, 'connection'));
+        // console.warn("fetchIdentity() this.currentEnvironment is ", this.currentEnvironment);
+        // console.warn("fetchIdentity() this.hasOwnProperty('_connection') is ", this.hasOwnProperty('_connection'));
+        // console.warn("fetchIdentity() Object.getOwnPropertyDescriptor(this, 'connection') is ", Object.getOwnPropertyDescriptor(this, 'connection'));
 
 
         if(!this.identityQuery) {
@@ -154,10 +154,23 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
         if(!this.handlesType(readOperation.target)) { 
             return;
         }
+        
         var objectDescriptor = readOperation.target,
             mapping = objectDescriptor && this.mappingForObjectDescriptor(objectDescriptor),
             authenticationPromise, 
-            responseOperation;
+            responseOperation,
+            readOperationCompletionPromiseResolvers,
+            readOperationCompletionPromise, readOperationCompletionPromiseResolve, readOperationCompletionPromiseReject;
+
+
+        if(this.promisesReadOperationCompletion) {
+            readOperationCompletionPromiseResolvers = Promise.withResolvers();
+            readOperationCompletionPromise = readOperationCompletionPromiseResolvers.promise;
+            readOperationCompletionPromiseResolve = readOperationCompletionPromiseResolvers.resolve;
+            readOperationCompletionPromiseReject = readOperationCompletionPromiseResolvers.reject;
+        } else {
+            readOperationCompletionPromise = readOperationCompletionPromiseResolve = readOperationCompletionPromiseReject = undefined;
+        }
 
         if(this.authenticationPolicy && this.authenticationPolicy === AuthenticationPolicy.UP_FRONT) {
             let identityPromise;
@@ -229,113 +242,154 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
             var fetchRequests = [],
             i, iRequest;
 
-        if(typeof mapping.mapDataOperationToFetchRequests === "function") {
-            mapping.mapDataOperationToFetchRequests(readOperation, fetchRequests);
-        }
-        else {
-            let error = new Error(this.name+": No Mapping for "+ readOperation.target.name+ " lacks mapDataOperationToFetchRequests(readOperation, fetchRequests) method");
-            responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
-            responseOperation.target.dispatchEvent(responseOperation);
-        }
-        
-        if(fetchRequests.length > 0) {
-
-            for(i=0; (iRequest = fetchRequests[i]); i++) {
-                //console.debug("iRequest url: ",iRequest.url);
-                // console.debug("iRequest headers: ",iRequest.headers);
-                // console.debug("iRequest body: ",iRequest.body);
-                fetch(iRequest)
-                .then((response) => {
-                if (response.status === 200) {
-                    //console.log("Cache-Control: " + response.headers.get('Cache-Control') || response.headers.get('cache-control'));
-                    if(response.headers.get('content-type').includes("json")) {
-                        return response.json();
-                    } else {
-                        return response.text();
-                    }
-                } else if( response.status === 401) {
-                    console.log("Token has expired?",response);
-                    throw new Error("Token has expired");
-                } else if( response.status === 404) {
-                    /*
-                        This is the case where the API is all path and therefore in case nothing is found, the response is logically a 404
-                    */
-                    if((new URL(response.url)).search === "") {
-                        return null;
-                    } else {
-                        console.log(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);
-                        throw new Error(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);    
-                    }
-                }
-                else {
-                    return response.text()
-                    .then((responseContent) => {
-                        if(responseContent === "") {
-                            console.log(response);
-                        }
-                        throw new Error("Request failed with error: " + responseContent);
-                    });
-                }
-                })
-                .then((responseContent) => {
-                    //console.debug("responseContent: ",responseContent);
-
-                    let rawData = [];
-                    mapping.mapFetchResponseToRawData(responseContent, rawData);
-                    //console.debug("rawData: ",rawData);
-                    responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
-                    responseOperation.target.dispatchEvent(responseOperation);
-                    //return responseOperation;
-                })
-                .catch((error) => {
-                    console.log(this.name+" Fetch Request error: ", error);
-                    responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
-                    console.error(error);
-                    responseOperation.target.dispatchEvent(responseOperation);
-                    //return responseOperation;
-                })
-                .finally((value) => {
-                    objectDescriptor.dispatchEvent(responseOperation);
-                })
-
-            }              
-        } else {
-            let criteriaParameters = readOperation?.criteria?.parameters,
-                qualifiedProperties = readOperation?.criteria?.qualifiedProperties,
-                rawData = [];
-
-            if(readOperation.data.readExpressions && readOperation.data.readExpressions.length > 0 && qualifiedProperties?.length == 1) {
-                /*
-                    The test obove is for a query initiated by mod's data-triggers to resolve values of one object at a time and that qualifiedProperties only is the priary key.
-                    So far mod supports a single primary key, that can be an object.
-
-                    We should more carefully use the syntax to match the property to it's value
-                */
-               let readExpressions = readOperation.data.readExpressions,
-                    rawDataObject = {};
-
-                rawData.push(rawDataObject);
-               //Set the primary key:
-               rawDataObject[qualifiedProperties[0]] = criteriaParameters;
-               
-               console.warn("No Mapping found for readOperation on "+ readOperation.target.name+ " for "+ readExpressions);
-               //console.warn("No Mapping found for readOperation on "+ readOperation.target.name+ " for "+ readExpressions+" and criteria: ",readOperation.criteria);
-                for(let i = 0, countI = readExpressions.length, iReadExpression, iPropertyDescriptor; (i < countI); i++ ) {
-                    iReadExpression = readExpressions[i]
-                    iPropertyDescriptor = objectDescriptor.propertyDescriptorNamed(iReadExpression);
-                    rawDataObject[iReadExpression] = iPropertyDescriptor.defaultFalsyValue;
-                }
-                responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
-                responseOperation.target.dispatchEvent(responseOperation);
-
-            } else {
-                let error = new Error("No Mapping found for readOperation on "+ readOperation.target.name+ " with criteria: "+JSON.stringify(readOperation.criteria));
-            
+            if(typeof mapping.mapDataOperationToFetchRequests === "function") {
+                mapping.mapDataOperationToFetchRequests(readOperation, fetchRequests);
+            }
+            else {
+                let error = new Error(this.name+": No Mapping for "+ readOperation.target.name+ " lacks mapDataOperationToFetchRequests(readOperation, fetchRequests) method");
                 responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
                 responseOperation.target.dispatchEvent(responseOperation);
-            }
 
-        }
+                //Resolve once dispatchEvent() is completed, including any pending progagationPromise.
+                responseOperation.propagationPromise.then(() => {
+                    readOperationCompletionPromiseResolve?.(responseOperation);
+                });
+                
+            }
+            
+            if(fetchRequests.length > 0) {
+
+                for(i=0; (iRequest = fetchRequests[i]); i++) {
+                    console.debug(iRequest.url);
+                    // console.debug("iRequest headers: ",iRequest.headers);
+                    // console.debug("iRequest body: ",iRequest.body);
+                    fetch(iRequest)
+                    .then((response) => {
+                        if (response.status === 200) {
+                            console.debug("200: "+response.url);
+
+                            //console.log("Cache-Control: " + response.headers.get('Cache-Control') || response.headers.get('cache-control'));
+                            if(response.headers.get('content-type').includes("json")) {
+                                return response.json();
+                            } else {
+                                return response.text();
+                            }
+                        } else if( response.status === 401) {
+                            console.debug("401: "+response.url);
+                            // console.log("Token has expired?",response);
+                            throw new Error("Token has expired");
+                        } else if( response.status === 404) {
+                            /*
+                                This is the case where the API is all path and therefore in case nothing is found, the response is logically a 404
+                            */
+                            if((new URL(response.url)).search === "") {
+                                return null;
+                            } else {
+                                console.log(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);
+                                throw new Error(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);    
+                            }
+                        }
+                        else {
+                            return response.text()
+                            .then((responseContent) => {
+                                if(responseContent === "") {
+                                    console.log(response);
+                                }
+                                throw new Error("Request failed with error: " + responseContent);
+                            });
+                        }
+                    })
+                    .then((responseContent) => {
+                        console.debug("responseContent: ",JSON.stringify(responseContent));
+
+                        let rawData = [];
+                        mapping.mapFetchResponseToRawData(responseContent, rawData);
+                        //console.debug("rawData: ",rawData);
+                        responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
+                        console.debug("then responseOperation.target.dispatchEvent("+responseOperation+");");
+                        responseOperation.target.dispatchEvent(responseOperation);
+
+                        //Resolve once dispatchEvent() is completed, including any pending progagationPromise.
+                        responseOperation.propagationPromise.then(() => {
+                            readOperationCompletionPromiseResolve?.(responseOperation);
+                        });
+
+                        //return responseOperation;
+                    })
+                    .catch((error) => {
+                        console.log(this.name+" Fetch Request error: ", error);
+                        responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
+                        console.error(error);
+                        console.debug("catch responseOperation.target.dispatchEvent("+responseOperation+");");
+                        responseOperation.target.dispatchEvent(responseOperation);
+
+                        //Resolve once dispatchEvent() is completed, including any pending progagationPromise.
+                        responseOperation.propagationPromise.then(() => {
+                            readOperationCompletionPromiseResolve?.(responseOperation);
+                        });
+                        
+                        //return responseOperation;
+                    })
+                    // .finally((value) => {
+                    //     console.debug("finally objectDescriptor.dispatchEvent("+responseOperation+");");
+                    //     objectDescriptor.dispatchEvent(responseOperation);
+                    // })
+
+                }              
+            } else {
+                let criteriaParameters = readOperation?.criteria?.parameters,
+                    qualifiedProperties = readOperation?.criteria?.qualifiedProperties,
+                    rawDataPrimaryKeyProperties = mapping.rawDataPrimaryKeyProperties,
+                    rawData = [];
+
+                if(readOperation.data.readExpressions && readOperation.data.readExpressions.length > 0 && qualifiedProperties?.length == 1) {
+                    /*
+                        The test obove is for a query initiated by mod's data-triggers to resolve values of one object at a time and that qualifiedProperties only is the primary key.
+                        So far mod supports a single primary key, that can be an object.
+
+                        We should more carefully use the syntax to match the property to it's value
+                    */
+                    let readExpressions = readOperation.data.readExpressions,
+                            rawDataObject = {};
+
+                        rawData.push(rawDataObject);
+                    //Set the primary key:
+                    rawDataObject[qualifiedProperties[0]] = criteriaParameters;
+                    
+                    console.once.warn("No Mapping found for readOperation on "+ readOperation.target.name+ " for "+ readExpressions);
+                    
+                    //console.warn("No Mapping found for readOperation on "+ readOperation.target.name+ " for "+ readExpressions+" and criteria: ",readOperation.criteria);
+                        for(let i = 0, countI = readExpressions.length, iReadExpression, iPropertyDescriptor; (i < countI); i++ ) {
+                            iReadExpression = readExpressions[i]
+                            iPropertyDescriptor = objectDescriptor.propertyDescriptorNamed(iReadExpression);
+                            rawDataObject[iReadExpression] = iPropertyDescriptor.defaultValue || iPropertyDescriptor.defaultFalsyValue;
+                        }
+                        responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
+                        responseOperation.target.dispatchEvent(responseOperation);
+
+                        //Resolve once dispatchEvent() is completed, including any pending progagationPromise.
+                        responseOperation.propagationPromise.then(() => {
+                            readOperationCompletionPromiseResolve?.(responseOperation);
+                        });
+
+                } else {
+                    let error = new Error("No Mapping found "+ readOperation.target.name+ " "+readOperation.data.readExpressions);
+                
+                    console.error(error);
+                    if(readOperation.clientId) {
+                        error.stack = null;
+                    }
+                    responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
+                    responseOperation.target.dispatchEvent(responseOperation);
+
+                    //Resolve once dispatchEvent() is completed, including any pending progagationPromise.
+                    responseOperation.propagationPromise.then(() => {
+                        readOperationCompletionPromiseResolve?.(responseOperation);
+                    });
+                    
+                }
+
+            }
 
 
         })
@@ -343,10 +397,16 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
             responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
             console.error(error);
             responseOperation.target.dispatchEvent(responseOperation);
-            //return responseOperation;
+
+            //Resolve once dispatchEvent() is completed, including any pending progagationPromise.
+            responseOperation.propagationPromise.then(() => {
+                readOperationCompletionPromiseResolve?.(responseOperation);
+            });
+            
         });
         
-}
+        return readOperationCompletionPromise;
+    }
 
 }
 

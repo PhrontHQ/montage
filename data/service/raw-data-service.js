@@ -77,6 +77,10 @@ const RawDataService = exports.RawDataService = class RawDataService extends Dat
             this._rawContextByTransaction = new WeakMap();
         }
     }
+
+
+    handleReadOperation(readOperation) {}
+ 
 }
 
 // exports.RawDataService = DataService.specialize(/** @lends RawDataService.prototype */ {
@@ -169,6 +173,8 @@ RawDataService.addClassProperties({
 
     /***************************************************************************
      * Serialization
+     * 
+     * TODO: serializeSelf is missing
      */
 
     deserializeSelf: {
@@ -202,6 +208,13 @@ RawDataService.addClassProperties({
 
                 this.connection = value;
             }
+
+            value = deserializer.getProperty("promisesReadOperationCompletion");
+            if (value) {
+                this.promisesReadOperationCompletion = value;
+            }
+
+            
 
         }
     },
@@ -310,7 +323,7 @@ RawDataService.addClassProperties({
 
     connection: {
         get: function() {
-            console.log(">>>>>> "+ this.name+" connection getter: this._connection is ",this._connection);
+            // console.log(">>>>>> "+ this.name+" connection getter: this._connection is ",this._connection);
 
             if(!this._connection) {
 
@@ -322,34 +335,28 @@ RawDataService.addClassProperties({
                     -> https://www.stackovercloud.com/2020/06/30/amazon-rds-proxy-now-generally-available/
                 */
 
-                console.log(this.name+" connection getter: this.connectionIdentifer is ",this.connectionIdentifer);
-                console.log(this.name+" connection getter: this.currentEnvironment is ",this.currentEnvironment);
-                console.log(this.name+" connection getter: this.currentEnvironment.isGCP is ",this.currentEnvironment.isGCP);
-                console.log(this.name+" connection getter: this.currentEnvironment.isCloud is ",this.currentEnvironment.isCloud);
-                console.log(this.name+" connection getter: this.currentEnvironment.stage is ",this.currentEnvironment.stage);
+                // console.log(this.name+" connection getter: this.connectionIdentifer is ",this.connectionIdentifer);
+                // console.log(this.name+" connection getter: this.currentEnvironment is ",this.currentEnvironment);
+                // console.log(this.name+" connection getter: this.currentEnvironment.isGCP is ",this.currentEnvironment.isGCP);
+                // console.log(this.name+" connection getter: this.currentEnvironment.isCloud is ",this.currentEnvironment.isCloud);
+                // console.log(this.name+" connection getter: this.currentEnvironment.stage is ",this.currentEnvironment.stage);
 
                 //If we have an connectionIdentifer, we go for it, otherwise we go for a stage-based logic
                 if(this.connectionIdentifer) {
                     this.connection = this.connectionForIdentifier(this.connectionIdentifer);
-                    console.log(this.name+" connection getter: A this.connection is ",this.connection);
                 }
                 else if(!this.currentEnvironment.isCloud) {
                     this.connection = this.connectionForIdentifier(`local-${this.currentEnvironment.stage}`);
-                    console.log(this.name+" connection getter: B this.connection is ",this.connection);
                 } else {
                     this.connection = this.connectionForIdentifier(this.currentEnvironment.stage);
-                    console.log(this.name+" connection getter: C this.connection is ",this.connection);
                 }
             }
             return this._connection;
         },
         set: function(value) {
 
-            console.log(this.name+" connection setter A: value is ", value);
-
             if(value !== this._connection) {
                 this._connection = value;
-                console.log(this.name+" connection setter B: this.connection is ",this._connection);
             }
         }
 
@@ -391,7 +398,9 @@ RawDataService.addClassProperties({
     rawClientPromise: {
         get: function () {
             if (!this._rawClientPromise) {
-                this._rawClientPromise = Promise.all(this.rawClientPromises).then(() => { return this.rawClient;});
+                this._rawClientPromise = Promise.all(this.rawClientPromises).then(() => { 
+                    return this.rawClient;
+                });
             }
             return this._rawClientPromise;
         }
@@ -687,7 +696,7 @@ RawDataService.addClassProperties({
     resetDataObject: {
         value: function (object) {
             var snapshot = this.snapshotForObject(object),
-                result = this._mapRawDataToObject(snapshot, object);
+                result = this.mapRawDataToObject(snapshot, object);
             return result || Promise.resolve(object);
         }
     },
@@ -940,7 +949,7 @@ RawDataService.addClassProperties({
             this.recordSnapshot(object.dataIdentifier, rawData);
 
 
-            result = this._mapRawDataToObject(rawData, object, context, readExpressions);
+            result = this.mapRawDataToObject(rawData, object, context, readExpressions);
 
             if (this._isAsync(result)) {
                 result = result.then( () => {
@@ -1041,7 +1050,7 @@ RawDataService.addClassProperties({
             //Record snapshot before mapping
             this.recordSnapshot(dataIdentifier, rawData);
 
-            result = this._mapRawDataToObject(rawData, object, context);
+            result = this.mapRawDataToObject(rawData, object, context);
 
             // //Record snapshot when done mapping
             // this.recordSnapshot(dataIdentifier, rawData);
@@ -1670,29 +1679,6 @@ RawDataService.addClassProperties({
     },
 
     /**
-     * Convert raw data to data objects of an appropriate type.
-     *
-     * Subclasses should override this method to map properties of the raw data
-     * to data objects:
-     * @method
-     * @argument {Object} rawData - An object whose properties' values hold
-     *                             the raw data.
-     * @argument {Object} object - An object whose properties must be set or
-     *                             modified to represent the raw data.
-     * @argument {?} context     - The value that was passed in to the
-     *                             [addRawData()]{@link RawDataService#addRawData}
-     *                             call that invoked this method.
-     */
-
-
-    mapRawDataToObject: {
-        value: function (rawData, object, context) {
-            return this.mapFromRawData(object, rawData, context);
-        }
-    },
-
-
-    /**
      * Called by a mapping before doing it's mapping work, giving the data service.
      * an opportunity to intervene.
      *
@@ -1771,7 +1757,7 @@ RawDataService.addClassProperties({
      *                             [addRawData()]{@link RawDataService#addRawData}
      *                             call that invoked this method.
      */
-    _mapRawDataToObject: {
+    mapRawDataToObject: {
         value: function (record, object, context, readExpressions) {
             var self = this,
                 mapping = this.mappingForObject(object),
@@ -2229,7 +2215,11 @@ RawDataService.addClassProperties({
             var mapping = this.mappingForType(objectDescriptor),
                 objectRule = mapping.objectMappingRuleForPropertyName(propertyName),
                 objectRuleConverter = objectRule && objectRule.converter,
-                valueDescriptor = objectRule && objectRule.propertyDescriptor._valueDescriptorReference;
+                valueDescriptor = objectRule && objectRule.propertyDescriptor?._valueDescriptorReference;
+
+            if(!objectRule.propertyDescriptor) {
+                console.warn("mapping for property '"+propertyName+"' doesn't have propertyDescriptor in model");
+            }
 
             return (
                 objectRule && (
@@ -2257,6 +2247,22 @@ RawDataService.addClassProperties({
      * Data Operation related methods
      *
      ***************************************************************************/
+
+    /**
+     * By default, raw data sercvices handling a readOperation don't return a promise, 
+     * which triggers the event manager to continue the propagation when that promise settles.
+     * 
+     * If promisesReadOperationCompletion is set to true, a RawDataService has to return a promise that resolves
+     * to the operation followig the read, a readCompletedOperation / readCompletedOperation or a readFailedOperation
+     *
+     *
+     * @property {Boolean}
+     */
+
+    promisesReadOperationCompletion: {
+        value: false
+    },
+
     _operationListenerNamesByType: {
         value: new Map()
     },
@@ -2722,7 +2728,8 @@ RawDataService.addClassProperties({
             if(readOperation.identity) {
                 operation.identity = readOperation.identity;
             }
-            // operation.referrer = readOperation;
+
+            operation.referrer = readOperation;
             operation.target = readOperation.target;
             operation.rawDataService = this;
 
@@ -3143,7 +3150,15 @@ RawDataService.addClassProperties({
                         We're saving the operations in the rawContext as we'll send them in handlePrepareTransaction
                     */
                     if (operationCount > 0) {
+                        /*
+                            Same combination of config.name/module.id to make the module id rooted on the project it belongs used in montage-visitor.js serializationModuleIdForObject() 
+                            to express it from the app stand point. This may not take into account an project-specific alias of the project?
+                            In any case, this should be consolidated in one unique place.
+
+                            This is a new-ish problem that started when we exchange seriaalization between different processes that are different projects
+                        */
                         transactionRawContext.operations[iObjectDescriptor.module.id] = operationsByType;
+                        //transactionRawContext.operations[`${iObjectDescriptor.module.require.config.name}/${iObjectDescriptor.module.id}`] = operationsByType;
                         operationObjectDescriptors.push(iObjectDescriptor);
                     }
                     return operationCount;
@@ -3582,7 +3597,7 @@ RawDataService.addClassProperties({
 
                     But we need to implemement cascade delete.
                 */
-                propertyIterator = isDeletedObject
+                propertyIterator = (isDeletedObject || !dataObjectChanges)
                     ? Object.keys(object).values()
                     : dataObjectChanges.keys(),
                 mapping = this.mappingForType(anObjectDescriptor),
@@ -3725,6 +3740,53 @@ RawDataService.addClassProperties({
                 */
                 if (!isNewObject) {
                     operation.snapshot = dataSnapshot;
+                } else {
+                    /*
+                        When an exiating object is registered via mainService.mergeDataObject(), the code doesn't go through
+
+                        DataService _registerDataObjectChangesFromEvent() where
+
+                            > if(!changesForDataObject) {
+                            >    changesForDataObject = new Map();
+                            >    this.dataObjectChanges.set(dataObject,changesForDataObject);
+                            > }
+
+                        is done.
+
+                        If it's missing here, we need to create it here and put it in dataObjectChangesMap
+                    */
+                    if(!dataObjectChanges) {
+                        dataObjectChanges = new Map();
+                        dataObjectChangesMap.set(object,dataObjectChanges);
+                    }
+
+
+                    /*
+                        After an new object is known to the mainService, wether it was created with mainService.createDataObject(type/objectDescriptor)
+                        of new aType() and registered later with mainService.registerCreatedDataObject(object), we're tracking changes and they are in dataObjectChanges.
+
+                        But anything that happens before the object is known to mainService and monitored for changes, would NOT be in dataObjectChanges. So as we go to save
+                        such created object, the value of the properties set before would be missed.
+
+                        The same is true for an object that is created with mainService.createDataObject(type/objectDescriptor), but then populated from doing a "manual" 
+                        mapRoawDataToObject(), as in done outside of a typical fetch, as the mapping process purposefully doesn't not trigger dataChanges.
+                        
+                        So in order to save everything we should, we're going to loop on own keys of object
+                    */
+                   for(let mainService = this.mainService, keys = Object.keys(object), i = 0, iTrigger, countI = keys.length; (i < countI); i++) {
+
+                        //If there's a trigger for it, it matters
+                        if((iTrigger = mainService._triggerForObjectProperty(object, keys[i] /* typically starting by an underscore*/))) {
+
+                            if(dataObjectChanges.get(iTrigger._propertyName) === object[keys[i]]) {
+                                //Verified matching, nothing else to do
+                                continue;
+                            } else {
+                                dataObjectChanges.set(iTrigger._propertyName, object[keys[i]]);
+                            }
+                        }
+                   }
+
                 }
 
                 return this._mapObjectChangesToOperationData(object, dataObjectChanges, operationData, snapshot, dataSnapshot, isDeletedObject, objectDescriptor)
@@ -4301,6 +4363,7 @@ RawDataService.addClassProperties({
     mapFromRawData: {
         value: function (object, record, context) {
             // Implemented by subclasses.
+            return object;
         }
     },
 

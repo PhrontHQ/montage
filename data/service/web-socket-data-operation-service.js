@@ -1,23 +1,27 @@
 var DataService = require("./data-service").DataService,
     RawDataService = require("./raw-data-service").RawDataService,
     //DataQuery = (require) ("mod/data/model/data-query").DataQuery,
-    Promise = require("../../core/promise").Promise,
-    evaluate = require("../../core/frb/evaluate"),
-    Set = require("../../core/collections/set"),
-    Map = require("../../core/collections/map"),
-    MontageSerializer = require("../../core/serialization/serializer/montage-serializer").MontageSerializer,
-    Deserializer = require("../../core/serialization/deserializer/montage-deserializer").MontageDeserializer,
+    Promise = require("core/promise").Promise,
+    Date = require("core/extras/date").Date,
+    Range = require("core/range").Range,
+
+    evaluate = require("core/frb/evaluate"),
+    Set = require("core/collections/set"),
+    Map = require("core/collections/map"),
+    MontageSerializer = require("core/serialization/serializer/montage-serializer").MontageSerializer,
+    Deserializer = require("core/serialization/deserializer/montage-deserializer").MontageDeserializer,
     DataOperation = require("./data-operation").DataOperation,
     //We don't use special Ids yet, when/if we do, the goal would be to avoid collision and maybe encode more data like the type in it.
     // Phluid = (require) ("./phluid").Phluid,
-    WebSocket = require("../../core/web-socket").WebSocket,
-    defaultEventManager = require("../../core/event/event-manager").defaultEventManager,
+    WebSocket = require("core/web-socket").WebSocket,
+    defaultEventManager = require("core/event/event-manager").defaultEventManager,
     //RawEmbeddedValueToObjectConverter = (require) ("mod/data/converter/raw-embedded-value-to-object-converter").RawEmbeddedValueToObjectConverter,
     //ReadEvent = (require) ("mod/data/model/read-event").ReadEvent,
-    BytesConverter = require("../../core/converter/bytes-converter").BytesConverter,
+    BytesConverter = require("core/converter/bytes-converter").BytesConverter,
     WebSocketSession = require("../model/app/web-socket-session").WebSocketSession,
+    WebSocketSessionConnection = require("../model/app/web-socket-session-connection").WebSocketSessionConnection,
     sizeof = require('object-sizeof'),
-    currentEnvironment = require("../../core/environment").currentEnvironment,
+    currentEnvironment = require("core/environment").currentEnvironment,
     isMod = ((currentEnvironment.stage === "mod" ||
     currentEnvironment.stage === "local"));
 
@@ -206,11 +210,14 @@ WebSocketDataOperationService.addClassProperties({
     _createSocket: {
         value: function() {
             var applicationIdentity = this.application.identity,
-                session = new WebSocketSession(),
+                //session = new WebSocketSession(),
+                session = this.mainService.createDataObject(WebSocketSession),
+                webSocketSessionConnection = new WebSocketSessionConnection(),
                 serializedSession,
                 base64EncodedSerializedSession;
 
-
+                webSocketSessionConnection.existenceTimeRange = new Range(Date.date, null);
+                session.connections = [webSocketSessionConnection];
             /*
                 TEMPORARY FIXME
                 hard-coding applicationId and applicationCredentials to run some tests.
@@ -378,6 +385,7 @@ WebSocketDataOperationService.addClassProperties({
             //console.log("received socket message ",event);
                 serializedOperation = event.data;
 
+            //console.log("serializedOperation: ",serializedOperation);
 
             if(serializedOperation) {
                 var deserializedOperation,
@@ -401,7 +409,7 @@ WebSocketDataOperationService.addClassProperties({
                      console.warn(event.data);
                 } else {
                     try {
-                        this._deserializer.init(serializedOperation, require, objectRequires, module, isSync);
+                        this._deserializer.init(serializedOperation, global.require, objectRequires, module, isSync);
                         operationPromise = this._deserializer.deserializeObject();
                     } catch (e) {
                         //Happens when serverless infra hasn't been used in a while:
