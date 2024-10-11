@@ -75,14 +75,14 @@ var deserializeObjectBindings = exports.deserializeObjectBindings = function des
     },
         targetPath,
         descriptor,
-        i, keys;
+        i, keys, countI;
 
     /* jshint forin: true */
     //for (targetPath in bindings) {
-    for (i=0, keys = Object.keys(bindings); (targetPath = keys[i]); i++) {
+    for (i=0, keys = Object.keys(bindings), countI = keys.length; (i<countI); i++) {
     /* jshint forin: false */
 
-        descriptor = bindings[targetPath];
+        descriptor = bindings[(targetPath = keys[i])];
 
         if (typeof descriptor !== "object") {
             if (!targetPath.includes('.')) {
