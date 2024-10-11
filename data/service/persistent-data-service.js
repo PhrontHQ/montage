@@ -584,24 +584,30 @@ PersistentDataService.addClassProperties({
                         //self.addRawData(stream, results);
                         //self.rawDataDone(stream);
                         if (orderings) {
-                            var expression = "";
-                            //Build combined expression
-                            for (var i=0,iDataOrdering,iExpression;(iDataOrdering = orderings[i]);i++) {
-                                iExpression = iDataOrdering.expression;
 
-                                if (expression.length) {
-                                    expression += ".";
-                                }
+                            /*
+                                Array.prototype.sortedArrayWithDataOrderings
+                                is defined in data-ordering.js, for now
+                            */
+                            results = results.sortedArrayWithDataOrderings(orderings);
+                            // var expression = "";
+                            // //Build combined expression
+                            // for (var i=0,iDataOrdering,iExpression;(iDataOrdering = orderings[i]);i++) {
+                            //     iExpression = iDataOrdering.expression;
 
-                                expression += "sorted{";
-                                expression += iExpression;
-                                expression += "}";
+                            //     if (expression.length) {
+                            //         expression += ".";
+                            //     }
 
-                                if (iDataOrdering.order === DESCENDING) {
-                                    expression += ".reversed()";
-                                }
-                            }
-                            results = evaluate(expression, results);
+                            //     expression += "sorted{";
+                            //     expression += iExpression;
+                            //     expression += "}";
+
+                            //     if (iDataOrdering.order === DESCENDING) {
+                            //         expression += ".reversed()";
+                            //     }
+                            // }
+                            // results = evaluate(expression, results);
                         }
 
                         stream.addRawData(results);
