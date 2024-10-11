@@ -1329,6 +1329,7 @@ Montage.defineProperty(Montage.prototype, "callDelegateMethod", {
 // Property Changes
 
 var PropertyChanges = require("./collections/listen/property-changes");
+require("./collections/shim-object");
 Object.addEach(Montage, PropertyChanges.prototype);
 Object.addEach(Montage.prototype, PropertyChanges.prototype);
 
