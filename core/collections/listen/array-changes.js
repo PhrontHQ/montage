@@ -29,11 +29,19 @@ var array_splice = Array.prototype.splice,
 
 if (protoIsSupported) {
     array_makeObservable = function () {
-        this.__proto__ = ChangeDispatchArray;
+        try {
+            this.__proto__ = ChangeDispatchArray;
+        } catch(error) {
+            //A frozen array will fail, but since it's frozen, it won't change, so all good
+        }
     };
 } else {
     array_makeObservable = function () {
-        Object.defineProperties(this, observableArrayProperties);
+        try {
+            Object.defineProperties(this, observableArrayProperties);
+        } catch(error) {
+            //A frozen array will fail, but since it's frozen, it won't change, so all good
+        }
     };
 }
 
