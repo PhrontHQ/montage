@@ -176,6 +176,12 @@ exports.OperationCoordinator = Target.specialize(/** @lends OperationCoordinator
                 errorStack = operation.data.stack;
                 operation.data.stack = null;
             }
+            /*
+                cleanup referrer we don't want to serialize back to the client:
+            */
+            if(operation.referrer) {
+                operation.referrer = null;
+            }
 
 
             operation.currentTarget = null;
