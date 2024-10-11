@@ -1,0 +1,27 @@
+{
+    "root": {
+        "prototype": "core/meta/module-object-descriptor",
+        "values": {
+            "name": "Montage",
+            "propertyDescriptors": [
+                {"@": "identifier"}
+            ],
+            "objectDescriptorModule": {
+                "%": "./montage.mjson"
+            },
+            "exportName": "Montage",
+            "module": {
+                "%": "./core[Montage]"
+            }
+        }
+    },
+
+    "identifier": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "identifier",
+            "valueType": "string",
+            "isSerializable": true
+        }
+    }
+}
