@@ -1,5 +1,6 @@
 var Range = require("../range").Range;
 
+exports.Date = Date;
 
 /**
 *  Defines extensions to intrinsic `Date` object.
