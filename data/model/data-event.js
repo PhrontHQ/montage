@@ -70,6 +70,10 @@ exports.DataEvent = MutableEvent.specialize({
         value: "create"
     },
 
+    merge: {
+        value: "merge"
+    },
+
     save: {
         value: "save"
     },
