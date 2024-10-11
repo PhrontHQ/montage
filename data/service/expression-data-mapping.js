@@ -13,6 +13,7 @@ var DataMapping = require("./data-mapping").DataMapping,
     deprecate = require("../../core/deprecate"),
     RawForeignValueToObjectConverter = require("../converter/raw-foreign-value-to-object-converter").RawForeignValueToObjectConverter,
     DataOperation = require("./data-operation").DataOperation,
+    syntaxProperties = require("core/frb/syntax-properties"),
     SyntaxInOrderIterator = require("../../core/frb/syntax-iterator").SyntaxInOrderIterator;
 
 var ONE_WAY_BINDING = "<-";
@@ -369,6 +370,13 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
             return this._rawDataPrimaryKeyExpressionSyntaxes;
         }
     },
+
+    rawDataPrimaryKeyProperties: {
+        get: function() {
+            return this.rawDataPrimaryKeyExpressionSyntaxes.map(syntaxProperties);
+        }
+    },
+
 
     rawDataPrimaryKeyCompiledExpressions: {
         get: function () {
