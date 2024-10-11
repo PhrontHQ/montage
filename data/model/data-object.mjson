@@ -23,8 +23,13 @@
             "exportName": "DataObject",
             "module": {
                 "%": "./data-object"
-            }
+            },
+            "parent":{"@": "MontageObjectDescriptor"}
         }
+    },
+
+    "MontageObjectDescriptor": {
+        "object": "core/montage.mjson"
     },
 
     "originId": {
@@ -32,8 +37,9 @@
         "values": {
             "name": "originId",
             "valueType": "string",
+            "isUnique": true,
             "isSearchable": true,
-            "description": "The primaryKey from a different system a Data Object maay have come from originally"
+            "description": "The primaryKey from a different system a Data Object may have come from originally"
         }
     },
 
