@@ -478,12 +478,12 @@ var MontageVisitor = Montage.specialize({
         value: function (malker, object) {
             var type,
                 propertyName,
-                propertyNames = Montage.getSerializablePropertyNames(object),
+                propertyNames = object.serializablePropertyNames,
                 propertyNamesCount = propertyNames.length;
 
             for (var i = 0; i < propertyNamesCount; i++) {
                 propertyName = propertyNames[i];
-                type = Montage.getPropertyAttribute(object, propertyName, "serializable");
+                type = object.propertySerializability(propertyName);
                 this.setProperty(malker, propertyName, object[propertyName], type);
             }
         }
