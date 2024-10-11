@@ -3,7 +3,9 @@ var Object = require("../collections/shim-object");
 var Map = require("../collections/map");
 var SortedSet = require("../collections/sorted-set");
 var Operators = require("./operators");
-var Scope = require("./scope");
+// var Scope = require("./scope");
+var parse = require("./parse");
+
 
 module.exports = compile;
 function compile(syntax) {
@@ -273,12 +275,12 @@ var argCompilers = {
 
     // TODO rename to evaluate
     path: function (evaluateObject, evaluatePath) {
+        var _parse = parse;
         return function (scope) {
             var value = evaluateObject(scope);
             var path = evaluatePath(scope);
-            var parse = require("./parse");
             try {
-                var syntax = parse(path);
+                var syntax = _parse(path);
                 var evaluate = compile(syntax);
                 return evaluate(scope.nest(value));
             } catch (exception) {
