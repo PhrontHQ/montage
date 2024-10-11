@@ -4,6 +4,14 @@ if (typeof window !== "undefined") {
     document._montageTiming.loadStartTime = Date.now();
 }
 
+console.once = new Proxy(console, {
+    
+    apply: (target, thisArg, argumentsList) => {
+        console.debug("Proxy apply Handler");
+        return target.apply(thisArg, argumentsList);
+    }
+})
+
 console._groupTime = Object.create(null);
 console.groupTime = function(name) {
     var groupTimeEntry = this._groupTime[name];
