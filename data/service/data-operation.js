@@ -200,16 +200,16 @@ var Montage = require("../../core/core").Montage,
 
 exports.DataOperationType = DataOperationType = new Enum().initWithMembersAndValues(dataOperationTypes,dataOperationTypes);
 
-var dataOperationErrorNames = ["ObjectStoreMissing"];
+var dataOperationErrorNames = ["DatabaseMissing", "ObjectDescriptorStoreMissing"];
 exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithMembersAndValues(dataOperationErrorNames,dataOperationErrorNames);
 
-// exports.DataOperationError.ObjectStoreMissingError = Error.specialize({
+// exports.DataOperationError.ObjectDescriptorStoreMissingError = Error.specialize({
 //     constructor: {
-//         value: function ObjectStoreMissingError(message) {
+//         value: function ObjectDescriptorStoreMissingError(message) {
 //             this.super(message);
 
 //             if (Error.captureStackTrace) {
-//                 Error.captureStackTrace(this, ObjectStoreMissingError);
+//                 Error.captureStackTrace(this, ObjectDescriptorStoreMissingError);
 //             }
 
 //             return this;
