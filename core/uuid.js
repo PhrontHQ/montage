@@ -136,7 +136,93 @@ if (!('randomUUID' in crypto)) {
 function generateCryptoRandomUUID() {
     return crypto.randomUUID();
 };
-exports.generate = generateCryptoRandomUUID;
+
+/*
+https://antonz.org/uuidv7/#javascript
+
+UUIDv7 looks like this when represented as a string:
+
+0190163d-8694-739b-aea5-966c26f8ad91
+└─timestamp─┘ │└─┤ │└───rand_b─────┘
+             ver │var
+              rand_a
+The 128-bit value consists of several parts:
+
+timestamp (48 bits) is a Unix timestamp in milliseconds.
+ver (4 bits) is a UUID version (7).
+rand_a (12 bits) is randomly generated.
+var* (2 bits) is equal to 10.
+rand_b (62 bits) is randomly generated.
+* In string representation, each symbol encodes 4 bits as a hex number, so the a in the example is 1010, where the first two bits are the fixed variant (10) and the next two are random. So the resulting hex number can be either 8 (1000), 9 (1001), a (1010) or b (1011).
+
+See RFC 9652 for details.
+*/
+
+//An alternative to using .padStart(2, "0"). with _padTwoFormatter.format(aNumber)
+//const _padTwoFormatter = new Intl.NumberFormat('en', { minimumIntegerDigits: 2, useGrouping: false });
+
+/*
+    https://www.xaymar.com/articles/2020/12/08/fastest-uint8array-to-hex-string-conversion-in-javascript/
+*/
+// Pre-Init
+const LUT_HEX_4b = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+const LUT_HEX_8b = new Array(0x100);
+//This is doing the equivalent of .padStart(2, "0") already 
+for (let n = 0; n < 0x100; n++) {
+  LUT_HEX_8b[n] = `${LUT_HEX_4b[(n >>> 4) & 0xF]}${LUT_HEX_4b[n & 0xF]}`;
+}
+// End Pre-Init
+function toHex(value) {
+    return LUT_HEX_8b[value];
+}
+
+const generateUUIDv7Buffer = new Uint8Array(16);
+
+function generateUUIDv7(aDate) {
+    // random bytes
+    const value = generateUUIDv7Buffer;
+    crypto.getRandomValues(value);
+
+    // current timestamp in ms
+    const timestamp = BigInt(aDate ? aDate.valueOf() : Date.now());
+
+    // timestamp
+    // value[0] = Number((timestamp >> 40n) & 0xffn);
+    // value[1] = Number((timestamp >> 32n) & 0xffn);
+    // value[2] = Number((timestamp >> 24n) & 0xffn);
+    // value[3] = Number((timestamp >> 16n) & 0xffn);
+    // value[4] = Number((timestamp >> 8n) & 0xffn);
+    // value[5] = Number(timestamp & 0xffn);
+
+    // version and variant
+    // value[6] = (value[6] & 0x0f) | 0x70;
+    // value[8] = (value[8] & 0x3f) | 0x80; 
+
+    //Initial code we started with, creates an array, then map/loop, then, loop again to join... not very efficient, plus a lot of intermediary strings created
+    // const uuidStr = Array.from(value)
+    // .map((b) => {
+    //     return b.toString(16).padStart(2, "0")
+    // })
+    // .join("");
+
+    //Looping on Uint8Array directly, more efficient, just one loop still 2 intermediary strings created, one for converting to base 16, the other to pad to 2 characters
+    // const iterator = value[Symbol.iterator]();
+    // let uuidStr1 = "";
+
+    // for (let iValue of iterator) {
+    //     uuidStr1 += iValue.toString(16).padStart(2, "0");
+    // }
+
+    //Final implementation: no loop as it's a fixed size we can unroll. Intermediary strings are reused from LUT_HEX_8b Array
+    return `${toHex(Number((timestamp >> 40n) & 0xffn))}${toHex(Number((timestamp >> 32n) & 0xffn))}${toHex(Number((timestamp >> 24n) & 0xffn))}${toHex(Number((timestamp >> 16n) & 0xffn))}${toHex(Number((timestamp >> 8n) & 0xffn))}${toHex(Number(timestamp & 0xffn))}${toHex(((value[6] & 0x0f) | 0x70))}${toHex((value[7]))}${toHex(((value[8] & 0x3f) | 0x80))}${toHex(value[9])}${toHex(value[10])}${toHex(value[11])}${toHex(value[12])}${toHex(value[13])}${toHex(value[14])}${toHex(value[15])}`
+
+}
+
+
+//exports.generate = generateCryptoRandomUUID;
+exports.generate = generateUUIDv7;
+
+
 var Uuid = exports.Uuid = Object.create(Object.prototype, /** @lends Uuid# */ {
     /**
      * Returns a univerally unique ID (UUID).
@@ -145,7 +231,7 @@ var Uuid = exports.Uuid = Object.create(Object.prototype, /** @lends Uuid# */ {
      */
     generate: {
         enumerable: false,
-        value: generateCryptoRandomUUID
+        value: generateUUIDv7
     }
 });
 
