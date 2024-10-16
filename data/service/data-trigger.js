@@ -785,8 +785,6 @@ Object.defineProperties(exports.DataTrigger, /** @lends DataTrigger */ (DataTrig
                         trigger = this.addTrigger(service, objectDescriptor, prototype, propertyDescriptor);
                         if (trigger) {
                             triggers[propertyDescriptor.name] = trigger;
-                            //Adding so we can find the trigger for an ownPropertyValue set on a DataObject that is private
-                            triggers[trigger._privatePropertyName] = trigger;
                         }
                     }
 
