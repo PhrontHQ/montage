@@ -1244,6 +1244,15 @@ DataService.addClassProperties({
         }
     },
 
+    /*
+        TODO: cache / optimize
+    */
+    childServicesThatCanSaveDataType: {
+        value: function (type) {
+            return this.childServicesForType(type).filter((service) => service.canSaveData === true)
+        }
+    },
+
     /**
      * Get all descendant child services that can handle data of the specified type,
      * or `null` if no such child service exists. They are ordered to be depth first, followed by their parent
