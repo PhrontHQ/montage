@@ -165,7 +165,7 @@ var Environment = exports.Environment = Montage.specialize({
 
     isCloud: {
         get: function() {
-            return (this.isAWS || this._isGCP);
+            return (this.isAWS || this.isGCP);
         }
     },
 
