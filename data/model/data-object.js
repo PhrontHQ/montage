@@ -108,6 +108,51 @@ exports.DataObject = class DataObject extends Target {
         });
     }
 
+    deserializeSelf(deserializer) {
+        super.deserializeSelf(deserializer);
+
+        var value;
+        value = deserializer.getProperty("originId");
+        if (value !== void 0) {
+            this.originId = value;
+        }
+        value = deserializer.getProperty("description");
+        if (value !== void 0) {
+            this.description = value;
+        }
+        value = deserializer.getProperty("creationDate");
+        if (value !== void 0) {
+            this.creationDate = value;
+        }
+        value = deserializer.getProperty("modificationDate");
+        if (value !== void 0) {
+            this.modificationDate = value;
+        }
+        value = deserializer.getProperty("publicationDate");
+        if (value !== void 0) {
+            this.publicationDate = value;
+        }
+
+    }
+
+    serializeSelf(serializer) {
+        if(this.originId) {
+            serializer.setProperty("originId", this.originId);
+        }
+        if(this.description) {
+            serializer.setProperty("description", this.description);
+        }
+        if(this.creationDate) {
+            serializer.setProperty("creationDate", this.creationDate);
+        }
+        if(this.modificationDate) {
+            serializer.setProperty("modificationDate", this.modificationDate);
+        }
+        if(this.publicationDate) {
+            serializer.setProperty("publicationDate", this.publicationDate);
+        }
+    }
+
     /*
         This class methods are polymorphic, which poses a problem.
         Object needs to receive create events from Object instances and all instances inheriting from Object.
