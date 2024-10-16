@@ -77,7 +77,11 @@ const WebSocketDataOperationService = exports.WebSocketDataOperationService = cl
 //         }
 //     },
 WebSocketDataOperationService.addClassProperties({
-
+    
+    canSaveData: {
+        value: true
+    },
+    
     supportsTransaction: {
         value: true
     },

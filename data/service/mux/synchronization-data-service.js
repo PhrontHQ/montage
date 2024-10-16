@@ -21,6 +21,14 @@ exports.SynchronizationDataService = class SynchronizationDataService extends Mu
     static {
 
         Montage.defineProperties(this.prototype, {
+            /*
+                No syncing unless at least one of the child service canSaveData.
+                It would be better to actually check that once we childServices are known
+            */
+            canSaveData: {
+                value: true
+            },
+        
             /**
              * Provides a reference to the parent application.
              *

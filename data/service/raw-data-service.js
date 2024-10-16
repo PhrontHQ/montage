@@ -2818,10 +2818,10 @@ RawDataService.addClassProperties({
     /**
      * Answers wether a RawDataService is capable of saving data
      *
-     * @property {Boolean} defaults to true as it's the most common case
+     * @property {Boolean} defaults to false as it's the most common case
      */
     canSaveData: {
-        value: true
+        value: false
     },
 
     /**
