@@ -1217,6 +1217,14 @@ Montage.defineProperty(Montage, "getInfoForObject", {
                             });
                         }
                     }
+                    return (
+                        Object.defineProperty(object, "_montage_metadata", {
+                            enumerable: false,
+                            // this object needs to be overriden by the SerializationCompiler because this particular code might be executed on an exported object before the Compiler takes action, for instance, if this function is called within the module definition itself (happens with __core__).
+                            writable: true,
+                            value: Object.create(metadata, instanceMetadataDescriptor)
+                        })
+                    ) && object._montage_metadata;
 
                     return (object._montage_metadata = Object.create(metadata, instanceMetadataDescriptor)) || object._montage_metadata;
                 }
