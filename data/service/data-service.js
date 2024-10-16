@@ -1633,6 +1633,10 @@ DataService.addClassProperties({
              var objectDescriptor = this._objectDescriptorForObjectCache.get(object);
 
              if(!objectDescriptor) {
+                objectDescriptor = this.objectDescriptorForType(object.constructor);
+             }
+
+             if(!objectDescriptor) {
                 var types = this.types,
                     objectInfo = Montage.getInfoForObject(object),
                     moduleId = objectInfo.moduleId,
