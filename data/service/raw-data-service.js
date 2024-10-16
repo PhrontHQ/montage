@@ -4099,7 +4099,7 @@ RawDataService.addClassProperties({
         value: function (commitTransactionFailedOperation) {
 
             var transaction = this.referrerContextForDataOperation(commitTransactionFailedOperation);
-            console.error("handleCommitTransactionFailedOperation: transaction-" + transaction.identifier, transaction);
+            console.error("handleCommitTransactionFailedOperation: transaction-" + transaction?.identifier, transaction);
 
             /*
                 This is fine as long as we have only one transaction running at a time, we'll need to be more subtle when we handle concurrent transaction
