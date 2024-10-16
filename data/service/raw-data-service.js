@@ -4018,8 +4018,8 @@ RawDataService.addClassProperties({
                         self._dispatchTransactionCommitComplete(transaction, dataOperationCompletion.data)
                         transaction.resolveCompletionPromiseForParticipant(self);
                     }, function (commitTransactionFailedOperationError) {
-                        self._dispatchTransactionCommitFail(transaction, error)
-                        transaction.rejectCompletionPromiseForParticipantWithError(self, error);
+                        self._dispatchTransactionCommitFail(transaction, commitTransactionFailedOperationError)
+                        transaction.rejectCompletionPromiseForParticipantWithError(self, commitTransactionFailedOperationError);
                     });
             }
         }
