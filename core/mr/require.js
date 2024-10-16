@@ -1779,16 +1779,32 @@ function locationByRemovingLastURLComponentKeepingSlash(location) {
                         //jshint +W106
                     } else if ((typeof object.getInfoForObject === "function" || typeof object.constructor.getInfoForObject === "function" ) && !_Object.isSealed(object)) {
 
-                        object._montage_metadata = new MontageMetadata(
-                            require,
-                            module.id.includes(".reel")
-                                ? module.id.replace(reverseReelExpression, reverseReelFunction)
-                                : module.id.includes(".mod")
-                                    ? module.id.replace(reverseModExpression, reverseModFunction)
-                                    : module.id,
-                                name,
-                                /*isInstance*/(typeof object !== "function")
-                        );
+                        // object._montage_metadata = new MontageMetadata(
+                        //     require,
+                        //     module.id.includes(".reel")
+                        //         ? module.id.replace(reverseReelExpression, reverseReelFunction)
+                        //         : module.id.includes(".mod")
+                        //             ? module.id.replace(reverseModExpression, reverseModFunction)
+                        //             : module.id,
+                        //         name,
+                        //         /*isInstance*/(typeof object !== "function")
+                        // );
+
+                        Object.defineProperty(object, "_montage_metadata", {
+                            enumerable: false,
+                            writable: true,
+                            value: (new MontageMetadata(
+                                require,
+                                module.id.includes(".reel")
+                                    ? module.id.replace(reverseReelExpression, reverseReelFunction)
+                                    : module.id.includes(".mod")
+                                        ? module.id.replace(reverseModExpression, reverseModFunction)
+                                        : module.id,
+                                    name,
+                                    /*isInstance*/(typeof object !== "function")
+                            ))
+                        });
+
                     }
                 }
             }
