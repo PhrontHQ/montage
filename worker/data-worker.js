@@ -478,7 +478,8 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
                 If there's no webSocketSession, we create one
             */
             if(!webSocketSession) {
-                webSocketSession = this.mainService.createDataObject(WebSocketSession);
+                webSocketSession = new WebSocketSession();
+                // webSocketSession = this.mainService.createDataObject(WebSocketSession);
                 webSocketSession.identity = identity;
             }
 
@@ -488,9 +489,9 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
             */
            let connections = webSocketSession.connections;
            if(!connections?.length) {
-                //let webSocketSessionConnection = new WebSocketSessionConnection();
-                let webSocketSessionConnection = this.mainService.createDataObject(WebSocketSessionConnection);
-            /*
+                let webSocketSessionConnection = new WebSocketSessionConnection();
+                //let webSocketSessionConnection = this.mainService.createDataObject(WebSocketSessionConnection);
+                /*
                     operation.clientId is AWS's event.requestContext.requestId.
                     It should be unique.
                 */
