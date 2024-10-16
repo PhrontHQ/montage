@@ -2542,7 +2542,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
             /*
                 for some cases,
             */
-            var rawDataMappingRules = (this._rawDataMappingRulesByObjectPropertyName && this._rawDataMappingRulesByObjectPropertyName.get(propertyName)) || (this.parent && this.parent.rawDataMappingRulesForObjectPropertyName(propertyName));
+            var rawDataMappingRules = (this._rawDataMappingRulesByObjectPropertyName?.get(propertyName)) || (this.parent?.rawDataMappingRulesForObjectPropertyName(propertyName));
 
             if(rawDataMappingRules === undefined) {
 
