@@ -2932,13 +2932,17 @@ DataService.addClassProperties({
      */
     mergeDataObject: {
         value: function(dataObject) {
+            var objectDescriptor = this.objectDescriptorForObject(dataObject);
 
-            if(this.isObjectCreated(dataObject)) {
+            if(!objectDescriptor || (objectDescriptor && !this.handlesType(objectDescriptor))) {
+                return;
+            }
+            //If we already know about the object, nothing to do
+            else if((this.isObjectCreated(dataObject) || this.isObjectFetched(dataObject) || this.isObjectChanged(dataObject) || this.isObjectDeleted(dataObject))) {
                 return;
             } else {
 
-                var objectDescriptor = this.objectDescriptorForObject(dataObject),
-                    createdDataObjects = this.createdDataObjects,
+                var createdDataObjects = this.createdDataObjects,
                     value = createdDataObjects.get(objectDescriptor);
 
                 if(!value) {
@@ -2947,13 +2951,17 @@ DataService.addClassProperties({
                 }
 
                 if(!value.has(dataObject)) {
-                    let service = this.childServiceForType(objectDescriptor),
-                        //In case the object's primarykey is a public property 
-                        primaryKey = service.primaryKeyForTypeRawData(objectDescriptor, dataObject),
+                    let service = this.childServicesThatCanSaveDataType(objectDescriptor)[0],
+                    //     //In case the object's primarykey is a public property 
+                    //     //
+                    //     //primaryKey = service.dataIdentifierForNewDataObject(objectDescriptor, dataObject),
+                    //     primaryKey = service.primaryKeyForTypeRawData(objectDescriptor, dataObject),
                         prototype = this._getPrototypeForType(objectDescriptor),
-                        dataIdentifier = primaryKey 
-                            ? service.dataIdentifierForTypePrimaryKey(objectDescriptor, primaryKey)
-                            : service.dataIdentifierForNewDataObject(this.objectDescriptorForType(objectDescriptor));
+                    //     dataIdentifier = primaryKey 
+                    //         ? service.dataIdentifierForTypePrimaryKey(objectDescriptor, primaryKey)
+                    //         : service.dataIdentifierForNewDataObject(objectDescriptor);
+
+                        dataIdentifier = service?.dataIdentifierForNewDataObject(objectDescriptor, dataObject);
 
                     this.registerUniqueObjectWithDataIdentifier(dataObject, dataIdentifier);
 
@@ -2980,10 +2988,21 @@ DataService.addClassProperties({
 
     registerMergedDataObjectChanges: {
         value: function(dataObject) {
-            // let dataObjectChanges = new Map();
+            let dataObjectTriggers = this._getTriggersForObject(dataObject),
+                dataObjectPropertyNames = Object.keys(dataObject),
+                // propertyNames = Object.keys(dataObjectTriggers),
+                changesForDataObject = this.changesForDataObject(dataObject);
 
-            // this.dataObjectChangesMap.set(object,dataObjectChanges);
-
+            for(let i=0, iPropertyName, iValue, countI = dataObjectPropertyNames.length; (i < countI); i++) {
+                iPropertyName = dataObjectPropertyNames[i];
+                //If values were set on the object and the property has a trigger, meaning it's handled by Mod data
+                if(dataObject.hasOwnProperty(iPropertyName) && dataObjectTriggers[iPropertyName]) {
+                    changesForDataObject.set(iPropertyName, (iValue = dataObject[iPropertyName]));
+                    if(iValue) {
+                        this.mergeDataObject(iValue);
+                    }
+                }
+            }
 
         }
     },
