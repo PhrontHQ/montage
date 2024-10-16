@@ -375,7 +375,7 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
                 } else {
                     let error = new Error("No Mapping found "+ readOperation.target.name+ " "+readOperation.data.readExpressions);
                 
-                    console.error(error);
+                    console.once.error(error.message);
                     if(readOperation.clientId) {
                         error.stack = null;
                     }
