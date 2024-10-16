@@ -2997,7 +2997,11 @@ DataService.addClassProperties({
             if(!isObjectCreated) {
                 var service = this._getChildServiceForObject(object);
                 if(service) {
-                    isObjectCreated = (service.isObjectCreated(object) || !service.hasSnapshotForObject(object));
+                    /*
+                        !service.hasSnapshotForObject(object) means that it's not been fetched.
+                        Not that it's been registered as created:
+                    */
+                    isObjectCreated = (service.isObjectCreated(object) /*|| !service.hasSnapshotForObject(object)*/);
                 } else {
                     isObjectCreated = false;
                 }
