@@ -3099,6 +3099,12 @@ DataService.addClassProperties({
         }
     },
 
+    isObjectChanged: {
+        value: function(dataObject) {
+            return this.changedDataObjects.get(dataObject.objectDescriptor)?.has(dataObject);
+        }
+    },
+
     unregisterChangedDataObject: {
         value: function(dataObject) {
             var objectDescriptor = this.objectDescriptorForObject(dataObject),
@@ -3108,6 +3114,12 @@ DataService.addClassProperties({
                 value.delete(dataObject);
                 this.objectDescriptorsWithChanges.delete(objectDescriptor);
             }
+        }
+    },
+
+    isObjectFetched: {
+        value: function(dataObject) {
+            return !!dataObject.snapshot;
         }
     },
 
@@ -3707,6 +3719,12 @@ DataService.addClassProperties({
             }
             value.add(dataObject);
             this.objectDescriptorsWithChanges.add(objectDescriptor);
+        }
+    },
+
+    isObjectDeleted: {
+        value: function(dataObject) {
+            return this.deletedDataObjects.get(dataObject.objectDescriptor)?.has(dataObject);
         }
     },
 
