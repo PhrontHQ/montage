@@ -3743,54 +3743,7 @@ RawDataService.addClassProperties({
                 */
                 if (!isNewObject) {
                     operation.snapshot = dataSnapshot;
-                } else {
-                    /*
-                        When an exiating object is registered via mainService.mergeDataObject(), the code doesn't go through
-
-                        DataService _registerDataObjectChangesFromEvent() where
-
-                            > if(!changesForDataObject) {
-                            >    changesForDataObject = new Map();
-                            >    this.dataObjectChanges.set(dataObject,changesForDataObject);
-                            > }
-
-                        is done.
-
-                        If it's missing here, we need to create it here and put it in dataObjectChangesMap
-                    */
-                    if(!dataObjectChanges) {
-                        dataObjectChanges = new Map();
-                        dataObjectChangesMap.set(object,dataObjectChanges);
-                    }
-
-
-                    /*
-                        After an new object is known to the mainService, wether it was created with mainService.createDataObject(type/objectDescriptor)
-                        of new aType() and registered later with mainService.registerCreatedDataObject(object), we're tracking changes and they are in dataObjectChanges.
-
-                        But anything that happens before the object is known to mainService and monitored for changes, would NOT be in dataObjectChanges. So as we go to save
-                        such created object, the value of the properties set before would be missed.
-
-                        The same is true for an object that is created with mainService.createDataObject(type/objectDescriptor), but then populated from doing a "manual" 
-                        mapRoawDataToObject(), as in done outside of a typical fetch, as the mapping process purposefully doesn't not trigger dataChanges.
-                        
-                        So in order to save everything we should, we're going to loop on own keys of object
-                    */
-                   for(let mainService = this.mainService, keys = Object.keys(object), i = 0, iTrigger, countI = keys.length; (i < countI); i++) {
-
-                        //If there's a trigger for it, it matters
-                        if((iTrigger = mainService._triggerForObjectProperty(object, keys[i] /* typically starting by an underscore*/))) {
-
-                            if(dataObjectChanges.get(iTrigger._propertyName) === object[keys[i]]) {
-                                //Verified matching, nothing else to do
-                                continue;
-                            } else {
-                                dataObjectChanges.set(iTrigger._propertyName, object[keys[i]]);
-                            }
-                        }
-                   }
-
-                }
+                } 
 
                 return this._mapObjectChangesToOperationData(object, dataObjectChanges, operationData, snapshot, dataSnapshot, isDeletedObject, objectDescriptor)
                     .then(function (resolvedOperationData) {
