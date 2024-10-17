@@ -220,8 +220,8 @@ MontageBoot.TemplateLoader = function (config, load) {
         }
 
         var html = id.match(html_regex);
-        var serialization = id.match(json_regex); // XXX this is not necessarily a strong indicator of a serialization alone
-        var meta = id.match(mjson_regex);
+        var json = id.match(json_regex); // XXX this is not necessarily a strong indicator of a serialization alone
+        var serialization = id.match(mjson_regex);
         var reelModule = id.match(reel_regex);
         if (html) {
             return load(id, module)
@@ -238,7 +238,7 @@ MontageBoot.TemplateLoader = function (config, load) {
                 }
                 return module;    
             });
-        } else if (meta) {
+        } else if (json) {
             return load(id, module);
         } else if (reelModule) {
             return load(id, module)
