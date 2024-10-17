@@ -255,6 +255,32 @@ exports.SynchronizationDataService = class SynchronizationDataService extends Mu
                 console.error("error: ", error);
             });
 
+        } else {
+            /*
+                If we have a delegate, we're going to rely on it to take care of the situation
+            */
+            if(this.delegate) {
+                readFailedOperation.stopPropagation();
+
+                this.delegate.performReadOperationThatDidFailWithError(readFailedOperation.referrer, readFailedOperation.data)
+                .then((result) => {
+                    /*
+                        Delegate's promise resolved to a result, we're now dispatching an actual readCompletedOperation.
+                    */
+                    let responseOperation = this.responseOperationForReadOperation(readFailedOperation.referrer, null, result);
+                    responseOperation.target.dispatchEvent(responseOperation);
+
+                })
+                .catch((error) => {
+                    /*
+                        Delegate's promise failed to resolved to a result, we're now dispatching an actual readFailedOperation.
+                    */
+                    let aggregateError = new AggregateError([readFailedOperation.data, error], "Both SynchronizationDataService and its delegate failed to read"),
+                        responseOperation = this.responseOperationForReadOperation(readFailedOperation.referrer, aggregateError, null);
+                    responseOperation.target.dispatchEvent(responseOperation);
+                });
+            }
+
         }
     }
     
