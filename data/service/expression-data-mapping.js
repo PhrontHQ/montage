@@ -898,7 +898,10 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                 service = this.service,
                 objectDescriptor = this.objectDescriptor,
                 r = 0,
-                dataHasRuleRequirements;
+                dataHasRuleRequirements,
+                isObjectCreated = service.isObjectCreated(object),
+                changesForDataObject,
+                mainService;
 
 
             for(;(rawDataPropertyIteration < rawDataPropertyIterationCount); rawDataPropertyIteration++) {
@@ -963,6 +966,16 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                     // }
 
                     result = this.mapRawDataToObjectProperty(data, object, aRule.targetPath, context, mappingScope);
+                    if(isObjectCreated) {
+                        if (this._isAsync(result)) {
+                            result = result.then((resultValue) => {
+                                this._registerMappedPropertyValueAsChangesForCreatedObject(aRule.targetPath, resultValue, (changesForDataObject || (changesForDataObject = service.changesForDataObject(object))), object, (mainService || (mainService = service.mainService)));        
+                                return resultValue;
+                            });
+                        } else {
+                            this._registerMappedPropertyValueAsChangesForCreatedObject(aRule.targetPath, result, (changesForDataObject || (changesForDataObject = service.changesForDataObject(object))), object, (mainService || (mainService = service.mainService)));
+                        }
+                    }
                     unnappedRequisitePropertyNames.delete(aRule.targetPath);
                     
                     if (this._isAsync(result)) {
@@ -971,6 +984,25 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                 }
             }
             return promises;
+        }
+    },
+
+    _registerMappedPropertyValueAsChangesForCreatedObject: {
+        value: function(mappedProperty, value, objectChanges, createdObject, _mainService = this.service.mainService) {
+            /*
+                If the object is created and we're mapping it, we need to record values set as changes
+                so will be saved properly.
+            */
+                objectChanges.set(mappedProperty, value);
+        
+            /*
+                If there's a value, we attempt to merge it. mergeDataObject takes care of deciding if value
+                is a DataObject worth tracking
+            */
+            if(value) {
+                _mainService.mergeDataObject(value);
+            }
+    
         }
     },
 
