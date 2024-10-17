@@ -231,6 +231,11 @@ exports.SynchronizationDataService = class SynchronizationDataService extends Mu
 
         That can mean that either mod_plum_v1 - the DB doesn't exist, or Factory doesn't exist in mod_plum_v1. 
     */
+    if(readFailedOperation.rawDataService === this) {
+        //We gave up, and reporting the fail ourselves
+        return;
+    }
+
         console.log("captureSynchronizationDataServiceReadFailedOperation: ", readFailedOperation);
 
         if((readFailedOperation.data.name === DataOperationErrorNames.DatabaseMissing) || 
@@ -277,6 +282,7 @@ exports.SynchronizationDataService = class SynchronizationDataService extends Mu
                     */
                     let aggregateError = new AggregateError([readFailedOperation.data, error], "Both SynchronizationDataService and its delegate failed to read"),
                         responseOperation = this.responseOperationForReadOperation(readFailedOperation.referrer, aggregateError, null);
+                        responseOperation.rawDataService = this;
                     responseOperation.target.dispatchEvent(responseOperation);
                 });
             }
