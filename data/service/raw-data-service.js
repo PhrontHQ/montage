@@ -2685,6 +2685,15 @@ RawDataService.addClassProperties({
 
     handleReadCompletedOperation: {
         value: function (operation) {
+
+            //FIXME - WE SHOULDN'T HAVE TO DO THIS, BUT A RAW DATA SERVICE HANDLES A READ COMPLETED OPERATION FROM ANOTHER...
+            //SO ADDING A CHECK
+            if(operation.rawDataService !== this) {
+                return;
+            }
+
+
+            
             //The read is complete
             this.handleReadUpdateOperation(operation);
             //var stream = DataService.mainService.registeredDataStreamForDataOperation(operation);
