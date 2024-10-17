@@ -113,8 +113,8 @@ exports.Worker = Target.specialize( /** @lends Worker.prototype */{
     },
 
     handleConnect: {
-        value: function(event, context, cb) {
-            cb(null, {
+        value: function(event, context, callback) {
+            callback(null, {
                 statusCode: 200,
                 body: 'Connected.'
             });
@@ -123,13 +123,13 @@ exports.Worker = Target.specialize( /** @lends Worker.prototype */{
 
     /* default implementation is just echo */
     handleMessage: {
-        value: async function(event, context, cb) {
+        value: async function(event, context, callback) {
             await this.apiGateway.postToConnection({
                 ConnectionId: event.requestContext.connectionId,
                 Data: event.body
             });
 
-            cb(null, {
+            callback(null, {
                 statusCode: 200,
                 body: 'Sent.'
               });
@@ -137,12 +137,17 @@ exports.Worker = Target.specialize( /** @lends Worker.prototype */{
     },
 
     handleDisconnect: {
-        value: function(event, context, cb) {
-            cb(null, {
+        value: function(event, context, callback) {
+            callback(null, {
                 statusCode: 200,
                 body: 'Disconnected.'
             });
         }
+    },
+
+    delegate: {
+        value: null
     }
+
 
 });
