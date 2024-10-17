@@ -625,8 +625,26 @@ exports.DataWorker = Worker.specialize( /** @lends DataWorker.prototype */{
                 }    
             })
             .catch((error) => {
-                console.error("No deserialization for ",serializedOperation);
-                return Promise.reject("Unknown message: ",serializedOperation);
+                if(this.delegate) {
+                    let responsePromise = this.delegate.respondsToWorkerFailureToHandleMessageWithError(this, message, error);
+                    if(responsePromise) {
+                        responsePromise.then((responseMessage) => {
+
+                            if(typeof responseMessage !== "string") {
+                                responseMessage = JSON.stringify(responseMessage);
+                            }
+                            
+                            return this.apiGateway.postToConnection({
+                                ConnectionId: event.requestContext.connectionId,
+                                Data: responseMessage
+                            });
+                                
+                        })
+                    }
+                } else {
+                    console.error("No deserialization for ",serializedOperation);
+                    return Promise.reject("Unknown message: ",serializedOperation);    
+                }
             });
 
         }
