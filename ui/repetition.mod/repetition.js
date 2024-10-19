@@ -407,7 +407,7 @@ var Iteration = exports.Iteration = Montage.specialize( /** @lends Iteration.pro
                 if (!childComponentsLeftToDraw) {
                     self.forEachElement(function (element) {
                         repetition._iterationForElement.set(element, this);
-                    }, this);
+                    }, self);
                 }
             };
 
@@ -424,7 +424,7 @@ var Iteration = exports.Iteration = Montage.specialize( /** @lends Iteration.pro
             } else {
                 this.forEachElement(function (element) {
                     repetition._iterationForElement.set(element, this);
-                }, this);
+                }, self);
             }
             this._elementsWillBeAddedToMap = true;
         }
@@ -1955,7 +1955,7 @@ var Repetition = exports.Repetition = Component.specialize(/** @lends Repetition
      */
     draw: {
         value: function () {
-            var index, _draw_forEachIterationElement_callback = this._draw_forEachIterationElement_callback;
+            var _draw_forEachIterationElement_callback = this._draw_forEachIterationElement_callback;
 
             if (!this._initialContentDrawn) {
                 this._drawInitialContent();
@@ -1965,15 +1965,15 @@ var Repetition = exports.Repetition = Component.specialize(/** @lends Repetition
             // Synchronize iterations and _drawnIterations
 
             // Retract iterations that should no longer be visible
-            for (index = this._drawnIterations.length - 1; index >= 0; index--) {
+            for (let index = this._drawnIterations.length - 1; index >= 0; index--) {
                 if (this._drawnIterations[index].index === null) {
                     this._drawnIterations[index].retractFromDocument();
                 }
             }
 
             // Inject iterations if they are not already in the right location
-            for (index = 0; index < this.iterations.length; index++) {
-                var iteration = this.iterations[index];
+            for (let index = 0, iterationsLength = this.iterations.length, iteration; index < iterationsLength; index++) {
+                iteration = this.iterations[index];
                 if (iteration._drawnIndex !== iteration.index && iteration.isComponentTreeLoaded()) {
                     iteration.injectIntoDocument(index);
                 }
@@ -1989,7 +1989,7 @@ var Repetition = exports.Repetition = Component.specialize(/** @lends Repetition
 
             for(let i=0, countI = iterations.length; ( i < countI); i++ ) {
                 if(iterations[i].isComponentTreeLoaded()) {
-                    iteration.forEachElement(_draw_forEachIterationElement_callback, this);
+                    iterations[i].forEachElement(_draw_forEachIterationElement_callback, this);
                 }
             }
         }
