@@ -22,8 +22,8 @@
             "prototype": "ui/repetition.mod",
             "values": {
                 "element": {"#": "repetition"},
-                "contentController": {"@": "repetitionController"}
-            }
+                "contentController": {"@": "repetitionController"},
+                isSelectionEnabled:  {"<-": "@owner.isSelectionEnabled"}            }
         },
 
         ":iteration": {

@@ -19,6 +19,10 @@ var PLACEHOLDER_POSITION = {
  */
 var TreeList = exports.TreeList = Component.specialize(/** @lends TreeList.prototype */ {
 
+    isSelectionEnabled: {
+        value: true
+    }
+
     _sortable: {
         value: false
     },

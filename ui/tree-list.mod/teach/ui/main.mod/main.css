@@ -121,6 +121,10 @@ input[type=checkbox][checked=checked].expand::before {
     align-items: center;
 }
 
+.mod-TreeList .selected {
+    background-color: #d9d9d9;
+}
+
 .tree-list-row .locked::after {
     font-family: FontAwesome;
     content: "\f023";
