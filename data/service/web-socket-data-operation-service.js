@@ -426,11 +426,12 @@ WebSocketDataOperationService.addClassProperties({
 
                 if(operationPromise) {
                     var self = this;
-                    operationPromise.then(function(operation) {
+                    operationPromise.then((operation) => {
                         // if(operation.type === "readCompletedOperation" || operation.type === "readUpdateOperation") {
                         //         console.debug("readCompletedOperation: ",operation.data);
                         // }
                         //operation.target = self;
+                        operation.rawDataService = this;
                         defaultEventManager.handleEvent(operation);
                     })
                 }
