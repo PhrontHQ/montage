@@ -263,78 +263,11 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
                     console.debug(iRequest.url);
                     // console.debug("iRequest headers: ",iRequest.headers);
                     // console.debug("iRequest body: ",iRequest.body);
-                    fetch(iRequest)
-                    .then((response) => {
-                        if (response.status === 200) {
-                            console.debug("200: "+response.url);
-
-                            //console.log("Cache-Control: " + response.headers.get('Cache-Control') || response.headers.get('cache-control'));
-                            if(response.headers.get('content-type').includes("json")) {
-                                return response.json();
-                            } else {
-                                return response.text();
-                            }
-                        } else if( response.status === 401) {
-                            console.debug("401: "+response.url);
-                            // console.log("Token has expired?",response);
-                            throw new Error("Token has expired");
-                        } else if( response.status === 404) {
-                            /*
-                                This is the case where the API is all path and therefore in case nothing is found, the response is logically a 404
-                            */
-                            if((new URL(response.url)).search === "") {
-                                return null;
-                            } else {
-                                console.log(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);
-                                throw new Error(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);    
-                            }
-                        }
-                        else {
-                            return response.text()
-                            .then((responseContent) => {
-                                if(responseContent === "") {
-                                    console.log(response);
-                                }
-                                throw new Error("Request failed with error: " + responseContent);
-                            });
-                        }
-                    })
-                    .then((responseContent) => {
-                        console.debug("responseContent: ",JSON.stringify(responseContent));
-
-                        let rawData = [];
-                        mapping.mapFetchResponseToRawData(responseContent, rawData);
-                        //console.debug("rawData: ",rawData);
-                        responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
-                        console.debug("then responseOperation.target.dispatchEvent("+responseOperation+");");
-                        responseOperation.target.dispatchEvent(responseOperation);
-
-                        //Resolve once dispatchEvent() is completed, including any pending progagationPromise.
-                        responseOperation.propagationPromise.then(() => {
-                            readOperationCompletionPromiseResolve?.(responseOperation);
-                        });
-
-                        //return responseOperation;
-                    })
-                    .catch((error) => {
-                        console.log(this.name+" Fetch Request error: ", error);
-                        responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
-                        console.error(error);
-                        console.debug("catch responseOperation.target.dispatchEvent("+responseOperation+");");
-                        responseOperation.target.dispatchEvent(responseOperation);
-
-                        //Resolve once dispatchEvent() is completed, including any pending progagationPromise.
-                        responseOperation.propagationPromise.then(() => {
-                            readOperationCompletionPromiseResolve?.(responseOperation);
-                        });
-                        
-                        //return responseOperation;
-                    })
                     // .finally((value) => {
                     //     console.debug("finally objectDescriptor.dispatchEvent("+responseOperation+");");
                     //     objectDescriptor.dispatchEvent(responseOperation);
                     // })
-
+                    this._fetchReadOperationRequest(readOperation, iRequest, mapping, readOperationCompletionPromiseResolve);
                 }              
             } else {
                 let criteriaParameters = readOperation?.criteria?.parameters,
@@ -406,6 +339,77 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
         });
         
         return readOperationCompletionPromise;
+    }
+
+    _fetchReadOperationRequest(readOperation, iRequest, mapping, readOperationCompletionPromiseResolve) {
+        fetch(iRequest)
+        .then((response) => {
+            if (response.status === 200) {
+                console.debug("200: "+response.url);
+
+                //console.log("Cache-Control: " + response.headers.get('Cache-Control') || response.headers.get('cache-control'));
+                if(response.headers.get('content-type').includes("json")) {
+                    return response.json();
+                } else {
+                    return response.text();
+                }
+            } else if( response.status === 401) {
+                console.debug("401: "+response.url);
+                // console.log("Token has expired?",response);
+                throw new Error("Token has expired");
+            } else if( response.status === 404) {
+                /*
+                    This is the case where the API is all path and therefore in case nothing is found, the response is logically a 404
+                */
+                if((new URL(response.url)).search === "") {
+                    return null;
+                } else {
+                    console.log(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);
+                    throw new Error(`No ${readOperation.target.name} Data found for criteria ${readOperation.criteria.expression} with parameters ${JSON.stringify(readOperation.criteria.parameters)} at ${response.url}`);    
+                }
+            }
+            else {
+                return response.text()
+                .then((responseContent) => {
+                    if(responseContent === "") {
+                        console.log(response);
+                    }
+                    throw new Error("Request failed with error: " + responseContent);
+                });
+            }
+        })
+        .then((responseContent) => {
+            console.debug("responseContent: ",JSON.stringify(responseContent));
+
+            let rawData = [];
+            mapping.mapFetchResponseToRawData(responseContent, rawData);
+            //console.debug("rawData: ",rawData);
+            let responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
+            console.debug("then responseOperation.target.dispatchEvent("+responseOperation+");");
+            responseOperation.target.dispatchEvent(responseOperation);
+
+            //Resolve once dispatchEvent() is completed, including any pending progagationPromise.
+            responseOperation.propagationPromise.then(() => {
+                readOperationCompletionPromiseResolve?.(responseOperation);
+            });
+
+            //return responseOperation;
+        })
+        .catch((error) => {
+            console.log(this.name+" Fetch Request:", iRequest+", error: ", error);
+            let responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, error, null);
+            console.error(error);
+            console.debug("catch responseOperation.target.dispatchEvent("+responseOperation+");");
+            responseOperation.target.dispatchEvent(responseOperation);
+
+            //Resolve once dispatchEvent() is completed, including any pending progagationPromise.
+            responseOperation.propagationPromise.then(() => {
+                readOperationCompletionPromiseResolve?.(responseOperation);
+            });
+            
+            //return responseOperation;
+        })
+
     }
 
 }
