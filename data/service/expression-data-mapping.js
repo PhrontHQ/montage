@@ -1336,6 +1336,9 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
             return propertyDescriptor.valueDescriptor.then(function (objectDescriptor) {
                 var inversePropertyDescriptor = objectDescriptor.propertyDescriptorForName(inversePropertyName);
 
+                if(inversePropertyName && !inversePropertyDescriptor) {
+                    console.warn("ExpressionDataMapping _assignInversePropertyValue() failed: no inversePropertyDescriptor found named "+inversePropertyName+" of "+object.objectDescriptor.name);
+                }
                 if (data) {
                     //Adding shouldFlagObjectBeingMapped argument to true.
                     if(Array.isArray(data)) {
