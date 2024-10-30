@@ -235,7 +235,7 @@ GenericCollection.prototype.concat = function () {
 GenericCollection.prototype.flatten = function () {
     var self = this;
     return this.reduce(function (result, array) {
-        if(array.forEach) {
+        if(array?.forEach) {
             array.forEach(function (value) {
                 this.push(value);
             }, result, self);
