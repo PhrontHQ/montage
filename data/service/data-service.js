@@ -337,7 +337,7 @@ DataService.addClassProperties({
             }
 
             value = deserializer.getProperty("shouldAuthenticateReadOperation");
-            if (value) {
+            if (value !== undefined) {
                 this.shouldAuthenticateReadOperation = value;
             }
 
