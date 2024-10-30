@@ -43,7 +43,7 @@ exports.Range = Range;
 //    * Pair | Meaning
 //    * -----|--------
 //    * `()` | open - excludes bounds
-//    * `[]` | closed - iclude bounds
+//    * `[]` | closed - include bounds
 //    * `[)` | left-closed, right-open
 //    * `(]` | left-open, right-closed
 //    *
@@ -57,6 +57,28 @@ exports.Range = Range;
 //    if (!isValidBounds(bounds)) throw new RangeError(INVALID_BOUNDS_ERR + bounds)
 // }
 
+Object.defineProperty(Range.prototype,"includesBegin", {
+    get: function () {
+        return this.bounds[0] === "[";
+    }
+});
+Object.defineProperty(Range.prototype,"excludesBegin", {
+    get: function () {
+        return this.bounds[0] === "(";
+    }
+});
+
+Object.defineProperty(Range.prototype,"includesEnd", {
+    get: function () {
+        return this.bounds[1] === "]";
+    }
+});
+Object.defineProperty(Range.prototype,"excludesEnd", {
+    get: function () {
+        return this.bounds[1] === ")";
+    }
+});
+
 
 
 
@@ -69,6 +91,9 @@ Range.prototype.equals = function(value, equals, memo) {
 };
 
 Range.empty = new Range();
+Object.freeze(Range.empty);
+
+
 
 
 Range.prototype.intersection = function (other) {
