@@ -2,7 +2,7 @@ var Montage = require("../../core/core").Montage;
 
 /**
  * A DataIdentifier represents a universal identifier for an object managed by
- * Montage Data.  It provides the support for uniquing in a DataService.
+ * Mod Data.  It provides the support for uniquing in a DataService.
  * Whether an object exists in one or more local DataServices in an Application
  * or in a remote one, a DataIdentifier encapsulates the information needed to
  * uniquely identify an object, like a primary key in a database.  A DataIdentifier
