@@ -284,3 +284,20 @@ if(typeof String.prototype.lastPathComponentRemovingExtension !== "function") {
         configurable: true
     });
 }
+
+if(typeof String.prototype.substringWithinRange !== "function") {
+    Object.defineProperty(String.prototype, 'substringWithinRange', {
+        value: function substringWithinRange (aRange) {
+            /*  substring:
+                indexStart: The index of the first character to include in the returned substring.
+                
+                indexEnd: The index of the first character to exclude from the returned substring.
+            */
+            return this.substring(aRange.includesBegin ? aRange.begin : (aRange.begin + 1), aRange.includesEnd ? (aRange.end + 1) : aRange.end)
+        },
+        writable: true,
+        configurable: true
+    });
+
+}
+
