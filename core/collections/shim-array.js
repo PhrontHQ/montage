@@ -46,15 +46,15 @@ Array.unzip = function (table) {
     var transpose = [];
     var length = Infinity;
     // compute shortest row
-    for (var i = 0; i < table.length; i++) {
-        var row = table[i];
+    for (var i = 0, row; i < table.length; i++) {
+        row = table[i];
         table[i] = row.toArray();
         if (row.length < length) {
             length = row.length;
         }
     }
-    for (var i = 0; i < table.length; i++) {
-        var row = table[i];
+    for (var i = 0, row; i < table.length; i++) {
+        row = table[i];
         for (var j = 0; j < row.length; j++) {
             if (j < length && j in row) {
                 transpose[j] = transpose[j] || [];
@@ -76,7 +76,7 @@ function define(key, value) {
 
 define("addEach", GenericCollection.prototype.addEach);
 define("deleteEach", GenericCollection.prototype.deleteEach);
-define("toArray", GenericCollection.prototype.toArray);
+// define("toArray", GenericCollection.prototype.toArray);
 define("toObject", GenericCollection.prototype.toObject);
 define("all", GenericCollection.prototype.all);
 define("any", GenericCollection.prototype.any);
@@ -91,6 +91,12 @@ define("enumerate", GenericCollection.prototype.enumerate);
 define("group", GenericCollection.prototype.group);
 define("sorted", GenericCollection.prototype.sorted);
 define("reversed", GenericCollection.prototype.reversed);
+
+
+
+define("toArray", function () {
+    return this;
+});
 
 define("constructClone", function (values) {
     var clone = new this.constructor();
