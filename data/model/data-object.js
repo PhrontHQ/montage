@@ -1,7 +1,8 @@
 const   Montage = require("../../core/core").Montage,
         Target = require("../../core/target").Target,
         DataService = require("../service/data-service").DataService,
-        DataEvent = require("./data-event").DataEvent;
+        DataEvent = require("./data-event").DataEvent,
+        Date = require("core/extras/date").Date;
 
 /**
  * @class DataObject
@@ -107,6 +108,11 @@ exports.DataObject = class DataObject extends Target {
 
         });
     }
+
+    date() {
+        return Date.date;
+    }
+
 
     deserializeSelf(deserializer) {
         if(super.deserializeSelf) {

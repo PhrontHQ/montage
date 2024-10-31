@@ -4,6 +4,7 @@
         "values": {
             "name": "DataObject",
             "propertyDescriptors": [
+                {"@": "date"},
                 {"@": "originId"},
                 {"@": "description"},
                 {"@": "isTemplate"},
@@ -30,6 +31,16 @@
 
     "MontageObjectDescriptor": {
         "object": "core/montage.mjson"
+    },
+
+    "date": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "date",
+            "valueDescriptor": {"@": "DateDescriptor"},
+            "isSerializable": false,
+            "description": "The current date at all time, potentially time-shifted globally at the app level. Returns Date.date"
+        }
     },
 
     "originId": {
