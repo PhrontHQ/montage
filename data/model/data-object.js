@@ -109,7 +109,9 @@ exports.DataObject = class DataObject extends Target {
     }
 
     deserializeSelf(deserializer) {
-        super.deserializeSelf(deserializer);
+        if(super.deserializeSelf) {
+            super.deserializeSelf(deserializer);
+        }
 
         var value;
         value = deserializer.getProperty("originId");
