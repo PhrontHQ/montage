@@ -2104,6 +2104,10 @@ RawDataService.addClassProperties({
                     } else if (this._isAsync(otherResult)) {
                         result = otherResult;
                     }
+
+                    result = result.then(() => {
+                        return record;
+                    })
                 } else {
                     result = this.mapObjectToRawData(object, record, context);
                 }
