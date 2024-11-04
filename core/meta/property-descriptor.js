@@ -2,6 +2,7 @@ var Montage = require("../core").Montage,
     Promise = require("../promise").Promise,
     deprecate = require("../deprecate"),
     Enum = require("../enum").Enum,
+    Range = require("../range").Range,
     parse = require("../frb/parse"),
     logger = require("../logger").logger("objectDescriptor");
 
@@ -210,7 +211,17 @@ exports.PropertyDescriptor = Montage.specialize( /** @lends PropertyDescriptor# 
             this._overridePropertyWithDefaults(deserializer, "deleteRule");
             this._overridePropertyWithDefaults(deserializer, "keyType");
             this._overridePropertyWithDefaults(deserializer, "valueType");
+
+
+            /*
+                TODO: implement evolution from collectionValueType to collectionDescriptor.
+                which means mapping used values such as "range", "map", "array", "set", "dict" and "list" to their ObjectDescriptors.
+                Most of these are built-in types, but for Range, the only way to do this here is to require() them upfront. 
+            */
             this._overridePropertyWithDefaults(deserializer, "collectionValueType");
+
+
+
             this._overridePropertyWithDefaults(deserializer, "valueObjectPrototypeName");
             this._overridePropertyWithDefaults(deserializer, "valueObjectModuleId");
             this._overridePropertyWithDefaults(deserializer, "_valueDescriptorReference", "valueDescriptor", "targetBlueprint");
@@ -592,6 +603,35 @@ exports.PropertyDescriptor = Montage.specialize( /** @lends PropertyDescriptor# 
      */
     collectionValueType: {
         value: Defaults.collectionValueType
+    },
+
+    /**
+     * Promise for the descriptor of the collection supporting this property. 
+     * Evolution meant to replace collectionValueType that is only a string.
+     * This allows to specifiy the class of the collection that will hold values
+     *
+     * **Note**: The setter expects an actual descriptor but the getter will
+     * return a promise.
+     * @type {string}
+     */
+    _collectionDescriptorReference: {
+        value: undefined
+    },
+    collectionDescriptor: {
+        serializable: false,
+        get: function () {
+            // TODO: Needed for backwards compatibility with ObjectDescriptorReference.
+            // Remove eventually, this can become completely sync
+            if (this._collectionDescriptorReference && typeof this._collectionDescriptorReference.promise === "function") {
+                deprecate.deprecationWarningOnce("collectionDescriptor reference via ObjectDescriptorReference", "direct reference via object syntax");
+                return this._collectionDescriptorReference.promise(this.require);
+            } else {
+                return this._collectionDescriptorReference && Promise.resolve(this._collectionDescriptorReference);
+            }
+        },
+        set: function (descriptor) {
+            this._collectionDescriptorReference = descriptor;
+        }
     },
 
     /**
