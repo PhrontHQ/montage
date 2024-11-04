@@ -1,0 +1,63 @@
+{
+    "root": {
+        "prototype": "mod/core/meta/module-object-descriptor",
+        "values": {
+            "name": "PhysicalQuantity",
+            "propertyDescriptors": [
+                {"@": "value"},
+                {"@": "unit"},
+                {"@": "dimension"}
+            ],
+            "objectDescriptorModule": {
+                "%":"./physical-quantity.mjson"
+            },
+            "exportName": "PhysicalQuantity",
+            "module": {
+                "%": "./physical-quantity"
+            },
+            "object":{"@": "PhysicalQuantityPrototype"},
+            "parent":{"@": "objectDescriptor"}
+        }
+    },
+    "PhysicalQuantityPrototype": {
+        "object": "./physical-quantity"
+    },
+    "objectDescriptor": {
+        "object": "mod/data/model/data-object.mjson"
+    },
+    "value": {
+        "prototype": "mod/core/meta/property-descriptor",
+        "values": {
+            "name": "value",
+            "valueType": "number"
+        }
+    },
+    "UnitDescriptor": {
+        "object": "./unit.mjson"
+    },
+    "unit": {
+        "prototype": "mod/core/meta/property-descriptor",
+        "values": {
+            "name": "unit",
+            "cardinality": 1,
+            "valueType": "object",
+            "valueDescriptor": {"@": "UnitDescriptor"},
+            "description": "A unit is a way to assign a number or measurement to a physical quantity of physical dimension."
+       }
+    },
+
+    "PhysicalDimensionDescriptor": {
+        "object": "./physical-dimension.mjson"
+    },
+     "dimension": {
+        "prototype": "mod/core/meta/property-descriptor",
+        "values": {
+            "name": "dimension",
+            "cardinality": 1,
+            "valueType": "object",
+            "valueDescriptor": {"@": "PhysicalDimensionDescriptor"},
+            "description": "Dimensions are physical quantities that can be measured / quantified: Length, Time, Mass, Temperature, Electric Current, Amount of Substance, Luminous Intensity, See https://www.me.psu.edu/cimbala/Learning/General/units.htm"
+        }
+    }
+
+}

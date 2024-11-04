@@ -1,0 +1,49 @@
+{
+    "root": {
+        "prototype": "mod/core/meta/module-object-descriptor",
+        "values": {
+            "name": "Unit",
+            "propertyDescriptors": [
+                {"@": "name"},
+                {"@": "dimension"}
+            ],
+            "objectDescriptorModule": {
+                "%":"./unit.mjson"
+            },
+            "exportName": "Unit",
+            "module": {
+                "%": "./unit"
+            },
+            "object":{"@": "UnitPrototype"},
+            "parent":{"@": "DataObjectDescriptor"}
+        }
+    },
+    "UnitPrototype": {
+        "object": "./unit"
+    },
+    "DataObjectDescriptor": {
+        "object": "mod/data/model/data-object.mjson"
+    },
+    "name": {
+        "prototype": "mod/core/meta/property-descriptor",
+        "values": {
+            "name": "value",
+            "valueType": "string"
+        }
+    },
+    "PhysicalDimensionDescriptor": {
+        "object": "./physical-dimension.mjson"
+    },
+     "dimension": {
+        "prototype": "mod/core/meta/property-descriptor",
+        "values": {
+            "name": "dimension",
+            "cardinality": 1,
+            "valueType": "object",
+            "valueDescriptor": {"@": "PhysicalDimensionDescriptor"},
+            "inversePropertyName": "units",
+            "description": "Dimensions are physical quantities that can be measured / quantified: Length, Time, Mass, Temperature, Electric Current, Amount of Substance, Luminous Intensity, See https://www.me.psu.edu/cimbala/Learning/General/units.htm"
+        }
+    }
+
+}

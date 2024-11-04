@@ -1,0 +1,49 @@
+{
+    "root": {
+        "prototype": "mod/core/meta/module-object-descriptor",
+        "values": {
+            "name": "PhysicalDimension",
+            "propertyDescriptors": [
+                {"@": "name"},
+                {"@": "units"}
+            ],
+            "objectDescriptorModule": {
+                "%":"./physical-dimension.mjson"
+            },
+            "exportName": "PhysicalDimension",
+            "module": {
+                "%": "./physical-dimension"
+            },
+            "object":{"@": "PhysicalDimensionPrototype"},
+            "parent":{"@": "DataObjectDescriptor"}
+        }
+    },
+    "PhysicalDimensionPrototype": {
+        "object": "./physical-dimension"
+    },
+    "DataObjectDescriptor": {
+        "object": "mod/data/model/data-object.mjson"
+    },
+    "name": {
+        "prototype": "mod/core/meta/property-descriptor",
+        "values": {
+            "name": "value",
+            "valueType": "string"
+        }
+    },
+    "UnitDescriptor": {
+        "object": "./unit.mjson"
+    },
+     "units": {
+        "prototype": "mod/core/meta/property-descriptor",
+        "values": {
+            "name": "units",
+            "cardinality": -1,
+            "valueType": "object",
+            "valueDescriptor": {"@": "PhysicalDimensionDescriptor"},
+            "inversePropertyName": "dimension",
+            "description": "Units used to measure / quantify the dimension"
+        }
+    }
+
+}
