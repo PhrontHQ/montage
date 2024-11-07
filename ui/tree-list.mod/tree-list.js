@@ -335,7 +335,7 @@ var TreeList = exports.TreeList = Component.specialize(/** @lends TreeList.proto
             }
 
             window.addEventListener("resize", this, false);
-            this._element.addEventListener("scroll", this, false);
+            this._treeListWrapper.addEventListener("scroll", this, false);
             this._startListeningToTranslateIfNeeded();
             this.handleScroll();
             this.handleTreeChange();
@@ -634,7 +634,7 @@ var TreeList = exports.TreeList = Component.specialize(/** @lends TreeList.proto
             var startRow, height, endRow, index;
             if (typeof this.rowHeight === "function") {
                 index = 0;
-                height = this._element.scrollTop;
+                height = this._treeListWrapper.scrollTop;
                 while (this._rowTopMargins[index + 1] < height) {
                     index++;
                 }
@@ -645,7 +645,7 @@ var TreeList = exports.TreeList = Component.specialize(/** @lends TreeList.proto
                 }
                 endRow = index;
             } else {
-                startRow = this._element.scrollTop / this._rowHeight;
+                startRow = this._treeListWrapper.scrollTop / this._rowHeight;
                 height = window.innerHeight / this._rowHeight;
                 endRow = startRow + height;
             }
