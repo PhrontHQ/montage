@@ -1,0 +1,34 @@
+{
+    "root": {
+        "prototype": "../../core/meta/module-object-descriptor",
+        "values": {
+            "name": "ObjectPropertyStore",
+            "propertyDescriptors": [
+                {"@": "name"}
+            ],
+            "objectDescriptorModule": {
+                "%": "./object-property-store.mjson"
+            },
+            "exportName": "ObjectPropertyStore",
+            "module": {
+                "%": "./object-property-store"
+            },
+            "parent":{"@": "DataObjectDescriptor"}
+        }
+    },
+
+    "DataObjectDescriptor": {
+        "object": "./data-object.mjson"
+    },
+
+    "name": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "name",
+            "valueType": "string",
+            "isSearchable": true,
+            "description": "The name of the ObjectPropertyStore"
+        }
+    }
+
+}
