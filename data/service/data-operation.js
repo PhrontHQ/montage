@@ -685,6 +685,15 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
     },
 
     /**
+     * The session in which the data operation exists
+     *
+     * @type {Object}
+     */
+    session: {
+        value: undefined
+    },
+
+    /**
      * The locales relevant to this operation. In an authoring mode/context, there could be multiple ones.
      *
      * @type {Array<Locale>}
