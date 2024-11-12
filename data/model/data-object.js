@@ -22,6 +22,10 @@ const   Montage = require("../../core/core").Montage,
 
 exports.DataObject = class DataObject extends Target {
 
+    constructor() {
+        super()
+    }
+
     static {
 
         Montage.defineProperties(this.prototype, {
@@ -71,12 +75,12 @@ exports.DataObject = class DataObject extends Target {
 
             // /**
             //  * The identity of the user who last modified a data object. This would be better as
-            //  * WOULD BE BETTER HANDLED AS PART OD HAVING A LOG THAT RECORDS OVER TIME
+            //  * WOULD BE BETTER HANDLED AS PART OF HAVING A LOG THAT RECORDS OVER TIME
             //  *
             //  * @property {Identity}
             //  * @default undefined
             //  */
-            // modificationIdentity: { value: undefined},
+            // modderIdentity: { value: undefined},
 
             /**
              * The last time a data object was published, as in getting "live"
@@ -94,7 +98,7 @@ exports.DataObject = class DataObject extends Target {
             //  * @property {Date}
             //  * @default undefined
             //  */
-            // publicationIdentity: { value: undefined}
+            // publisherIdentity: { value: undefined}
 
             /**
              * states wether a data object is allowed to change. This has implication to prevent changes 

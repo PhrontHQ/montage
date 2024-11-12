@@ -13,7 +13,7 @@
                 {"@": "creationDate"},
                 {"@": "creatorIdentity"},
                 {"@": "modificationDate"},
-                {"@": "modifierIdentity"},
+                {"@": "modderIdentity"},
                 {"@": "publicationDate"},
                 {"@": "publisherIdentity"},
                 {"@": "isReadOnly"}
@@ -129,10 +129,10 @@
        }
     },
 
-    "modifierIdentity": {
+    "modderIdentity": {
         "prototype": "../../core/meta/property-descriptor",
         "values": {
-            "name": "modifierIdentity",
+            "name": "modderIdentity",
             "valueDescriptor": {"@": "UserIdentityDescriptor"},
             "description": "The identity of the last user or agent who modified the object"
         }
