@@ -29,7 +29,8 @@ var Montage = require("../../core/core").Montage,
     DataOperationErrorNames = require("./data-operation").DataOperationErrorNames,
     Transaction = require("../model/transaction").Transaction,
     TransactionEvent = require("../model/transaction-event").TransactionEvent,
-    ObjectSroreDescriptor = require("../model/object-store.mjson").montageObject;
+    ObjectStoreDescriptor = require("../model/object-store.mjson").montageObject,
+    ObjectPropertyStoreDescriptor = require("../model/object-property-store.mjson").montageObject;
 
     require("../../core/extras/string");
     require("../../core/extras/date");
@@ -6963,13 +6964,29 @@ DataService.addClassProperties({
         }
     },
 
-    createObjectStoreOperationForObjectDescriptor: {
+    objectStoreCreateOperationForObjectDescriptor: {
         value: function (objectDescriptor) {
             var iOperation = new DataOperation();
 
             iOperation.type = DataOperation.Type.CreateOperation;
             iOperation.data = objectDescriptor;
-            iOperation.target = ObjectSroreDescriptor;
+            iOperation.target = ObjectStoreDescriptor;
+            iOperation.rawDataService = this;
+
+            return iOperation;
+        }
+    },
+
+    objectPropertyStoreCreateOperationForPropertyDescriptor: {
+        value: function (propertyDescriptor, objectDescriptor) {
+            var iOperation = new DataOperation();
+
+            iOperation.type = DataOperation.Type.CreateOperation;
+            iOperation.data = {
+                propertyDescriptor: propertyDescriptor,
+                objectDescriptor: objectDescriptor
+            };
+            iOperation.target = ObjectPropertyStoreDescriptor;
             iOperation.rawDataService = this;
 
             return iOperation;
