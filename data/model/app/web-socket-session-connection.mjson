@@ -4,6 +4,7 @@
         "values": {
             "name": "WebSocketSessionConnection",
             "propertyDescriptors": [
+                {"@": "webSocketSession"},
                 {"@": "serverConnectionId"},
                 {"@": "existenceTimeRange"}
             ],
@@ -20,6 +21,22 @@
     "DataObjectDescriptor": {
         "object": "../data-object.mjson"
     },
+
+    "WebSocketSessionDescriptor": {
+        "object": "./web-socket-session.mjson"
+    },
+
+    "webSocketSession": {
+        "prototype": "core/meta/property-descriptor",
+        "values": {
+            "name": "webSocketSession",
+            "cardinality": 1,
+            "valueType": "object",
+            "valueDescriptor": {"@": "WebSocketSessionDescriptor"},
+            "inversePropertyName": "connections"
+       }
+    },
+
     "serverConnectionId": {
         "prototype": "../../../core/meta/property-descriptor",
         "values": {

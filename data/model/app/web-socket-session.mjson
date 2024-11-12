@@ -51,6 +51,7 @@
             "valueType": "object",
             "cardinality": -1,
             "valueDescriptor": {"@": "WebSocketSessionConnectionsDescriptor"},
+            "inversePropertyName": "webSocketSession",
             "isSearchable": true
         }
     },
