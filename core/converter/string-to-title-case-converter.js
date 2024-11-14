@@ -35,7 +35,10 @@ var StringToTitleCaseConverter = exports.StringToTitleCaseConverter = Converter.
     convert: {
         value: function StringToTitleCaseConverter_convert(str) {
 
-          return str.toLowerCase().split(wordSeparators)
+
+          return !str
+            ? str
+            : str.toLowerCase().split(wordSeparators)
           .map(function (current, index, array) {
             if (
               /* Check for small words */
