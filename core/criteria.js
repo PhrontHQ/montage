@@ -11,6 +11,11 @@ var parse = require("./frb/parse"),
     SyntaxInOrderIterator = require("./frb/syntax-iterator").SyntaxInOrderIterator;
 
 var Criteria = exports.Criteria = Montage.specialize({
+
+    name: {
+        value: null
+    },
+
     _expression: {
         value: null
     },
@@ -78,7 +83,7 @@ var Criteria = exports.Criteria = Montage.specialize({
      *
      * @type {object}
      */
-   syntax: {
+    syntax: {
         get: function() {
             return this._syntax || (this._syntax = parse(this._expression));
         },
@@ -217,6 +222,9 @@ var Criteria = exports.Criteria = Montage.specialize({
 
     serializeSelf: {
         value: function (serializer) {
+            if(this.name) {
+                serializer.setProperty("name", this.name);
+            }
             serializer.setProperty("expression", this._expression || (this._expression = stringify(this.syntax)));
             serializer.setProperty("parameters", this.parameters);
         }
@@ -225,6 +233,12 @@ var Criteria = exports.Criteria = Montage.specialize({
     deserializeSelf: {
         value: function (deserializer) {
             var value;
+
+            value = deserializer.getProperty("name");
+            if (value !== undefined) {
+                this.name = value;
+            }
+
             value = deserializer.getProperty("expression") || deserializer.getProperty("path");
             if (value !== void 0) {
                 this._expression = value;
