@@ -1,10 +1,10 @@
 var Montage = require("../../core/core").Montage,
     Enum = require("../../core/enum").Enum,
     ASCENDING = {name: "Ascending"},
-    DESCENDING = {name: "Descending"};
+    DESCENDING = {name: "Descending"},
     // parse = require("core/frb/parse"),
     // compile = require("core/frb/compile-evaluator"),
-    // evaluate = require("core/frb/evaluate"),
+    evaluate = require("core/frb/evaluate");
     // Scope = require("core/frb/scope");
 
 /*
@@ -94,10 +94,10 @@ if(!Array.prototype.sortedArrayWithDataOrderings) {
         value: function(dataOrderings) {
             var expression = "";
             //Build combined expression
-            for (var i=0,iDataOrdering, iExpression;(iDataOrdering = orderings[i]);i++) {
+            for (var i=0,iDataOrdering, iExpression;(iDataOrdering = dataOrderings[i]);i++) {
                 iExpression = iDataOrdering.expression;
         
-                expression += `${expression.length ? "." : ""}sorted{${iExpression}}${iDataOrdering.order === DESCENDING ? ".reversed()" : ""} }`;
+                expression += `${expression.length ? "." : ""}sorted{${iExpression}}${iDataOrdering.order === DESCENDING ? ".reversed()" : ""}`;
         
                 // if (expression.length) {
                 //     expression += ".";
