@@ -1,6 +1,9 @@
 var Montage = require("./core").Montage,
     parse = require("core/frb/parse"),
-    evaluate = require("core/frb/evaluate");
+    evaluate = require("core/frb/evaluate"),
+    DataOrdering = require("data/model/data-ordering").DataOrdering,
+    ASCENDING = DataOrdering.Ascending,
+    DESCENDING = DataOrdering.Descending;
 
 var TreeNode = exports.TreeNode = Montage.specialize({
 
@@ -87,6 +90,10 @@ exports.TreeController = Montage.specialize({
                 }
             }
         }
+    },
+
+    childrenDataOrderings: {
+        value: [DataOrdering.withExpressionAndOrder("name", ASCENDING)]
     },
 
     /**
@@ -239,11 +246,9 @@ exports.TreeController = Montage.specialize({
 
             // This is a speed optimisation. If childrenExpression
             // is just a single property, we don't evaluate it
-
-            if (this._childrenExpressionProperty === null) {
-                return evaluate(this._childrenExpression, node);
-            }
-            return node[this._childrenExpressionProperty];
+            return ((this._childrenExpressionProperty === null)
+                ? evaluate(this._childrenExpression, node)
+                : node[this._childrenExpressionProperty])?.sortedArrayWithDataOrderings(this.childrenDataOrderings);
         }
     },
 
