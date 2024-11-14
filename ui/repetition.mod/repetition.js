@@ -402,12 +402,14 @@ var Iteration = exports.Iteration = Montage.specialize( /** @lends Iteration.pro
             var childComponentsLeftToDraw = this._childComponents.length;
 
             var firstDraw = function (event) {
-                event.target.removeEventListener("firstDraw", firstDraw, false);
-                childComponentsLeftToDraw--;
-                if (!childComponentsLeftToDraw) {
-                    self.forEachElement(function (element) {
-                        repetition._iterationForElement.set(element, this);
-                    }, self);
+                if (event.target === event.currentTarget) {
+                    event.target.removeEventListener("firstDraw", firstDraw, false);
+                    childComponentsLeftToDraw--;
+                    if (!childComponentsLeftToDraw) {
+                        self.forEachElement(function (element) {
+                            repetition._iterationForElement.set(element, this);
+                        }, self);
+                    }
                 }
             };
 
