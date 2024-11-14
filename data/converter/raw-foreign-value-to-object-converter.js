@@ -28,7 +28,6 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
 
             this.super(serializer);
 
-            serializer.setProperty("foreignDescriptorMappings", this.foreignDescriptorMappings);
             serializer.setProperty("combinesFetchData", this.combinesFetchData);
             
 
@@ -40,41 +39,12 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
 
             this.super(deserializer);
 
-            var value = deserializer.getProperty("foreignDescriptorMappings");
-            if (value) {
-                this.foreignDescriptorMappings = value;
-            }
-
-            value = deserializer.getProperty("combinesFetchData");
+            var value = deserializer.getProperty("combinesFetchData");
             if (value !== undefined) {
                 this.combinesFetchData = value;
             }
         }
     },
-
-    /**
-     * foreignDescriptorMappings enables the converter to handle polymorphic relationships
-     * where the object that need to be found from a foreign key can be of different type,
-     * and potentially be stored in different raw-level storage, diffferent table in a database
-     * or different API endpoint. The arrau contains RawDataTypeMappings which have an expression,
-     * which if it evaluates as true on a value means this RawDataTypeMapping's object descriptor
-     * should be used. When present, the converter will evaluate the value passed,
-     * in polyporphic case a record like:
-     * {
-     *      foreignKeyOfTypeA: null,
-     *      foreignKeyOfTypeB: "foreign-key-value",
-     *      foreignKeyOfTypeC: null
-     * }
-     *
-     * Only one of those properties can be not null at a time
-     *
-     * @type {?Array<RawDataTypeMapping>}
-     * */
-
-    foreignDescriptorMappings: {
-        value: undefined
-    },
-
 
     /*
         cache:
@@ -474,6 +444,9 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
                 query,
                 mapIterationFetchPromise;
 
+            if(queryParts.criteria.length > 1) {
+                combinedCriteria.name = this.constructor.RawForeignValueToObjectConverterCombinedCriteria;
+            }
 
             //console.log("A combinedCriteria syntax:" + JSON.stringify(combinedCriteria.syntax));
             // var testOrCriteria = (new Criteria).initWithExpression(
@@ -607,49 +580,6 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
         }
     },
 
-    /**
-     * Uses foreignDescriptorMappings to find an ObjectDescriptor that matches
-     * the passed raw data, delegating to iindividual RawDataTypeMappings
-     * the job of assessing if their condition match the raw data or not.
-     *
-     * Such expression might consider a combination of raw data key/value,
-     * an type property, a mutually exclusive list of potential foreignKeys,
-     * and eventually one foreign primary key if it were to contain the type of
-     * the data it represents.
-     *
-     * @method
-     * @argument {Object} value The raw data to evaluate.
-     * @returns {ObjectDescriptor} An ObjectDescriptor if one is found or null.
-     *
-     */
-
-    foreignDescriptorForValue: {
-        value: function(value) {
-
-            for(var i=0, mappings = this.foreignDescriptorMappings, countI = mappings.length, iMapping;(i<countI);i++) {
-                if(mappings[i].match(value)) {
-                    return mappings[i].type;
-                }
-            }
-            return null;
-        }
-    },
-
-
-    foreignDescriptorMatchingRawProperty: {
-        value: function(rawProperty) {
-
-            if(this.foreignDescriptorMappings) {
-                for(var i=0, mappings = this.foreignDescriptorMappings, countI = mappings.length, iMapping;(i<countI);i++) {
-                    if(mappings[i].rawDataProperty === rawProperty) {
-                        return mappings[i];
-                    }
-                }
-            }
-            return null;
-        }
-    },
-
 
     /*
         To open the ability to get derived values from non-saved objects, some failsafes blocking a non-saved created object to get any kind of property resolved/fetched were removed. So we need to be smarter here and do the same.
@@ -666,7 +596,41 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
         }
     },
 
-    __foreignDescriptorMappingsByObjectyDescriptor: {
+
+    _convertFetchPromisesByValue: {
+        value: undefined
+    },
+
+    /*********************************************************************
+     * Public API
+     */
+
+    /**
+     * Converts the fault for the relationship to an actual object that has an ObjectDescriptor.
+     * @function
+     * @param {Property} v The value to format.
+     * @returns {Promise} A promise for the referenced object.  The promise is
+     * fulfilled after the object is successfully fetched.
+     *    __foreignDescriptorMappingsByObjectyDescriptor: {
+        value: undefined
+    },
+    _foreignDescriptorMappingsByObjectyDescriptor: {
+        get: function() {
+            if(!this.__foreignDescriptorMappingsByObjectyDescriptor) {
+                for(var i=0, mappings = this.foreignDescriptorMappings, countI = mappings.length, iMapping, mappingByObjectDescriptor = new Map();(i<countI);i++) {
+                    mappingByObjectDescriptor.set(mappings[i].type,mappings[i]);
+                }
+                this.__foreignDescriptorMappingsByObjectyDescriptor = mappingByObjectDescriptor;
+            }
+            return this.__foreignDescriptorMappingsByObjectyDescriptor;
+        }
+    },
+
+    rawDataTypeMappingForForeignDescriptor: {
+        value: function(anObjectDescriptor) {
+            return this._foreignDescriptorMappingsByObjectyDescriptor.get(anObjectDescriptor);
+        }
+    },    __foreignDescriptorMappingsByObjectyDescriptor: {
         value: undefined
     },
     _foreignDescriptorMappingsByObjectyDescriptor: {
@@ -686,22 +650,6 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
             return this._foreignDescriptorMappingsByObjectyDescriptor.get(anObjectDescriptor);
         }
     },
-
-    _convertFetchPromisesByValue: {
-        value: undefined
-    },
-
-    /*********************************************************************
-     * Public API
-     */
-
-    /**
-     * Converts the fault for the relationship to an actual object that has an ObjectDescriptor.
-     * @function
-     * @param {Property} v The value to format.
-     * @returns {Promise} A promise for the referenced object.  The promise is
-     * fulfilled after the object is successfully fetched.
-     *
      */
 
     convert: {
@@ -867,44 +815,6 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
         }
     },
 
-    _rawDataPropertyByForeignDescriptor: {
-        value: undefined
-    },
-    rawDataPropertyForForeignDescriptor: {
-        value: function(anObjectDescriptor) {
-            var rawProperty;
-
-            if(!anObjectDescriptor) return null;
-
-            if(!this._rawDataPropertyByForeignDescriptor) {
-                this._rawDataPropertyByForeignDescriptor = new Map();
-            } else {
-                rawProperty = this._rawDataPropertyByForeignDescriptor.get(anObjectDescriptor);
-            }
-
-            if(!rawProperty) {
-                var rawDataTypeMapping = this.rawDataTypeMappingForForeignDescriptor(anObjectDescriptor),
-                    rawDataTypeMappingExpressionSyntax = rawDataTypeMapping.expressionSyntax;
-
-                /*
-                    Assuming the raw-data-type-mapping expressions are of the form: "aForeignKeyId.defined()"
-                */
-
-                if(rawDataTypeMappingExpressionSyntax.type === "defined" && rawDataTypeMappingExpressionSyntax.args[0].type === "property") {
-                    rawProperty = rawDataTypeMappingExpressionSyntax.args[0].args[1].value;
-
-                    this._rawDataPropertyByForeignDescriptor.set(anObjectDescriptor,rawProperty);
-
-                } else {
-                    console.error("Couldn't find raw data Property for foreign descriptor", anObjectDescriptor, "rawDataTypeMapping:",rawDataTypeMapping);
-                }
-            }
-
-            return rawProperty;
-
-        }
-
-    },
 
 
     /**
@@ -971,4 +881,8 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
         }
     }
 
+}, {
+    RawForeignValueToObjectConverterCombinedCriteria: {
+        value: "RawForeignValueToObjectConverterCombinedCriteria"
+    }
 });

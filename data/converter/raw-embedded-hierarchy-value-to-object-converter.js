@@ -117,7 +117,9 @@ exports.RawEmbeddedHierarchyValueToObjectConverter = RawValueToObjectConverter.s
 
     _convertOneValue:  {
         value: function (v, typeToFetch, service, hierarchyExpression, index, previousResult) {
-            var result = service.resolveObjectForTypeRawData(typeToFetch, v);
+            let valueObjectDescriptor = this.foreignDescriptorForValue(v);
+
+            var result = service.resolveObjectForTypeRawData(valueObjectDescriptor || typeToFetch, v);
 
             if (result) {
                 result = Promise.all([previousResult, result])

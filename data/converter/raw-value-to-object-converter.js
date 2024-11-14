@@ -34,6 +34,7 @@ exports.RawValueToObjectConverter = ExpressionConverter.specialize( /** @lends R
             // serializer.setProperty("convertExpression", this.convertExpression);
 
             serializer.setProperty("foreignDescriptor", this._foreignDescriptorReference);
+            serializer.setProperty("foreignDescriptorMappings", this.foreignDescriptorMappings);
 
             // serializer.setProperty("revertExpression", this.revertExpression);
 
@@ -70,6 +71,11 @@ exports.RawValueToObjectConverter = ExpressionConverter.specialize( /** @lends R
                 }
             } else if (value) {
                 this.foreignDescriptor = value;
+            }
+
+            value = deserializer.getProperty("foreignDescriptorMappings");
+            if (value) {
+                this.foreignDescriptorMappings = value;
             }
 
             value = deserializer.getProperty("service");
@@ -225,6 +231,133 @@ exports.RawValueToObjectConverter = ExpressionConverter.specialize( /** @lends R
                 this.__descriptorToFetch = null;
             }
         }
+    },
+
+    /**
+     * foreignDescriptorMappings enables the converter to handle polymorphic relationships
+     * where the object that need to be found from a foreign key can be of different type,
+     * and potentially be stored in different raw-level storage, diffferent table in a database
+     * or different API endpoint. The arrau contains RawDataTypeMappings which have an expression,
+     * which if it evaluates as true on a value means this RawDataTypeMapping's object descriptor
+     * should be used. When present, the converter will evaluate the value passed,
+     * in polyporphic case a record like:
+     * {
+     *      foreignKeyOfTypeA: null,
+     *      foreignKeyOfTypeB: "foreign-key-value",
+     *      foreignKeyOfTypeC: null
+     * }
+     *
+     * Only one of those properties can be not null at a time
+     *
+     * @type {?Array<RawDataTypeMapping>}
+     * */
+
+    foreignDescriptorMappings: {
+        value: undefined
+    },
+
+
+        /**
+     * Uses foreignDescriptorMappings to find an ObjectDescriptor that matches
+     * the passed raw data, delegating to iindividual RawDataTypeMappings
+     * the job of assessing if their condition match the raw data or not.
+     *
+     * Such expression might consider a combination of raw data key/value,
+     * an type property, a mutually exclusive list of potential foreignKeys,
+     * and eventually one foreign primary key if it were to contain the type of
+     * the data it represents.
+     *
+     * @method
+     * @argument {Object} value The raw data to evaluate.
+     * @returns {ObjectDescriptor} An ObjectDescriptor if one is found or null.
+     *
+     */
+
+    foreignDescriptorForValue: {
+        value: function(value) {
+
+            for(var i=0, mappings = this.foreignDescriptorMappings, countI = mappings.length, iMapping;(i<countI);i++) {
+                if(mappings[i].match(value)) {
+                    return mappings[i].type;
+                }
+            }
+            return null;
+        }
+    },
+
+
+    foreignDescriptorMatchingRawProperty: {
+        value: function(rawProperty) {
+
+            if(this.foreignDescriptorMappings) {
+                for(var i=0, mappings = this.foreignDescriptorMappings, countI = mappings.length, iMapping;(i<countI);i++) {
+                    if(mappings[i].rawDataProperty === rawProperty) {
+                        return mappings[i];
+                    }
+                }
+            }
+            return null;
+        }
+    },
+
+    __foreignDescriptorMappingsByObjectyDescriptor: {
+        value: undefined
+    },
+    _foreignDescriptorMappingsByObjectyDescriptor: {
+        get: function() {
+            if(!this.__foreignDescriptorMappingsByObjectyDescriptor) {
+                for(var i=0, mappings = this.foreignDescriptorMappings, countI = mappings.length, iMapping, mappingByObjectDescriptor = new Map();(i<countI);i++) {
+                    mappingByObjectDescriptor.set(mappings[i].type,mappings[i]);
+                }
+                this.__foreignDescriptorMappingsByObjectyDescriptor = mappingByObjectDescriptor;
+            }
+            return this.__foreignDescriptorMappingsByObjectyDescriptor;
+        }
+    },
+
+    rawDataTypeMappingForForeignDescriptor: {
+        value: function(anObjectDescriptor) {
+            return this._foreignDescriptorMappingsByObjectyDescriptor.get(anObjectDescriptor);
+        }
+    },
+
+    _rawDataPropertyByForeignDescriptor: {
+        value: undefined
+    },
+    rawDataPropertyForForeignDescriptor: {
+        value: function(anObjectDescriptor) {
+            var rawProperty;
+
+            if(!anObjectDescriptor) return null;
+
+            if(!this._rawDataPropertyByForeignDescriptor) {
+                this._rawDataPropertyByForeignDescriptor = new Map();
+            } else {
+                rawProperty = this._rawDataPropertyByForeignDescriptor.get(anObjectDescriptor);
+            }
+
+            if(!rawProperty) {
+                var rawDataTypeMapping = this.rawDataTypeMappingForForeignDescriptor(anObjectDescriptor),
+                    rawDataTypeMappingExpressionSyntax = rawDataTypeMapping.expressionSyntax;
+
+                /*
+                    Assuming the raw-data-type-mapping expressions are of the form: "aForeignKeyId.defined()"
+                */
+
+                if(rawDataTypeMappingExpressionSyntax.type === "defined" && rawDataTypeMappingExpressionSyntax.args[0].type === "property") {
+                    rawProperty = rawDataTypeMappingExpressionSyntax.args[0].args[1].value;
+
+                    this._rawDataPropertyByForeignDescriptor.set(anObjectDescriptor,rawProperty);
+
+                } else {
+                    console.error("Couldn't find raw data Property for foreign descriptor", anObjectDescriptor, "rawDataTypeMapping:",rawDataTypeMapping);
+                }
+            }
+
+            return rawProperty;
+
+        }
+
     },
 
     /**
