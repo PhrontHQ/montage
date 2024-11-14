@@ -1,7 +1,7 @@
 const   Worker = require("./worker").Worker,
         Identity = require("../data/model/identity").Identity,
         IdentityDescriptor = require("../data/model/identity.mjson").montageObject,
-        DataOrdering = require("mod/data/model/data-ordering").DataOrdering,
+        DataOrdering = require("data/model/data-ordering").DataOrdering,
         DESCENDING = DataOrdering.DESCENDING,    
         AuthorizationPolicy = require("../data/service/authorization-policy").AuthorizationPolicy,
         DataOperation = require("../data/service/data-operation").DataOperation,
