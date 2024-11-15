@@ -197,7 +197,7 @@ var Overlay = exports.Overlay = Component.specialize( /** @lends Overlay.prototy
                 this.classList.add(VISIBLE_CLASS_NAME);
                 this.loadComposer(this._pressComposer);
                 this.loadComposer(this._keyComposer);
-                this._isShown = true;
+                this._setVisibility(true);
                 this.needsDraw = true;
 
                 this._keyComposer.addEventListener("keyPress", this, false);
@@ -217,7 +217,7 @@ var Overlay = exports.Overlay = Component.specialize( /** @lends Overlay.prototy
                 this.classList.remove(VISIBLE_CLASS_NAME);
                 this.unloadComposer(this._pressComposer);
                 this.unloadComposer(this._keyComposer);
-                this._isShown = false;
+                this._setVisibility(false);
                 this.needsDraw = true;
 
                 if (this.isModal) {
@@ -232,6 +232,17 @@ var Overlay = exports.Overlay = Component.specialize( /** @lends Overlay.prototy
                 }
             }
         }
+    },
+
+    _setVisibility: {
+        value: function (visible) {
+            // Dispatching to listeners that the property `isShown` will change.
+            // Without this the binding system will not be able to update the
+            // bound properties that depend on `isShown`.
+            this.dispatchBeforeOwnPropertyChange("isShown", this._isShown);
+            this._isShown = visible;
+            this.dispatchOwnPropertyChange("isShown", visible);
+        },
     },
 
     isModal: {
