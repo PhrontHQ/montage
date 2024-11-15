@@ -276,7 +276,7 @@ exports.RawValueToObjectConverter = ExpressionConverter.specialize( /** @lends R
     foreignDescriptorForValue: {
         value: function(value) {
 
-            for(var i=0, mappings = this.foreignDescriptorMappings, countI = mappings.length, iMapping;(i<countI);i++) {
+            for(var i=0, mappings = this.foreignDescriptorMappings, countI = mappings?.length, iMapping;(i<countI);i++) {
                 if(mappings[i].match(value)) {
                     return mappings[i].type;
                 }
@@ -290,7 +290,7 @@ exports.RawValueToObjectConverter = ExpressionConverter.specialize( /** @lends R
         value: function(rawProperty) {
 
             if(this.foreignDescriptorMappings) {
-                for(var i=0, mappings = this.foreignDescriptorMappings, countI = mappings.length, iMapping;(i<countI);i++) {
+                for(var i=0, mappings = this.foreignDescriptorMappings, countI = mappings?.length, iMapping;(i<countI);i++) {
                     if(mappings[i].rawDataProperty === rawProperty) {
                         return mappings[i];
                     }
