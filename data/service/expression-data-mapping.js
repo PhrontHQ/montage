@@ -1494,7 +1494,8 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                 }
             }
 
-            return promises && promises.length && Promise.all(promises) || Promise.resolve(null);
+            return (promises && promises.length && Promise.all(promises) || Promise.resolve(null))
+            .then(() => data);
         }
     },
 
