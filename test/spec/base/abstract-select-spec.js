@@ -378,12 +378,20 @@ describe("test/base/abstract-select-spec", function () {
             expect(listeners).toEqual(aSelect);
         });
 
-        describe("once prepareForActivationEvents is called", function () {
-            beforeEach(function () {
-                aSelect.element = anElement;
-                aSelect.prepareForActivationEvents();
-            });
-        });
+        /*
+            This triggers:
+
+            DEPRECATION: describe with no children (describe() or it()) is deprecated and will be removed in a future version of Jasmine. Please either remove the describe or add children to it.
+            Note: This message will be shown only once. Set the verboseDeprecations config property to true to see every occurrence.
+
+            Looking at it, this seems to be done in the it() block above
+        */
+        // describe("once prepareForActivationEvents is called", function () {
+        //     beforeEach(function () {
+        //         aSelect.element = anElement;
+        //         aSelect.prepareForActivationEvents();
+        //     });
+        // });
     });
 
     describe("objectDescriptor", function () {

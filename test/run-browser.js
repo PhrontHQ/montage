@@ -76,12 +76,56 @@ function insertParam(key, value) {
 // Default reporter
 jasmineEnv.addReporter(jasmineInterface.jsApiReporter);
 
-var catchingExceptions = queryString("catch");
-jasmineEnv.catchExceptions(catchingExceptions === "false" ? false : true);
+// var catchingExceptions = queryString("catch");
+// jasmineEnv.catchExceptions(catchingExceptions === "false" ? false : true);
 
 var queryString2 = new jasmineRequire.QueryString(jasmine)({
     getWindowLocation: function() { return window.location; }
 });
+
+let configuration = {},
+failFast = queryString2.getParam("failFast"),
+failSpecWithNoExpectations = queryString2.getParam("failSpecWithNoExpectations"),
+hideDisabled = queryString2.getParam("hideDisabled"),
+oneFailurePerSpec = queryString2.getParam("oneFailurePerSpec"),
+random = queryString2.getParam("random"),
+stopOnSpecFailure = queryString2.getParam("stopOnSpecFailure"),
+stopSpecOnExpectationFailure = queryString2.getParam("stopSpecOnExpectationFailure");
+
+if(failFast !== undefined) configuration.failFast = failFast;
+if(failSpecWithNoExpectations !== undefined) configuration.failSpecWithNoExpectations = failSpecWithNoExpectations;
+if(hideDisabled !== undefined) configuration.hideDisabled = hideDisabled;
+if(oneFailurePerSpec !== undefined) configuration.oneFailurePerSpec = oneFailurePerSpec;
+if(random !== undefined) configuration.random = random
+else configuration.random = false;
+if(stopOnSpecFailure !== undefined) configuration.stopOnSpecFailure = stopOnSpecFailure;
+if(stopSpecOnExpectationFailure !== undefined) configuration.stopSpecOnExpectationFailure = stopSpecOnExpectationFailure;
+
+function HtmlSpecFilter(options) {
+      const filterString =
+        options &&
+        options.filterString() &&
+        options.filterString().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+      const filterPattern = new RegExp(filterString);
+  
+      this.matches = function(specName) {
+        return filterPattern.test(specName);
+      };
+    };
+
+  // Filter which specs will be run by matching the start of the full name against the `spec` query param.
+var specFilter = new HtmlSpecFilter({
+    filterString: function() { 
+        return queryString("spec"); 
+    }
+});
+
+configuration.specFilter = function(spec) {
+    return specFilter.matches(spec.getFullName());
+};
+
+jasmineEnv.configure(configuration);
+
 
 // Html reporter
 jasmineRequire.html(jasmine);
@@ -98,15 +142,3 @@ var htmlReporter = new jasmine.HtmlReporter({
 });
 htmlReporter.initialize();
 jasmineEnv.addReporter(htmlReporter);
-
-
-// Filter which specs will be run by matching the start of the full name against the `spec` query param.
-var specFilter = new jasmine.HtmlSpecFilter({
-    filterString: function() { 
-        return queryString("spec"); 
-    }
-});
-
-jasmineEnv.specFilter = function(spec) {
-    return specFilter.matches(spec.getFullName());
-};

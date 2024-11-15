@@ -348,6 +348,39 @@ var TestPageLoader = exports.TestPageLoader = Montage.specialize( {
         }
     },
 
+/*
+    waitForComponentDraw: {
+        value: function(component, numDraws, forceDraw) {
+
+            let { promise, resolve, reject } = Promise.withResolvers();
+
+            var theTestPage = this;
+            var currentDraw = component.draw;
+            numDraws = numDraws || 1;
+
+            if (!currentDraw.oldDraw) {
+                component.draw = function draw() {
+                    var result = draw.oldDraw.apply(this, arguments);
+                    draw.drawHappened++;
+                    if(component.draw.drawHappened === numDraws) {
+                        resolve(theTestPage.drawHappened);
+                    }
+                    return result;
+                };
+
+                component.draw.oldDraw = currentDraw;
+            }
+            component.draw.drawHappened = 0;
+
+            if (forceDraw) {
+                theTestPage.rootComponent.drawTree();
+            }
+
+            return promise;
+        }
+    },
+    */
+
     getElementById: {
         enumerable: false,
         value: function(elementId) {
