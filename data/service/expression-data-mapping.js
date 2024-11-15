@@ -2274,6 +2274,9 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                         object[propertyName] = value;
                     }
                     else {
+                        if(objectPropertyValue.includes(value)) {
+                            console.warn("property "+propertyName+" already contaims value: ", value);
+                        }
                         objectPropertyValue.push(value);
                     }
                 } else {
