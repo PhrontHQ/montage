@@ -48,25 +48,23 @@ var _RangeSelection = function(content, rangeController) {
     //self.makeObservable();
     self.__proto__ = _RangeSelection.prototype;
 
-    self.rangeController = rangeController;
-    self.contentEquals = content && content.contentEquals || Object.is;
+    Object.defineProperty(self, "rangeController", {
+        value: rangeController,
+        enumerable: false,
+        configurable: true,
+        writable: true
+    });    
 
-    //Moved to _RangeSelection.prototype for optimization
-    // Object.defineProperty(self, "clone", {
-    //     value: function(){
-    //         return this.slice();
-    //     }
-    // });
-     // Object.defineProperty(self, "swap", {
-     //     configurable: false,
-     //     value: _RangeSelection.prototype.swap
-     // });
-     // Object.defineProperty(self, "push", {
-     //     configurable: false,
-     //     value: _RangeSelection.prototype.push
-     // });
+    Object.defineProperty(self, "contentEquals", {
+        value: (content && content.contentEquals || Object.is),
+        enumerable: false,
+        configurable: true,
+        writable: true
+    });    
+
     return self;
 };
+
 _RangeSelection.prototype = Object.create(Array.prototype, observableArrayProperties);
 Object.defineProperty(_RangeSelection.prototype, "clone", {
     value: function(){
