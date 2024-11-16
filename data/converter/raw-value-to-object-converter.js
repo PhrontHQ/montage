@@ -306,7 +306,7 @@ exports.RawValueToObjectConverter = ExpressionConverter.specialize( /** @lends R
     _foreignDescriptorMappingsByObjectyDescriptor: {
         get: function() {
             if(!this.__foreignDescriptorMappingsByObjectyDescriptor) {
-                for(var i=0, mappings = this.foreignDescriptorMappings, countI = mappings.length, iMapping, mappingByObjectDescriptor = new Map();(i<countI);i++) {
+                for(var i=0, mappings = this.foreignDescriptorMappings, countI = mappings?.length, iMapping, mappingByObjectDescriptor = new Map();(i<countI);i++) {
                     mappingByObjectDescriptor.set(mappings[i].type,mappings[i]);
                 }
                 this.__foreignDescriptorMappingsByObjectyDescriptor = mappingByObjectDescriptor;
