@@ -92,6 +92,13 @@ var Overlay = exports.Overlay = Component.specialize( /** @lends Overlay.prototy
         }
     },
 
+    // If true, the overlay will be constrained to the anchor element.
+    // This means that the overlay will be displayed below the anchor and
+    // will have the same width as the anchor.
+    constrainToAnchor: {
+        value: false
+    },
+
     // Value used to store the position where the overlay will be drawn.
     // This position is calculated at willDraw time and used at draw.
     _drawPosition: {
@@ -197,7 +204,7 @@ var Overlay = exports.Overlay = Component.specialize( /** @lends Overlay.prototy
                 this.classList.add(VISIBLE_CLASS_NAME);
                 this.loadComposer(this._pressComposer);
                 this.loadComposer(this._keyComposer);
-                this._isShown = true;
+                this._setVisibility(true);
                 this.needsDraw = true;
 
                 this._keyComposer.addEventListener("keyPress", this, false);
@@ -217,7 +224,7 @@ var Overlay = exports.Overlay = Component.specialize( /** @lends Overlay.prototy
                 this.classList.remove(VISIBLE_CLASS_NAME);
                 this.unloadComposer(this._pressComposer);
                 this.unloadComposer(this._keyComposer);
-                this._isShown = false;
+                this._setVisibility(false);
                 this.needsDraw = true;
 
                 if (this.isModal) {
@@ -232,6 +239,17 @@ var Overlay = exports.Overlay = Component.specialize( /** @lends Overlay.prototy
                 }
             }
         }
+    },
+
+    _setVisibility: {
+        value: function (visible) {
+            // Dispatching to listeners that the property `isShown` will change.
+            // Without this the binding system will not be able to update the
+            // bound properties that depend on `isShown`.
+            this.dispatchBeforeOwnPropertyChange("isShown", this._isShown);
+            this._isShown = visible;
+            this.dispatchOwnPropertyChange("isShown", visible);
+        },
     },
 
     isModal: {
@@ -331,10 +349,21 @@ var Overlay = exports.Overlay = Component.specialize( /** @lends Overlay.prototy
     draw: {
         value: function () {
             if (this._isShown) {
-                var position = this._drawPosition;
+                const position = this._drawPosition;
+                const { constraints } = position;
 
                 this.element.style.top = position.top + "px";
                 this.element.style.left = position.left + "px";
+
+                // FIXME: Workaround for applying constraints to the overlay
+                // This is a temporary solution until we have a better way to
+                // handle constraints
+                if (constraints) {
+                    if (constraints.width) {
+                        this.element.style.width =  `${constraints.width}px`;
+                    }
+                }
+
                 // this.element.style.visibility = "visible";
 
                 this.callDelegateMethod("didShowOverlay", this);
@@ -385,10 +414,23 @@ var Overlay = exports.Overlay = Component.specialize( /** @lends Overlay.prototy
                 anchorWidth = anchor.offsetWidth || 0,
                 position;
 
-            position = {
-                top: anchorPosition.top + anchorHeight,
-                left: anchorPosition.left + (anchorWidth / 2) - (width / 2)
-            };
+            // FIXME: Workaround for applying constraints to the overlay
+            // This is a temporary solution until we have a better way to
+            // handle constraints
+            if (this.constrainToAnchor) {
+                position = {
+                    top: anchorPosition.top + anchorHeight,
+                    left: anchorPosition.left,
+                    constraints: {
+                        width: anchorWidth,
+                    },
+                };
+            } else { // Otherwise centers overlay relative to anchor.
+                position = {
+                    top: anchorPosition.top + anchorHeight,
+                    left: anchorPosition.left + anchorWidth / 2 - width / 2,
+                };
+            }
 
             if (position.left < 0) {
                 position.left = 0;
