@@ -572,7 +572,16 @@ RawDataService.addClassProperties({
 
                         return DataService.mainService.fetchData(propertyNameQuery)
                         .then(function(object) {
-                            return object[propertyName];
+                            if(Array.isArray(object)) {
+                                return object;
+                            } else {
+                            /*
+                                Bug fix object should always be an arry resolving from fetchData(), but in case there's been an exception,
+                                keeping 
+                            */
+                                console.warn("Investigarte: propertyNameQuery DataService.fetchData.then() did not resolve to an array...",propertyNameQuery);
+                                return object[propertyName];
+                            }
                         });
                     }
 
