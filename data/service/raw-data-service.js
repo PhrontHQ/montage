@@ -862,7 +862,7 @@ RawDataService.addClassProperties({
                 syntaxPropertyByName;
 
             for (i = 0, countI = rawDataPrimaryKeys ? rawDataPrimaryKeys.length : 0; (i < countI); i++) {
-                if (!rawData.hasOwnProperty(rawDataPrimaryKeys[i])) {
+                if (rawData && !rawData.hasOwnProperty(rawDataPrimaryKeys[i])) {
                     //Needs to find among the equals syntax the one that matches the current key.
                     iterator = new SyntaxInOrderIterator(query.criteria.syntax, "equals");
                     criteriaParameters = query.criteria.parameters;
