@@ -2575,7 +2575,7 @@ RawDataService.addClassProperties({
                     iKey = keys[i];
                     iValue = parameters[iKey];
                     if (!iValue) {
-                        throw "fetchData: criteria with no value for parameter key " + iKey;
+                        console.warn("fetchData: criteria ",criteria, "has value: "+value+" for parameter key " + iKey);
                     } else {
                         if (iValue.dataIdentifier) {
 
