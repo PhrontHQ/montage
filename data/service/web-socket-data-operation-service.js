@@ -481,7 +481,7 @@ WebSocketDataOperationService.addClassProperties({
 
                         but others aren't
                     */
-                    return this.super(stream, rawData.to_jsonb || rawData, context);
+                    return this.super(stream, rawData?.to_jsonb || rawData, context);
                 } else {
                     if(Array.isArray(rawData)) {
                         return this.super(stream, JSON.parse(rawData[0].stringValue), context);
