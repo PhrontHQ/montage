@@ -2246,7 +2246,8 @@ DataService.addClassProperties({
      */
     fetchObjectProperty: {
         value: function (object, propertyName, isObjectCreated, readExpressions) {
-            var isHandler = this.parentService && this.parentService._getChildServiceForObject(object) === this,
+            var childServices = this.childServicesForType(object.objectDescriptor),
+                isHandler = (this.parentService && this.parentService._getChildServiceForObject(object) === this) && (!childServices || (childServices && childServices.length == 0)),
                 useDelegate = isHandler && typeof this.fetchRawObjectProperty === "function",
                 delegateFunction = !useDelegate && isHandler && this._delegateFunctionForPropertyName(propertyName),
                 propertyDescriptor = !useDelegate && !delegateFunction && isHandler && this._propertyDescriptorForObjectAndName(object, propertyName),
@@ -3309,7 +3310,7 @@ DataService.addClassProperties({
 
             } else if(propertyDescriptor.cardinality > 1) {
                 //value should  be an array
-                if(!Array.isArray(value)) {
+                if(value && !Array.isArray(value)) {
                     console.warn("Something's off...., the value of propertyDescriptor:",propertyDescriptor, " of data object:",dataObject," should be an array");
                 }
 
@@ -3375,7 +3376,7 @@ DataService.addClassProperties({
         value: function (dataObject, propertyDescriptor, values, inversePropertyDescriptor) {
             if(inversePropertyDescriptor) {
                 //value should  be an array
-                if(!Array.isArray(values) || !(propertyDescriptor.cardinality > 0)) {
+                if((values && !Array.isArray(values)) || !(propertyDescriptor.cardinality > 0)) {
                     console.warn("Something's off...., values added to propertyDescriptor:",propertyDescriptor, " of data object:",dataObject," should be an array");
                 }
 
@@ -3383,7 +3384,7 @@ DataService.addClassProperties({
                     inversePropertyCardinality = inversePropertyDescriptor.cardinality,
                     i, countI;
 
-                for(i=0, countI = values.length; (i<countI); i++) {
+                for(i=0, countI = values?.length; (i<countI); i++) {
                     this._addDataObjectPropertyDescriptorValueForInversePropertyDescriptor(dataObject, propertyDescriptor, values[i], inversePropertyDescriptor, inversePropertyCardinality, inversePropertyName);
 
                 }
