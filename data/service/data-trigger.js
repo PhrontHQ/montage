@@ -312,7 +312,7 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
                 a fetch is in flight or have been made, since we merge local value 
                 and fetched ones in the setter.
             */
-            if(isToMany && object[this._privatePropertyName] === undefined) {
+            if((myPropertyDescriptor.collectionValueType === "range" || isToMany) && object[this._privatePropertyName] === undefined) {
                 let valueClass;
                 if(myPropertyDescriptor.collectionValueType) {
                     /*
