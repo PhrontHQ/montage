@@ -1,10 +1,11 @@
-var Montage = require("../../core/core").Montage,
+var Montage = require("core/core").Montage,
     DataObjectDescriptor = require("../model/data-object-descriptor").DataObjectDescriptor,
     ObjectDescriptor = require("../model/object-descriptor").ObjectDescriptor,
-    Map = require("../../core/collections/map"),
+    Map = require("core/collections/map"),
+    Range = require("core/range").Range,
     //DataService requires DataTrigger before it sets itself on the exports object...
     //DataServiceModule = require("data/service/data-service"),
-    ChangeEvent = require("../../core/event/change-event").ChangeEvent,
+    ChangeEvent = require("core/event/change-event").ChangeEvent,
     DataTrigger;
 
 /**
@@ -272,14 +273,20 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
         configurable: true,
         writable: true,
         value: function (object, shouldFetch) {
-            var prototype, descriptor, getter = this._valueGetter, propertyName = this._propertyName;
+            var valueStatus,
+                myPropertyDescriptor = this.propertyDescriptor,
+                isToMany = (myPropertyDescriptor.cardinality !== 1),
+                prototype, 
+                descriptor, 
+                getter = this._valueGetter, 
+                propertyName = this._propertyName;
 
             /*
                 Experiment to see if it would make sense to avoid triggering getObjectProperty during mapping?
             */
             // if(!this._service.rootService._objectsBeingMapped.has(object)
             // ) {
-            if(shouldFetch !== false && this._getValueStatus(object) !== null && (!this.propertyDescriptor.definition || !this.propertyDescriptor.isDerived) && !this._service.isObjectCreated(object)) {
+            if(shouldFetch !== false && (valueStatus = this._getValueStatus(object)) !== null && (!myPropertyDescriptor.definition || !myPropertyDescriptor.isDerived) && !this._service.isObjectCreated(object)) {
 
 
                 /*
@@ -298,6 +305,33 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
             }
 
             //}
+
+            /*
+                We're going to initialize to-Many to their collection type.
+                I don't think we need to check our valueStatus to see if
+                a fetch is in flight or have been made, since we merge local value 
+                and fetched ones in the setter.
+            */
+            if(isToMany && object[this._privatePropertyName] === undefined) {
+                let valueClass;
+                if(myPropertyDescriptor.collectionValueType) {
+                    /*
+                        We should deprecate collectionValueType for collectionDescriptor
+                        See: https://github.com/PhrontHQ/mod/issues/12
+
+                        Which would give us directly, via the descriptor, the class to instantiate
+                    */
+                    if(myPropertyDescriptor.collectionValueType === "map" ) valueClass = Map;
+                    if(myPropertyDescriptor.collectionValueType === "set" ) valueClass = Set;
+                    if(myPropertyDescriptor.collectionValueType === "array" ) valueClass = Array;
+                    if(myPropertyDescriptor.collectionValueType === "list" ) valueClass = Array;
+                    if(myPropertyDescriptor.collectionValueType === "range" ) valueClass = Range;
+                } else {
+                    valueClass = Array;
+                }
+
+                object[this._privatePropertyName] = new valueClass();
+            }
 
             // Return the property's current value.
             return getter ? getter.call(object) : object[this._privatePropertyName];
@@ -625,7 +659,9 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
             /*
                 If the object is not created and not saved, we fetch the value
 
-                In some cases, a new object created in-memory, with enough data set on it might be able to read some property that might be derived from the raw values of the property already set on it. So let's leave the bottom layers to figure that out.
+                In some cases, a new object created in-memory, with enough data set on it, 
+                might be able to read some property that might be derived from the raw values of the property already set on it.
+                So let's leave the bottom layers to figure that out.
             */
             // if(!this._service.isObjectCreated(object)) {
                 var status = this._getValueStatus(object);
@@ -682,7 +718,9 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
             //console.log("data-trigger: _fetchObjectProperty "+this._propertyName,object );
             this._service.fetchObjectProperty(object, this._propertyName).then(function (propertyValue) {
                 /*
-                    If there's a propertyValue, it's the actual result of the fetch and bipassed the existing path where the mapping would have added the value on object by the time we get back here. So since it wasn't done, we do it here.
+                    If there's a propertyValue, it's the actual result of the fetch 
+                    and bipassed the existing path where the mapping would have added the value 
+                    on object by the time we get back here. So since it wasn't done, we do it here.
                 */
                 // console.log(propertyValue);
                 if(propertyValue === null) {
@@ -693,10 +731,14 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
                         object[self._propertyName] = propertyValue;
                     }
                     /*
-                        When we fetch a property of an object that's not a relationship, typically a basic type, the value is returned and mapped to the existing object already. If that's the case, propertyValue[0] would be the object itself. If that's the case, then there's nothing to do.
+                        When we fetch a property of an object that's not a relationship, 
+                        typically a basic type, the value is returned and mapped to the existing object already. 
+                        If that's the case, propertyValue[0] would be the object itself.
+                         If that's the case, then there's nothing to do.
 
-                        Benoit: 5/5/2022 - FIXME. We need to assess wether we'd propertyValue could be return as a value in an array for a to-one, or just the objecy as expected. Adding a check for that as the code apparently expecyted an array with only a value in it.
-
+                        Benoit: 5/5/2022 - FIXME. We need to assess wether we'd propertyValue could be return 
+                        as a value in an array for a to-one, or just the objecy as expected. 
+                        Adding a check for that as the code apparently expecyted an array with only a value in it.
                     */
                     else if((propertyValue = (Array.isArray(propertyValue) ? propertyValue[0] : propertyValue)) !== object) {
                         object[self._propertyName] = propertyValue;
