@@ -1,8 +1,3 @@
-/* global describe, spyOn, expect, beforeAll, afterAll, testName, queryString */
-
-/**
- * @see https://developer.mozilla.org/en/DOM/HTMLIFrameElement
- */
 var Montage = require("mod/core/core").Montage;
 var Point = require("mod/core/geometry/point").Point;
 var ActionEventListener = require("mod/core/event/action-event-listener").ActionEventListener;
@@ -22,27 +17,32 @@ var TestPageLoader = exports.TestPageLoader = Montage.specialize( {
             if (!global.document) {
                 throw new Error('TestPageLoader require browser enviroment');
             } else if (typeof global.testpage === "undefined") {
-                if (!this.iframe) {
-                    this.iframe = global.document.createElement("iframe");
-                    this.iframe.id = "testpage";
-
-                    this.iframe.style.width = '100%';
-                    this.iframe.style.height = '100%';
-                    this.iframe.style.left = '75%';
-                    this.iframe.style.top = '0';
-                    this.iframe.style.position = 'absolute';
-                    this.iframe.style.border = 'none';
-                    this.iframe.style.zIndex = '100';
-                    this.iframe.style.pointerEvents = 'none';
-
-                    global.document.body.appendChild(this.iframe);
-                }
+                this.createIframe();
                 global.testpage = this;
                 this.loaded = false;
                 return this;
             } else {
                 return global.testpage;
             }
+        }
+    },
+
+    createIframe: {
+        value: function () {
+            if (this.iframe) {
+                global.document.body.removeChild(this.iframe);
+            }
+            this.iframe = global.document.createElement("iframe");
+            this.iframe.id = "testpage";
+            this.iframe.style.width = '100%';
+            this.iframe.style.height = '100%';
+            this.iframe.style.left = '75%';
+            this.iframe.style.top = '0';
+            this.iframe.style.position = 'absolute';
+            this.iframe.style.border = 'none';
+            this.iframe.style.zIndex = '100';
+            this.iframe.style.pointerEvents = 'none';
+            global.document.body.appendChild(this.iframe);
         }
     },
 
@@ -120,6 +120,13 @@ var TestPageLoader = exports.TestPageLoader = Montage.specialize( {
                         self.rootComponent = root;
                         // override the default drawIfNeeded behaviour
                         var originalDrawIfNeeded = root.drawIfNeeded;
+
+                        // The following code doesn't seem to be considering the canDrawGate.
+                        // That makes tests to fail if they take too long to load, like in
+                        // the case of loading css files from a cdn, making the tests non
+                        // deterministic. Until this code is fixed a workaround is to only
+                        // load files from localhost to ensure a fast load.
+
                         root.drawIfNeeded = function() {
                             var continueDraw = function() {
                                 originalDrawIfNeeded.call(root);
@@ -228,8 +235,9 @@ var TestPageLoader = exports.TestPageLoader = Montage.specialize( {
                 }, false);
                 self.testWindow.addEventListener("load", callback, true);
             } else {
-                self.iframe.addEventListener("load", callback, true);
-                self.iframe.src = src;
+                this.createIframe();
+                this.iframe.addEventListener("load", callback, true);
+                this.iframe.src = src;
             }
 
             return frameLoad.promise;
