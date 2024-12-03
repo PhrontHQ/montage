@@ -1,4 +1,4 @@
-var Montage = require("mod/core/core").Montage;
+﻿var Montage = require("mod/core/core").Montage;
 var TestPageLoader = require("mod-testing/testpageloader").TestPageLoader;
 
 TestPageLoader.queueTest("active-target-test/active-target-test", function (testPage) {
@@ -111,6 +111,10 @@ TestPageLoader.queueTest("active-target-test/active-target-test", function (test
                     expect(proximalComponent.isActiveTarget).toBeFalsy();
                 });
 
+                it("⚠️ The test right after this one requires the document to be focused to pass. Note that it has to be the document focused, not the dev tools", function () {
+                    expect(document.hasFocus()).toBe(true);
+                });
+                
                 it("should focus on some nextTarget that accepts focus when the proximal target receives focus", function () {
                     proximalElement.focus();
                     expect(eventManager.activeTarget).toBe(activeComponent);
