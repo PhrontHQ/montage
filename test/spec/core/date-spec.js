@@ -281,7 +281,10 @@ describe("core/date-spec", function () {
         // so we are testing that parsing the formated date should get you back the original date
         var expected = new Date(2010, 7-1 , 20, 15, 0, 0, 0);
         var resultLocal = expected.toRFC3339LocaleString();
-        var resultReconstituted = Date.parse( resultLocal );
+        // old Date.parse shim:
+        // var resultReconstituted = Date.parse( resultLocal );
+        // native Date.parse:
+        resultReconstituted = new Date(Date.parse(resultLocal));
         //Error message: "incorrect toRFC3339LocaleString format" );
         expect(resultReconstituted.toUTCString()).toBe(expected.toUTCString());
     });
