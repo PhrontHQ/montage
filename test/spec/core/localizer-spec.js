@@ -227,7 +227,7 @@ describe("core/localizer-spec", function () {
         });
 
         it("can be created with a foreign language code", function () {
-            var l = new Localizer.Localizer().initWithLocale("no");
+            var l = new Localizer.Localizer().initWithLocale("es");
             expect(l.messageFormat).not.toBe(null);
         });
 

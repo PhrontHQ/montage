@@ -8,6 +8,12 @@
                     "files": {
                         "messages.json": null
                     }
+                },
+                "es": {
+                    "directory": true,
+                    "files": {
+                        "messages.json": null
+                    }
                 }
             }
         }
