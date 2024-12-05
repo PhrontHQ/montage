@@ -227,7 +227,7 @@ describe("core/localizer-spec", function () {
         });
 
         it("can be created with a foreign language code", function () {
-            var l = new Localizer.Localizer().initWithLocale("no");
+            var l = new Localizer.Localizer().initWithLocale("es");
             expect(l.messageFormat).not.toBe(null);
         });
 
@@ -422,9 +422,9 @@ describe("core/localizer-spec", function () {
             });
 
             it("loads non-English messages", function (done) {
-                var l = new Localizer.Localizer().initWithLocale("no");
                 require.loadPackage(module.directory + "localizer/fallback/", {}).then(function (r){
                     l.require = r;
+                    l.initWithLocale("no");
                     return l.loadMessages();
                 }).then(function (messages) {
                     expect(messages.hello).toBe("Hei");
@@ -434,9 +434,9 @@ describe("core/localizer-spec", function () {
             });
 
             it("loads the fallback messages", function (done) {
-                var l = new Localizer.Localizer().initWithLocale("no-x-compiled");
                 require.loadPackage(module.directory + "localizer/fallback/", {}).then(function (r){
                     l.require = r;
+                    l.initWithLocale("no-x-compiled");
                     return l.loadMessages();
                 }).then(function (messages) {
                     expect(messages.hello).toBe("Hei");
