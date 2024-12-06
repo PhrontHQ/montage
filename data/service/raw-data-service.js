@@ -21,7 +21,7 @@ var DataService = require("./data-service").DataService,
     ReadEvent = require("../model/read-event").ReadEvent,
     TransactionEvent = require("../model/transaction-event").TransactionEvent,
     uuid = require("../../core/uuid"),
-    syntaxProperties =syntaxProperties require("../../core/frb/syntax-properties"),
+    syntaxProperties = require("../../core/frb/syntax-properties"),
     //DataEvent = (require)("../model/data-event").DataEvent,
     DataQuery = require("../model/data-query").DataQuery;
 
