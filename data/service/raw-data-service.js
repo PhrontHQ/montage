@@ -21,6 +21,7 @@ var DataService = require("./data-service").DataService,
     ReadEvent = require("../model/read-event").ReadEvent,
     TransactionEvent = require("../model/transaction-event").TransactionEvent,
     uuid = require("../../core/uuid"),
+    syntaxProperties =syntaxProperties require("../../core/frb/syntax-properties"),
     //DataEvent = (require)("../model/data-event").DataEvent,
     DataQuery = require("../model/data-query").DataQuery;
 
@@ -936,20 +937,48 @@ RawDataService.addClassProperties({
             //Shall we add a check for having readExpressions as well?
             if(context instanceof DataOperation && context.target !== streamQueryType) {
                 type = context.target;
-            } else {
+            } 
+            else {
                 type = streamQueryType;
             }
+                
+            if(readExpressions && readExpressions.length > 0 && rawData === null) {
+                //We need to find the object matching stream.query.criteria
+                object = this.objectWithDescriptorMatchingRawDataPrimaryKeyCriteria(type,stream.query.criteria);
+                dataIdentifier = this.dataIdentifierForObject(object);
 
-            this._addRawDataPrimaryKeyValuesIfNeeded(rawData, type, stream.query);
+                /*
+                    if we have an object, we have a snapshot. We might be able to create a rawData that contains readExpressions' matching raw property set to null 
+                */
+                if(object) {
+                    let mapping = this.mappingForType(type);
 
-            dataIdentifier = this.dataIdentifierForTypeRawData(type, rawData, context),
+                    for(let iReadExpression of readExpressions) {
+                        let iRule = mapping.objectMappingRuleForPropertyName(iReadExpression);
 
-            // if(!object) {
-            object = this.objectForTypeRawData(type, rawData, dataIdentifier, context);
-            // }
-            // else {
-            //     isUpdateToExistingObject = true;
-            // }
+                        //If iRule'sourcePath isn't a literal value like null 
+                        if(iRule && iRule.sourcePathSyntax.type !== "literal" && iRule.sourcePathSyntax.value !== null) {
+                            (rawData || (rawData = {}))[iRule.sourcePath] = null;
+                        }
+                    }
+
+                }
+
+            } else {
+
+
+                this._addRawDataPrimaryKeyValuesIfNeeded(rawData, type, stream.query);
+
+                dataIdentifier = this.dataIdentifierForTypeRawData(type, rawData, context),
+
+                // if(!object) {
+                object = this.objectForTypeRawData(type, rawData, dataIdentifier, context);
+                // }
+                // else {
+                //     isUpdateToExistingObject = true;
+                // }
+            }
+
 
             //If we're already have a snapshot, we've already fetched and
             //instanciated an object for that identifier previously.
@@ -957,14 +986,19 @@ RawDataService.addClassProperties({
                 isUpdateToExistingObject = true;
             }
 
-            //Record the snapshot before we map.
-            this.recordSnapshot(object.dataIdentifier, rawData);
+            /*
+                If rawData is null, we have no rawData-level property to work with and store in the snapshot
+            */
+            if(rawData) {
+                //Record the snapshot before we map.
+                this.recordSnapshot(object.dataIdentifier, rawData);
+            }
 
 
             result = this.mapRawDataToObject(rawData, object, context, readExpressions);
 
             if (this._isAsync(result)) {
-                result = result.then( () => {
+                result = result.then( (resultValue) => {
                     // console.log(object.dataIdentifier.objectDescriptor.name +" addOneRawData id:"+rawData.id+"  MAPPING PROMISE RESOLVED -> stream.addData(object)");
 
                     /*
@@ -2257,6 +2291,76 @@ RawDataService.addClassProperties({
         }
     },
 
+    areCriteriaSyntaxPropertiesRawDataPrimaryKeys: {
+        value: function(typeToFetch, criteria) {
+            let mapping = this.mappingForType(typeToFetch);
+            return (mapping && mapping.rawDataPrimaryKeys && mapping.rawDataPrimaryKeys.equals(syntaxProperties(criteria.syntax)));
+        }
+    },
+
+    objectWithDescriptorMatchingRawDataPrimaryKeyCriteria: {
+        value: function (typeToFetch, criteria) {
+            var dataIdentifier, existingObject = null;
+
+            /*
+            1) dataIdentifierForTypePrimaryKey(type, primaryKey)
+
+            2) objectForDataIdentifier
+            */
+           /*
+            Simplifying assumptions for now:
+            if parameters is a string, it's the primary key
+            if parameters is an array, it's an array of primaryKeys
+            */
+           if(this.areCriteriaSyntaxPropertiesRawDataPrimaryKeys(typeToFetch, criteria)) {
+
+                if(typeof criteria.parameters === "string") {
+                        dataIdentifier = this.dataIdentifierForTypePrimaryKey(typeToFetch,criteria.parameters);
+                        existingObject = this.rootService.objectForDataIdentifier(dataIdentifier);
+                } else if(Array.isArray(criteria.parameters)) {
+                    var rootService = this.rootService,
+                        array = criteria.parameters, i=0, iObject,
+                        firstLocalObjectIndex = -1,
+                        parametersToFetch;
+
+                    while( i < array.length ) {
+                        dataIdentifier = this.dataIdentifierForTypePrimaryKey(typeToFetch,array[i]);
+                        iObject = rootService.objectForDataIdentifier(dataIdentifier);
+                        if(iObject) {
+                            //Add to result
+                            (existingObject || (existingObject = [])).push(iObject);
+                            //remove from criteria since found
+                            // array.splice(i,1);
+                            /*
+                                The first time we find a local object, we need to fork the arrays as we'll fullfill some from local, and the rest from the network.
+                            */
+                            if(firstLocalObjectIndex == -1) {
+                                firstLocalObjectIndex = i;
+                            }
+                        } else if(firstLocalObjectIndex !== -1) {
+
+                            if(!parametersToFetch) {
+                                parametersToFetch = array.slice(0, firstLocalObjectIndex);
+                            }
+                            parametersToFetch.push(array[i]);
+                        }
+                        i++;
+                    }
+
+                    if(parametersToFetch) {
+                        criteria.parameters = parametersToFetch;
+                    } else if(existingObject && existingObject.length === array.length) {
+                        /*
+                            Looks like we found everything locally
+                        */
+                        criteria.parameters = Array.empty;
+                    }
+                }
+            }
+
+            return existingObject;
+        }
+    },
 
     /***************************************************************************
      *

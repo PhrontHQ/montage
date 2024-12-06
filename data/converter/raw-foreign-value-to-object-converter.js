@@ -110,73 +110,14 @@ exports.RawForeignValueToObjectConverter = RawValueToObjectConverter.specialize(
     _areCriteriaSyntaxPropertiesRawDataPrimaryKeys: {
         value: function(typeToFetch, criteria, service) {
             if(this.__areCriteriaSyntaxPropertiesRawDataPrimaryKeys === undefined) {
-                var mapping = service.mappingForType(typeToFetch);
-                this.__areCriteriaSyntaxPropertiesRawDataPrimaryKeys = mapping && mapping.rawDataPrimaryKeys && mapping.rawDataPrimaryKeys.equals(syntaxProperties(criteria.syntax))
+                this.__areCriteriaSyntaxPropertiesRawDataPrimaryKeys = service.areCriteriaSyntaxPropertiesRawDataPrimaryKeys(typeToFetch, criteria);
             }
             return this.__areCriteriaSyntaxPropertiesRawDataPrimaryKeys
         }
     },
     _lookupExistingObjectForObjectDescriptorCriteria: {
         value: function(typeToFetch, criteria, service) {
-            var dataIdentifier, existingObject = null;
-
-            /*
-            1) dataIdentifierForTypePrimaryKey(type, primaryKey)
-
-            2) objectForDataIdentifier
-            */
-           /*
-            Simplifying assumptions for now:
-            if parameters is a string, it's the primary key
-            if parameters is an array, it's an array of primaryKeys
-            */
-           if(this._areCriteriaSyntaxPropertiesRawDataPrimaryKeys(typeToFetch, criteria, service)) {
-
-                if(typeof criteria.parameters === "string") {
-                        dataIdentifier = service.dataIdentifierForTypePrimaryKey(typeToFetch,criteria.parameters);
-                        existingObject = service.rootService.objectForDataIdentifier(dataIdentifier);
-                } else if(Array.isArray(criteria.parameters)) {
-                    var rootService = service.rootService,
-                        array = criteria.parameters, i=0, iObject,
-                        firstLocalObjectIndex = -1,
-                        parametersToFetch;
-
-                    while( i < array.length ) {
-                        dataIdentifier = service.dataIdentifierForTypePrimaryKey(typeToFetch,array[i]);
-                        iObject = rootService.objectForDataIdentifier(dataIdentifier);
-                        if(iObject) {
-                            //Add to result
-                            (existingObject || (existingObject = [])).push(iObject);
-                            //remove from criteria since found
-                            // array.splice(i,1);
-                            /*
-                                The first time we find a local object, we need to fork the arrays as we'll fullfill some from local, and the rest from the network.
-                            */
-                            if(firstLocalObjectIndex == -1) {
-                                firstLocalObjectIndex = i;
-                            }
-                        } else if(firstLocalObjectIndex !== -1) {
-
-                            if(!parametersToFetch) {
-                                parametersToFetch = array.slice(0, firstLocalObjectIndex);
-                            }
-                            parametersToFetch.push(array[i]);
-                        }
-                        i++;
-                    }
-
-                    if(parametersToFetch) {
-                        criteria.parameters = parametersToFetch;
-                    } else if(existingObject && existingObject.length === array.length) {
-                        /*
-                            Looks like we found everything locally
-                        */
-                        criteria.parameters = Array.empty;
-                    }
-                }
-            }
-
-            return existingObject;
+            return service.objectWithDescriptorMatchingRawDataPrimaryKeyCriteria(typeToFetch, criteria);
         }
     },
     _fetchConvertedDataForObjectDescriptorCriteria: {
