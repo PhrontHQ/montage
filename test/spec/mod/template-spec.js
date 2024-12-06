@@ -1789,7 +1789,7 @@ describe("spec/mod/template-spec", function () {
 
     describe("cache", function () {
         it("should treat same module id in different package as different templates", function (done) {
-            return require.loadPackage("spec/package-a").then(function (pkg1) {
+            require.loadPackage("spec/package-a").then(function (pkg1) {
                 return require.loadPackage("spec/package-b").then(function (pkg2) {
                     return Template.getTemplateWithModuleId("ui/main.mod/main.html", pkg1)
                     .then(function (template1) {
