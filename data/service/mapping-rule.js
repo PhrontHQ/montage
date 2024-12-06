@@ -298,7 +298,10 @@ exports.MappingRule = Montage.specialize(/** @lends MappingRule.prototype */ {
                 }
             } else if(this.reverter) {
                 this.reverter.currentRule = this;
-                value = this.reverter.revert(value);
+                /*
+                    There may not be a reverter method
+                */
+                value = this.reverter.revert?.(value);
                 if(this._isAsync(value)) {
                     var self = this;
                     return value.then(function(value) {
