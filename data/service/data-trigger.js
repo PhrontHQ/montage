@@ -225,6 +225,8 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
             } else {
                 this._valueStatus.delete(object);
             }
+
+            return status;
         }
     },
 
@@ -260,6 +262,12 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
         }
     },
 
+    isToMany: {
+        get: function() {
+            return (this.propertyDescriptor.cardinality !== 1)
+        }
+    },
+
     /**
      * @method
      * @argument {Object} object
@@ -275,7 +283,7 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
         value: function (object, shouldFetch) {
             var valueStatus,
                 myPropertyDescriptor = this.propertyDescriptor,
-                isToMany = (myPropertyDescriptor.cardinality !== 1),
+                isToMany = this.isToMany,
                 prototype, 
                 descriptor, 
                 getter = this._valueGetter, 
@@ -300,7 +308,7 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
                 // Start an asynchronous fetch of the property's value if necessary.
                 this.getObjectProperty(object)
                 .catch((error) => {
-                    console.error("getObjectProperty error: ",error);
+                    console.error(this._propertyName+" DataTrigger: getObjectProperty error: ",error);
                 });
             }
 
@@ -330,7 +338,8 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
                     valueClass = Array;
                 }
 
-                object[this._privatePropertyName] = new valueClass();
+                this._setAndObserveValue(object, undefined, new valueClass());
+
             }
 
             // Return the property's current value.
@@ -392,11 +401,145 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
      * property's value will only temporarily be set to the specified value:
      * When the service finishes obtaining the value the property's value will
      * be reset to that obtained value.
+     * 
+     * 12/5/2024 — Except for collections where we merge values
      *
      * @method
      * @argument {Object} object
      * @argument {} value
      */
+
+    _setAndObserveValue: {
+        configurable: true,
+        writable: true,
+        value: function (object, initialValue, currentValue) {
+            if(this.isToMany) {
+                if(initialValue) {
+                    var listener = this._collectionListener.get(object);
+                    if(listener) {
+
+                        if(isArray) {
+                            initialValue.removeRangeChangeListener(listener);
+                        } else if(isMap) {
+                            initialValue.removeMapChangeListener(listener);
+                        }
+
+                        if(!currentValue) {
+                            this._collectionListener.delete(object);
+                        }
+
+                    }
+
+                }
+                if(currentValue) {
+                    if(Array.isArray(currentValue)) {
+                        var self = this,
+                            listener = function _triggerArrayCollectionListener(plus, minus, index) {
+                                //If we're not in the middle of a mapping...:
+                                if(!self._service._objectsBeingMapped.has(object)) {
+                                    //Dispatch update event
+                                    var changeEvent = new ChangeEvent;
+                                    changeEvent.target = object;
+                                    changeEvent.key = self._propertyName;
+
+                                    //This
+                                    changeEvent.index = index;
+                                    changeEvent.addedValues = plus;
+                                    changeEvent.removedValues = minus;
+
+                                    //Or this?
+                                    //changeEvent.rangeChange = [plus, minus, index];
+
+                                    //Or both with a getter/setter for index, addedValues and removedValues on top of rangeChange?
+
+                                    //To deal with changes happening to an array value of that property,
+                                    //we'll need to add/cancel observing on the array itself
+                                    //and dispatch added/removed change in the array's change handler.
+
+                                    //Bypass EventManager for now
+                                    self._service.rootService.handleChange(changeEvent);
+                                }
+                            };
+
+                        this._collectionListener.set(object,listener);
+                        currentValue.addRangeChangeListener(listener);
+                    }
+                    else if(currentValue instanceof Map) {
+                        var self = this,
+                            listener = function _triggerMapCollectionListener(value, key) {
+                                //If we're not in the middle of a mapping...:
+                                if(!self._service._objectsBeingMapped.has(object)) {
+                                    //Dispatch update event
+                                    var changeEvent = new ChangeEvent;
+                                    changeEvent.target = object;
+                                    /*
+                                        Here we're saying the hosting object changed.
+                                        so maybe this should be called "property","propertyValue","previousPropertyValue"
+                                        which opens up the use of key for the content, for Map, but also key as index for an array. We only support expressing changes on 1 index for array, happy coincidence!
+
+                                        !!! What if we renamed
+                                            - addedValues to added
+                                                - for Array, added contains values added to the array (plus)
+                                                - for Map, added contains one, or more pairs [key,values] as entries, when it's actually added
+
+                                            - removedValues to removed
+                                                - for Array, removed contains values removed to the array (minus)
+                                                - for Map, removed contains one, or more pairs [key,values] as entries, when it's actually deleted from the map
+
+                                            - key/keyValue represents a set on an object as well as a map, a mutation of something that was there. For Array it's useful to use it for length on top of added/removed
+
+                                                - previousKeyValue if there contains the value before keyValue at key
+
+                                    */
+                                    changeEvent.key = self._propertyName;
+                                    //We set the whole Map() since we don't have the tools yet to express better
+                                    changeEvent.keyValue = object[self._privatePropertyName];
+
+                                    /*
+                                        Today, we'd have to listen to before change to know about the value that was previously under "key". It wouldn't be very practical for the trigger to store somewhere that value, so it can reuse it here. We probably can find a way. Another option could be to add the previous value to the arguments passed to the listener, which wouldn't break existing code and allow us to be smarter.
+                                        changeEvent.previousKeyValue = initialValue;
+                                    */
+
+                                    /*
+                                        Look like we're missing in collections listen the semantic to exparess the fact that a key is gone from the Map, vs the key being there and containing undefined?
+
+                                        changeEvent.index makes no sense for a Map or an object, but it is similar to a key, it's a "slot"
+
+                                        How could we express the disparition of a Key? We would need a removedKeys?
+                                    */
+                                    //We could use "key" for arrays and the value would be an integer
+                                    // changeEvent.index = index;
+                                    // changeEvent.addedValues = plus;
+                                    // changeEvent.removedValues = minus;
+
+                                    //Or this?
+                                    //changeEvent.rangeChange = [plus, minus, index];
+
+                                    //Or both with a getter/setter for index, addedValues and removedValues on top of rangeChange?
+
+                                    //To deal with changes happening to an array value of that property,
+                                    //we'll need to add/cancel observing on the array itself
+                                    //and dispatch added/removed change in the array's change handler.
+
+                                    //Bypass EventManager for now
+                                    self._service.rootService.handleChange(changeEvent);
+                                }
+                            };
+
+                        this._collectionListener.set(object,listener);
+                        currentValue.addMapChangeListener(listener);
+                    }
+                    else if(this.propertyDescriptor.isLocalizable) {
+                        console.error("DataTrigger misses implementation to track changes on to-many localized property values");
+                    } else {
+                        console.error("DataTrigger misses implementation to track changes on property values that are neither Array nor Map");
+                    }
+
+                }
+            }
+
+        }
+    },
     _setValue: {
         configurable: true,
         writable: true,
@@ -415,7 +558,7 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
 
             initialValue = this._getValue(object, shouldFetch);
             //If Array / to-Many
-            isToMany = this.propertyDescriptor.cardinality !== 1;
+            isToMany = this.isToMany;
             isArray = Array.isArray(initialValue);
             isMap  = !isArray && initialValue instanceof Map;
 
@@ -465,131 +608,7 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
 
             currentValue = this._getValue(object, shouldFetch);
             if(currentValue !== initialValue) {
-
-                if(isToMany) {
-                    if(initialValue) {
-                        var listener = this._collectionListener.get(object);
-                        if(listener) {
-
-                            if(isArray) {
-                                initialValue.removeRangeChangeListener(listener);
-                            } else if(isMap) {
-                                initialValue.removeMapChangeListener(listener);
-                            }
-
-                            if(!currentValue) {
-                                this._collectionListener.delete(object);
-                            }
-
-                        }
-
-                    }
-                    if(currentValue) {
-                        if(Array.isArray(currentValue)) {
-                            var self = this,
-                                listener = function _triggerArrayCollectionListener(plus, minus, index) {
-                                    //If we're not in the middle of a mapping...:
-                                    if(!self._service._objectsBeingMapped.has(object)) {
-                                        //Dispatch update event
-                                        var changeEvent = new ChangeEvent;
-                                        changeEvent.target = object;
-                                        changeEvent.key = self._propertyName;
-
-                                        //This
-                                        changeEvent.index = index;
-                                        changeEvent.addedValues = plus;
-                                        changeEvent.removedValues = minus;
-
-                                        //Or this?
-                                        //changeEvent.rangeChange = [plus, minus, index];
-
-                                        //Or both with a getter/setter for index, addedValues and removedValues on top of rangeChange?
-
-                                        //To deal with changes happening to an array value of that property,
-                                        //we'll need to add/cancel observing on the array itself
-                                        //and dispatch added/removed change in the array's change handler.
-
-                                        //Bypass EventManager for now
-                                        self._service.rootService.handleChange(changeEvent);
-                                    }
-                                };
-
-                            this._collectionListener.set(object,listener);
-                            currentValue.addRangeChangeListener(listener);
-                        }
-                        else if(currentValue instanceof Map) {
-                            var self = this,
-                                listener = function _triggerMapCollectionListener(value, key) {
-                                    //If we're not in the middle of a mapping...:
-                                    if(!self._service._objectsBeingMapped.has(object)) {
-                                        //Dispatch update event
-                                        var changeEvent = new ChangeEvent;
-                                        changeEvent.target = object;
-                                        /*
-                                            Here we're saying the hosting object changed.
-                                            so maybe this should be called "property","propertyValue","previousPropertyValue"
-                                            which opens up the use of key for the content, for Map, but also key as index for an array. We only support expressing changes on 1 index for array, happy coincidence!
-
-                                            !!! What if we renamed
-                                                - addedValues to added
-                                                    - for Array, added contains values added to the array (plus)
-                                                    - for Map, added contains one, or more pairs [key,values] as entries, when it's actually added
-
-                                                - removedValues to removed
-                                                    - for Array, removed contains values removed to the array (minus)
-                                                    - for Map, removed contains one, or more pairs [key,values] as entries, when it's actually deleted from the map
-
-                                                - key/keyValue represents a set on an object as well as a map, a mutation of something that was there. For Array it's useful to use it for length on top of added/removed
-
-                                                    - previousKeyValue if there contains the value before keyValue at key
-
-                                        */
-                                        changeEvent.key = self._propertyName;
-                                        //We set the whole Map() since we don't have the tools yet to express better
-                                        changeEvent.keyValue = object[self._privatePropertyName];
-
-                                        /*
-                                            Today, we'd have to listen to before change to know about the value that was previously under "key". It wouldn't be very practical for the trigger to store somewhere that value, so it can reuse it here. We probably can find a way. Another option could be to add the previous value to the arguments passed to the listener, which wouldn't break existing code and allow us to be smarter.
-                                            changeEvent.previousKeyValue = initialValue;
-                                        */
-
-                                        /*
-                                            Look like we're missing in collections listen the semantic to exparess the fact that a key is gone from the Map, vs the key being there and containing undefined?
-
-                                            changeEvent.index makes no sense for a Map or an object, but it is similar to a key, it's a "slot"
-
-                                            How could we express the disparition of a Key? We would need a removedKeys?
-                                        */
-                                        //We could use "key" for arrays and the value would be an integer
-                                        // changeEvent.index = index;
-                                        // changeEvent.addedValues = plus;
-                                        // changeEvent.removedValues = minus;
-
-                                        //Or this?
-                                        //changeEvent.rangeChange = [plus, minus, index];
-
-                                        //Or both with a getter/setter for index, addedValues and removedValues on top of rangeChange?
-
-                                        //To deal with changes happening to an array value of that property,
-                                        //we'll need to add/cancel observing on the array itself
-                                        //and dispatch added/removed change in the array's change handler.
-
-                                        //Bypass EventManager for now
-                                        self._service.rootService.handleChange(changeEvent);
-                                    }
-                                };
-
-                            this._collectionListener.set(object,listener);
-                            currentValue.addMapChangeListener(listener);
-                        }
-                        else if(this.propertyDescriptor.isLocalizable) {
-                            console.error("DataTrigger misses implementation to track changes on to-many localized property values");
-                        } else {
-                            console.error("DataTrigger misses implementation to track changes on property values that are neither Array nor Map");
-                        }
-
-                    }
-                }
+                this._setAndObserveValue(object, initialValue, currentValue);
             }
 
 
@@ -692,14 +711,14 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
     updateObjectProperty: {
         value: function (object) {
             var self = this,
-                status = this._getValueStatus(object) || {};
+                status = this._getValueStatus(object) || this._setValueStatus(object, {});
             if (!status.promise) {
-                this._setValueStatus(object, status);
+                //this._setValueStatus(object, status);
                 status.promise = new Promise(function (resolve, reject) {
                     status.resolve = resolve;
                     status.reject = reject;
-                    self._fetchObjectProperty(object);
                 });
+                self._fetchObjectProperty(object);
             }
             // Return the existing or just created promise for this data.
             return status.promise;
@@ -726,23 +745,65 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
                 if(propertyValue === null) {
                     object[self._propertyName] = propertyValue;
                 }
-                else if(propertyValue && !object[self._privatePropertyName]) {
-                    if(self.propertyDescriptor.cardinality > 1) {
-                        object[self._propertyName] = propertyValue;
-                    }
+                else if(propertyValue) {
                     /*
-                        When we fetch a property of an object that's not a relationship, 
-                        typically a basic type, the value is returned and mapped to the existing object already. 
-                        If that's the case, propertyValue[0] would be the object itself.
-                         If that's the case, then there's nothing to do.
-
-                        Benoit: 5/5/2022 - FIXME. We need to assess wether we'd propertyValue could be return 
-                        as a value in an array for a to-one, or just the objecy as expected. 
-                        Adding a check for that as the code apparently expecyted an array with only a value in it.
+                        If there's no value at all on the object, we go ahead and set it
                     */
-                    else if((propertyValue = (Array.isArray(propertyValue) ? propertyValue[0] : propertyValue)) !== object) {
-                        object[self._propertyName] = propertyValue;
+                    let localValue = object[self._privatePropertyName];
+                    if(!localValue) {
+                        if(self.propertyDescriptor.cardinality > 1) {
+                            object[self._propertyName] = propertyValue;
+                        }
+                        /*
+                            When we fetch a property of an object that's not a relationship, 
+                            typically a basic type, the value is returned and mapped to the existing object already. 
+                            If that's the case, propertyValue[0] would be the object itself.
+                            If that's the case, then there's nothing to do.
+
+                            Benoit: 5/5/2022 - FIXME. We need to assess wether we'd propertyValue could be return 
+                            as a value in an array for a to-one, or just the objecy as expected. 
+                            Adding a check for that as the code apparently expected an array with only a value in it.
+                        */
+                        else if((propertyValue = (Array.isArray(propertyValue) ? propertyValue[0] : propertyValue)) !== object) {
+                            object[self._propertyName] = propertyValue;
+                        }
+                    } 
+                    /*
+                        We now initialize to-Many to empty array/collections.
+                        So if there's an empty value on the object, we fill, if it has values, we merge
+                    */
+                    else if(self.propertyDescriptor.cardinality > 1) {
+
+                        if(Array.isArray(localValue)) {
+                            if(self.propertyDescriptor.hasUniqueValues && localValue.length > 0) {
+                                for(let iValue of propertyValue) {
+                                    if(!localValue.includes(iValue)) {
+                                        localValue.push(iValue);
+                                    }
+                                }
+                            } else {
+                                localValue.push(...propertyValue);
+                            }
+                        } else if(localValue instanceof Set) {
+                            localValue.addEach(propertyValue)
+
+                        } else if(localValue instanceof Map) {
+                            localValue.addEach(propertyValue)
+                        }
+                        
+
+                    } 
+                    /*
+                        We should not be in a position where a property is fetched for a toOne/type and there's already a value,
+                        unless it was set by client code while the fetch was happening. We should ideally tell the user as this is 
+                        really an update, and hopefully the stack will treat as such.
+
+                        TODO: VERIFY that a property set before it is fetched ends up being processed as an update.
+                    */
+                    else if(Array.isArray(propertyValue) ? (propertyValue[0] !== undefined && propertyValue[0] !== localValue) : (propertyValue !== localValue)) {
+                        console.warn("property "+self._propertyName+"'s value was resolved by fetch to ",propertyValue, ", but current value is now: ", object[self._propertyName]);
                     }
+
                 }
                 return self._fulfillObjectPropertyFetch(object);
             }).catch(function (error) {
