@@ -60,7 +60,7 @@ var Defaults = {
     isUnique: false,
     isOneWayEncrypted: false,
     isSerializable: true,
-    hasUniqueValues: false,
+    hasUniqueValues: true,
 };
 
 
