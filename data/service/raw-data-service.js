@@ -1212,6 +1212,9 @@ RawDataService.addClassProperties({
         }
     },
 
+    /*
+        Not called anymore, registerDataIdentifierForTypePrimaryKey() is called directly now by other methods
+    */
     registerDataIdentifierForTypeRawData: {
         value: function (dataIdentifier, type, rawData) {
             var primaryKey = this.primaryKeyForTypeRawData(type, rawData);
