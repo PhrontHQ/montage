@@ -282,28 +282,29 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
 
                         We should more carefully use the syntax to match the property to it's value
                     */
-                    let readExpressions = readOperation.data.readExpressions,
-                            rawDataObject = {};
+                    // let readExpressions = readOperation.data.readExpressions,
+                    //         rawDataObject = {};
 
-                        rawData.push(rawDataObject);
-                    //Set the primary key:
-                    rawDataObject[qualifiedProperties[0]] = criteriaParameters;
+                    //     rawData.push(rawDataObject);
+                    // //Set the primary key:
+                    // rawDataObject[qualifiedProperties[0]] = criteriaParameters;
                     
-                    console.once.warn("No Mapping found for readOperation on "+ readOperation.target.name+ " for "+ readExpressions);
+                    // console.once.warn("No Mapping found for readOperation on "+ readOperation.target.name+ " for "+ readExpressions);
                     
-                    //console.warn("No Mapping found for readOperation on "+ readOperation.target.name+ " for "+ readExpressions+" and criteria: ",readOperation.criteria);
-                        for(let i = 0, countI = readExpressions.length, iReadExpression, iPropertyDescriptor; (i < countI); i++ ) {
-                            iReadExpression = readExpressions[i]
-                            iPropertyDescriptor = objectDescriptor.propertyDescriptorNamed(iReadExpression);
-                            rawDataObject[iReadExpression] = iPropertyDescriptor.defaultValue || iPropertyDescriptor.defaultFalsyValue;
-                        }
-                        responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
-                        responseOperation.target.dispatchEvent(responseOperation);
+                    // //console.warn("No Mapping found for readOperation on "+ readOperation.target.name+ " for "+ readExpressions+" and criteria: ",readOperation.criteria);
+                    // for(let i = 0, countI = readExpressions.length, iReadExpression, iPropertyDescriptor; (i < countI); i++ ) {
+                    //     iReadExpression = readExpressions[i]
+                    //     iPropertyDescriptor = objectDescriptor.propertyDescriptorNamed(iReadExpression);
+                    //     rawDataObject[iReadExpression] = iPropertyDescriptor.defaultValue || iPropertyDescriptor.defaultFalsyValue;
+                    // }
+                    
+                    responseOperation = this.responseOperationForReadOperation(readOperation.referrer ? readOperation.referrer : readOperation, null, rawData);
+                    responseOperation.target.dispatchEvent(responseOperation);
 
-                        //Resolve once dispatchEvent() is completed, including any pending progagationPromise.
-                        responseOperation.propagationPromise.then(() => {
-                            readOperationCompletionPromiseResolve?.(responseOperation);
-                        });
+                    //Resolve once dispatchEvent() is completed, including any pending progagationPromise.
+                    responseOperation.propagationPromise.then(() => {
+                        readOperationCompletionPromiseResolve?.(responseOperation);
+                    });
 
                 } else {
                     let error = new Error("No Mapping found "+ readOperation.target.name+ " "+readOperation.data.readExpressions);
@@ -379,7 +380,7 @@ var HttpService = exports.HttpService = class HttpService extends RawDataService
             }
         })
         .then((responseContent) => {
-            console.debug("responseContent: ",JSON.stringify(responseContent));
+            //console.debug(iRequest.url+": ",JSON.stringify(responseContent));
 
             let rawData = [];
             mapping.mapFetchResponseToRawData(responseContent, rawData);
