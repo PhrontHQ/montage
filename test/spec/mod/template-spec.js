@@ -1437,7 +1437,8 @@ describe("spec/mod/template-spec", function () {
                 getTemplateArgumentSerialization: function (elementIds) {
                     return argumentsTemplate
                         ._createSerializationWithElementIds(elementIds);
-                }
+                },
+                _ownerDocumentPart: new DocumentPart()
             };
         });
 
