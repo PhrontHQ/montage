@@ -192,6 +192,7 @@ var Montage = require("../../core/core").Montage,
         "validateCompletedOperation",
         "cancelValidateOperation",
         "validateCanceledOperation",
+        
         "keepAliveOperation"
     ];
 
