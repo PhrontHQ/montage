@@ -74,6 +74,13 @@ function define(key, value) {
     });
 }
 
+/*
+    GenericCollection.prototype.addEach = function (values, mapFn, thisp) {...}
+
+    unless there's a mapFn and or thisp, addEach(values) should really be a splice,
+    which should perform better:
+    TODO: add a new implementation and matching test 
+*/
 define("addEach", GenericCollection.prototype.addEach);
 define("deleteEach", GenericCollection.prototype.deleteEach);
 // define("toArray", GenericCollection.prototype.toArray);
