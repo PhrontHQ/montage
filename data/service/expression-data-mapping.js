@@ -886,9 +886,10 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     },
 
     _mapRawDataPropertiesToObject: {
-        value: function(data, rawDataProperties, object, context, readExpressions, mappingScope, unnappedRequisitePropertyNames, promises) {
-            var result,
-                rawDataPropertyIteration = 0, rawDataPropertyIterationCount = rawDataProperties.length,
+        value: function(data, object, context, readExpressions, mappingScope, unnappedRequisitePropertyNames, promises) {
+            var rawDataProperties = data ? Object.keys(data) : null,
+                result,
+                rawDataPropertyIteration = 0, rawDataPropertyIterationCount = (rawDataProperties?.length || 0),
                 dataMatchingRules,
                 requisitePropertyNames = this.requisitePropertyNames,
                 hasSnapshot = this.service.hasSnapshotForObject(object),
@@ -903,86 +904,100 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                 changesForDataObject,
                 mainService;
 
-
-            for(;(rawDataPropertyIteration < rawDataPropertyIterationCount); rawDataPropertyIteration++) {
-                dataMatchingRules = this.mappingRulesForRawDataProperty(rawDataProperties[rawDataPropertyIteration]);
-
-                r = 0;
-                while ((aRule = dataMatchingRules[r++])) {
-
-                    /*
-                        If a rawData property led us to a Rule we've seen before, we don't want to process it twice
-                    */
-                    if(matchingRules.has(aRule)) {
-                        continue;
-                    }
-
-                    matchingRules.add(aRule);
-
-                    isRequiredRule = requisitePropertyNames.has(aRule.targetPath) ||  (readExpressions && readExpressions.indexOf(aRule.targetPath) !== -1);
-                    aRuleRequirements = aRule.requirements;
-                    dataHasRuleRequirements = true;
-
-                    //Check if the rule has what it needs.
-                    for(i=0, countI = aRuleRequirements.length;(i<countI);i++) {
-                        if(!data.hasOwnProperty(aRuleRequirements[i])) {
-                            dataHasRuleRequirements = false;
-                            break;
+            /*
+                If data is null and we have readExpressions, which are object-level, we go on and set those.
+            */
+            if(data === null && rawDataPropertyIterationCount === 0 && readExpressions.length > 0) {
+                for(let iReadExpression of readExpressions) {
+                    object[iReadExpression] = null;
+                }
+            }
+            else {
+                /*
+                    We have a rawData object to work with, we proceed to mapping properties it holds
+                */
+                for(;(rawDataPropertyIteration < rawDataPropertyIterationCount); rawDataPropertyIteration++) {
+                    dataMatchingRules = this.mappingRulesForRawDataProperty(rawDataProperties[rawDataPropertyIteration]);
+    
+                    r = 0;
+                    while ((aRule = dataMatchingRules[r++])) {
+    
+                        /*
+                            If a rawData property led us to a Rule we've seen before, we don't want to process it twice
+                        */
+                        if(matchingRules.has(aRule)) {
+                            continue;
                         }
-                    }
-
-                    if(isRequiredRule && !dataHasRuleRequirements) {
-                        console.error("Rule: ",aRule, "can't be mapped because data is missing required property \"" + aRuleRequirements[i] + "\"");
-                    }
-
-                    /*
-                        #WARNING TO DO: IF WE HAVE PENDING CHANGES - A DIFFERENT VALUE - FOR A PROPERTY THAT WOULD BE OVERRIDEN BY THIS CURRENT MAPPING WE'RE GOING TO HAVE
-                        TO TELL THE USER ABOUT IT TO RESOLVE
-
-                        original condition: Why do we even need to consider snapshot here?
-
-                        if((!hasSnapshot && !requisitePropertyNames.has(aRule.targetPath)) || ((aRule.converter && (aRule.converter instanceof RawForeignValueToObjectConverter)) &&
-                            !requisitePropertyNames.has(aRule.targetPath) &&
-                            (readExpressions && readExpressions.indexOf(aRule.targetPath) === -1))) {
-                                continue;
+    
+                        matchingRules.add(aRule);
+    
+                        isRequiredRule = requisitePropertyNames.has(aRule.targetPath) ||  (readExpressions && readExpressions.indexOf(aRule.targetPath) !== -1);
+                        aRuleRequirements = aRule.requirements;
+                        dataHasRuleRequirements = true;
+    
+                        //Check if the rule has what it needs.
+                        for(i=0, countI = aRuleRequirements.length;(i<countI);i++) {
+                            if(!data.hasOwnProperty(aRuleRequirements[i])) {
+                                dataHasRuleRequirements = false;
+                                break;
+                            }
                         }
-                    */
-
-                    /*
-                        if we don't have what we need to fullfill, we bail out.
-
-                        Previously if the rule isn't required, we would bail out, but if it's been sent ny the server, me might as well make it useful than stay unused in the snapshot, as long as we can.
-                    */
-
-                    // if(service.canMapObjectDescriptorRawDataToObjectPropertyWithoutFetch(objectDescriptor, aRule.targetPath) && dataHasRuleRequirements) {
-                    //     console.log("Now mapping property "+aRule.targetPath+" of "+objectDescriptor.name);
-                    // }
-
-                    if((!isRequiredRule && !service.canMapObjectDescriptorRawDataToObjectPropertyWithoutFetch(objectDescriptor, aRule.targetPath)) || !dataHasRuleRequirements) {
-                        continue;
-                    }
-                    // if(!isRequiredRule || !dataHasRuleRequirements) {
-                    //     continue;
-                    // }
-
-                    result = this.mapRawDataToObjectProperty(data, object, aRule.targetPath, context, mappingScope);
-                    if(isObjectCreated) {
+    
+                        if(isRequiredRule && !dataHasRuleRequirements) {
+                            console.error("Rule: ",aRule, "can't be mapped because data is missing required property \"" + aRuleRequirements[i] + "\"");
+                        }
+    
+                        /*
+                            #WARNING TO DO: IF WE HAVE PENDING CHANGES - A DIFFERENT VALUE - FOR A PROPERTY THAT WOULD BE OVERRIDEN BY THIS CURRENT MAPPING WE'RE GOING TO HAVE
+                            TO TELL THE USER ABOUT IT TO RESOLVE
+    
+                            original condition: Why do we even need to consider snapshot here?
+    
+                            if((!hasSnapshot && !requisitePropertyNames.has(aRule.targetPath)) || ((aRule.converter && (aRule.converter instanceof RawForeignValueToObjectConverter)) &&
+                                !requisitePropertyNames.has(aRule.targetPath) &&
+                                (readExpressions && readExpressions.indexOf(aRule.targetPath) === -1))) {
+                                    continue;
+                            }
+                        */
+    
+                        /*
+                            if we don't have what we need to fullfill, we bail out.
+    
+                            Previously if the rule isn't required, we would bail out, but if it's been sent ny the server, me might as well make it useful than stay unused in the snapshot, as long as we can.
+                        */
+    
+                        // if(service.canMapObjectDescriptorRawDataToObjectPropertyWithoutFetch(objectDescriptor, aRule.targetPath) && dataHasRuleRequirements) {
+                        //     console.log("Now mapping property "+aRule.targetPath+" of "+objectDescriptor.name);
+                        // }
+    
+                        if((!isRequiredRule && !service.canMapObjectDescriptorRawDataToObjectPropertyWithoutFetch(objectDescriptor, aRule.targetPath)) || !dataHasRuleRequirements) {
+                            continue;
+                        }
+                        // if(!isRequiredRule || !dataHasRuleRequirements) {
+                        //     continue;
+                        // }
+    
+                        result = this.mapRawDataToObjectProperty(data, object, aRule.targetPath, context, mappingScope);
+                        if(isObjectCreated) {
+                            if (this._isAsync(result)) {
+                                result = result.then((resultValue) => {
+                                    this._registerMappedPropertyValueAsChangesForCreatedObject(aRule.targetPath, resultValue, (changesForDataObject || (changesForDataObject = service.changesForDataObject(object))), object, (mainService || (mainService = service.mainService)));        
+                                    return resultValue;
+                                });
+                            } else {
+                                this._registerMappedPropertyValueAsChangesForCreatedObject(aRule.targetPath, result, (changesForDataObject || (changesForDataObject = service.changesForDataObject(object))), object, (mainService || (mainService = service.mainService)));
+                            }
+                        }
+                        unnappedRequisitePropertyNames.delete(aRule.targetPath);
+                        
                         if (this._isAsync(result)) {
-                            result = result.then((resultValue) => {
-                                this._registerMappedPropertyValueAsChangesForCreatedObject(aRule.targetPath, resultValue, (changesForDataObject || (changesForDataObject = service.changesForDataObject(object))), object, (mainService || (mainService = service.mainService)));        
-                                return resultValue;
-                            });
-                        } else {
-                            this._registerMappedPropertyValueAsChangesForCreatedObject(aRule.targetPath, result, (changesForDataObject || (changesForDataObject = service.changesForDataObject(object))), object, (mainService || (mainService = service.mainService)));
+                            (promises || (promises = [])).push(result);
                         }
-                    }
-                    unnappedRequisitePropertyNames.delete(aRule.targetPath);
-                    
-                    if (this._isAsync(result)) {
-                        (promises || (promises = [])).push(result);
                     }
                 }
             }
+
+            
             return promises;
         }
     },
@@ -1024,114 +1039,100 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     },
 
     mapRawDataToObject: {
-        value: function (data, object, context, readExpressions) {
-            var promises;
+        value: function (rawData, object, context, readExpressions) {
+            var promises,
+                requisitePropertyNames = this.requisitePropertyNames,
+                unmappedRequisitePropertyNames = new Set(requisitePropertyNames),
+                mappingScope;
 
-            if(data) {
-                var rawDataProperties = Object.keys(data),
-                    rawDataPropertyIteration = 0, rawDataPropertyIterationCount = rawDataProperties.length,
-                    dataMatchingRules,
-                    requisitePropertyNames = this.requisitePropertyNames,
-                    unmappedRequisitePropertyNames = new Set(requisitePropertyNames),
-                    hasSnapshot = this.service.hasSnapshotForObject(object),
-                    aRule,
-                    matchingRules = new Set(),
-                    aRuleRequirements, i, countI,
-                    service = this.service,
-                    objectDescriptor = this.objectDescriptor,
-                    r = 0,
-                    dataHasRuleRequirements,
-                    mappingScope;
+            if(context instanceof DataOperation) {
+                mappingScope = this._scope.nest(context);
+                mappingScope = mappingScope.nest(rawData);
 
-                if(context instanceof DataOperation) {
-                    mappingScope = this._scope.nest(context);
-                    mappingScope = mappingScope.nest(data);
-
-                } else {
-                    mappingScope = this._scope.nest(data);
-                }
-
-                promises = this._mapRawDataPropertiesToObject(data, rawDataProperties, object, context, readExpressions, mappingScope, unmappedRequisitePropertyNames, promises);
-                
-                /*
-                    This is causing problems: as partial aspects of the object are filled-in, the attempts to run mapping rules for object properties on raw data that doesn't contain
-                    the right raw properties, we end up with undefiend values, overriding previously successfully mapped ones.
-
-                    To avoid that, we'd need to only run a rule after we verified the raw data has the properties a rule expect to be there.
-                */
-                //promises = this._mapRawDataToObjectRequisiteProperties(data, object, context, readExpressions, mappingScope, unmappedRequisitePropertyNames, promises);
-
-
-
-                // for(;(rawDataPropertyIteration < rawDataPropertyIterationCount); rawDataPropertyIteration++) {
-                //     dataMatchingRules = this.mappingRulesForRawDataProperty(rawDataProperties[rawDataPropertyIteration]);
-
-                //     r = 0;
-                //     while ((aRule = dataMatchingRules[r++])) {
-
-                //         /*
-                //             If a rawData propety led us to a Rule we've seen before, we don't want to process it twice
-                //         */
-                //         if(matchingRules.has(aRule)) {
-                //             continue;
-                //         }
-
-                //         matchingRules.add(aRule);
-
-                //         isRequiredRule = requisitePropertyNames.has(aRule.targetPath) ||  (readExpressions && readExpressions.indexOf(aRule.targetPath) !== -1);
-                //         aRuleRequirements = aRule.requirements;
-                //         dataHasRuleRequirements = true;
-
-                //         //Check if the rule has what it needs.
-                //         for(i=0, countI = aRuleRequirements.length;(i<countI);i++) {
-                //             if(!data.hasOwnProperty(aRuleRequirements[i])) {
-                //                 dataHasRuleRequirements = false;
-                //                 break;
-                //             }
-                //         }
-
-                //         if(isRequiredRule && !dataHasRuleRequirements) {
-                //             console.error("Rule: ",aRule, "can't be mapped because data is missing required property \"" + aRuleRequirements[i] + "\"");
-                //         }
-
-                //         /*
-                //             #WARNING TO DO: IF WE HAVE PENDING CHANGES - A DIFFERENT VALUE - FOR A PROPERTY THAT WOULD BE OVERRIDEN BY THIS CURRENT MAPPING WE'RE GOING TO HAVE
-                //             TO TELL THE USER ABOUT IT TO RESOLVE
-
-                //             original condition: Why do we even need to consider snapshot here?
-
-                //             if((!hasSnapshot && !requisitePropertyNames.has(aRule.targetPath)) || ((aRule.converter && (aRule.converter instanceof RawForeignValueToObjectConverter)) &&
-                //                 !requisitePropertyNames.has(aRule.targetPath) &&
-                //                 (readExpressions && readExpressions.indexOf(aRule.targetPath) === -1))) {
-                //                     continue;
-                //             }
-                //         */
-
-                //         /*
-                //             if we don't have what we need to fullfill, we bail out.
-
-                //             Previously if the rule isn't required, we would bail out, but if it's been sent ny the server, me might as well make it useful than stay unused in the snapshot, as long as we can.
-                //         */
-
-                //         // if(service.canMapObjectDescriptorRawDataToObjectPropertyWithoutFetch(objectDescriptor, aRule.targetPath) && dataHasRuleRequirements) {
-                //         //     console.log("Now mapping property "+aRule.targetPath+" of "+objectDescriptor.name);
-                //         // }
-
-                //         if((!isRequiredRule && !service.canMapObjectDescriptorRawDataToObjectPropertyWithoutFetch(objectDescriptor, aRule.targetPath)) || !dataHasRuleRequirements) {
-                //             continue;
-                //         }
-                //         // if(!isRequiredRule || !dataHasRuleRequirements) {
-                //         //     continue;
-                //         // }
-
-                //         result = this.mapRawDataToObjectProperty(data, object, aRule.targetPath, context, mappingScope);
-                //         if (this._isAsync(result)) {
-                //             (promises || (promises = [])).push(result);
-                //         }
-                //     }
-                // }
-
+            } else {
+                mappingScope = this._scope.nest(rawData);
             }
+
+            promises = this._mapRawDataPropertiesToObject(rawData, object, context, readExpressions, mappingScope, unmappedRequisitePropertyNames, promises);
+            
+            /*
+                This is causing problems: as partial aspects of the object are filled-in, the attempts to run mapping rules for object properties on raw data that doesn't contain
+                the right raw properties, we end up with undefiend values, overriding previously successfully mapped ones.
+
+                To avoid that, we'd need to only run a rule after we verified the raw data has the properties a rule expect to be there.
+            */
+            //promises = this._mapRawDataToObjectRequisiteProperties(data, object, context, readExpressions, mappingScope, unmappedRequisitePropertyNames, promises);
+
+
+
+            // for(;(rawDataPropertyIteration < rawDataPropertyIterationCount); rawDataPropertyIteration++) {
+            //     dataMatchingRules = this.mappingRulesForRawDataProperty(rawDataProperties[rawDataPropertyIteration]);
+
+            //     r = 0;
+            //     while ((aRule = dataMatchingRules[r++])) {
+
+            //         /*
+            //             If a rawData propety led us to a Rule we've seen before, we don't want to process it twice
+            //         */
+            //         if(matchingRules.has(aRule)) {
+            //             continue;
+            //         }
+
+            //         matchingRules.add(aRule);
+
+            //         isRequiredRule = requisitePropertyNames.has(aRule.targetPath) ||  (readExpressions && readExpressions.indexOf(aRule.targetPath) !== -1);
+            //         aRuleRequirements = aRule.requirements;
+            //         dataHasRuleRequirements = true;
+
+            //         //Check if the rule has what it needs.
+            //         for(i=0, countI = aRuleRequirements.length;(i<countI);i++) {
+            //             if(!data.hasOwnProperty(aRuleRequirements[i])) {
+            //                 dataHasRuleRequirements = false;
+            //                 break;
+            //             }
+            //         }
+
+            //         if(isRequiredRule && !dataHasRuleRequirements) {
+            //             console.error("Rule: ",aRule, "can't be mapped because data is missing required property \"" + aRuleRequirements[i] + "\"");
+            //         }
+
+            //         /*
+            //             #WARNING TO DO: IF WE HAVE PENDING CHANGES - A DIFFERENT VALUE - FOR A PROPERTY THAT WOULD BE OVERRIDEN BY THIS CURRENT MAPPING WE'RE GOING TO HAVE
+            //             TO TELL THE USER ABOUT IT TO RESOLVE
+
+            //             original condition: Why do we even need to consider snapshot here?
+
+            //             if((!hasSnapshot && !requisitePropertyNames.has(aRule.targetPath)) || ((aRule.converter && (aRule.converter instanceof RawForeignValueToObjectConverter)) &&
+            //                 !requisitePropertyNames.has(aRule.targetPath) &&
+            //                 (readExpressions && readExpressions.indexOf(aRule.targetPath) === -1))) {
+            //                     continue;
+            //             }
+            //         */
+
+            //         /*
+            //             if we don't have what we need to fullfill, we bail out.
+
+            //             Previously if the rule isn't required, we would bail out, but if it's been sent ny the server, me might as well make it useful than stay unused in the snapshot, as long as we can.
+            //         */
+
+            //         // if(service.canMapObjectDescriptorRawDataToObjectPropertyWithoutFetch(objectDescriptor, aRule.targetPath) && dataHasRuleRequirements) {
+            //         //     console.log("Now mapping property "+aRule.targetPath+" of "+objectDescriptor.name);
+            //         // }
+
+            //         if((!isRequiredRule && !service.canMapObjectDescriptorRawDataToObjectPropertyWithoutFetch(objectDescriptor, aRule.targetPath)) || !dataHasRuleRequirements) {
+            //             continue;
+            //         }
+            //         // if(!isRequiredRule || !dataHasRuleRequirements) {
+            //         //     continue;
+            //         // }
+
+            //         result = this.mapRawDataToObjectProperty(data, object, aRule.targetPath, context, mappingScope);
+            //         if (this._isAsync(result)) {
+            //             (promises || (promises = [])).push(result);
+            //         }
+            //     }
+            // }
+
 
             return (promises && promises.length &&
                 ( promises.length === 1
