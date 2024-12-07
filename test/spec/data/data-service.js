@@ -34,6 +34,7 @@ describe("A DataService", function() {
         parent = new RawDataService();
         parent.NAME = "PARENT";
         parent.jasmineToString = function () { return "PARENT"; };
+        defaultEventManager.application.mainService = parent;
         child = new RawDataService();
         child.NAME = "CHILD";
         child.jasmineToString = function () { return "CHILD"; };
