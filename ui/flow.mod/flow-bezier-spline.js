@@ -1,4 +1,5 @@
 var Montage = require("../../core/core").Montage;
+const epsilon = 1e-9;
 
 var FlowBezierSpline = exports.FlowBezierSpline = Montage.specialize( {
 
@@ -326,7 +327,7 @@ var FlowBezierSpline = exports.FlowBezierSpline = Montage.specialize( {
         value: function (a, b, c, d) {
             var math = Math;
 
-            if ((a !== 0)) {
+            if (math.abs(a) > epsilon) {
                 var dv = 1 / a,
                     A = b * dv,
                     B = c * dv,
@@ -364,7 +365,7 @@ var FlowBezierSpline = exports.FlowBezierSpline = Montage.specialize( {
                     }
                 }
             } else {
-                if ((b !== 0)) {
+                if (math.abs(b) > epsilon) {
                     var sq = c * c - 4 * b * d;
 
                     if (sq >= 0) {
@@ -374,7 +375,7 @@ var FlowBezierSpline = exports.FlowBezierSpline = Montage.specialize( {
                         return [];
                     }
                 } else {
-                    if ((c !== 0)) {
+                    if (math.abs(c) > epsilon) {
                         return [-d / c];
                     } else {
                         return [];

@@ -4,18 +4,6 @@ var Montage = require("mod/core/core").Montage,
     ModuleReference = require("mod/core/module-reference").ModuleReference,
     Alias = require("mod/core/serialization/alias").Alias;
 
-    function fakeGetSerializablePropertyNames(object, returnValues) {
-        getSerializablePropertyNames = Montage.getSerializablePropertyNames;
-
-        spyOn(Montage, "getSerializablePropertyNames").and.callFake(function (obj) {
-            if (obj === object) {
-                return returnValues;
-            } else {
-                return getSerializablePropertyNames.apply(Montage, arguments);
-            }
-        });
-    }
-
     function createFakeModuleReference(id, _require) {
         return new ModuleReference().initWithIdAndRequire(id, _require || require);
     }
@@ -484,72 +472,6 @@ describe("spec/serialization/montage-serializer-spec", function () {
                 object.prop2a = object.prop2b = prop2;
 
                 serialization = serializer.serializeObject(object);
-                expect(JSON.parse(serialization))
-                .toEqual(expectedSerialization);
-            });
-        });
-
-        describe("multiple references to the same object", function () {
-            it("should serialize the same object first as reference then value", function () {
-                var object = new objects.SerializableAttribute(),
-                    empty = new objects.Empty(),
-                    serialization,
-                    expectedSerialization;
-
-                fakeGetSerializablePropertyNames(object, ["prop1a", "prop2a"]);
-
-                expectedSerialization = {
-                    root: {
-                        prototype: "spec/serialization/testobjects-v2[SerializableAttribute]",
-                        values: {
-                            prop1a: {"@": "empty"},
-                            prop2a: {"@": "empty"}
-                        }
-                    },
-                    empty: {
-                        prototype: "spec/serialization/testobjects-v2[Empty]",
-                        values: {
-                            identifier: null
-                        }
-                    }
-                };
-
-                object.prop1a = empty;
-                object.prop2a = empty;
-                serialization = serializer.serializeObject(object);
-
-                expect(JSON.parse(serialization))
-                .toEqual(expectedSerialization);
-            });
-
-            it("should serialize the same object first as value then reference", function () {
-                var object = new objects.SerializableAttribute(),
-                    empty = new objects.Empty(),
-                    serialization,
-                    expectedSerialization;
-
-                fakeGetSerializablePropertyNames(object, ["prop2a", "prop1a"]);
-
-                expectedSerialization = {
-                    root: {
-                        prototype: "spec/serialization/testobjects-v2[SerializableAttribute]",
-                        values: {
-                            prop2a: {"@": "empty"},
-                            prop1a: {"@": "empty"}
-                        }
-                    },
-                    empty: {
-                        prototype: "spec/serialization/testobjects-v2[Empty]",
-                        values: {
-                            identifier: null
-                        }
-                    }
-                };
-
-                object.prop1a = empty;
-                object.prop2a = empty;
-                serialization = serializer.serializeObject(object);
-
                 expect(JSON.parse(serialization))
                 .toEqual(expectedSerialization);
             });

@@ -1284,7 +1284,7 @@ Montage.defineProperty(Montage, "propertySerializability", {
 });
 
 
-Montage.defineProperty(Montage.prototype, "_buildSserializablePropertyNames", {
+Montage.defineProperty(Montage.prototype, "_buildSerializablePropertyNames", {
     value: function() {
 
         let _serializablePropertyNames,
@@ -1304,15 +1304,15 @@ Montage.defineProperty(Montage.prototype, "_buildSserializablePropertyNames", {
         return _serializablePropertyNames;
     }
 });
-Montage.defineProperty(Montage, "_buildSserializablePropertyNames", {
-    value: Montage.prototype._buildSserializablePropertyNames
+Montage.defineProperty(Montage, "_buildSerializablePropertyNames", {
+    value: Montage.prototype._buildSerializablePropertyNames
 });
 
 Montage.defineProperty(Montage.prototype, "serializablePropertyNames", {
     get: function () {
         return this.__proto__.hasOwnProperty("_serializablePropertyNames")
             ? this._serializablePropertyNames
-            : this._buildSserializablePropertyNames();
+            : this._buildSerializablePropertyNames();
     }
 });
 Montage.defineProperty(Montage, "serializablePropertyNames", {
