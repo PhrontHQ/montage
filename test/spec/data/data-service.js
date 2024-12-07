@@ -2,7 +2,8 @@ var DataService = require("mod/data/service/data-service").DataService,
     DataObjectDescriptor = require("mod/data/model/data-object-descriptor").DataObjectDescriptor,
     ModuleObjectDescriptor = require("mod/core/meta/module-object-descriptor").ModuleObjectDescriptor,
     ModuleReference = require("mod/core/module-reference").ModuleReference,
-    RawDataService = require("mod/data/service/raw-data-service").RawDataService;
+    RawDataService = require("mod/data/service/raw-data-service").RawDataService,
+    defaultEventManager = require("mod/core/event/event-manager").defaultEventManager;
 
 describe("A DataService", function() {
 
@@ -10,24 +11,17 @@ describe("A DataService", function() {
         expect(new DataService()).toBeDefined();
     });
 
-    it("initially has no parent, is a root service, and is the main service", function () {
-        var service;
+    it("initially has no parent and is a root service", function () {
+        var service = new DataService();
+        // Verify that the service has no parent and is the root.
+        expect(service.parentService).toBeUndefined();
+        expect(service.rootService).toEqual(service);
+    });
 
-        // Create the service after resetting the main service.
+    it("DataService.mainService is set to application's mainService", function () {
         DataService.mainService = undefined;
-        service = new DataService();
-        service.NAME = "SERVICE";
-        service.jasmineToString = function () { return "SERVICE"; };
-
-        // Verify that the service has no parent and is the root and main.
-        expect(service.parentService).toBeUndefined();
-        expect(service.rootService).toEqual(service);
-        expect(DataService.mainService).toEqual(service);
-
-        // Try to set a parent and verify again.
-        service.parentService = new DataService();
-        expect(service.parentService).toBeUndefined();
-        expect(service.rootService).toEqual(service);
+        var service = new DataService();
+        defaultEventManager.application.mainService = service;
         expect(DataService.mainService).toEqual(service);
     });
 
@@ -386,20 +380,20 @@ describe("A DataService", function() {
         registerPromises = [syncChild, asyncChild].map(function (c) {
             return parent.registerChildService(c);
         });
-        return Promise.all(registerPromises).then(function () {
-                expect(syncChild.parentService).toBe(parent);
-                expect(asyncChild.parentService).toBe(parent);
-                unregisterPromises = [syncChild, asyncChild].map(function (c) {
-                    return parent.unregisterChildService(c);
-                });
-
-                return Promise.all(unregisterPromises);
-            })
-            .then(function () {
-                expect(syncChild.parentService).toBeUndefined();
-                expect(asyncChild.parentService).toBeUndefined();
-                done();
+        Promise.all(registerPromises).then(function () {
+            expect(syncChild.parentService).toBe(parent);
+            expect(asyncChild.parentService).toBe(parent);
+            unregisterPromises = [syncChild, asyncChild].map(function (c) {
+                return parent.unregisterChildService(c);
             });
+
+            return Promise.all(unregisterPromises);
+        })
+        .then(function () {
+            expect(syncChild.parentService).toBeUndefined();
+            expect(asyncChild.parentService).toBeUndefined();
+            done();
+        });
     });
 
     it("has a fetchData() method", function () {
