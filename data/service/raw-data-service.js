@@ -1549,7 +1549,7 @@ RawDataService.addClassProperties({
                 return dataToPersist ? self.writeOfflineData(dataToPersist, stream.query, context) : null;
             }).then(function () {
                 // console.log("stream.dataDone() for "+stream.query.type.name);
-                if (stream.query && stream.query.orderings && self.shouldSortDataStream(stream)) {
+                if (stream.query?.orderings && self.shouldSortDataStream(stream)) {
                     self.sortDataStream(stream);
                 }
                 stream.dataDone();
