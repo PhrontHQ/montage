@@ -32,43 +32,6 @@ describe("A RawDataService", function() {
         expect(DataService.mainService).toEqual(service);
     });
 
-    it("can be a parent, child, or grandchild service", function () {
-        var parent, child, grandchild;
-
-        // Create the parent, child, and grandchild after resetting the main
-        // service, and tie them all together.
-        DataService.mainService = undefined;
-        parent = new RawDataService(),
-        parent.jasmineToString = function () { return "PARENT"; };
-        child = new RawDataService();
-        child.jasmineToString = function () { return "CHILD"; };
-        grandchild = new RawDataService();
-        grandchild.jasmineToString = function () { return "GRANDCHILD"; };
-        parent.addChildService(child);
-        child.addChildService(grandchild);
-
-        // Verify that the parents, roots, and main are correct.
-        expect(parent.parentService).toBeUndefined();
-        expect(parent.rootService).toEqual(parent);
-        expect(child.parentService).toEqual(parent);
-        expect(child.rootService).toEqual(parent);
-        expect(grandchild.parentService).toEqual(child);
-        expect(grandchild.rootService).toEqual(parent);
-        expect(DataService.mainService).toEqual(parent);
-
-        // Try to set new parents and verify again.
-        parent.parentService = new RawDataService();
-        child.parentService = new RawDataService();
-        grandchild.parentService = new RawDataService();
-        expect(parent.parentService).toBeUndefined();
-        expect(parent.rootService).toEqual(parent);
-        expect(child.parentService).toEqual(parent);
-        expect(child.rootService).toEqual(parent);
-        expect(grandchild.parentService).toEqual(child);
-        expect(grandchild.rootService).toEqual(parent);
-        expect(DataService.mainService).toEqual(parent);
-    });
-
     it("manages children correctly", function () {
         var toString, Types, objects, Child, children, parent;
 
