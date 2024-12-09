@@ -62,4 +62,4 @@ tmtags
 ### Node ###
 npm-debug.log*
 .npmignore
-node_modules/
+/node_modules/
