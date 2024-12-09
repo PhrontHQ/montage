@@ -860,7 +860,7 @@ DataService.addClassProperties({
 
             if(jObjectDescriptor.object) {
                 this._constructorToObjectDescriptorMap.set(jObjectDescriptor.object, jObjectDescriptor);
-            } else if(jObjectDescriptor.module) {
+            } else if(jObjectDescriptor.module && typeof jObjectDescriptor.loadObjectFromModule === "function") {
                 var self = this;
                 result = jObjectDescriptor.loadObjectFromModule()
                     .then(function() {
@@ -943,7 +943,7 @@ DataService.addClassProperties({
             } else {
                 var self = this,
                 module = objectDescriptor.module;
-                if(module) {
+                if(module && typeof objectDescriptor.loadObjectFromModule === "function") {
                     return objectDescriptor.loadObjectFromModule().then(function (moduleObject) {
                         return self.__makePrototypeForType(childService, objectDescriptor, moduleObject);
                     });
