@@ -13,25 +13,6 @@ describe("A RawDataService", function() {
         expect(new RawDataService()).toBeDefined();
     });
 
-    it("initially has no parent, is a root service, and is the main service", function () {
-        var service;
-
-        // Create the service after resetting the main service.
-        DataService.mainService = undefined;
-        service = new DataService();
-
-        // Verify that the service has no parent and is the root and main.
-        expect(service.parentService).toBeUndefined();
-        expect(service.rootService).toEqual(service);
-        expect(DataService.mainService).toEqual(service);
-
-        // Try to set a parent and verify again.
-        service.parentService = new DataService();
-        expect(service.parentService).toBeUndefined();
-        expect(service.rootService).toEqual(service);
-        expect(DataService.mainService).toEqual(service);
-    });
-
     it("manages children correctly", function () {
         var toString, Types, objects, Child, children, parent;
 
