@@ -125,13 +125,12 @@ RawDataService.addClassProperties({
     addMainServiceEventListeners: {
         value: function () {
 
-            this.addEventListener(ReadEvent.read, this, false);
-
             if (this.canSaveData) {
                 this.mainService.addEventListener(TransactionEvent.transactionCreate, this, false);
             }
 
             if (this.supportsDataOperation) {
+                this.addEventListener(ReadEvent.read, this, false);
                 /*
                     DataOperations on their way out:
                 */
