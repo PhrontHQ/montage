@@ -886,7 +886,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     },
 
     _mapRawDataPropertiesToObject: {
-        value: function(data, object, context, readExpressions, mappingScope, unnappedRequisitePropertyNames, promises) {
+        value: function(data, object, context, readExpressions, mappingScope, unmappedRequisitePropertyNames, promises) {
             var rawDataProperties = data ? Object.keys(data) : null,
                 result,
                 rawDataPropertyIteration = 0, rawDataPropertyIterationCount = (rawDataProperties?.length || 0),
@@ -988,7 +988,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                                 this._registerMappedPropertyValueAsChangesForCreatedObject(aRule.targetPath, result, (changesForDataObject || (changesForDataObject = service.changesForDataObject(object))), object, (mainService || (mainService = service.mainService)));
                             }
                         }
-                        unnappedRequisitePropertyNames.delete(aRule.targetPath);
+                        unmappedRequisitePropertyNames.delete(aRule.targetPath);
                         
                         if (this._isAsync(result)) {
                             (promises || (promises = [])).push(result);
