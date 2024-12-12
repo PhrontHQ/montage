@@ -2536,7 +2536,11 @@ DataService.addClassProperties({
                     dataObject = this.objectForDataIdentifier(dataIdentifier);
                 }
                 if (!dataObject) {
-                    dataObject = this._createDataObject(type, dataIdentifier);
+                    if (dataIdentifier === undefined) {
+                        dataObject = this.createDataObject(type);
+                    } else {
+                        dataObject = this._createDataObject(type, dataIdentifier);
+                    }
                 }
 
                 return dataObject;
