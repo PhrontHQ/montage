@@ -2518,9 +2518,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                     this._initializeRules();
                 }
                 if (this.parent && Object.getPrototypeOf(this._objectMappingRules) !== this.parent.objectMappingRules) {
-                    const previousObjectMappingRules = this._objectMappingRules;
-                    this._objectMappingRules = Object.create(this.parent.objectMappingRules);
-                    Object.assign(this._objectMappingRules, previousObjectMappingRules);
+                    Object.setPrototypeOf(this._objectMappingRules, this.parent.objectMappingRules);
                 }   
                 this._hasGeneratedObjectMappingRules = true;
             }
@@ -2555,9 +2553,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                     this._initializeRules();
                 }
                 if (this.parent && Object.getPrototypeOf(this._rawDataMappingRules) !== this.parent.rawDataMappingRules) {
-                    const previousRawDataMappingRules = this._rawDataMappingRules;
-                    this._rawDataMappingRules = Object.create(this.parent.rawDataMappingRules);
-                    Object.assign(this._rawDataMappingRules, previousRawDataMappingRules);
+                    Object.setPrototypeOf(this._rawDataMappingRules, this.parent.rawDataMappingRules);
                 }   
                 this._hasGeneratedRawDataMappingRules = true;
             }
