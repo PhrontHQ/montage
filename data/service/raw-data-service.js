@@ -1852,7 +1852,7 @@ RawDataService.addClassProperties({
                 // console.log(object.dataIdentifier.objectDescriptor.name +" _mapRawDataToObject id:"+record.id+" FIRST NEW MAPPING PROMISE");
 
                 if (result) {
-                    result = result.then(function () {
+                    result = result.then(function (resultValue) {
                         result = self.mapRawDataToObject(record, object, context, readExpressions);
                         if (!self._isAsync(result)) {
                             // self._deleteMapRawDataToObjectPromise(record, object);
