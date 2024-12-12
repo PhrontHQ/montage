@@ -2365,7 +2365,7 @@ DataService.addClassProperties({
                     /*
                         rawDataPrimaryKeys.length === 1 is to assess if it's a traditional id with no intrinsic meaning
                     */
-                    if(rawDataPrimaryKeys.length === 1 && requiredRawProperties.indexOf(rawDataPrimaryKeys[0] !== -1)){
+                    if(rawDataPrimaryKeys.length === 1 && requiredRawProperties.indexOf(rawDataPrimaryKeys[0]) !== -1) {
                         /*
                             Fetching depends on something that doesn't exists on the other side, we bail:
                         */
