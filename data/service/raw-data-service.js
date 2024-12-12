@@ -1827,7 +1827,7 @@ RawDataService.addClassProperties({
 
                 //Replacing with:
                 if (this._objectsBeingMapped.has(object)) {
-                    return undefined;
+                    return object;
 
                     // if(this._objectsBeingMapped.has(object)) {
                     //     console.log(object.dataIdentifier.objectDescriptor.name +" _mapRawDataToObject id:"+record.id+" FOUND EXISTING MAPPING PROMISE");
