@@ -602,7 +602,9 @@ exports.PropertyDescriptor = Montage.specialize( /** @lends PropertyDescriptor# 
      * Default is an Array, but this could be a Set or other type of collection.
      */
     collectionValueType: {
-        value: Defaults.collectionValueType
+        // 12/11/2024 - Removing that default that's just wrong 
+        //value: Defaults.collectionValueType
+        value: undefined
     },
 
     /**
