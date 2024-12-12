@@ -218,7 +218,13 @@ exports.PropertyDescriptor = Montage.specialize( /** @lends PropertyDescriptor# 
                 which means mapping used values such as "range", "map", "array", "set", "dict" and "list" to their ObjectDescriptors.
                 Most of these are built-in types, but for Range, the only way to do this here is to require() them upfront. 
             */
-            this._overridePropertyWithDefaults(deserializer, "collectionValueType");
+            //this._overridePropertyWithDefaults(deserializer, "collectionValueType");
+            value = deserializer.getProperty("collectionValueType");
+            if (value !== void 0) {
+                this.collectionValueType = value;
+            } else if(this.cardinality > 1) {
+                this.collectionValueType = Defaults["collectionValueType"];
+            }
 
 
 
