@@ -245,6 +245,9 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
         get: function () {
             if (!this._parent && this.objectDescriptor && this.objectDescriptor.parent && this.service) {
                 this._parent = this.service.mappingForType(this.objectDescriptor.parent);
+                if (this._parent) {
+                    this._hasGeneratedObjectMappingRules = false;
+                }
             }
             return this._parent;
         }
@@ -2505,24 +2508,21 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
         value: undefined
     },
 
-    _initializeObjectMappingRules: {
-        value: function() {
-            if(!this._objectMappingRules) {
-                if (this.parent) {
-                    this._objectMappingRules = Object.create(this.parent.objectMappingRules);
-                } else {
-                    this._objectMappingRules = {};
-                }
-
-                this._initializeRules();
-            }
-            return this._objectMappingRules;
-        }
-    },
-
     objectMappingRules: {
         get: function () {
-            return this._objectMappingRules || this._initializeObjectMappingRules();
+            if (!this._hasGeneratedObjectMappingRules) {
+                if (!this._objectMappingRules) {
+                    this._objectMappingRules = {};
+                    this._initializeRules();
+                }
+                if (this.parent && Object.getPrototypeOf(this._objectMappingRules) !== this.parent.objectMappingRules) {
+                    const previousObjectMappingRules = this._objectMappingRules;
+                    this._objectMappingRules = Object.create(this.parent.objectMappingRules);
+                    Object.assign(this._objectMappingRules, previousObjectMappingRules);
+                }   
+                this._hasGeneratedObjectMappingRules = true;
+            }
+            return this._objectMappingRules;
         }
     },
 
