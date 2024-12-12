@@ -4,6 +4,8 @@
         "values": {
             "name": "DataObject",
             "propertyDescriptors": [
+                {"@": "type"},
+                {"@": "subtypes"},
                 {"@": "date"},
                 {"@": "originId"},
                 {"@": "description"},
@@ -33,8 +35,29 @@
         "object": "core/montage.mjson"
     },
 
+    "type": {
+        "prototype": "core/meta/property-descriptor",
+        "values": {
+            "name": "type",
+            "valueDescriptor": {"=": "@root.parent"},
+            "description": "This is a reference to what would be an object's prototye in JavaScript: A unique instance of parent class that defines common characteristics for all objects of that type"
+        }
+    },
+
+    "subtypes": {
+        "prototype": "core/meta/property-descriptor",
+        "values": {
+            "name": "subtypes",
+            "valueType": "array",
+            "cardinality": -1,
+            "inversePropertyName": "type",
+            "valueDescriptor": {"@": "root"},
+            "description": "The list of all type instances (aka protoype in JS) of this class' subclasses, which are all specialized version of this class"
+        }
+    },
+
     "date": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "date",
             "valueDescriptor": {"@": "DateDescriptor"},
@@ -44,7 +67,7 @@
     },
 
     "originId": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "originId",
             "valueType": "string",
@@ -55,7 +78,7 @@
     },
 
     "description": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "description",
             "valueType": "string",
@@ -65,7 +88,7 @@
     },
 
     "isTemplate": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isTemplate",
             "valueType": "boolean",
@@ -75,7 +98,7 @@
     },
 
     "templateName": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "templateName",
             "isLocalizable": true,
@@ -85,7 +108,7 @@
     },
 
     "templateDescription": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "templateDescription",
             "isLocalizable": true,
@@ -94,11 +117,11 @@
     },
 
     "DateDescriptor": {
-        "object": "../../core/date.mjson"
+        "object": "core/date.mjson"
     },
 
     "creationDate": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "creationDate",
             "valueDescriptor": {"@": "DateDescriptor"},
@@ -112,7 +135,7 @@
     },
 
     "creatorIdentity": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "creatorIdentity",
             "valueDescriptor": {"@": "UserIdentityDescriptor"},
@@ -121,7 +144,7 @@
     },
 
     "modificationDate": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "modificationDate",
             "valueDescriptor": {"@": "DateDescriptor"},
@@ -130,7 +153,7 @@
     },
 
     "modderIdentity": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "modderIdentity",
             "valueDescriptor": {"@": "UserIdentityDescriptor"},
@@ -140,7 +163,7 @@
 
 
    "publicationDate": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "publicationDate",
             "valueDescriptor": {"@": "DateDescriptor"}
@@ -148,7 +171,7 @@
     },
 
     "publisherIdentity": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "publisherIdentity",
             "valueDescriptor": {"@": "UserIdentityDescriptor"},
@@ -157,7 +180,7 @@
     },
 
     "isReadOnly": {
-        "prototype": "../../core/meta/property-descriptor",
+        "prototype": "core/meta/property-descriptor",
         "values": {
             "name": "isReadOnly",
             "valueType": "boolean",
