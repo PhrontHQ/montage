@@ -9,11 +9,13 @@
 */
 
 var Range = require("strange"),
-Montage = require("./core").Montage;
+    Montage = require("./core").Montage,
+    PropertyChanges = require("core/collections/listen/property-changes");
 
 exports.Range = Range;
 
 
+Object.addEach(Range.prototype, PropertyChanges.prototype);
 
 // For doc/reference:
 
