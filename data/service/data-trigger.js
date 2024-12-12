@@ -320,7 +320,7 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
                 a fetch is in flight or have been made, since we merge local value 
                 and fetched ones in the setter.
             */
-            if(isToMany && object[this._privatePropertyName] === undefined) {
+            if((isToMany || (myPropertyDescriptor.collectionValueType !== undefined)) && object[this._privatePropertyName] === undefined) {
                 let valueClass;
                 if(myPropertyDescriptor.collectionValueType) {
                     /*
@@ -338,8 +338,9 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
                     valueClass = Array;
                 }
 
-                this._setAndObserveValue(object, undefined, new valueClass());
-
+                // this._setAndObserveValue(object, undefined, new valueClass());
+                let initValue = new valueClass();
+                this._setValue(object, initValue, false, undefined, initValue);
             }
 
             // Return the property's current value.
@@ -413,7 +414,11 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
         configurable: true,
         writable: true,
         value: function (object, initialValue, currentValue) {
-            if(this.isToMany) {
+            let isArray = Array.isArray(initialValue);
+                isMap  = !isArray && initialValue instanceof Map;
+
+            /* a range is a collection containing infinite values but it may not properly have a cardinality properly set as such, so we check this to be sure */
+            if(this.isToMany || (this.propertyDescriptor.collectionValueType === "range" )) {
                 if(initialValue) {
                     var listener = this._collectionListener.get(object);
                     if(listener) {
@@ -529,6 +534,30 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
                         this._collectionListener.set(object,listener);
                         currentValue.addMapChangeListener(listener);
                     }
+                    else if(currentValue instanceof Range) {
+
+                        let self = this,
+                            listener = function _triggerArrayCollectionListener(plus, minus, index) {
+                                //If we're not in the middle of a mapping...:
+                                if(!self._service._objectsBeingMapped.has(object)) {
+                                    //Dispatch update event
+                                    var changeEvent = new ChangeEvent;
+                                    changeEvent.target = object;
+                                    changeEvent.key = self._propertyName;
+                                    //We'd have to register for addOwnPropertyChangeListener with before argument to true to get it 
+                                    //changeEvent.previousKeyValue = initialValue;
+                                    changeEvent.keyValue = currentValue;
+
+                                    //Bypass EventManager for now
+                                    self._service.rootService.handleChange(changeEvent);
+                                }
+                            };
+
+                        this._collectionListener.set(object,listener);
+                        currentValue.addOwnPropertyChangeListener("begin", listener);
+                        currentValue.addOwnPropertyChangeListener("end", listener);
+                        currentValue.addOwnPropertyChangeListener("bounds", listener);
+                    }
                     else if(this.propertyDescriptor.isLocalizable) {
                         console.error("DataTrigger misses implementation to track changes on to-many localized property values");
                     } else {
@@ -543,9 +572,9 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
     _setValue: {
         configurable: true,
         writable: true,
-        value: function (object, value, _dispatchChange) {
+        value: function (object, value, _dispatchChange, _initialValue, _currentValue) {
             var status, prototype, descriptor, getter, setter = this._valueSetter, writable, currentValue, isToMany, isArray, isMap, initialValue,
-            dispatchChange = (arguments.length === 3) ? _dispatchChange : true,
+            dispatchChange = (arguments.length >= 3) ? _dispatchChange : true,
             //shouldFetch = !this._service.rootService._objectsBeingMapped.has(object);
             shouldFetch = undefined;
 
@@ -556,7 +585,7 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
             status = this._getValueStatus(object);
             this._setValueStatus(object, null);
 
-            initialValue = this._getValue(object, shouldFetch);
+            initialValue = arguments.length >= 4 ? _initialValue : this._getValue(object, shouldFetch);
             //If Array / to-Many
             isToMany = this.isToMany;
             isArray = Array.isArray(initialValue);
@@ -606,7 +635,7 @@ exports.DataTrigger.prototype = Object.create({}, /** @lends DataTrigger.prototy
 
             }
 
-            currentValue = this._getValue(object, shouldFetch);
+            currentValue = arguments.length >= 5 ? _currentValue : this._getValue(object, shouldFetch);
             if(currentValue !== initialValue) {
                 this._setAndObserveValue(object, initialValue, currentValue);
             }
