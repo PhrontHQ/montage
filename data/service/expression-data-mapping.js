@@ -247,6 +247,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                 this._parent = this.service.mappingForType(this.objectDescriptor.parent);
                 if (this._parent) {
                     this._hasGeneratedObjectMappingRules = false;
+                    this._hasGeneratedRawDataMappingRules = false;
                 }
             }
             return this._parent;
@@ -983,8 +984,9 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                         result = this.mapRawDataToObjectProperty(data, object, aRule.targetPath, context, mappingScope);
                         if(isObjectCreated) {
                             if (this._isAsync(result)) {
+                                const targetPath = aRule.targetPath;
                                 result = result.then((resultValue) => {
-                                    this._registerMappedPropertyValueAsChangesForCreatedObject(aRule.targetPath, resultValue, (changesForDataObject || (changesForDataObject = service.changesForDataObject(object))), object, (mainService || (mainService = service.mainService)));        
+                                    this._registerMappedPropertyValueAsChangesForCreatedObject(targetPath, resultValue, (changesForDataObject || (changesForDataObject = service.changesForDataObject(object))), object, (mainService || (mainService = service.mainService)));        
                                     return resultValue;
                                 });
                             } else {
@@ -2545,26 +2547,21 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     _rawOwnRawDataMappingRules: {
         value: undefined
     },
-
-    _initializeRawDataMappingRules: {
-        value: function() {
-            if(!this._rawDataMappingRules) {
-                if (this.parent) {
-                    this._rawDataMappingRules = Object.create(this.parent.rawDataMappingRules);
-                } else {
-                    this._rawDataMappingRules = {};
-                }
-
-                this._initializeRules();
-            }
-
-            return this._rawDataMappingRules;
-        }
-    },
-
     rawDataMappingRules: {
         get: function () {
-            return this._rawDataMappingRules || this._initializeRawDataMappingRules();
+            if (!this._hasGeneratedRawDataMappingRules) {
+                if (!this._rawDataMappingRules) {
+                    this._rawDataMappingRules = {};
+                    this._initializeRules();
+                }
+                if (this.parent && Object.getPrototypeOf(this._rawDataMappingRules) !== this.parent.rawDataMappingRules) {
+                    const previousRawDataMappingRules = this._rawDataMappingRules;
+                    this._rawDataMappingRules = Object.create(this.parent.rawDataMappingRules);
+                    Object.assign(this._rawDataMappingRules, previousRawDataMappingRules);
+                }   
+                this._hasGeneratedRawDataMappingRules = true;
+            }
+            return this._rawDataMappingRules;
         }
     },
 
