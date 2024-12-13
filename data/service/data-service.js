@@ -2066,7 +2066,7 @@ DataService.addClassProperties({
                 return this._getOrUpdateObjectProperties(object, names, start, false);
             }
             else {
-                return this.rootService.getObjectProperties(object, propertyNames);
+                return this.rootService.getObjectProperties(...arguments);
             }
         }
     },
@@ -2201,7 +2201,7 @@ DataService.addClassProperties({
                 return this._getOrUpdateObjectProperties(object, names, start, true);
               }
               else {
-                return this.rootService.updateObjectProperties(object, propertyNames);
+                return this.rootService.updateObjectProperties(...arguments);
               }
         }
     },
