@@ -1,0 +1,29 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="../cell.mod/cell.css">
+    <link rel="stylesheet" type="text/css" href="cell-boolean.css">
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "cellBoolean"},
+                "expandButton": {"@": "expandButton"},
+                "displayCheckbox": {"#": "displayCheckbox"},
+                "checkbox": {"#": "checkbox"}
+            }
+        },
+        "expandButton": {
+            "prototype": "ui/button.mod",
+            "values": {
+                "element": {"#": "expandButton"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="cellBoolean" class="Cell CellBoolean">
+        <input tabindex="-1" data-mod-id="displayCheckbox" type="checkbox" class="CellBoolean-displayCheckbox">
+        <input data-mod-id="checkbox" type="checkbox" class="CellBoolean-checkbox">
+        <div data-mod-id="expandButton" class="Cell-expandButton"></div>
+    </div>
+</body>

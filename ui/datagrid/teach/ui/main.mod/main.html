@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script type="text/mod-serialization">
+        {
+            "owner": {
+                "values": {
+                    "element": {"#": "main"},
+                    "datagrid": {"@": "datagrid"},
+                    "datagridOrderBy": {"<-": "@datagrid.orderings.0.expression"},
+                    "datagridIsOrderAscending": {"<-": "@datagrid.orderings.0.order.name == 'Ascending'"}
+                }
+            },
+            "nameColumnDescriptor": {
+                "prototype": "mod/ui/datagrid/column-descriptor",
+                "values": {
+                    "title": "Name",
+                    "cellPrototype": "mod/ui/datagrid/cell-string.mod",
+                    "cellValues": {
+                        "value": {"<->": "@datagrid:row.object.name"}
+                    }
+                }
+            },
+            "surnameColumnDescriptor": {
+                "prototype": "mod/ui/datagrid/column-descriptor",
+                "values": {
+                    "title": "Surname",
+                    "cellPrototype": "mod/ui/datagrid/cell-string.mod",
+                    "cellValues": {
+                        "value": {"<->": "@datagrid:row.object.surname"}
+                    }
+                }
+            },
+            "ageColumnDescriptor": {
+                "prototype": "mod/ui/datagrid/column-descriptor",
+                "values": {
+                    "title": "Age",
+                    "cellPrototype": "mod/ui/datagrid/cell-number.mod",
+                    "cellValues": {
+                        "value": {"<->": "@datagrid:row.object.age"}
+                    },
+                    "width": 60
+                }
+            },
+            "isAwesomeColumnDescriptor": {
+                "prototype": "mod/ui/datagrid/column-descriptor",
+                "values": {
+                    "title": "Awesome",
+                    "cellPrototype": "mod/ui/datagrid/cell-boolean.mod",
+                    "cellValues": {
+                        "value": {"<->": "@datagrid:row.object.isAwesome"}
+                    },
+                    "width": 110
+                }
+            },
+            "datagrid": {
+                "prototype": "mod/ui/datagrid/datagrid.mod",
+                "values": {
+                    "element": {"#": "datagrid"},
+                    "content": {"<-": "@owner.data"},
+                    "columnDescriptors": [
+                        {"@": "isAwesomeColumnDescriptor"},
+                        {"@": "nameColumnDescriptor"},
+                        {"@": "surnameColumnDescriptor"},
+                        {"@": "ageColumnDescriptor"}                        
+                    ]
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div data-mod-id="main" class="Main">
+        <header>Teach Datagrid Mod</header>
+        <div data-mod-id="datagrid" class="datagrid"></span>
+    </div>
+</body>
+</html>
