@@ -1,0 +1,42 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="../cell.mod/cell.css">
+    <link rel="stylesheet" type="text/css" href="cell-string.css">
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "cellString"},
+                "expandButton": {"@": "expandButton"},
+                "title": {"<-": "value"}
+            }
+        },
+        "expandButton": {
+            "prototype": "ui/button.mod",
+            "values": {
+                "element": {"#": "expandButton"}
+            }
+        },
+        "text": {
+            "prototype": "ui/text.mod",
+            "values": {
+                "element": {"#": "text"},
+                "value": {"<-": "@owner.value"}
+            }
+        },
+        "input": {
+            "prototype": "ui/text-field.mod",
+            "values": {
+                "element": {"#": "input"},
+                "value": {"<->": "@owner.value"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="cellString" class="Cell CellString">
+        <input tabIndex="-1" data-mod-id="input" class="CellString-input">
+        <div data-mod-id="text" class="CellString-text"></div>
+        <div data-mod-id="expandButton" class="Cell-expandButton"></div>
+    </div>
+</body>

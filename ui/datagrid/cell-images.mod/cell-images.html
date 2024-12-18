@@ -1,0 +1,42 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="../cell.mod/cell.css">
+    <link rel="stylesheet" type="text/css" href="cell-images.css">
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "cellImages"},
+                "expandButton": {"@": "expandButton"}
+            }
+        },
+        "expandButton": {
+            "prototype": "mod/ui/button.mod",
+            "values": {
+                "element": {"#": "expandButton"}
+            }
+        },
+        "repetition": {
+            "prototype": "mod/ui/repetition.mod",
+            "values": {
+                "element": {"#": "repetition"},
+                "content": {"<-": "@owner.images"}
+            }
+        },
+        "image": {
+            "prototype": "../cell-images-image.mod",
+            "values": {
+                "element": {"#": "image"},
+                "src": {"<-": "@repetition:iteration.object.path(@owner.imageSrcExpression)"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="cellImages" class="Cell CellImages">
+        <div data-mod-id="repetition" class="CellImages-repetition"><!--
+         --><div data-mod-id="image" class="CellImages-image"></div><!--
+     --></div>
+        <div data-mod-id="expandButton" class="Cell-expandButton"></div>
+    </div>
+</body>

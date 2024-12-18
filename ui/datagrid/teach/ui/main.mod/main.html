@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script type="text/mod-serialization">
+        {
+            "owner": {
+                "values": {
+                    "element": {"#": "main"},
+                    "datagrid": {"@": "datagrid"},
+                    "datagridOrderBy": {"<-": "@datagrid.orderings.0.expression"},
+                    "datagridIsOrderAscending": {"<-": "@datagrid.orderings.0.order.name == 'Ascending'"}
+                }
+            },
+            "isSelectionEnabled": {
+                "prototype": "mod/ui/checkbox.mod",
+                "values": {
+                    "element": {"#": "isSelectionEnabled"},
+                    "checked": {"<->": "@datagrid.isSelectionEnabled"}
+                }
+            },
+            "isEditable": {
+                "prototype": "mod/ui/checkbox.mod",
+                "values": {
+                    "element": {"#": "isEditable"},
+                    "checked": {"<->": "@datagrid.isEditable"}
+                }
+            },
+            "nameColumnDescriptor": {
+                "prototype": "mod/ui/datagrid/column-descriptor",
+                "values": {
+                    "title": "Name",
+                    "cellPrototype": "mod/ui/datagrid/cell-string.mod",
+                    "cellValues": {
+                        "value": {"<->": "@datagrid:row.object.name"}
+                    },
+                    "isEditable": true,
+                    "isSortable": true
+                }
+            },
+            "surnameColumnDescriptor": {
+                "prototype": "mod/ui/datagrid/column-descriptor",
+                "values": {
+                    "title": "Surname (non editable)",
+                    "cellPrototype": "mod/ui/datagrid/cell-string.mod",
+                    "cellValues": {
+                        "value": {"<-": "@datagrid:row.object.surname"}
+                    },
+                    "isSortable": true
+                }
+            },
+            "ageColumnDescriptor": {
+                "prototype": "mod/ui/datagrid/column-descriptor",
+                "values": {
+                    "title": "Age",
+                    "cellPrototype": "mod/ui/datagrid/cell-number.mod",
+                    "cellValues": {
+                        "value": {"<->": "@datagrid:row.object.age"}
+                    },
+                    "width": 60,
+                    "isEditable": true,
+                    "isSortable": true
+                }
+            },
+            "isAwesomeColumnDescriptor": {
+                "prototype": "mod/ui/datagrid/column-descriptor",
+                "values": {
+                    "title": "Awesome",
+                    "cellPrototype": "mod/ui/datagrid/cell-boolean.mod",
+                    "cellValues": {
+                        "value": {"<->": "@datagrid:row.object.isAwesome"}
+                    },
+                    "width": 110,
+                    "isEditable": true
+                }
+            },
+            "datagrid": {
+                "prototype": "mod/ui/datagrid/datagrid.mod",
+                "values": {
+                    "element": {"#": "datagrid"},
+                    "content": {"<-": "@owner.data"},
+                    "columnDescriptors": [
+                        {"@": "isAwesomeColumnDescriptor"},
+                        {"@": "nameColumnDescriptor"},
+                        {"@": "surnameColumnDescriptor"},
+                        {"@": "ageColumnDescriptor"}                        
+                    ]
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div data-mod-id="main" class="Main">
+        <header>Teach Datagrid Mod</header>
+        <label>
+            <input type="checkbox" data-mod-id="isSelectionEnabled">
+            isSelectionEnabled
+        </label><br><br>
+        <label>
+            <input type="checkbox" data-mod-id="isEditable">
+            isEditable
+        </label><br><br><br>
+        <div data-mod-id="datagrid" class="datagrid"></span>
+    </div>
+</body>
+</html>

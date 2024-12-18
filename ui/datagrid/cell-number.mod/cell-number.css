@@ -1,0 +1,54 @@
+.CellNumber-text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: block;
+    padding: 0 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-align: right;
+}
+
+.CellNumber-input {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: inherit;
+    box-sizing: border-box;
+    border: none;
+    background: none;
+    outline: none;
+    padding: 0 10px;
+    font-family: inherit;
+    font-size: inherit;
+    vertical-align: top;
+    margin: 0;
+    text-align: right;
+}
+
+.DatagridRow.selected .CellNumber.isEditable .CellNumber-input,
+.Datagrid:not(.isSelectionEnabled) .CellNumber.isEditable .CellNumber-input {
+    display: block;
+    opacity: 0;
+}
+
+.DatagridRow.selected .CellNumber.isEditable .CellNumber-input:focus,
+.Datagrid:not(.isSelectionEnabled) .CellNumber.isEditable .CellNumber-input:focus {
+    opacity: 1;
+}
+
+.DatagridRow.selected .CellNumber.isEditable .CellNumber-input:focus + .CellNumber-text,
+.Datagrid:not(.isSelectionEnabled) .CellNumber-input:focus + .CellNumber-text {
+    display: none;
+}

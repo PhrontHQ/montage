@@ -1,0 +1,42 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="../cell.mod/cell.css">
+    <link rel="stylesheet" type="text/css" href="cell-objects.css">
+    <script type="text/mod-serialization">
+    {
+        "owner": {
+            "values": {
+                "element": {"#": "cellObjects"},
+                "expandButton": {"@": "expandButton"}
+            }
+        },
+        "expandButton": {
+            "prototype": "ui/button.mod",
+            "values": {
+                "element": {"#": "expandButton"}
+            }
+        },
+        "repetition": {
+            "prototype": "ui/repetition.mod",
+            "values": {
+                "element": {"#": "repetition"},
+                "content": {"<-": "@owner.objects"}
+            }
+        },
+        "object": {
+            "prototype": "ui/text.mod",
+            "values": {
+                "element": {"#": "object"},
+                "value": {"<-": "@repetition:iteration.object.path(@owner.titleExpression)"}
+            }
+        }
+    }
+    </script>
+</head>
+<body>
+    <div data-mod-id="cellObjects" class="Cell CellObjects">
+        <div data-mod-id="repetition" class="CellObjects-repetition"><!--
+         --><div data-mod-id="object" class="CellObjects-object"></div><!--
+     --></div>
+        <div tabIndex="-1" data-mod-id="expandButton" class="Cell-expandButton"></div>
+    </div>
+</body>
