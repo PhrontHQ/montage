@@ -2066,7 +2066,7 @@ DataService.addClassProperties({
                 return this._getOrUpdateObjectProperties(object, names, start, false);
             }
             else {
-                return this.rootService.getObjectProperties(object, propertyNames);
+                return this.rootService.getObjectProperties(...arguments);
             }
         }
     },
@@ -2201,7 +2201,7 @@ DataService.addClassProperties({
                 return this._getOrUpdateObjectProperties(object, names, start, true);
               }
               else {
-                return this.rootService.updateObjectProperties(object, propertyNames);
+                return this.rootService.updateObjectProperties(...arguments);
               }
         }
     },
@@ -2365,7 +2365,7 @@ DataService.addClassProperties({
                     /*
                         rawDataPrimaryKeys.length === 1 is to assess if it's a traditional id with no intrinsic meaning
                     */
-                    if(rawDataPrimaryKeys.length === 1 && requiredRawProperties.indexOf(rawDataPrimaryKeys[0] !== -1)){
+                    if(rawDataPrimaryKeys.length === 1 && requiredRawProperties.indexOf(rawDataPrimaryKeys[0]) !== -1) {
                         /*
                             Fetching depends on something that doesn't exists on the other side, we bail:
                         */
@@ -2536,7 +2536,11 @@ DataService.addClassProperties({
                     dataObject = this.objectForDataIdentifier(dataIdentifier);
                 }
                 if (!dataObject) {
-                    dataObject = this._createDataObject(type, dataIdentifier);
+                    if (dataIdentifier === undefined) {
+                        dataObject = this.createDataObject(type);
+                    } else {
+                        dataObject = this._createDataObject(type, dataIdentifier);
+                    }
                 }
 
                 return dataObject;
@@ -5084,11 +5088,12 @@ DataService.addClassProperties({
             query.type = this.objectDescriptorForType(query.type);
 
 
-
-            //Check if we already have a DataStream pending for that same query:
-            if(stream = this.registeredDataStreamMapForObjectDescriptorCriteria(query.type, query.criteria)) {
-                //console.debug("registeredDataStreamMapForObjectDescriptorCriteria found for "+query.type.name+", criteria:",query.criteria);
-                return stream;
+            if (this.supportsDataOperation) {
+                //Check if we already have a DataStream pending for that same query:
+                if(stream = this.registeredDataStreamMapForObjectDescriptorCriteria(query.type, query.criteria)) {
+                    //console.debug("registeredDataStreamMapForObjectDescriptorCriteria found for "+query.type.name+", criteria:",query.criteria);
+                    return stream;
+                }
             }
 
             // Set up the stream.
@@ -5127,7 +5132,7 @@ DataService.addClassProperties({
                     supportsDataOperation will be determined by all RawDataServices supportsDataOperation
                 */
 
-                if(/*self.supportsDataOperation*/query.type.dispatchEvent) {
+                if(self.supportsDataOperation && query.type.dispatchEvent) {
                     try {
 
                         var readEvent = ReadEvent.checkout();

@@ -245,6 +245,10 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
         get: function () {
             if (!this._parent && this.objectDescriptor && this.objectDescriptor.parent && this.service) {
                 this._parent = this.service.mappingForType(this.objectDescriptor.parent);
+                if (this._parent) {
+                    this._hasGeneratedObjectMappingRules = false;
+                    this._hasGeneratedRawDataMappingRules = false;
+                }
             }
             return this._parent;
         }
@@ -886,7 +890,7 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     },
 
     _mapRawDataPropertiesToObject: {
-        value: function(data, object, context, readExpressions, mappingScope, unnappedRequisitePropertyNames, promises) {
+        value: function(data, object, context, readExpressions, mappingScope, unmappedRequisitePropertyNames, promises) {
             var rawDataProperties = data ? Object.keys(data) : null,
                 result,
                 rawDataPropertyIteration = 0, rawDataPropertyIterationCount = (rawDataProperties?.length || 0),
@@ -980,15 +984,16 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                         result = this.mapRawDataToObjectProperty(data, object, aRule.targetPath, context, mappingScope);
                         if(isObjectCreated) {
                             if (this._isAsync(result)) {
+                                const targetPath = aRule.targetPath;
                                 result = result.then((resultValue) => {
-                                    this._registerMappedPropertyValueAsChangesForCreatedObject(aRule.targetPath, resultValue, (changesForDataObject || (changesForDataObject = service.changesForDataObject(object))), object, (mainService || (mainService = service.mainService)));        
+                                    this._registerMappedPropertyValueAsChangesForCreatedObject(targetPath, resultValue, (changesForDataObject || (changesForDataObject = service.changesForDataObject(object))), object, (mainService || (mainService = service.mainService)));        
                                     return resultValue;
                                 });
                             } else {
                                 this._registerMappedPropertyValueAsChangesForCreatedObject(aRule.targetPath, result, (changesForDataObject || (changesForDataObject = service.changesForDataObject(object))), object, (mainService || (mainService = service.mainService)));
                             }
                         }
-                        unnappedRequisitePropertyNames.delete(aRule.targetPath);
+                        unmappedRequisitePropertyNames.delete(aRule.targetPath);
                         
                         if (this._isAsync(result)) {
                             (promises || (promises = [])).push(result);
@@ -2505,24 +2510,19 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
         value: undefined
     },
 
-    _initializeObjectMappingRules: {
-        value: function() {
-            if(!this._objectMappingRules) {
-                if (this.parent) {
-                    this._objectMappingRules = Object.create(this.parent.objectMappingRules);
-                } else {
-                    this._objectMappingRules = {};
-                }
-
-                this._initializeRules();
-            }
-            return this._objectMappingRules;
-        }
-    },
-
     objectMappingRules: {
         get: function () {
-            return this._objectMappingRules || this._initializeObjectMappingRules();
+            if (!this._hasGeneratedObjectMappingRules) {
+                if (!this._objectMappingRules) {
+                    this._objectMappingRules = {};
+                    this._initializeRules();
+                }
+                if (this.parent && Object.getPrototypeOf(this._objectMappingRules) !== this.parent.objectMappingRules) {
+                    Object.setPrototypeOf(this._objectMappingRules, this.parent.objectMappingRules);
+                }   
+                this._hasGeneratedObjectMappingRules = true;
+            }
+            return this._objectMappingRules;
         }
     },
 
@@ -2545,26 +2545,19 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
     _rawOwnRawDataMappingRules: {
         value: undefined
     },
-
-    _initializeRawDataMappingRules: {
-        value: function() {
-            if(!this._rawDataMappingRules) {
-                if (this.parent) {
-                    this._rawDataMappingRules = Object.create(this.parent.rawDataMappingRules);
-                } else {
-                    this._rawDataMappingRules = {};
-                }
-
-                this._initializeRules();
-            }
-
-            return this._rawDataMappingRules;
-        }
-    },
-
     rawDataMappingRules: {
         get: function () {
-            return this._rawDataMappingRules || this._initializeRawDataMappingRules();
+            if (!this._hasGeneratedRawDataMappingRules) {
+                if (!this._rawDataMappingRules) {
+                    this._rawDataMappingRules = {};
+                    this._initializeRules();
+                }
+                if (this.parent && Object.getPrototypeOf(this._rawDataMappingRules) !== this.parent.rawDataMappingRules) {
+                    Object.setPrototypeOf(this._rawDataMappingRules, this.parent.rawDataMappingRules);
+                }   
+                this._hasGeneratedRawDataMappingRules = true;
+            }
+            return this._rawDataMappingRules;
         }
     },
 

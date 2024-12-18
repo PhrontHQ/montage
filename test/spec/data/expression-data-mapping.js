@@ -11,7 +11,8 @@ var ExpressionDataMapping = require("mod/data/service/expression-data-mapping").
     PropertyDescriptor = require("mod/core/meta/property-descriptor").PropertyDescriptor,
     RawDataService = require("mod/data/service/raw-data-service").RawDataService,
     RawDataTypeMapping = require("mod/data/service/raw-data-type-mapping").RawDataTypeMapping,
-    RawForeignValueToObjectConverter = require("mod/data/converter/raw-foreign-value-to-object-converter").RawForeignValueToObjectConverter;
+    RawForeignValueToObjectConverter = require("mod/data/converter/raw-foreign-value-to-object-converter").RawForeignValueToObjectConverter,
+    defaultEventManager = require("mod/core/event/event-manager").defaultEventManager;
 
 
 var Movie = require("spec/data/logic/model/movie").Movie,
@@ -89,6 +90,7 @@ describe("An Expression Data Mapping", function() {
     mainService = new DataService();
     mainService.supportsDataOperation = false;
     mainService.NAME = "Movies";
+    defaultEventManager.application.mainService = mainService;
     movieService = new RawDataService();
     movieModuleReference = new ModuleReference().initWithIdAndRequire("spec/data/logic/model/movie", require);
     movieObjectDescriptor = new ModuleObjectDescriptor().initWithModuleAndExportName(movieModuleReference, "Movie");
