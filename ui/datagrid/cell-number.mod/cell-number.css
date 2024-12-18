@@ -37,15 +37,18 @@
     text-align: right;
 }
 
-.DatagridRow.selected .CellNumber-input {
+.DatagridRow.selected .CellNumber.isEditable .CellNumber-input,
+.Datagrid:not(.isSelectionEnabled) .CellNumber.isEditable .CellNumber-input {
     display: block;
     opacity: 0;
 }
 
-.DatagridRow.selected .CellNumber-input:focus {
+.DatagridRow.selected .CellNumber.isEditable .CellNumber-input:focus,
+.Datagrid:not(.isSelectionEnabled) .CellNumber.isEditable .CellNumber-input:focus {
     opacity: 1;
 }
 
-.DatagridRow.selected .CellNumber-input:focus + .CellNumber-text {
+.DatagridRow.selected .CellNumber.isEditable .CellNumber-input:focus + .CellNumber-text,
+.Datagrid:not(.isSelectionEnabled) .CellNumber-input:focus + .CellNumber-text {
     display: none;
 }

@@ -13,7 +13,7 @@ exports.CellBoolean = Cell.specialize({
                 this._element.addEventListener("click", this);
                 this.checkbox.addEventListener("input", this);
             }
-            this.displayCheckbox.checked = this.checkbox.checked = this._value;
+            this.checkbox.checked = this._value;
         }
     },
 
@@ -36,7 +36,7 @@ exports.CellBoolean = Cell.specialize({
             if (this._value !== value) {
                 this._value = value;
                 if (this.checkbox) {
-                    this.displayCheckbox.checked = this.checkbox.checked = value;
+                    this.checkbox.checked = value;
                 }
             }
         }

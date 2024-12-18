@@ -6,6 +6,13 @@ exports.DatagridRow = Component.specialize({
         value: function DatagridRow() {}
     },
 
+    _blurInnerElements: {
+        value: function () {
+            const elements = [...this.element.getElementsByTagName("*")];
+            elements.forEach(element => element.blur());
+        }
+    },
+
     index: {
         set: function (value) {
             this._element.style.top = value * this.rowHeight + "px";
@@ -14,6 +21,7 @@ exports.DatagridRow = Component.specialize({
             } else {
                 this.classList.remove("odd");
             }
+            this._blurInnerElements();
         }
     }
 

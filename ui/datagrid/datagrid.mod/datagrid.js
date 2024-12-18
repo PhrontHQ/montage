@@ -311,7 +311,7 @@ exports.Datagrid = Component.specialize({
                     prototype: "mod/ui/repetition.reel",
                     values: {
                         element: {"#": "rowRepetition"},
-                        isSelectionEnabled: true,
+                        isSelectionEnabled: {"<-": `@${this.identifier}.isSelectionEnabled`},
                         visibleIndexes: [],
                         content: {"<-": "@" + this.identifier + ".content"}
                     }
@@ -344,6 +344,7 @@ exports.Datagrid = Component.specialize({
                     cellId = "cell" + (i + 1);
                     descriptor.cellValues.element = {"#": cellId};
                     descriptor.cellValues.datagrid = {"=": "@" + this.identifier};
+                    descriptor.cellValues.columnDescriptor = {"=": "@" + this.identifier + ".columnDescriptors." + i};
                     descriptor.cellValues.columnIndex = i;
                     for (key in descriptor.cellValues) {
                         value = descriptor.cellValues[key];
@@ -415,6 +416,14 @@ exports.Datagrid = Component.specialize({
                 this.updateStyle();
             }
         }
+    },
+
+    isSelectionEnabled: {
+        value: true
+    },
+
+    isEditable: {
+        value: true
     }
 
 });

@@ -5,7 +5,7 @@ exports.Main = class Main extends Component {
     constructor() {
         super();
         const data = [];
-        const names = ["Olivia", "Noah", "Amelia", "Liam", "Emma", "Oliver", "Sophia", "Elijah", "Charlotte", "Mateo", "Isabella", "Lucas", "Ava", "LeviMia", "Ezra", "Elli", "Asher", "Luna", "Leo"];
+        const names = ["Olivia", "Noah", "Amelia", "Liam", "Emma", "Oliver", "Sophia", "Elijah", "Charlotte", "Mateo", "Isabella", "Lucas", "Ava", "Levi", "Mia", "Ezra", "Elli", "Asher", "Luna", "Leo"];
         const surnames = ["Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Taylor", "Wilson", "Anderson", "Marchant", "Román Cortés", "Hipp", "Kanaparthi", "Kiener", "Zanini"];
         for (let i = 0; i < 100; ++i) {
             data.push({

@@ -12,6 +12,20 @@
                     "datagridIsOrderAscending": {"<-": "@datagrid.orderings.0.order.name == 'Ascending'"}
                 }
             },
+            "isSelectionEnabled": {
+                "prototype": "mod/ui/checkbox.mod",
+                "values": {
+                    "element": {"#": "isSelectionEnabled"},
+                    "checked": {"<->": "@datagrid.isSelectionEnabled"}
+                }
+            },
+            "isEditable": {
+                "prototype": "mod/ui/checkbox.mod",
+                "values": {
+                    "element": {"#": "isEditable"},
+                    "checked": {"<->": "@datagrid.isEditable"}
+                }
+            },
             "nameColumnDescriptor": {
                 "prototype": "mod/ui/datagrid/column-descriptor",
                 "values": {
@@ -19,16 +33,17 @@
                     "cellPrototype": "mod/ui/datagrid/cell-string.mod",
                     "cellValues": {
                         "value": {"<->": "@datagrid:row.object.name"}
-                    }
+                    },
+                    "isEditable": true
                 }
             },
             "surnameColumnDescriptor": {
                 "prototype": "mod/ui/datagrid/column-descriptor",
                 "values": {
-                    "title": "Surname",
+                    "title": "Surname (non editable)",
                     "cellPrototype": "mod/ui/datagrid/cell-string.mod",
                     "cellValues": {
-                        "value": {"<->": "@datagrid:row.object.surname"}
+                        "value": {"<-": "@datagrid:row.object.surname"}
                     }
                 }
             },
@@ -40,7 +55,8 @@
                     "cellValues": {
                         "value": {"<->": "@datagrid:row.object.age"}
                     },
-                    "width": 60
+                    "width": 60,
+                    "isEditable": true
                 }
             },
             "isAwesomeColumnDescriptor": {
@@ -51,7 +67,8 @@
                     "cellValues": {
                         "value": {"<->": "@datagrid:row.object.isAwesome"}
                     },
-                    "width": 110
+                    "width": 110,
+                    "isEditable": true
                 }
             },
             "datagrid": {
@@ -73,6 +90,14 @@
 <body>
     <div data-mod-id="main" class="Main">
         <header>Teach Datagrid Mod</header>
+        <label>
+            <input type="checkbox" data-mod-id="isSelectionEnabled">
+            isSelectionEnabled
+        </label><br><br>
+        <label>
+            <input type="checkbox" data-mod-id="isEditable">
+            isEditable
+        </label><br><br><br>
         <div data-mod-id="datagrid" class="datagrid"></span>
     </div>
 </body>

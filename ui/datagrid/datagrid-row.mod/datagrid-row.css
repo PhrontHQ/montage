@@ -16,10 +16,13 @@
     height: inherit;
     line-height: inherit;
     box-sizing: border-box;
+}
+
+.Datagrid.isSelectionEnabled .DatagridRow > * {
     pointer-events: none;
 }
 
-.DatagridRow.selected > * {
+.Datagrid.isSelectionEnabled .DatagridRow.selected > * {
     pointer-events: auto;
 }
 

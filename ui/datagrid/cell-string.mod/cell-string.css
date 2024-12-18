@@ -35,15 +35,18 @@
     margin: 0;
 }
 
-.DatagridRow.selected .CellString-input {
+.DatagridRow.selected .CellString.isEditable .CellString-input,
+.Datagrid:not(.isSelectionEnabled) .CellString.isEditable .CellString-input {
     display: block;
     opacity: 0;
 }
 
-.DatagridRow.selected .CellString-input:focus {
+.DatagridRow.selected .CellString.isEditable .CellString-input:focus,
+.Datagrid:not(.isSelectionEnabled) .CellString.isEditable .CellString-input:focus {
     opacity: 1;
 }
 
-.DatagridRow.selected .CellString-input:focus + .CellString-text {
+.DatagridRow.selected .CellString.isEditable .CellString-input:focus + .CellString-text,
+.Datagrid:not(.isSelectionEnabled) .CellString-input:focus + .CellString-text {
     display: none;
 }

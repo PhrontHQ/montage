@@ -19,14 +19,11 @@
 }
 
 .CellBoolean-checkbox {
-    display: none;
     outline: none;
+    pointer-events: none;
 }
 
-.DatagridRow.selected .CellBoolean-displayCheckbox {
-    display: none;
-}
-
-.DatagridRow.selected .CellBoolean-checkbox {
-    display: inline;
+.DatagridRow.selected .CellBoolean.isEditable .CellBoolean-checkbox,
+.Datagrid:not(.isSelectionEnabled) .CellBoolean.isEditable .CellBoolean-checkbox {
+    pointer-events: auto;
 }
