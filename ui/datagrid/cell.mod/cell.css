@@ -2,6 +2,11 @@
     outline: none;
 }
 
+.Cell.isDisabled {
+    opacity: .4;
+    pointer-events: none;
+}
+
 .Cell.isNotValid:after {
     content: "";
     position: absolute;
