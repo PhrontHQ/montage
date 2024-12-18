@@ -723,6 +723,23 @@ var Criteria = exports.Criteria = Montage.specialize({
         value: function (aliasedParameters, aliasedScopeComponents, scopeComponentTranslation, parameterCounters) {
             return this._syntaxByAliasingSyntaxWithParameters(this.syntax, aliasedParameters, parameterCounters||{value:0}, this.parameters, aliasedScopeComponents, this._scope.components, scopeComponentTranslation);
         }
+    },
+
+    /**
+     * TODO:
+     * Analyze the syntactic tree of a criteria to find what parameter values 
+     * apply to a property name used in the criteria expression, and which operator.
+     * 
+     * This is particularyly useful when one need to apply the criteria to actual data.
+     *
+     * @method
+     * @returns {Array{ { "value": "operator"}}}
+     */
+
+    parameterValuesAndOperatorsForPropertyName: {
+        value: function(propertyName) {
+            throw "Implementation Missing. Time to roll your sleeves ;-)"
+        }
     }
 
 },{
