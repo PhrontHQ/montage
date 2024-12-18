@@ -11,7 +11,8 @@ exports.Cell = Component.specialize({
             if (isFirstTime) {
                 this._element.addEventListener("focusin", this);
                 this.defineBinding("expandButton.label", {"<-": "datagrid.expandButtonLabel"});
-                this.defineBinding("classList.has('isEditable')", {"<-": "datagrid.isEditable && columnDescriptor.isEditable"});
+                this.defineBinding("classList.has('isEditable')", {"<-": "datagrid.isEditable && columnDescriptor.isEditable && !isDisabled"});
+                this.defineBinding("classList.has('isDisabled')", {"<-": "isDisabled"});
                 this.expandButton.addEventListener("action", this);
             }
         }
