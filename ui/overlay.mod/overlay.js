@@ -258,7 +258,7 @@ var Overlay = exports.Overlay = Component.specialize( /** @lends Overlay.prototy
 
     shouldComposerSurrenderPointerToComponent: {
         value: function (composer, pointer, component) {
-            if (this.dismissOnExternalInteractioncomponent && component.element && !this.element.contains(component.element)) {
+            if (this.dismissOnExternalInteraction && component?.element && !this.element.contains(component.element)) {
                 this.hide();
             }
 
