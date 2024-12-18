@@ -17,11 +17,14 @@
             "module": {
                 "%": "./identity"
             },
-            "object":{"@": "Identity"}
+            "parent": {"@": "DataObjectDescriptor"}
         }
     },
     "Identity": {
         "object": "./identity"
+    },
+    "DataObjectDescriptor": {
+        "object": "./data-object.mjson"
     },
     "applicationIdentifier": {
         "prototype": "../../core/meta/property-descriptor",
