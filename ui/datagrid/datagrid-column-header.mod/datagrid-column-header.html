@@ -8,7 +8,8 @@
                 "wrapper": {"#": "wrapper"},
                 "resizeHandle": {"#": "resizeHandle"},
                 "classList.has('orderBy')": {"<-": "datagrid.orderings.0 == columnDescriptor.ordering"},
-                "classList.has('isDescending')": {"<-": "columnDescriptor.ordering.order.name == 'Descending'"}
+                "classList.has('isDescending')": {"<-": "columnDescriptor.ordering.order.name == 'Descending'"},
+                "classList.has('isSortable')": {"<-": "columnDescriptor.isSortable"}
             }
         },
         "title": {

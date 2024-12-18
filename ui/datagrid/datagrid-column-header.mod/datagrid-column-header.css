@@ -53,11 +53,19 @@
     bottom: 0;
 }
 
-.DatagridColumnHeader-wrapper:active {
+.DatagridColumnHeader .DatagridColumnHeader-wrapper {
+    pointer-events: none;
+}
+
+.DatagridColumnHeader.isSortable .DatagridColumnHeader-wrapper {
+    pointer-events: auto;
+}
+
+.DatagridColumnHeader.isSortable .DatagridColumnHeader-wrapper:active {
     background: #dbdbdb;
 }
 
-.DatagridColumnHeader.orderBy:after {
+.DatagridColumnHeader.isSortable.orderBy:after {
     content: "△";
     position: absolute;
     right: 8px;
@@ -65,6 +73,6 @@
     pointer-events: none;
 }
 
- .DatagridColumnHeader.orderBy.isDescending:after {
+.DatagridColumnHeader.isSortable.orderBy.isDescending:after {
     content: "▽";
 }

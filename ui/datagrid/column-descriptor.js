@@ -41,6 +41,10 @@ exports.ColumnDescriptor = Montage.specialize({
                 }
             }
         }
+    },
+
+    isSortable: {
+        value: false
     }
 
 });
