@@ -2247,7 +2247,7 @@ DataService.addClassProperties({
     fetchObjectProperty: {
         value: function (object, propertyName, isObjectCreated, readExpressions) {
             var childServices = this.childServicesForType(object.objectDescriptor),
-                isHandler = (this.parentService && this.parentService._getChildServiceForObject(object) === this) && (!childServices || (childServices && childServices.length == 0)),
+                isHandler = /*(this.parentService && this.parentService._getChildServiceForObject(object) === this)*/ this.handlesType(object.objectDescriptor) && (!childServices || (childServices && childServices.length == 0)),
                 useDelegate = isHandler && typeof this.fetchRawObjectProperty === "function",
                 delegateFunction = !useDelegate && isHandler && this._delegateFunctionForPropertyName(propertyName),
                 propertyDescriptor = !useDelegate && !delegateFunction && isHandler && this._propertyDescriptorForObjectAndName(object, propertyName),
@@ -2268,11 +2268,38 @@ DataService.addClassProperties({
                                 ?   delegateFunction.call(this, object)
                                 :   isHandler && propertyDescriptor
                                     ?   this._fetchObjectPropertyWithPropertyDescriptor(object, propertyName, propertyDescriptor, isObjectCreated)
-                                    : childService
-                                        ?   childService.fetchObjectProperty(object, propertyName)
+                                    :   childServices?.length > 0
+                                        ? childServices.length === 1
+                                            ? childServices[0].fetchObjectProperty(object, propertyName, isObjectCreated)
+                                            : this.childServicesFetchObjectProperty(object, propertyName, isObjectCreated)
                                         :   this.nullPromise;
         }
     },
+
+    childServicesFetchObjectProperty: {
+        value: function (object, propertyName, isObjectCreated) {
+                throw "Data Services with multiple child services per ObjectDescriptor have to implement this method"
+            //     /*
+            //         If there's more than one, we're entering the realm of decisions about how to deal with them.
+            //         That's why MuxDataService's and it's subclasses were created, to implement the various possible strategies.
+            //     */
+
+            // let childServices = this.childServicesForType(object.objectDescriptor),
+            //     promises,
+            //     childService;
+
+            // if(childServices === 1) {
+            //     return childServices[0].fetchObjectProperty(object, propertyName, isObjectCreated)
+            // } else {
+            //     for(childService of childServices) {
+            //         (promises || (promises = [])).push(childService.fetchObjectProperty(object, propertyName, isObjectCreated));
+            //     }
+            //     //If the
+            // }
+        }
+    },
+
+
 
     _delegateFunctionForPropertyName: {
         value: function (propertyName) {
