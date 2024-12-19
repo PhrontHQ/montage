@@ -321,6 +321,15 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
             if(this._context) {
                 serializer.setProperty("context", this._context);
             }
+
+            if(this.hasOwnProperty("needsDataMapping")) {
+                serializer.setProperty("needsDataMapping", this.needsDataMapping);
+            }
+
+            if(this.dataMapping) {
+                serializer.setProperty("dataMapping", this.dataMapping);
+            }
+
         }
     },
     deserializeSelf: {
@@ -421,6 +430,16 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
             value = deserializer.getProperty("context");
             if (value !== void 0) {
                 this.context = value;
+            }
+
+            value = deserializer.getProperty("needsDataMapping");
+            if (typeof value == "boolean") {
+                this.needsDataMapping = value;
+            }
+
+            value = deserializer.getProperty("dataMapping");
+            if (value !== void 0) {
+                this.dataMapping = value;
             }
 
         }
@@ -918,6 +937,37 @@ exports.DataOperationErrorNames = DataOperationErrorNames = new Enum().initWithM
                 this._data = value;
             }
         }
+    },
+
+
+    /**
+     * A property used for ReadOperation that can be set to true by a client-side RawDataService
+     * that doesn't have DataMappings loaded in advance to request one from the Worker,
+     * then to turn it back to false once it's cached client-side for following read operations
+     * of the same type.
+     *
+     * This is useful for DataOperations carrying data, like readUpdate / readCompleted
+     * It might also be applicable to transactions.
+     *
+     * @property {boolean}
+     * @default false
+     */
+    needsDataMapping: {
+        value: false
+    },
+
+    /**
+     * A dataMapping instance to be used by the data service processing this data operation.
+     * Even that RawDataService has a mapping, the DataOperation-specific one should take precedence 
+     *
+     * This is useful for DataOperations carrying data, like readUpdate / readCompleted
+     * It might also be applicable to transactions.
+     *
+     * @property {DataMapping}
+     * @default undefined
+     */
+    dataMapping: {
+        value: undefined
     },
 
     snapshotData: {
