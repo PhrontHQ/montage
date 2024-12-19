@@ -53,6 +53,8 @@ exports.Datagrid = Component.specialize({
                 this._generateContent();
                 this._element.nativeAddEventListener("wheel", this);
                 window.addEventListener("resize", this);
+            } else {
+                this.handleScroll();
             }
         }
     },
