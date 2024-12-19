@@ -2372,6 +2372,7 @@ DataService.addClassProperties({
             objectDescriptor = this.objectDescriptorForObject(object),
             mapping = objectDescriptor && this.mappingForType(objectDescriptor),
                 data = {},
+                snapshotPromise,
                 result;
 
 
@@ -2387,49 +2388,93 @@ DataService.addClassProperties({
                 if(isObjectCreated) {
                     var rule = mapping.objectMappingRuleForPropertyName(propertyName),
                         rawDataPrimaryKeys = mapping.rawDataPrimaryKeys,
-                        requiredRawProperties = rule && rule.requirements;
+                        requiredRawProperties = rule && rule.requirements,
+                        mappingResult;
 
+                        mappingResult = this.mapObjectToRawData(object, data);
+                    if (Promise.is(mappingResult)) {
+                        snapshotPromise = mappingResult;
+                    } else {
+                        snapshotPromise = Promise.resolve(mappingResult);
+                    }
+        
                     /*
                         rawDataPrimaryKeys.length === 1 is to assess if it's a traditional id with no intrinsic meaning
                     */
-                    if(rawDataPrimaryKeys.length === 1 && requiredRawProperties.indexOf(rawDataPrimaryKeys[0]) !== -1) {
+                    // if(rawDataPrimaryKeys.length === 1 && requiredRawProperties.indexOf(rawDataPrimaryKeys[0]) !== -1) {
+                    if(rawDataPrimaryKeys.length === 1 && (requiredRawProperties.indexOf(rawDataPrimaryKeys[0]) === -1)){
                         /*
                             Fetching depends on something that doesn't exists on the other side, we bail:
                         */
                        return this.nullPromise;
                     }
+                } else {
+                    /*
+                        @marchant: Why aren't we passing this.snapshotForObject(object) instead of copying everying in a new empty object?
+
+                        @tejaede: The criteria source was a first attempt to support derived properties. It's a bucket in which we can put data from the cooked object in order to fetch other cooked properties. The cooked data placed in the criteria source does not belong in the snapshot.
+
+                        For example, take this model:
+
+                        A Foo model includes a bars property and a baz property.
+                        Foo.baz is derived from the value of Foo.bars.
+                        When the application triggers a fetch for Foo.baz, the value of Foo.bars needs to be available to build the criteria for the fetch. However, the value of Foo.bars is cooked and does not belong in the snapshot. Therefore, we create a copy of the snapshot called the "criteria source" into which we can put Foo.bars.
+
+                        All of this said, I don't know this is the right way to solve the problem. The issue at the moment is that this functionality is being used so we cannot remove it without an alternative.
+                    */
+                    Object.assign(data, this.snapshotForObject(object));
+                    snapshotPromise = Promise.resolve(data);
+
                 }
 
-                /*
-                    @marchant: Why aren't we passing this.snapshotForObject(object) instead of copying everying in a new empty object?
 
-                    @tejaede: The criteria source was a first attempt to support derived properties. It's a bucket in which we can put data from the cooked object in order to fetch other cooked properties. The cooked data placed in the criteria source does not belong in the snapshot.
+                return snapshotPromise.then((data) => {
 
-                    For example, take this model:
+                    self._objectsBeingMapped.add(object);
 
-                    A Foo model includes a bars property and a baz property.
-                    Foo.baz is derived from the value of Foo.bars.
-                    When the application triggers a fetch for Foo.baz, the value of Foo.bars needs to be available to build the criteria for the fetch. However, the value of Foo.bars is cooked and does not belong in the snapshot. Therefore, we create a copy of the snapshot called the "criteria source" into which we can put Foo.bars.
-
-                    All of this said, I don't know this is the right way to solve the problem. The issue at the moment is that this functionality is being used so we cannot remove it without an alternative.
-                */
-                Object.assign(data, this.snapshotForObject(object));
-
-                self._objectsBeingMapped.add(object);
-
-                result = mapping.mapObjectToCriteriaSourceForProperty(object, data, propertyName, true);
-                if (this._isAsync(result)) {
-                    return result.then(function() {
-                        Object.assign(data, self.snapshotForObject(object));
-                        result = mapping.mapRawDataToObjectProperty(data, object, propertyName);
-
-                        if (!self._isAsync(result)) {
-                            result = this.nullPromise;
+                    result = mapping.mapObjectToCriteriaSourceForProperty(object, data, propertyName, true);
+                    if (this._isAsync(result)) {
+                        return result.then(function() {
+                            Object.assign(data, self.snapshotForObject(object));
+                            result = mapping.mapRawDataToObjectProperty(data, object, propertyName);
+    
+                            if (!self._isAsync(result)) {
+                                result = this.nullPromise;
+                                self._objectsBeingMapped.delete(object);
+                            }
+                            else {
+                                result = result.then(function(resolved) {
+    
+                                    self._objectsBeingMapped.delete(object);
+                                    return resolved;
+                                }, function(failed) {
+                                    self._objectsBeingMapped.delete(object);
+                                });
+                            }
+                            return result;
+                        }, function(error) {
                             self._objectsBeingMapped.delete(object);
+                            throw error;
+                        });
+                    } else {
+                        //This was already done a few lines up. Why are we re-doing this?
+                        Object.assign(data, self.snapshotForObject(object));
+                        /*
+                            This code path ends up triggering the mapping logic to convert a foreign/primary key to an object via a converter.
+                            The converter ends up being the one doing a fetch
+                        */
+                        result = mapping.mapRawDataToObjectProperty(data, object, propertyName);
+                        if (!this._isAsync(result)) {
+                            /*
+                                BUG: when we map from values already in the snapshot we end up here, but the value has alredy been assigned to the object by  mapping.mapRawDataToObjectProperty(data, object, propertyName).
+    
+                                So there's really nothing else to do but return result. If we re-set result to null bellow, it does end up as the result of DataTrigger._fetchObjectProperty() promise and erases the value that was there, the one just mapped, causing loss of data and bugs.
+                            */
+                            // result = this.nullPromise;
+                            this._objectsBeingMapped.delete(object);
                         }
                         else {
                             result = result.then(function(resolved) {
-
                                 self._objectsBeingMapped.delete(object);
                                 return resolved;
                             }, function(failed) {
@@ -2437,33 +2482,12 @@ DataService.addClassProperties({
                             });
                         }
                         return result;
-                    }, function(error) {
-                        self._objectsBeingMapped.delete(object);
-                        throw error;
-                    });
-                } else {
-                    //This was already done a few lines up. Why are we re-doing this?
-                    Object.assign(data, self.snapshotForObject(object));
-                    result = mapping.mapRawDataToObjectProperty(data, object, propertyName);
-                    if (!this._isAsync(result)) {
-                        /*
-                            BUG: when we map from values already in the snapshot we end up here, but the value has alredy been assigned to the object by  mapping.mapRawDataToObjectProperty(data, object, propertyName).
+                    }
 
-                            So there's really nothing else to do but return result. If we re-set result to null bellow, it does end up as the result of DataTrigger._fetchObjectProperty() promise and erases the value that was there, the one just mapped, causing loss of data and bugs.
-                        */
-                        // result = this.nullPromise;
-                        this._objectsBeingMapped.delete(object);
-                    }
-                    else {
-                        result = result.then(function(resolved) {
-                            self._objectsBeingMapped.delete(object);
-                            return resolved;
-                        }, function(failed) {
-                            self._objectsBeingMapped.delete(object);
-                        });
-                    }
-                    return result;
-                }
+                })
+
+
+            
             } else {
                 return this.nullPromise;
             }
