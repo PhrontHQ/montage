@@ -134,7 +134,7 @@ var Select = exports.Select =  Control.specialize(/** @lends module:"mod/ui/nati
         set: function (value) {
             if(value != this.selection) {
                 this.selection.removeRangeChangeListener(this, "selection");
-                value.addRangeChangeListener(this, "selection");
+                value?.addRangeChangeListener(this, "selection");
             }
             this.contentController.selection = value;
         }
