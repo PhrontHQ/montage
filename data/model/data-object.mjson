@@ -8,7 +8,10 @@
                 {"@": "subtypes"},
                 {"@": "date"},
                 {"@": "originId"},
+                {"@": "originDataSnapshot"},
                 {"@": "description"},
+                {"@": "isType"},
+                {"@": "kinds"},
                 {"@": "isTemplate"},
                 {"@": "templateName"},
                 {"@": "templateDescription"},
@@ -40,7 +43,30 @@
         "values": {
             "name": "type",
             "valueDescriptor": {"=": "@root.parent"},
-            "description": "This is a reference to what would be an object's prototye in JavaScript: A unique instance of parent class that defines common characteristics for all objects of that type"
+            "description": "The reference to what would be an object's prototype in JavaScript: A unique instance of parent class that defines common characteristics for all objects of that type"
+        }
+    },
+
+    "isType": {
+        "prototype": "core/meta/property-descriptor",
+        "values": {
+            "name": "isType",
+            "valueType": "boolean",
+            "defaultValue": false,
+            "isSearchable": true,
+            "description": "If true, indicates that an instance is used by others as their type, which is the equivalent of the role of the prototype in JavaScript: an object one derived from"
+        }
+    },
+
+    "kinds": {
+        "prototype": "core/meta/property-descriptor",
+        "values": {
+            "name": "kinds",
+            "valueType": "array",
+            "cardinality": -1,
+            "inversePropertyName": "type",
+            "valueDescriptor": {"@": "root"},
+            "description": "All instances of that class that have the same type and that are not used as type, meaning the value of their property 'isType' is false"
         }
     },
 
@@ -52,7 +78,7 @@
             "cardinality": -1,
             "inversePropertyName": "type",
             "valueDescriptor": {"@": "root"},
-            "description": "The list of all type instances (aka protoype in JS) of this class' subclasses, which are all specialized version of this class"
+            "description": "All instances of this class' subclasses that are also used as types, meaning the value of their property 'isType' is true"
         }
     },
 
@@ -77,6 +103,17 @@
         }
     },
 
+    "originDataSnapshot": {
+        "prototype": "core/meta/property-descriptor",
+        "values": {
+            "name": "originDataSnapshot",
+            "valueType": "object",
+            "isUnique": true,
+            "isSearchable": true,
+            "description": "Stores the latest known data snapshot from an origin service it was imported from. An entry per origin data service contains the data snapshot from that origin"
+        }
+    },
+
     "description": {
         "prototype": "core/meta/property-descriptor",
         "values": {
@@ -93,7 +130,8 @@
             "name": "isTemplate",
             "valueType": "boolean",
             "defaultValue": false,
-            "isSearchable": true
+            "isSearchable": true,
+            "description": "If true, indicates that an instance is used by others as a source of default values"
         }
     },
 

@@ -31,12 +31,40 @@ exports.DataObject = class DataObject extends Target {
         Montage.defineProperties(this.prototype, {
             
             /**
+             * Stores the latest known data snapshot from an origin service it was imported from. 
+             * An entry per origin data service contains the data snapshot from that origin
+             *
+             * @property {Object}
+             * @default null
+             */
+            originDataSnapshot: { value: undefined},
+
+            
+            /**
              * The primaryKey from a different system a Data Object may have come from originally
              *
              * @property {Object}
              * @default null
              */
             originId: { value: undefined},
+
+            /**
+             * If true, indicates that an instance is used by others as their type, 
+             * which is the equivalent of the role of the prototype in JavaScript: 
+             * an object one derived from
+             *
+             * @property {String}
+             * @default undefined
+             */
+            isType: { value: false},
+
+            /**
+             * If true, indicates that an instance is used by others as a source of default values
+             *
+             * @property {String}
+             * @default undefined
+             */
+            isTemplate: { value: false},
 
             /**
              * The description of what a data object is
@@ -128,6 +156,20 @@ exports.DataObject = class DataObject extends Target {
         if (value !== void 0) {
             this.originId = value;
         }
+        value = deserializer.getProperty("originDataSnapshot");
+        if (value !== void 0) {
+            this.originDataSnapshot = value;
+        }
+
+        value = deserializer.getProperty("isType");
+        if (value !== void 0) {
+            this.isType = value;
+        }
+        value = deserializer.getProperty("isTemplate");
+        if (value !== void 0) {
+            this.isTemplate = value;
+        }
+
         value = deserializer.getProperty("description");
         if (value !== void 0) {
             this.description = value;
@@ -151,6 +193,17 @@ exports.DataObject = class DataObject extends Target {
         if(this.originId) {
             serializer.setProperty("originId", this.originId);
         }
+        if(this.originDataSnapshot) {
+            serializer.setProperty("originDataSnapshot", this.originDataSnapshot);
+        }
+        
+        if(this.isType !== undefined) {
+            serializer.setProperty("isType", this.isType);
+        }
+        if(this.isTemplate !== undefined) {
+            serializer.setProperty("isTemplate", this.isTemplate);
+        }
+
         if(this.description) {
             serializer.setProperty("description", this.description);
         }
