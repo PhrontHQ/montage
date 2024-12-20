@@ -145,7 +145,7 @@ RangeChanges.prototype.removeRangeChangeListener = function (listener, token, be
     var descriptor = this.getRangeChangeDescriptor(token),
         listeners = beforeChange ? descriptor._willChangeListeners : descriptor._changeListeners;
 
-    if(listeners._current) {
+    if(listeners?._current) {
         if(listeners._current === listener) {
             listeners._current = null;
         }
