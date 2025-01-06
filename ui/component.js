@@ -765,7 +765,7 @@ Component.addClassProperties(
             var element = this._element;
 
             if (element) {
-                return element.getAttribute("data-mod-id") || element.getAttribute("data-mod-id");
+                return element.getAttribute("data-mod-id") || element.getAttribute("data-montage-id");
             }
         }
     },
