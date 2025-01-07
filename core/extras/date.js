@@ -386,7 +386,7 @@ Date.prototype.toRFC3339LocaleString = function (supressFormating, supressMillis
     if ((!supressMillis) && (this.getMilliseconds() > 0)) result += '.' + this.getMilliseconds().toPaddedString(3);
     var tzOffset = -this.getTimezoneOffset();
     result += (tzOffset < 0 ? '-' : '+')
-    result += (tzOffset / 60).toPaddedString(2);
+    result += (Math.abs(tzOffset) / 60).toPaddedString(2);
     result += tSep + (tzOffset % 60).toPaddedString(2);
     return result;
 }
