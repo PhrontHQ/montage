@@ -114,7 +114,7 @@ var DocumentResources = Montage.specialize({
 
     cssScopeForResource: {
         value: function (url) {
-            this._resources[url] !== true
+            return this._resources[url] !== true
                 ? this._resources[url]
                 : null;       
         }
