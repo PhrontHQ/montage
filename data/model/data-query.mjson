@@ -5,18 +5,14 @@
         "values": {
             "name": "DataQuery",
             "propertyDescriptors": [
-                { "@": "criteriaDescriptor" },
                 { "@": "orderingsDescriptor" },
                 { "@": "readExpressionsDescriptor" },
-                { "@": "typeDescriptor" },
                 { "@": "fetchLimitDescriptor" }
             ],
             "propertyDescriptorGroups": {
                 "all": [
-                    { "@": "criteriaDescriptor" },
                     { "@": "orderingsDescriptor" },
                     { "@": "readExpressionsDescriptor" },
-                    { "@": "typeDescriptor" },
                     { "@": "fetchLimitDescriptor" }
                 ]
             },
@@ -24,23 +20,15 @@
             "objectDescriptorModule": { "%": "./data-query.mjson" },
             "exportName": "DataQuery",
             "module": { "%": "./data-query" },
-            "object":{ "@": "DataQuery" }
+            "object":{ "@": "DataQuery" },
+            "parent":{"@": "ObjectSpecificationDescriptor"}
         }
     },
     "DataQuery": {
         "object": "./data-query"
     },
-    "criteriaDescriptor": {
-        "prototype": "../../core/meta/property-descriptor",
-        "values": {
-            "name": "criteria",
-            "cardinality": 1,
-            "valueType": "object",
-            "valueDescriptor": { "@": "CriteriaDescriptor" }
-        }
-    },
-    "CriteriaDescriptor": {
-        "object": "../../core/criteria.mjson"
+    "ObjectSpecificationDescriptor": {
+        "object": "./object-specification.mjson"
     },
 
     "orderingsDescriptor": {
@@ -63,18 +51,6 @@
             "cardinality": -1,
             "valueType": "string"
         }
-    },
-
-    "typeDescriptor": {
-        "prototype": "../../core/meta/property-descriptor",
-        "values": {
-            "name": "type",
-            "valueType": "object",
-            "valueDescriptor": { "@": "ObjectDescriptor" }
-        }
-    },
-    "ObjectDescriptor": {
-        "object": "../../core/meta/module-object-descriptor.mjson"
     },
 
     "fetchLimitDescriptor": {

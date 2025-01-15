@@ -1,0 +1,52 @@
+{
+
+    "root": {
+        "prototype": "../../core/meta/module-object-descriptor",
+        "values": {
+            "name": "ObjectSpecification",
+            "propertyDescriptors": [
+                { "@": "typeDescriptor" },
+                { "@": "criteriaDescriptor" }
+            ],
+            "propertyDescriptorGroups": {
+                "all": [
+                    { "@": "typeDescriptor" },
+                    { "@": "criteriaDescriptor" }
+                ]
+            },
+            "propertyValidationRules": {},
+            "objectDescriptorModule": { "%": "./object-specification.mjson" },
+            "exportName": "ObjectSpecification",
+            "module": { "%": "./object-specification" },
+            "object":{ "@": "ObjectSpecification" }
+        }
+    },
+    "ObjectSpecification": {
+        "object": "./object-specification"
+    },
+    "criteriaDescriptor": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "criteria",
+            "cardinality": 1,
+            "valueType": "object",
+            "valueDescriptor": { "@": "CriteriaDescriptor" }
+        }
+    },
+    "CriteriaDescriptor": {
+        "object": "../../core/criteria.mjson"
+    },
+
+    "typeDescriptor": {
+        "prototype": "../../core/meta/property-descriptor",
+        "values": {
+            "name": "type",
+            "valueType": "object",
+            "valueDescriptor": { "@": "ObjectDescriptor" }
+        }
+    },
+    "ObjectDescriptor": {
+        "object": "../../core/meta/module-object-descriptor.mjson"
+    }
+
+}

@@ -1,23 +1,20 @@
-var Montage = require("../../core/core").Montage;
+var ObjectSpecification = require("./object-specification").ObjectSpecification;
 
 /**
  * Defines the criteria that objects must satisfy to be included in a set of
  * data as well as other characteristics that data must possess.
  *
  * @class
- * @extends external:Montage
+ * @extends external:ObjectSpecification
  */
-exports.DataQuery = Montage.specialize(/** @lends DataQuery.prototype */ {
+exports.DataQuery = ObjectSpecification.specialize(/** @lends DataQuery.prototype */ {
 
 
     deserializeSelf: {
         value: function (deserializer) {
             var result, value;
 
-            value = deserializer.getProperty("criteria");
-            if (value !== void 0) {
-                this.criteria = value;
-            }
+            this.super(deserializer)
 
             value = deserializer.getProperty("orderings");
             if (value !== void 0) {
@@ -37,12 +34,6 @@ exports.DataQuery = Montage.specialize(/** @lends DataQuery.prototype */ {
             value = deserializer.getProperty("selectExpression");
             if (value !== void 0) {
                 this.selectExpression = value;
-            }
-
-
-            value = deserializer.getProperty("type");
-            if (value !== void 0) {
-                this.type = value;
             }
 
             // else {
@@ -70,9 +61,9 @@ exports.DataQuery = Montage.specialize(/** @lends DataQuery.prototype */ {
 
     serializeSelf: {
         value: function (serializer) {
-            if(this.criteria) {
-                serializer.setProperty("criteria", this.criteria);
-            }
+
+            this.super(serializer)
+
             if(this.orderings) {
                 serializer.setProperty("orderings", this.orderings);
             }
@@ -87,10 +78,6 @@ exports.DataQuery = Montage.specialize(/** @lends DataQuery.prototype */ {
             }
             if(this.fetchLimit) {
                 serializer.setProperty("fetchLimit", this.fetchLimit);
-            }
-
-            if(this.type) {
-                serializer.setProperty("type", this.type);
             }
 
             // if (this.typeModule || (this.type && this.type.objectDescriptorInstanceModule)) {
@@ -114,11 +101,10 @@ exports.DataQuery = Montage.specialize(/** @lends DataQuery.prototype */ {
 
             */
             if(
-                (this.type === otherQuery.type) &&
+                this.super(otherQuery) &&
                 (this.fetchLimit === otherQuery.fetchLimit) &&
                 (this.readExpressions && this.readExpressions.equals(otherQuery.readExpressions)) &&
-                (this.orderings && this.orderings.equals(otherQuery.orderings)) &&
-                (this.criteria && this.criteria.equals(otherQuery.criteria))
+                (this.orderings && this.orderings.equals(otherQuery.orderings))
             ) {
                 return true;
             } else {
@@ -126,26 +112,6 @@ exports.DataQuery = Montage.specialize(/** @lends DataQuery.prototype */ {
             }
         }
     },
-
-    /**
-     * The type of the data object to retrieve.
-     *
-     * @type {ObjectDescriptor}
-     */
-    type: {
-        serializable: "value",
-        value: undefined
-    },
-
-    /**
-     * A property used to give a meaningful name to an operation
-     *
-     * @type {string}
-     */
-    name: {
-        value: undefined
-    },
-
 
     /**
      * A property used to carry the identity of the current user issuing the query
@@ -156,34 +122,6 @@ exports.DataQuery = Montage.specialize(/** @lends DataQuery.prototype */ {
      * @type {Identity}
      */
     identity: {
-        value: undefined
-    },
-
-
-    /**
-     * An object defining the criteria that must be satisfied by objects for
-     * them to be included in the data set defined by this query.
-     *
-     * Initially this can be any object and will typically be a set of key-value
-     * pairs, ultimately this will be a boolean expression to be applied to data
-     * objects to determine whether they should be in the selected set or not.
-     *
-     * @type {Object}
-     */
-    criteria: {
-        get: function () {
-            //Might be breaking, but we shouldn't create an empty object lile that, of the wrong type...
-            // if (!this._criteria) {
-            //     this._criteria = {};
-            // }
-            return this._criteria;
-        },
-        set: function (criteria) {
-            this._criteria = criteria;
-        }
-    },
-
-    _criteria: {
         value: undefined
     },
 
@@ -329,20 +267,5 @@ exports.DataQuery = Montage.specialize(/** @lends DataQuery.prototype */ {
 
 
 
-
-}, /** @lends DataQuery */ {
-
-    /**
-     * @todo Document.
-     */
-    withTypeAndCriteria: {
-        value: function (type, criteria) {
-            var query;
-            query = new this();
-            query.type = type;
-            query.criteria = criteria;
-            return query;
-        }
-    }
 
 });
