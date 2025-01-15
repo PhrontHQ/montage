@@ -38,7 +38,7 @@ function _parseRequirementsFromSyntax(syntax, requirements) {
         var subProperty = [args[1].value],
             result;
         _parseRequirementsFromSyntax(args[0], subProperty);
-        result = subProperty.reverse().join(".");
+        result = subProperty.reverse();
         if(!_requirements || (_requirements && _requirements.indexOf(result) === -1)) {
             (_requirements || (_requirements = [])).push(result);
         }

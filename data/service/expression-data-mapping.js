@@ -795,7 +795,14 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                     aRulePropertyRequirements = aRule.requirements;
                     if(aRulePropertyRequirements) {
                         for(i=0, countI = aRulePropertyRequirements.length;i<countI;i++) {
-                            if (rawDataProperty === aRulePropertyRequirements[i]) {
+                            let aRuleCache = aRulePropertyRequirements[i];
+                            if (Array.isArray(aRuleCache)) {
+                                for(let j=0, countJ = aRuleCache.length; j<countJ; j++) {
+                                    if (rawDataProperty === aRuleCache[j]) {
+                                        matchingRules.add(aRule)
+                                    }
+                                }
+                            } else if (rawDataProperty === aRulePropertyRequirements[i]) {
                                 matchingRules.add(aRule);
                             }
                         }
@@ -940,13 +947,31 @@ exports.ExpressionDataMapping = DataMapping.specialize(/** @lends ExpressionData
                         dataHasRuleRequirements = true;
     
                         //Check if the rule has what it needs.
+                        // FIXME: aRuleRequirements contains properties from root object down to nested objects -- but will only work for one level deep.
+                        // Nested objects need to be resolved for more complex scenarios. E.g., 5 level nested properties duplicated.
+                        // [[]] of rules. 
+                        // TODO: Use or build a Property iterator on the syntactic tree. (no duplication of data structures, lighter weight :) )
+                        // Explore if using expression evaluation is feasible (this is an assessment if data is really accesible).
+                        // Theoretically production shouldn't waste time computing this; only in development while data is flexible.
+                        let iData = data
                         for(i=0, countI = aRuleRequirements.length;(i<countI);i++) {
-                            if(!data.hasOwnProperty(aRuleRequirements[i])) {
+                            if (Array.isArray(aRuleRequirements[i])) {
+                                let propertyPath = aRuleRequirements[i];
+                                let jData = iData;
+                                for(j=0, countJ = propertyPath.length; (j<countJ); j++) {
+                                    if (!jData.hasOwnProperty(propertyPath[j])) {
+                                        dataHasRuleRequirements = false;
+                                        break;
+                                    } else {
+                                        jData = jData[propertyPath[j]]
+                                    }
+                                }
+                            }
+                            else if(!iData.hasOwnProperty(aRuleRequirements[i])) {
                                 dataHasRuleRequirements = false;
                                 break;
                             }
-                        }
-    
+                        }    
                         if(isRequiredRule && !dataHasRuleRequirements) {
                             console.error("Rule: ",aRule, "can't be mapped because data is missing required property \"" + aRuleRequirements[i] + "\"");
                         }
