@@ -3469,7 +3469,10 @@ DataService.addClassProperties({
 
                 } else {
                     //A many-to-one
-                    if(value[_inversePropertyName || inversePropertyDescriptor.name] !== dataObject) {
+                    let propertyName = (_inversePropertyName || inversePropertyDescriptor.name),
+                        objectPropertyValue = Object.getPropertyDescriptor(value,propertyName)?.get?.call(value, /*shouldFetch*/false);
+
+                    if(objectPropertyValue !== dataObject) {
                         value[_inversePropertyName || inversePropertyDescriptor.name] = dataObject;
                     }
                 }
