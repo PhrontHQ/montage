@@ -262,7 +262,7 @@ var DocumentResources = Montage.specialize({
                         target.ownerDocument.styleSheets, but we need the component's element's classList
                     */
                     
-                    if(classListScope = this.cssScopeForResource(target.href)) {
+                    if(classListScope = this.cssScopeForResource(target.href) && typeof CSSScopeRule === "function") {
                         let stylesheet = target.sheet,
                             cssRules = stylesheet.cssRules,
                             iStart = 0,
