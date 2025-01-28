@@ -114,9 +114,7 @@ var DocumentResources = Montage.specialize({
 
     cssScopeForResource: {
         value: function (url) {
-            return this._resources[url] !== true
-                ? this._resources[url]
-                : null;       
+            return this._resources[url] !== true ? this._resources[url] : null;       
         }
     },
 
@@ -248,7 +246,8 @@ var DocumentResources = Montage.specialize({
                 index = this._expectedStyles.indexOf(target.href);
                 if (index >= 0) {
                     this._expectedStyles.splice(index, 1);
-                    let classListScope;
+                    let classListScope = this.cssScopeForResource(target.href),
+                        stylesheet = target.sheet;
 
                     /*
                         Adding CSS Scoping for components in dev mode. When we mop, we'll add it in the CSS. 
@@ -262,27 +261,41 @@ var DocumentResources = Montage.specialize({
                         target.ownerDocument.styleSheets, but we need the component's element's classList
                     */
                     
-                    if(classListScope = this.cssScopeForResource(target.href) && typeof CSSScopeRule === "function") {
-                        let stylesheet = target.sheet,
-                            cssRules = stylesheet.cssRules,
+                    if(classListScope && stylesheet.disabled === false && typeof CSSScopeRule === "function") {
+                        let cssRules = stylesheet.cssRules,
                             iStart = 0,
                             scopeRule;
 
                         // console.log("classListScope: ",classListScope);
-
                         //Insert the scope rule, after any CSSImportRule
                         while(cssRules[iStart] instanceof CSSImportRule) {
                             iStart++;
                         }
-                    
-                        stylesheet.insertRule(`@scope (${classListScope}) to (${classListScope}) {}`, iStart);
-                        scopeRule = stylesheet.cssRules[iStart];
+
+                        /*
+                            This worked — creating one CSSScopeRule for the whole component's stylesheet
+                            and nest all other rules in it. But it started to fail in Chrome 132.
+                        */
+                        // stylesheet.insertRule(`@scope (${classListScope}) to (${classListScope}) {}`, iStart);
+                        // scopeRule = stylesheet.cssRules[iStart];
+
+
+                        /*
+                            So as a workaround, creating one CSSScopeRule for each of a component's stylesheet's rules
+                            works in Chrome 132, and WebKit. Firefox doesn't support it yet as of 1/27/2025
+                        */
 
                         //Now loop on rules to move - re-create them as there's no other way :-( 
                         for(let i = cssRules.length-1; (i>iStart) ; i--) {
+                            //stylesheet.insertRule(`@scope (${classListScope}) to (${classListScope}) {}`, i);
+                            stylesheet.insertRule(`@scope (${classListScope}) {}`, i);
+                            scopeRule = stylesheet.cssRules[iStart];    
                             scopeRule.insertRule(cssRules[i].cssText);
                             stylesheet.deleteRule(i);
                         }
+
+                        //console.log("stylesheet: ",stylesheet.cssRules[0].cssText);
+
                     }
 
                 }
