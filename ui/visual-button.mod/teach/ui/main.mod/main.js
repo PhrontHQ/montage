@@ -22,6 +22,8 @@ exports.Main = class Main extends Component {
 
     disabled = false;
 
+    loading = false;
+
     handleOverridePrimaryColorCheckboxAction() {
         if (!this.overridePrimaryColor) {
             document.documentElement.style.setProperty(

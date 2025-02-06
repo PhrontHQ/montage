@@ -128,6 +128,7 @@
     justify-content: center;
     box-sizing: border-box;
     font-weight: 600;
+    position: relative;
 }
 
 .VisualButton.image-start {
@@ -146,6 +147,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+/* Loading State */
+
+.VisualButton.loading {
+    pointer-events: none;
+    opacity: 0.75;
+}
+
+.VisualButton.loading .VisualButton-image {
+    animation: VisualButton-spin 1s linear infinite;
 }
 
 /* Size Variants */
@@ -156,9 +169,9 @@
     gap: 8px;
 }
 
-.VisualButton.small .VisualButton-image>img {
-    width: 12px;
-    height: 12px;
+.VisualButton.small .VisualButton-image {
+    width: 14px;
+    height: 14px;
 }
 
 .VisualButton.medium {
@@ -167,9 +180,9 @@
     gap: 12px;
 }
 
-.VisualButton.medium .VisualButton-image>img {
-    width: 14px;
-    height: 14px;
+.VisualButton.medium .VisualButton-image {
+    width: 16px;
+    height: 16px;
 }
 
 .VisualButton.large {
@@ -178,9 +191,9 @@
     gap: 14px;
 }
 
-.VisualButton.large .VisualButton-image>img {
-    width: 16px;
-    height: 16px;
+.VisualButton.large .VisualButton-image {
+    width: 18px;
+    height: 18px;
 }
 
 /* Text Variant */
@@ -545,4 +558,14 @@
 .VisualButton.outlined:disabled {
     border-color: var(--mod-visual-button-disabled-border-color);
     color: var(--mod-visual-button-disabled-text-color);
+}
+
+@keyframes VisualButton-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }

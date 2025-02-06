@@ -62,6 +62,13 @@
                         "checked": {"<->": "@owner.overridePrimaryColor"}
                     }
                 },
+                "loadingCheckbox": {
+                    "prototype": "mod/ui/checkbox.mod",
+                    "values": {
+                        "element": {"#": "loadingCheckbox"},
+                        "checked": {"<->": "@owner.loading"}
+                    }
+                },
                 "contained": {
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
@@ -98,12 +105,13 @@
                         "label": "Text"
                     }
                 },
-                "containedImage": {
+                "containedButtonWithImage": {
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
-                        "element": {"#": "containedImage"},
+                        "element": {"#": "containedButtonWithImage"},
                         "imagePlacement": {"<-": "@owner.imagePlacement"},
                         "disabled": {"<-": "@owner.disabled"},
+                        "loading": {"<-": "@owner.loading"},
                         "shape": {"<-": "@owner.shape"},
                         "color": {"<-": "@owner.color"},
                         "size": {"<-": "@owner.size"},
@@ -111,12 +119,22 @@
                         "label": "Contained"
                     }
                 },
-                "outlinedImage": {
+                "searchImage": {
+                    "prototype": "mod/ui/component",
+                    "values": {
+                        "element": {"#": "searchImage"},
+                        "classList.has('fa-arrows-rotate')": {"<-": "@owner.loading"},
+                        "classList.has('fa-magnifying-glass')": {"<-": "!@owner.loading"},
+                        "hasTemplate": false
+                    }
+                },
+                "outlinedButtonWithImage": {
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
-                        "element": {"#": "outlinedImage"},
+                        "element": {"#": "outlinedButtonWithImage"},
                         "imagePlacement": {"<-": "@owner.imagePlacement"},
                         "disabled": {"<-": "@owner.disabled"},
+                        "loading": {"<-": "@owner.loading"},
                         "shape": {"<-": "@owner.shape"},
                         "color": {"<-": "@owner.color"},
                         "size": {"<-": "@owner.size"},
@@ -124,17 +142,99 @@
                         "label": "Outlined"
                     }
                 },
-                "textImage": {
+                "userImage": {
+                    "prototype": "mod/ui/component",
+                    "values": {
+                        "element": {"#": "userImage"},
+                        "classList.has('fa-circle-notch')": {"<-": "@owner.loading"},
+                        "classList.has('fa-user')": {"<-": "!@owner.loading"},
+                        "hasTemplate": false
+                    }
+                },
+                "textButtonWithImage": {
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
-                        "element": {"#": "textImage"},
+                        "element": {"#": "textButtonWithImage"},
                         "imagePlacement": {"<-": "@owner.imagePlacement"},
                         "disabled": {"<-": "@owner.disabled"},
+                        "loading": {"<-": "@owner.loading"},
                         "shape": {"<-": "@owner.shape"},
                         "color": {"<-": "@owner.color"},
                         "size": {"<-": "@owner.size"},
                         "variant": "text",
                         "label": "Text"
+                    }
+                },
+                "plusImage": {
+                    "prototype": "mod/ui/component",
+                    "values": {
+                        "element": {"#": "plusImage"},
+                        "classList.has('fa-spinner')": {"<-": "@owner.loading"},
+                        "classList.has('fa-plus')": {"<-": "!@owner.loading"},
+                        "hasTemplate": false
+                    }
+                },
+                "searchIconButton": {
+                    "prototype": "mod/ui/visual-button.mod",
+                    "values": {
+                        "element": {"#": "searchIconButton"},
+                        "disabled": {"<-": "@owner.disabled"},
+                        "loading": {"<-": "@owner.loading"},
+                        "shape": {"<-": "@owner.shape"},
+                        "color": {"<-": "@owner.color"},
+                        "size": {"<-": "@owner.size"},
+                        "variant": "contained"
+                    }
+                },
+                "searchIcon": {
+                    "prototype": "mod/ui/component",
+                    "values": {
+                        "element": {"#": "searchIcon"},
+                        "classList.has('fa-arrows-rotate')": {"<-": "@owner.loading"},
+                        "classList.has('fa-magnifying-glass')": {"<-": "!@owner.loading"},
+                        "hasTemplate": false
+                    }
+                },
+                "userIconButton": {
+                    "prototype": "mod/ui/visual-button.mod",
+                    "values": {
+                        "element": {"#": "userIconButton"},
+                        "disabled": {"<-": "@owner.disabled"},
+                        "loading": {"<-": "@owner.loading"},
+                        "shape": {"<-": "@owner.shape"},
+                        "color": {"<-": "@owner.color"},
+                        "size": {"<-": "@owner.size"},
+                        "variant": "outlined"
+                    }
+                },
+                "userIcon": {
+                    "prototype": "mod/ui/component",
+                    "values": {
+                        "element": {"#": "userIcon"},
+                        "classList.has('fa-circle-notch')": {"<-": "@owner.loading"},
+                        "classList.has('fa-user')": {"<-": "!@owner.loading"},
+                        "hasTemplate": false
+                    }
+                },
+                "plusIconButton": {
+                    "prototype": "mod/ui/visual-button.mod",
+                    "values": {
+                        "element": {"#": "plusIconButton"},
+                        "disabled": {"<-": "@owner.disabled"},
+                        "loading": {"<-": "@owner.loading"},
+                        "shape": {"<-": "@owner.shape"},
+                        "color": {"<-": "@owner.color"},
+                        "size": {"<-": "@owner.size"},
+                        "variant": "text"
+                    }
+                },
+                "plusIcon": {
+                    "prototype": "mod/ui/component",
+                    "values": {
+                        "element": {"#": "plusIcon"},
+                        "classList.has('fa-spinner')": {"<-": "@owner.loading"},
+                        "classList.has('fa-plus')": {"<-": "!@owner.loading"},
+                        "hasTemplate": false
                     }
                 }
             }
@@ -173,6 +273,10 @@
                             data-mod-id="overridePrimaryColorCheckbox"
                         />
                     </div>
+                    <div class="row gap3 align-center">
+                        <label for="shapeSelect">Loading:</label>
+                        <input type="checkbox" data-mod-id="loadingCheckbox" />
+                    </div>
                 </div>
                 <div class="row gap4 margin-top6 margin-bottom3">
                     <button data-mod-id="contained"></button>
@@ -180,14 +284,49 @@
                     <button data-mod-id="text"></button>
                 </div>
                 <div class="row gap4 margin-top6">
-                    <button data-mod-id="containedImage">
-                        <i data-arg="image" class="fa-solid fa-user"></i>
+                    <button data-mod-id="containedButtonWithImage">
+                        <i
+                            data-arg="image"
+                            data-mod-id="searchImage"
+                            class="fa-solid"
+                        ></i>
                     </button>
-                    <button data-mod-id="outlinedImage">
-                        <i data-arg="image" class="fa-solid fa-user"></i>
+                    <button data-mod-id="outlinedButtonWithImage">
+                        <i
+                            data-arg="image"
+                            data-mod-id="userImage"
+                            class="fa-solid"
+                        ></i>
                     </button>
-                    <button data-mod-id="textImage">
-                        <i data-arg="image" class="fa-solid fa-user"></i>
+                    <button data-mod-id="textButtonWithImage">
+                        <i
+                            data-arg="image"
+                            data-mod-id="plusImage"
+                            class="fa-solid"
+                        ></i>
+                    </button>
+                </div>
+                <div class="row gap4 margin-top6">
+                    <button data-mod-id="searchIconButton">
+                        <i
+                            data-mod-id="searchIcon"
+                            data-arg="image"
+                            class="fa-solid"
+                        ></i>
+                    </button>
+                    <button data-mod-id="userIconButton">
+                        <i
+                            data-mod-id="userIcon"
+                            data-arg="image"
+                            class="fa-solid"
+                        ></i>
+                    </button>
+                    <button data-mod-id="plusIconButton">
+                        <i
+                            data-mod-id="plusIcon"
+                            data-arg="image"
+                            class="fa-solid"
+                        ></i>
                     </button>
                 </div>
             </div>
