@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" type="text/css" href="main.css" />
+        <script type="text/mod-serialization">
+            {
+                "owner": {
+                    "values": {
+                        "element": {"#": "main"}
+                    },
+                    "listeners": [
+                        {
+                            "type": "action",
+                            "listener": {"@": "owner"}
+                        }
+                    ]
+                },
+                "sizeSelect": {
+                    "prototype": "mod/ui/select.mod",
+                    "values": {
+                        "element": {"#": "sizeSelect"},
+                        "content": {"<-": "@owner.sizesOptions"},
+                        "selection.0": {"<->": "@owner.size"}
+                    }
+                },
+                "colorSelect": {
+                    "prototype": "mod/ui/select.mod",
+                    "values": {
+                        "element": {"#": "colorSelect"},
+                        "content": {"<-": "@owner.colorsOptions"},
+                        "selection.0": {"<->": "@owner.color"}
+                    }
+                },
+                "imagePlacementSelect": {
+                    "prototype": "mod/ui/select.mod",
+                    "values": {
+                        "element": {"#": "imagePlacementSelect"},
+                        "content": {"<-": "@owner.imagePlacementOptions"},
+                        "selection.0": {"<->": "@owner.imagePlacement"}
+                    }
+                },
+                "shapeSelect": {
+                    "prototype": "mod/ui/select.mod",
+                    "values": {
+                        "element": {"#": "shapeSelect"},
+                        "content": {"<-": "@owner.shapeOptions"},
+                        "selection.0": {"<->": "@owner.shape"}
+                    }
+                },
+                "disabledCheckbox": {
+                    "prototype": "mod/ui/checkbox.mod",
+                    "values": {
+                        "element": {"#": "disabledCheckbox"},
+                        "checked": {"<->": "@owner.disabled"}
+                    }
+                },
+                "overridePrimaryColorCheckbox": {
+                    "prototype": "mod/ui/checkbox.mod",
+                    "values": {
+                        "element": {"#": "overridePrimaryColorCheckbox"},
+                        "checked": {"<->": "@owner.overridePrimaryColor"}
+                    }
+                },
+                "contained": {
+                    "prototype": "mod/ui/visual-button.mod",
+                    "values": {
+                        "element": {"#": "contained"},
+                        "disabled": {"<-": "@owner.disabled"},
+                        "color": {"<-": "@owner.color"},
+                        "shape": {"<-": "@owner.shape"},
+                        "size": {"<-": "@owner.size"},
+                        "variant": "contained",
+                        "label": "Contained"
+                    }
+                },
+                "outlined": {
+                    "prototype": "mod/ui/visual-button.mod",
+                    "values": {
+                        "element": {"#": "outlined"},
+                        "disabled": {"<-": "@owner.disabled"},
+                        "color": {"<-": "@owner.color"},
+                        "shape": {"<-": "@owner.shape"},
+                        "size": {"<-": "@owner.size"},
+                        "variant": "outlined",
+                        "label": "Outlined"
+                    }
+                },
+                "text": {
+                    "prototype": "mod/ui/visual-button.mod",
+                    "values": {
+                        "element": {"#": "text"},
+                        "disabled": {"<-": "@owner.disabled"},
+                        "color": {"<-": "@owner.color"},
+                        "shape": {"<-": "@owner.shape"},
+                        "size": {"<-": "@owner.size"},
+                        "variant": "text",
+                        "label": "Text"
+                    }
+                },
+                "containedImage": {
+                    "prototype": "mod/ui/visual-button.mod",
+                    "values": {
+                        "element": {"#": "containedImage"},
+                        "imagePlacement": {"<-": "@owner.imagePlacement"},
+                        "disabled": {"<-": "@owner.disabled"},
+                        "shape": {"<-": "@owner.shape"},
+                        "color": {"<-": "@owner.color"},
+                        "size": {"<-": "@owner.size"},
+                        "variant": "contained",
+                        "label": "Contained"
+                    }
+                },
+                "outlinedImage": {
+                    "prototype": "mod/ui/visual-button.mod",
+                    "values": {
+                        "element": {"#": "outlinedImage"},
+                        "imagePlacement": {"<-": "@owner.imagePlacement"},
+                        "disabled": {"<-": "@owner.disabled"},
+                        "shape": {"<-": "@owner.shape"},
+                        "color": {"<-": "@owner.color"},
+                        "size": {"<-": "@owner.size"},
+                        "variant": "outlined",
+                        "label": "Outlined"
+                    }
+                },
+                "textImage": {
+                    "prototype": "mod/ui/visual-button.mod",
+                    "values": {
+                        "element": {"#": "textImage"},
+                        "imagePlacement": {"<-": "@owner.imagePlacement"},
+                        "disabled": {"<-": "@owner.disabled"},
+                        "shape": {"<-": "@owner.shape"},
+                        "color": {"<-": "@owner.color"},
+                        "size": {"<-": "@owner.size"},
+                        "variant": "text",
+                        "label": "Text"
+                    }
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div data-mod-id="main" class="Main">
+            <h3 class="margin-bottom6">Teach Virtual Button</h3>
+            <div class="column">
+                <h5 class="margin-bottom6">Options:</h5>
+                <div class="row gap6 margin-bottom6 wrap">
+                    <div class="row gap3 align-center">
+                        <label for="sizeSelect">Size:</label>
+                        <select data-mod-id="sizeSelect"></select>
+                    </div>
+                    <div class="row gap3 align-center">
+                        <label for="variantSelect">Color:</label>
+                        <select data-mod-id="colorSelect"></select>
+                    </div>
+                    <div class="row gap3 align-center">
+                        <label for="imagePlacementSelect">Image Placement:</label>
+                        <select data-mod-id="imagePlacementSelect"></select>
+                    </div>
+                    <div class="row gap3 align-center">
+                        <label for="shapeSelect">Shape:</label>
+                        <select data-mod-id="shapeSelect"></select>
+                    </div>
+                    <div class="row gap3 align-center">
+                        <label for="shapeSelect">Disabled:</label>
+                        <input type="checkbox" data-mod-id="disabledCheckbox" />
+                    </div>
+                    <div class="row gap3 align-center">
+                        <label for="shapeSelect">Override Primary Color CSS Variables:</label>
+                        <input
+                            type="checkbox"
+                            data-mod-id="overridePrimaryColorCheckbox"
+                        />
+                    </div>
+                </div>
+                <div class="row gap4 margin-top6 margin-bottom3">
+                    <button data-mod-id="contained"></button>
+                    <button data-mod-id="outlined"></button>
+                    <button data-mod-id="text"></button>
+                </div>
+                <div class="row gap4 margin-top6">
+                    <button data-mod-id="containedImage">
+                        <i data-arg="image" class="fa-solid fa-user"></i>
+                    </button>
+                    <button data-mod-id="outlinedImage">
+                        <i data-arg="image" class="fa-solid fa-user"></i>
+                    </button>
+                    <button data-mod-id="textImage">
+                        <i data-arg="image" class="fa-solid fa-user"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
