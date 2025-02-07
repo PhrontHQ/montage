@@ -109,9 +109,9 @@
     --mod-visual-button-contained-light-bg-active-color: var(--mod-color-primary-600, #7c7468);
     --mod-visual-button-contained-light-color: var(--mod-color-gray-950, #0f172a);
 
-    --mod-visual-button-contained-dark-bg-color: var(--mod-color-gray-900, #1e293b);
-    --mod-visual-button-contained-dark-bg-hover-color: var(--mod-color-gray-800, #334155);
-    --mod-visual-button-contained-dark-bg-active-color: var(--mod-color-gray-950, #0f172a);
+    --mod-visual-button-contained-dark-bg-color: var(--mod-color-gray-800, #424242);
+    --mod-visual-button-contained-dark-bg-hover-color: var(--mod-color-gray-900, #212121);
+    --mod-visual-button-contained-dark-bg-active-color: var(--mod-color-gray-800, #424242);
     --mod-visual-button-contained-dark-color: var(--mod-color-gray-50, #f7f5f2);
 
     /* Button Shape Variables */
@@ -137,6 +137,7 @@
     box-sizing: border-box;
     font-weight: 600;
     position: relative;
+    transition: background-color .2s ease-in-out;
 }
 
 .VisualButton.image-start {
@@ -158,9 +159,16 @@
     position: relative;
 }
 
-
 .VisualButton svg {
     fill: currentColor;
+}
+
+.VisualButton.hasVisualFeedback:hover {
+    transform: scale(1.02);
+  }
+
+.VisualButton.hasVisualFeedback:active {
+    transform: scale(0.98);
 }
 
 /* Loading State */

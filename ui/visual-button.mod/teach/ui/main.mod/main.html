@@ -69,10 +69,18 @@
                         "checked": {"<->": "@owner.loading"}
                     }
                 },
+                "visualFeedbackCheckbox": {
+                    "prototype": "mod/ui/checkbox.mod",
+                    "values": {
+                        "element": {"#": "visualFeedbackCheckbox"},
+                        "checked": {"<->": "@owner.hasVisualFeedback"}
+                    }
+                },
                 "contained": {
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
                         "element": {"#": "contained"},
+                        "hasVisualFeedback": {"<-": "@owner.hasVisualFeedback"},
                         "disabled": {"<-": "@owner.disabled"},
                         "color": {"<-": "@owner.color"},
                         "shape": {"<-": "@owner.shape"},
@@ -85,6 +93,7 @@
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
                         "element": {"#": "outlined"},
+                        "hasVisualFeedback": {"<-": "@owner.hasVisualFeedback"},
                         "disabled": {"<-": "@owner.disabled"},
                         "color": {"<-": "@owner.color"},
                         "shape": {"<-": "@owner.shape"},
@@ -96,6 +105,7 @@
                 "text": {
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
+                        "hasVisualFeedback": {"<-": "@owner.hasVisualFeedback"},
                         "element": {"#": "text"},
                         "disabled": {"<-": "@owner.disabled"},
                         "color": {"<-": "@owner.color"},
@@ -108,6 +118,7 @@
                 "containedButtonWithImage": {
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
+                        "hasVisualFeedback": {"<-": "@owner.hasVisualFeedback"},
                         "element": {"#": "containedButtonWithImage"},
                         "imagePlacement": {"<-": "@owner.imagePlacement"},
                         "disabled": {"<-": "@owner.disabled"},
@@ -131,6 +142,7 @@
                 "outlinedButtonWithImage": {
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
+                        "hasVisualFeedback": {"<-": "@owner.hasVisualFeedback"},
                         "element": {"#": "outlinedButtonWithImage"},
                         "imagePlacement": {"<-": "@owner.imagePlacement"},
                         "disabled": {"<-": "@owner.disabled"},
@@ -154,6 +166,7 @@
                 "textButtonWithImage": {
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
+                        "hasVisualFeedback": {"<-": "@owner.hasVisualFeedback"},
                         "element": {"#": "textButtonWithImage"},
                         "imagePlacement": {"<-": "@owner.imagePlacement"},
                         "disabled": {"<-": "@owner.disabled"},
@@ -177,6 +190,7 @@
                 "searchIconButton": {
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
+                        "hasVisualFeedback": {"<-": "@owner.hasVisualFeedback"},
                         "element": {"#": "searchIconButton"},
                         "disabled": {"<-": "@owner.disabled"},
                         "loading": {"<-": "@owner.loading"},
@@ -198,6 +212,7 @@
                 "userIconButton": {
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
+                        "hasVisualFeedback": {"<-": "@owner.hasVisualFeedback"},
                         "element": {"#": "userIconButton"},
                         "disabled": {"<-": "@owner.disabled"},
                         "loading": {"<-": "@owner.loading"},
@@ -219,6 +234,7 @@
                 "plusIconButton": {
                     "prototype": "mod/ui/visual-button.mod",
                     "values": {
+                        "hasVisualFeedback": {"<-": "@owner.hasVisualFeedback"},
                         "element": {"#": "plusIconButton"},
                         "disabled": {"<-": "@owner.disabled"},
                         "loading": {"<-": "@owner.loading"},
@@ -276,6 +292,10 @@
                     <div class="row gap3 align-center">
                         <label for="shapeSelect">Loading:</label>
                         <input type="checkbox" data-mod-id="loadingCheckbox" />
+                    </div>
+                    <div class="row gap3 align-center">
+                        <label for="visualFeedbackCheckbox">Has Visual Feedback:</label>
+                        <input type="checkbox" data-mod-id="visualFeedbackCheckbox" />
                     </div>
                 </div>
                 <div class="row gap4 margin-top6 margin-bottom3">

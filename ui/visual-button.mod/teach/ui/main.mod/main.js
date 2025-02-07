@@ -20,6 +20,8 @@ exports.Main = class Main extends Component {
 
     overridePrimaryColor = false;
 
+    hasVisualFeedback = false;
+
     disabled = false;
 
     loading = false;

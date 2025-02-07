@@ -152,6 +152,13 @@ exports.VisualButton = class VisualButton extends Button {
         }
     }
 
+    /**
+     * Whether the button should display a visual feedback when clicked
+     * @type {boolean}
+     * @default false
+     */
+    hasVisualFeedback = false;
+
     enterDocument() {
         this._applyImagePlacementStyles();
         this._applyColorStyles();
