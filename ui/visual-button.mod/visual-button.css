@@ -77,34 +77,42 @@
     --mod-visual-button-contained-primary-bg-color: var(--mod-color-primary-500, #6366f1);
     --mod-visual-button-contained-primary-bg-hover-color: var(--mod-color-primary-400, #818cf8);
     --mod-visual-button-contained-primary-bg-active-color: var(--mod-color-primary-600, #4f46e5);
+    --mod-visual-button-contained-primary-color: var(--mod-color-gray-50, #f7f5f2);
 
     --mod-visual-button-contained-secondary-bg-color: var(--mod-color-secondary-500, #a855f7);
     --mod-visual-button-contained-secondary-bg-hover-color: var(--mod-color-secondary-400, #c084fc);
     --mod-visual-button-contained-secondary-bg-active-color: var(--mod-color-secondary-600, #9333ea);
+    --mod-visual-button-contained-secondary-color: var(--mod-color-gray-50, #f7f5f2);
 
     --mod-visual-button-contained-danger-bg-color: var(--mod-color-red-500, #ef4444);
     --mod-visual-button-contained-danger-bg-hover-color: var(--mod-color-red-400, #f87171);
     --mod-visual-button-contained-danger-bg-active-color: var(--mod-color-red-600, #dc2626);
+    --mod-visual-button-contained-danger-color: var(--mod-color-gray-50, #f7f5f2);
 
     --mod-visual-button-contained-success-bg-color: var(--mod-color-green-500, #22c55e);
     --mod-visual-button-contained-success-bg-hover-color: var(--mod-color-green-400, #4ade80);
     --mod-visual-button-contained-success-bg-active-color: var(--mod-color-green-600, #16a34a);
+    --mod-visual-button-contained-success-color: var(--mod-color-gray-50, #f7f5f2);
 
     --mod-visual-button-contained-warn-bg-color: var(--mod-color-orange-500, #f97316);
     --mod-visual-button-contained-warn-bg-hover-color: var(--mod-color-orange-400, #fb923c);
     --mod-visual-button-contained-warn-bg-active-color: var(--mod-color-orange-600, #ea580c);
+    --mod-visual-button-contained-warn-color: var(--mod-color-gray-950, #0f172a);
 
     --mod-visual-button-contained-info-bg-color: var(--mod-color-blue-500, #3b82f6);
     --mod-visual-button-contained-info-bg-hover-color: var(--mod-color-blue-400, #60a5fa);
     --mod-visual-button-contained-info-bg-active-color: var(--mod-color-blue-600, #2563eb);
+    --mod-visual-button-contained-info-color: var(--mod-color-gray-50, #f7f5f2);
 
     --mod-visual-button-contained-light-bg-color: var(--mod-color-primary-500, #958e81);
     --mod-visual-button-contained-light-bg-hover-color: var(--mod-color-primary-400, #b3ada2);
     --mod-visual-button-contained-light-bg-active-color: var(--mod-color-primary-600, #7c7468);
+    --mod-visual-button-contained-light-color: var(--mod-color-gray-950, #0f172a);
 
     --mod-visual-button-contained-dark-bg-color: var(--mod-color-gray-900, #1e293b);
     --mod-visual-button-contained-dark-bg-hover-color: var(--mod-color-gray-800, #334155);
     --mod-visual-button-contained-dark-bg-active-color: var(--mod-color-gray-950, #0f172a);
+    --mod-visual-button-contained-dark-color: var(--mod-color-gray-50, #f7f5f2);
 
     /* Button Shape Variables */
     --mod-visual-button-square-border-radius: 0;
@@ -148,6 +156,11 @@
     align-items: center;
     justify-content: center;
     position: relative;
+}
+
+
+.VisualButton svg {
+    fill: currentColor;
 }
 
 /* Loading State */
@@ -305,7 +318,7 @@
 
 .VisualButton.contained.primary {
     background-color: var(--mod-visual-button-contained-primary-bg-color);
-    color: white;
+    color: var(--mod-visual-button-contained-primary-color);
 }
 
 .VisualButton.contained.primary:hover {
@@ -318,7 +331,7 @@
 
 .VisualButton.contained.secondary {
     background-color: var(--mod-visual-button-contained-secondary-bg-color);
-    color: white;
+    color: var(--mod-visual-button-contained-secondary-color);
 }
 
 .VisualButton.contained.secondary:hover {
@@ -331,7 +344,7 @@
 
 .VisualButton.contained.danger {
     background-color: var(--mod-visual-button-contained-danger-bg-color);
-    color: white;
+    color: var(--mod-visual-button-contained-danger-color);
 }
 
 .VisualButton.contained.danger:hover {
@@ -344,7 +357,7 @@
 
 .VisualButton.contained.success {
     background-color: var(--mod-visual-button-contained-success-bg-color);
-    color: white;
+    color: var(--mod-visual-button-contained-success-color);
 }
 
 .VisualButton.contained.success:hover {
@@ -357,7 +370,7 @@
 
 .VisualButton.contained.warn {
     background-color: var(--mod-visual-button-contained-warn-bg-color);
-    color: white;
+    color: var(--mod-visual-button-contained-warn-color);
 }
 
 .VisualButton.contained.warn:hover {
@@ -370,7 +383,7 @@
 
 .VisualButton.contained.info {
     background-color: var(--mod-visual-button-contained-info-bg-color);
-    color: white;
+    color: var(--mod-visual-button-contained-info-color);
 }
 
 .VisualButton.contained.info:hover {
@@ -383,7 +396,7 @@
 
 .VisualButton.contained.light {
     background-color: var(--mod-visual-button-contained-light-bg-color);
-    color: white;
+    color: var(--mod-visual-button-contained-light-color);
 }
 
 .VisualButton.contained.light:hover {
@@ -396,7 +409,7 @@
 
 .VisualButton.contained.dark {
     background-color: var(--mod-visual-button-contained-dark-bg-color);
-    color: white;
+    color: var(--mod-visual-button-contained-dark-color);
 }
 
 .VisualButton.contained.dark:hover {
