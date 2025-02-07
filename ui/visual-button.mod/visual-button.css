@@ -124,7 +124,7 @@
     border: none;
     cursor: pointer;
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: center;
     box-sizing: border-box;
     font-weight: 600;
@@ -165,35 +165,38 @@
 
 .VisualButton.small {
     padding: 8px 12px;
-    font-size: 12px;
+    line-height: 14px;
+    font-size: 14px;
     gap: 8px;
 }
 
 .VisualButton.small .VisualButton-image {
-    width: 14px;
-    height: 14px;
-}
-
-.VisualButton.medium {
-    padding: 10px 12px;
-    font-size: 14px;
-    gap: 12px;
-}
-
-.VisualButton.medium .VisualButton-image {
     width: 16px;
     height: 16px;
 }
 
+.VisualButton.medium {
+    padding: 10px 12px;
+    line-height: 16px;
+    font-size: 16px;
+    gap: 12px;
+}
+
+.VisualButton.medium .VisualButton-image {
+    width: 18px;
+    height: 18px;
+}
+
 .VisualButton.large {
     padding: 14px 16px;
-    font-size: 16px;
+    line-height: 18px;
+    font-size: 18px;
     gap: 14px;
 }
 
 .VisualButton.large .VisualButton-image {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
 }
 
 /* Text Variant */
@@ -562,10 +565,12 @@
 
 @keyframes VisualButton-spin {
     0% {
+        transform-origin: center;
         transform: rotate(0deg);
     }
 
     100% {
+        transform-origin: center;
         transform: rotate(360deg);
     }
 }
