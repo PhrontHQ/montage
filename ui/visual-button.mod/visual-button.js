@@ -1,3 +1,4 @@
+const { throttle } = require("../../core/helpers/throttle");
 var { Button } = require("../button.mod");
 
 /**
@@ -159,12 +160,63 @@ exports.VisualButton = class VisualButton extends Button {
      */
     hasVisualFeedback = false;
 
+    _isThrottled = false;
+
+    /**
+     * Whether the button should throttle the action event
+     * @type {boolean}
+     */
+    get isThrottled() {
+        return this._isThrottled;
+    }
+
+    set isThrottled(value) {
+        if (value !== this._isThrottled) {
+            this._isThrottled = value;
+        }
+    }
+
+    _throttleDuration = 400;
+
+    /**
+     * The duration in milliseconds to throttle the action event
+     * @type {number}
+     */
+    get throttleDuration() {
+        return this._throttleDuration;
+    }
+
+    set throttleDuration(value) {
+        if (value !== this._throttleDuration) {
+            this._throttleDuration = value;
+            this._buildThrottledDispatchActionEvent();
+        }
+    }
+
+    /**
+     * Dispatches the action event, throttled if necessary
+     * @override
+     */
+    dispatchActionEvent() {
+        if (this.isThrottled) return this._throttledDispatchActionEvent();
+
+        return super.dispatchActionEvent();
+    }
+
     enterDocument() {
+        this._buildThrottledDispatchActionEvent();
         this._applyImagePlacementStyles();
         this._applyColorStyles();
         this._applyVariantStyles();
         this._applySizeStyles();
         this._applyShapeStyles();
+    }
+
+    _buildThrottledDispatchActionEvent() {
+        this._throttledDispatchActionEvent = throttle(
+            super.dispatchActionEvent,
+            this.throttleDuration
+        );
     }
 
     /**
