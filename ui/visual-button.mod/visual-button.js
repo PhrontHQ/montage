@@ -212,6 +212,7 @@ exports.VisualButton = class VisualButton extends Button {
         this._applyShapeStyles();
     }
 
+    // this logic could be added to the Button Component
     _buildThrottledDispatchActionEvent() {
         this._throttledDispatchActionEvent = throttle(
             super.dispatchActionEvent,
