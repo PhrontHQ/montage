@@ -7,7 +7,8 @@
             {
                 "owner": {
                     "values": {
-                        "element": {"#": "main"}
+                        "element": {"#": "main"},
+                        "throttledButton": {"@": "throttledButton"}
                     },
                     "listeners": [
                         {
@@ -252,6 +253,35 @@
                         "classList.has('fa-plus')": {"<-": "!@owner.loading"},
                         "hasTemplate": false
                     }
+                },
+                "throttledButton": {
+                    "prototype": "mod/ui/visual-button.mod",
+                    "values": {
+                        "hasVisualFeedback": {"<-": "@owner.hasVisualFeedback"},
+                        "disabled": {"<-": "@owner.disabled"},
+                        "element": {"#": "throttledButton"},
+                        "shape": {"<-": "@owner.shape"},
+                        "color": {"<-": "@owner.color"},
+                        "size": {"<-": "@owner.size"},
+                        "throttleDuration": 400,
+                        "label": "Throttled",
+                        "isThrottled": true,
+                        "variant": "text"
+                    }
+                },
+                "passedThroughCounter": {
+                    "prototype": "mod/ui/text.mod",
+                    "values": {
+                        "value": {"<-": "'Passed through:' + @owner.passedThroughCounter"},
+                        "element": {"#": "passedThroughCounter"}
+                    }
+                },
+                "attemptCounter": {
+                    "prototype": "mod/ui/text.mod",
+                    "values": {
+                        "value": {"<-": "'Attempts:' + @owner.attemptCounter"},
+                        "element": {"#": "attemptCounter"}
+                    }
                 }
             }
         </script>
@@ -260,7 +290,7 @@
         <div data-mod-id="main" class="Main">
             <h3 class="margin-bottom6">Teach Virtual Button</h3>
             <div class="column">
-                <h5 class="margin-bottom6">Options:</h5>
+                <h4 class="margin-bottom6">Options:</h4>
                 <div class="row gap6 margin-bottom6 wrap">
                     <div class="row gap3 align-center">
                         <label for="sizeSelect">Size:</label>
@@ -295,9 +325,13 @@
                     </div>
                     <div class="row gap3 align-center">
                         <label for="visualFeedbackCheckbox">Has Visual Feedback:</label>
-                        <input type="checkbox" data-mod-id="visualFeedbackCheckbox" />
+                        <input
+                            type="checkbox"
+                            data-mod-id="visualFeedbackCheckbox"
+                        />
                     </div>
                 </div>
+                <h5 class="margin-bottom3">Examples:</h5>
                 <div class="row gap4 margin-top6 margin-bottom3">
                     <button data-mod-id="contained"></button>
                     <button data-mod-id="outlined"></button>
@@ -349,6 +383,13 @@
                         ></i>
                     </button>
                 </div>
+                <h5 class="margin-bottom3 margin-top6">Throttled Example:</h5>
+                <div class="row align-center gap6 margin-bottom3">
+                    <button data-mod-id="throttledButton"></button>
+                    <span data-mod-id="passedThroughCounter"></span>
+                    <span data-mod-id="attemptCounter"></span>
+                </div>
+                <i>Throttled to one click every 400 ms</i>
             </div>
         </div>
     </body>

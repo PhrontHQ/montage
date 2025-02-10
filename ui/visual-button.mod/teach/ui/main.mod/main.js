@@ -26,6 +26,32 @@ exports.Main = class Main extends Component {
 
     loading = false;
 
+    passedThroughCounter = 0;
+
+    attemptCounter = 0;
+
+    enterDocument() {
+        this.throttledButton.element.addEventListener(
+            "click",
+            this.handleThrottledButtonClick
+        );
+    }
+
+    exitDocument() {
+        this.throttledButton.element.removeEventListener(
+            "click",
+            this.handleThrottledButtonClick
+        );
+    }
+
+    handleThrottledButtonClick = () => {
+        this.attemptCounter++;
+    };
+
+    handleThrottledButtonAction() {
+        this.passedThroughCounter++;
+    }
+
     handleOverridePrimaryColorCheckboxAction() {
         if (!this.overridePrimaryColor) {
             document.documentElement.style.setProperty(
