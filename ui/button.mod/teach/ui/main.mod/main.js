@@ -1,24 +1,24 @@
-const { VisualButton } = require("mod/ui/visual-button.mod");
 const { Component } = require("mod/ui/component");
+const { Button } = require("mod/ui/button.mod");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 exports.Main = class Main extends Component {
-    imagePlacementOptions = Object.keys(VisualButton.IMAGE_PLACEMENTS);
+    imagePlacementOptions = Object.keys(Button.IMAGE_PLACEMENTS);
 
-    colorsOptions = Object.keys(VisualButton.COLORS);
+    colorsOptions = Object.keys(Button.COLORS);
 
-    sizesOptions = Object.keys(VisualButton.SIZES);
+    sizesOptions = Object.keys(Button.SIZES);
 
-    shapeOptions = Object.keys(VisualButton.SHAPES);
+    shapeOptions = Object.keys(Button.SHAPES);
 
-    imagePlacement = VisualButton.IMAGE_PLACEMENTS.start;
+    imagePlacement = Button.IMAGE_PLACEMENTS.start;
 
-    shape = VisualButton.SHAPES.rounded;
+    shape = Button.SHAPES.rounded;
 
-    color = VisualButton.COLORS.primary;
+    color = Button.COLORS.primary;
 
-    size = VisualButton.SIZES.medium;
+    size = Button.SIZES.medium;
 
     overridePrimaryColor = false;
 
