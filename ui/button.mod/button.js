@@ -1,4 +1,4 @@
- /*global require, exports*/
+/*global require, exports*/
 
 const { PressComposer } = require("composer/press-composer");
 const { throttle } = require("../../core/helpers/throttle");
@@ -52,7 +52,8 @@ b1.addEventListener("action", function(event) {
 }
 &lt;button data-mod-id="btnElement"></button>
 */
-const Button = exports.Button = class Button extends Control { /** @lends module:"mod/ui/native/button.mod".Button# */
+const Button = (exports.Button = class Button extends Control {
+    /** @lends module:"mod/ui/native/button.mod".Button# */
     /**
      * Available button colors
      * @readonly
@@ -117,15 +118,19 @@ const Button = exports.Button = class Button extends Control { /** @lends module
         circle: "circle",
     });
 
+    standardElementTagName = "BUTTON";
+
+    drawsFocusOnPointerActivation = true;
+
     hasTemplate = true;
 
     label = null;
 
-    get label () {
+    get label() {
         return this._label;
     }
 
-    set label (value) {
+    set label(value) {
         const isDefined = typeof value !== "undefined";
 
         if (isDefined && this.converter) {
@@ -135,7 +140,7 @@ const Button = exports.Button = class Button extends Control { /** @lends module
                 if (this.error) {
                     this.error = null;
                 }
-            } catch(e) {
+            } catch (e) {
                 // unable to convert - maybe error
                 this.error = e;
             }
@@ -143,6 +148,16 @@ const Button = exports.Button = class Button extends Control { /** @lends module
 
         this._label = isDefined && value !== null ? String(value) : null;
     }
+
+    /**
+     * A Mod converter object used to convert or format the label displayed by
+     * the Button instance. When a new value is assigned to <code>label</code>,
+     * the converter object's <code>convert()</code> method is invoked,
+     * passing it the newly assigned label value.
+     * @type {Property}
+     * @default null
+     */
+    converter = null;
 
     _size = Button.SIZES.medium;
 
@@ -194,10 +209,7 @@ const Button = exports.Button = class Button extends Control { /** @lends module
     }
 
     set imagePlacement(value) {
-        if (
-            value !== this._imagePlacement &&
-            Button.IMAGE_PLACEMENTS[value]
-        ) {
+        if (value !== this._imagePlacement && Button.IMAGE_PLACEMENTS[value]) {
             this._imagePlacement = Button.IMAGE_PLACEMENTS[value];
             this._applyImagePlacementStyles();
         }
@@ -257,6 +269,96 @@ const Button = exports.Button = class Button extends Control { /** @lends module
         }
     }
 
+    _promise = undefined;
+
+    get promise() {
+        return this._promise;
+    }
+
+    set promise(promise) {
+        // Only proceed if the new promise is different from the current one
+        if (this._promise === promise) return;
+
+        const shouldClearPendingState = !!this._promise;
+        this._promise = promise;
+
+        if (promise) {
+            // Set up pending state when promise is set
+            this.classList.add("mod--pending");
+
+            // Create a closure to handle promise resolution
+            const handleResolution = () => {
+                // Only clear pending state if this is still the current promise
+                if (handleResolution.originalPromise === this._promise) {
+                    this.classList.remove("mod--pending");
+                    this._promise = undefined;
+                }
+            };
+
+            // Store reference to the original promise for comparison
+            handleResolution.originalPromise = promise;
+
+            // Ensure pending state is cleared even on rejection
+            // TODO: we should propably add an error state...
+            promise.finally(handleResolution);
+        } else if (shouldClearPendingState) {
+            // Clear pending state when the current promise is set to null
+            this.classList.remove("mod--pending");
+        }
+    }
+
+    /**
+     * The amount of time in milliseconds the user must press and hold
+     * the button a <code>hold</code> event is dispatched.
+     * The default is 1 second.
+     * @type {number}
+     * @default 1000
+     */
+    get holdThreshold() {
+        return this._pressComposer.longPressThreshold;
+    }
+
+    set holdThreshold(value) {
+        this._pressComposer.longPressThreshold = value;
+    }
+
+    __pressComposer = null;
+
+    get _pressComposer() {
+        if (!this.__pressComposer) {
+            this.__pressComposer = new PressComposer();
+            this.addComposer(this.__pressComposer);
+        }
+
+        return this.__pressComposer;
+    }
+
+    __spaceKeyComposer = null;
+
+    get _spaceKeyComposer() {
+        if (!this.__spaceKeyComposer) {
+            this.__spaceKeyComposer = KeyComposer.createKey(
+                this,
+                "space",
+                "space"
+            );
+        }
+        return this.__spaceKeyComposer;
+    }
+
+    __enterKeyComposer = null;
+
+    get _enterKeyComposer() {
+        if (!this.__enterKeyComposer) {
+            this.__enterKeyComposer = KeyComposer.createKey(
+                this,
+                "enter",
+                "enter"
+            );
+        }
+        return this.__enterKeyComposer;
+    }
+
     enterDocument(firstDraw) {
         super.enterDocument?.call(firstDraw);
 
@@ -274,6 +376,26 @@ const Button = exports.Button = class Button extends Control { /** @lends module
         }
     }
 
+    prepareForActivationEvents() {
+        this._pressComposer.addEventListener("pressStart", this, false);
+        this._spaceKeyComposer.addEventListener("keyPress", this, false);
+        this._enterKeyComposer.addEventListener("keyPress", this, false);
+    }
+
+    // Override addEventListener for optimization
+    addEventListener(type, listener, useCapture) {
+        Control.prototype.addEventListener.call(
+            this,
+            type,
+            listener,
+            useCapture
+        );
+
+        if (type === "longAction") {
+            this._pressComposer.addEventListener("longPress", this, false);
+        }
+    }
+
     /**
      * Dispatches the action event, throttled if necessary
      * @override
@@ -282,6 +404,84 @@ const Button = exports.Button = class Button extends Control { /** @lends module
         return this._dispatchActionEvent();
     }
 
+    // <---- Event Handlers ---->
+
+    handleKeyPress(mutableEvent) {
+        // when focused action event on spacebar & enter
+        // FIXME: - property identifier is not set on the mutable event
+        if (
+            mutableEvent._event.identifier === "space" ||
+            mutableEvent._event.identifier === "enter"
+        ) {
+            this.active = false;
+            this.dispatchActionEvent();
+        }
+    }
+
+    /**
+     * Called when the user starts interacting with the component.
+     */
+    handlePressStart(_) {
+        if (!this._promise) {
+            this.active = true;
+            this._addEventListeners();
+        }
+    }
+
+    /**
+     * Called when the user has interacted with the button.
+     */
+    handlePress(event) {
+        if (!this._promise) {
+            this.active = false;
+            this.dispatchActionEvent(event.details);
+            this._removeEventListeners();
+        }
+    }
+
+    handleLongPress(_) {
+        if (!this._promise) {
+            // When we fire the "hold" event we don't want to fire the
+            // "action" event as well.
+            this._pressComposer.cancelPress();
+            this._removeEventListeners();
+
+            const longActionEvent = document.createEvent("CustomEvent");
+
+            // FIXME: InitCustomEvent is deprecated
+            longActionEvent.initCustomEvent("longAction", true, true, null);
+            this.dispatchEvent(longActionEvent);
+        }
+    }
+
+    /**
+     * Called when all interaction is over.
+     * @protected
+     */
+    handlePressCancel(_) {
+        this.active = false;
+        this._removeEventListeners();
+    }
+
+    _addEventListeners() {
+        this._pressComposer.addEventListener("press", this, false);
+        this._pressComposer.addEventListener("pressCancel", this, false);
+
+        // FIXME: @benoit: we should maybe have a flag for this kind of event.
+        // can be tricky with the event delegation for example if we don't add it.
+        // same issue for: the pressComposer and the translate composer.
+        this._pressComposer.addEventListener("longPress", this, false);
+    }
+
+    _removeEventListeners() {
+        this._pressComposer.removeEventListener("press", this, false);
+        this._pressComposer.removeEventListener("pressCancel", this, false);
+        this._pressComposer.removeEventListener("longPress", this, false);
+    }
+
+    /**
+     * @private
+     */
     _buildDispatchActionEvent() {
         if (this.isThrottled) {
             this._dispatchActionEvent = throttle(
@@ -325,9 +525,7 @@ const Button = exports.Button = class Button extends Control { /** @lends module
      * @private
      */
     _applyImagePlacementStyles() {
-        this._removeClassListTokens(
-            ...Object.values(Button.IMAGE_PLACEMENTS)
-        );
+        this._removeClassListTokens(...Object.values(Button.IMAGE_PLACEMENTS));
 
         this.classList.add(this.imagePlacement);
     }
@@ -349,229 +547,6 @@ const Button = exports.Button = class Button extends Control { /** @lends module
             this.classList.remove(token);
         }
     }
-}
-
-Button.addClassProperties( {
-    /**
-        Dispatched when the button is activated through a mouse click, finger tap,
-        or when focused and the spacebar is pressed.
-
-        @event action
-        @memberof module:"mod/ui/native/button.mod".Button
-        @param {Event} event
-    */
-
-    /**
-        Dispatched when the button is pressed for a period of time, set by
-        {@link holdThreshold}.
-
-        @event hold
-        @memberof module:"mod/ui/native/button.mod".Button
-        @param {Event} event
-    */
-
-    standardElementTagName: {
-        value: "BUTTON"
-    },
-
-    drawsFocusOnPointerActivation : {
-        value: true
-    },
-
-    /**
-        converter
-        A Montage converter object used to convert or format the label displayed by the Button instance. When a new value is assigned to <code>label</code>, the converter object's <code>convert()</code> method is invoked, passing it the newly assigned label value.
-        @type {Property}
-        @default null
-    */
-
-    _promise: {
-        value: undefined
-    },
-
-    promise: {
-        get: function () {
-            return this._promise;
-        },
-        set: function (value) {
-            var self = this;
-            var test = function promiseResolved(){
-                            if (promiseResolved.promise === self._promise){
-                                self.classList.remove('mod--pending');
-                                self._promise = undefined;
-                            }
-                        };
-
-            if (this._promise !== value) {
-                this._promise = value;
-
-                if (this._promise){
-                    this.classList.add('mod--pending');
-                    test.promise = value;
-                    this._promise.then(test);
-                }
-            }
-        }
-    },
-
-    /**
-     * The amount of time in milliseconds the user must press and hold the button a <code>hold</code> event is dispatched. The default is 1 second.
-     * @type {number}
-     * @default 1000
-     */
-    holdThreshold: {
-        get: function () {
-            return this._pressComposer.longPressThreshold;
-        },
-        set: function (value) {
-            this._pressComposer.longPressThreshold = value;
-        }
-    },
-
-    __pressComposer: {
-        enumerable: false,
-        value: null
-    },
-
-    _pressComposer: {
-        enumerable: false,
-        get: function () {
-            if (!this.__pressComposer) {
-                this.__pressComposer = new PressComposer();
-                this.addComposer(this.__pressComposer);
-            }
-
-            return this.__pressComposer;
-        }
-    },
-
-    __spaceKeyComposer: {
-        value: null
-    },
-
-    _spaceKeyComposer: {
-        get: function () {
-            if (!this.__spaceKeyComposer) {
-                this.__spaceKeyComposer = KeyComposer.createKey(this, "space", "space");
-            }
-            return this.__spaceKeyComposer;
-        }
-    },
-
-    _enterKeyComposer: {
-        get: function () {
-            if (!this.__enterKeyComposer) {
-                this.__enterKeyComposer = KeyComposer.createKey(this, "enter", "enter");
-            }
-            return this.__enterKeyComposer;
-        }
-    },
-
-    // HTMLInputElement/HTMLButtonElement methods
-    // click() deliberately omitted (it isn't available on <button> anyways)
-
-    prepareForActivationEvents: {
-        value: function () {
-            this._pressComposer.addEventListener("pressStart", this, false);
-            this._spaceKeyComposer.addEventListener("keyPress", this, false);
-            this._enterKeyComposer.addEventListener("keyPress", this, false);
-        }
-    },
-
-    handleKeyPress: {
-        value: function (mutableEvent) {
-            // when focused action event on spacebar & enter
-            // FIXME - property identifier is not set on the mutable event
-            if (mutableEvent._event.identifier === "space" ||
-                mutableEvent._event.identifier === "enter") {
-                this.active = false;
-                this.dispatchActionEvent();
-            }
-        }
-    },
-
-    // Optimisation
-    addEventListener: {
-        value: function (type, listener, useCapture) {
-            Control.prototype.addEventListener.call(this, type, listener, useCapture);
-            if (type === "longAction") {
-                this._pressComposer.addEventListener("longPress", this, false);
-            }
-        }
-    },
-
-    _addEventListeners: {
-        value: function () {
-            this._pressComposer.addEventListener("press", this, false);
-            this._pressComposer.addEventListener("pressCancel", this, false);
-
-            //fixme: @benoit: we should maybe have a flag for this kind of event.
-            // can be tricky with the event delegation for example if we don't add it.
-            // same issue for: the pressComposer and the translate composer.
-            this._pressComposer.addEventListener("longPress", this, false);
-        }
-    },
-
-    _removeEventListeners: {
-        value: function () {
-            this._pressComposer.removeEventListener("press", this, false);
-            this._pressComposer.removeEventListener("pressCancel", this, false);
-            this._pressComposer.removeEventListener("longPress", this, false);
-        }
-    },
-
-    // Handlers
-
-    /**
-    Called when the user starts interacting with the component.
-    */
-    handlePressStart: {
-        value: function (event) {
-            if (!this._promise){
-                this.active = true;
-                this._addEventListeners();
-            }
-        }
-    },
-
-    /**
-    Called when the user has interacted with the button.
-    */
-    handlePress: {
-        value: function (event) {
-            if (!this._promise){
-                this.active = false;
-                this.dispatchActionEvent(event.details);
-                this._removeEventListeners();
-            }
-        }
-    },
-
-    handleLongPress: {
-        value: function(event) {
-            if (!this._promise){
-                // When we fire the "hold" event we don't want to fire the
-                // "action" event as well.
-                this._pressComposer.cancelPress();
-                this._removeEventListeners();
-
-                var longActionEvent = document.createEvent("CustomEvent");
-                longActionEvent.initCustomEvent("longAction", true, true, null);
-                this.dispatchEvent(longActionEvent);
-            }
-        }
-    },
-
-    /**
-    Called when all interaction is over.
-    @private
-    */
-    handlePressCancel: {
-        value: function(event) {
-            this.active = false;
-            this._removeEventListeners();
-        }
-    },
 });
 
 Button.addAttributes( /** @lends module:"mod/ui/native/button.mod".Button# */{
