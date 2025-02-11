@@ -1,45 +1,158 @@
-var Component = require("mod/ui/component").Component,
-    Promise = require('mod/core/promise').Promise;
+const { VisualButton } = require("mod/ui/visual-button.mod");
+const { Component } = require("mod/ui/component");
 
-exports.Main = Component.specialize(/** @lends Main# */{
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    message: {
-        value: null
-    },
+exports.Main = class Main extends Component {
+    imagePlacementOptions = Object.keys(VisualButton.IMAGE_PLACEMENTS);
 
-    handleAction: {
-        value: function (event) {
-            this.message = event.target.identifier + " button has been clicked";
-        }
-    },
+    colorsOptions = Object.keys(VisualButton.COLORS);
 
-    handleLongAction: {
-        value: function (event) {
-            this.message = event.target.identifier + " button has been clicked (long action)";
-        }
-    },
+    sizesOptions = Object.keys(VisualButton.SIZES);
 
-    handlePromiseButtonAction: {
-        value: function (event) {
-            var self = this;
+    shapeOptions = Object.keys(VisualButton.SHAPES);
 
-            this.message = "Promise is pending resolution";
+    imagePlacement = VisualButton.IMAGE_PLACEMENTS.start;
 
-            this.promiseButton.promise = new Promise(function(resolve){
-                setTimeout(function(){
-                    resolve();
-                }, 2000);
-            }).then(function(){
-                self.message = "First promise resolved!";
-            });
+    shape = VisualButton.SHAPES.rounded;
 
-            this.promiseButton.promise = new Promise(function(resolve){
-                setTimeout(function(){
-                    resolve();
-                }, 5000);
-            }).then(function(){
-                self.message = "Second promise resolved!";
-            });
+    color = VisualButton.COLORS.primary;
+
+    size = VisualButton.SIZES.medium;
+
+    overridePrimaryColor = false;
+
+    hasVisualFeedback = false;
+
+    pendingPromise = null;
+
+    disabled = false;
+
+    passedThroughCounter = 0;
+
+    attemptCounter = 0;
+
+    lastActionEventType = 'none';
+
+    enterDocument() {
+        this.throttledButton.element.addEventListener(
+            "click",
+            this.handleThrottledButtonClick
+        );
+    }
+
+    exitDocument() {
+        this.throttledButton.element.removeEventListener(
+            "click",
+            this.handleThrottledButtonClick
+        );
+    }
+
+    handleAction() {
+        this.lastActionEventType = "action";
+    }
+
+    handleLongAction() {
+        this.lastActionEventType = "long-action";
+    }
+
+    handleThrottledButtonClick = () => {
+        this.attemptCounter++;
+    };
+
+    handleThrottledButtonAction() {
+        this.passedThroughCounter++;
+    }
+
+    async handlePendingButtonAction() {
+        this.pendingPromise = delay(2_500);
+        await this.pendingPromise;
+        this.pendingPromise = null;
+    }
+
+    handleOverridePrimaryColorCheckboxAction() {
+        if (!this.overridePrimaryColor) {
+            document.documentElement.style.setProperty(
+                "--mod-button-text-primary-color",
+                "#6366f1"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-text-primary-bg-hover-color",
+                "#eef2ff"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-text-primary-bg-active-color",
+                "#e0e7ff"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-outlined-primary-color",
+                "#6366f1"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-outlined-primary-border",
+                "#6366f1"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-outlined-primary-bg-hover-color",
+                "#eef2ff"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-outlined-primary-bg-active-color",
+                "#e0e7ff"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-contained-primary-bg-color",
+                "#6366f1"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-contained-primary-bg-hover-color",
+                "#818cf8"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-contained-primary-bg-active-color",
+                "#4f46e5"
+            );
+        } else {
+            document.documentElement.style.setProperty(
+                "--mod-button-text-primary-color",
+                "#ec4899"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-text-primary-bg-hover-color",
+                "#fdf2f8"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-text-primary-bg-active-color",
+                "#fce7f3"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-outlined-primary-color",
+                "#ec4899"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-outlined-primary-border",
+                "#ec4899"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-outlined-primary-bg-hover-color",
+                "#fdf2f8"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-outlined-primary-bg-active-color",
+                "#fce7f3"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-contained-primary-bg-color",
+                "#ec4899"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-contained-primary-bg-hover-color",
+                "#f9a8d4"
+            );
+            document.documentElement.style.setProperty(
+                "--mod-button-contained-primary-bg-active-color",
+                "#db2777"
+            );
         }
     }
-});
+};

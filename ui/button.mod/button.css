@@ -1,0 +1,597 @@
+:root {
+    /* Text Variant Color Variables */
+    --mod-button-text-primary-color: var(--mod-color-primary-500, #6366f1);
+    --mod-button-text-primary-bg-hover-color: var(--mod-color-primary-50, #eef2ff);
+    --mod-button-text-primary-bg-active-color: var(--mod-color-primary-100, #e0e7ff);
+
+    --mod-button-text-secondary-color: var(--mod-color-secondary-500, #a855f7);
+    --mod-button-text-secondary-bg-hover-color: var(--mod-color-secondary-50, #faf5ff);
+    --mod-button-text-secondary-bg-active-color: var(--mod-color-secondary-100, #f3e8ff);
+
+    --mod-button-text-danger-color: var(--mod-color-red-500, #ef4444);
+    --mod-button-text-danger-bg-hover-color: var(--mod-color-red-50, #fef2f2);
+    --mod-button-text-danger-bg-active-color: var(--mod-color-red-100, #fee2e2);
+
+    --mod-button-text-success-color: var(--mod-color-green-500, #22c55e);
+    --mod-button-text-success-bg-hover-color: var(--mod-color-green-50, #f0fdf4);
+    --mod-button-text-success-bg-active-color: var(--mod-color-green-100, #dcfce7);
+
+    --mod-button-text-warn-color: var(--mod-color-orange-500, #f97316);
+    --mod-button-text-warn-bg-hover-color: var(--mod-color-orange-50, #fff7ed);
+    --mod-button-text-warn-bg-active-color: var(--mod-color-orange-100, #ffedd5);
+
+    --mod-button-text-info-color: var(--mod-color-blue-500, #3b82f6);
+    --mod-button-text-info-bg-hover-color: var(--mod-color-blue-50, #eff6ff);
+    --mod-button-text-info-bg-active-color: var(--mod-color-blue-100, #dbeafe);
+
+    --mod-button-text-light-color: var(--mod-color-gray-500, #958e81);
+    --mod-button-text-light-bg-hover-color: var(--mod-color-gray-50, #F7F7F6);
+    --mod-button-text-light-bg-active-color: var(--mod-color-gray-100, #f7f5f2);
+
+    --mod-button-text-dark-color: var(--mod-color-gray-950, #0f172a);
+    --mod-button-text-dark-bg-hover-color: var(--mod-color-gray-50, #F7F7F6);
+    --mod-button-text-dark-bg-active-color: var(--mod-color-gray-100, #f7f5f2);
+
+    /* Outlined Variant Color Variables */
+    --mod-button-outlined-primary-color: var(--mod-color-primary-500, #6366f1);
+    --mod-button-outlined-primary-border: var(--mod-color-primary-500, #6366f1);
+    --mod-button-outlined-primary-bg-hover-color: var(--mod-color-primary-50, #eef2ff);
+    --mod-button-outlined-primary-bg-active-color: var(--mod-color-primary-100, #e0e7ff);
+
+    --mod-button-outlined-secondary-color: var(--mod-color-secondary-500, #a855f7);
+    --mod-button-outlined-secondary-border: var(--mod-color-secondary-500, #a855f7);
+    --mod-button-outlined-secondary-bg-hover-color: var(--mod-color-secondary-50, #faf5ff);
+    --mod-button-outlined-secondary-bg-active-color: var(--mod-color-secondary-100, #f3e8ff);
+
+    --mod-button-outlined-danger-color: var(--mod-color-red-500, #ef4444);
+    --mod-button-outlined-danger-border: var(--mod-color-red-500, #ef4444);
+    --mod-button-outlined-danger-bg-hover-color: var(--mod-color-red-50, #fef2f2);
+    --mod-button-outlined-danger-bg-active-color: var(--mod-color-red-100, #fee2e2);
+
+    --mod-button-outlined-success-color: var(--mod-color-green-500, #22c55e);
+    --mod-button-outlined-success-border: var(--mod-color-green-500, #22c55e);
+    --mod-button-outlined-success-bg-hover-color: var(--mod-color-green-50, #f0fdf4);
+    --mod-button-outlined-success-bg-active-color: var(--mod-color-green-100, #dcfce7);
+
+    --mod-button-outlined-warn-color: var(--mod-color-orange-500, #f97316);
+    --mod-button-outlined-warn-border: var(--mod-color-orange-500, #f97316);
+    --mod-button-outlined-warn-bg-hover-color: var(--mod-color-orange-50, #fff7ed);
+    --mod-button-outlined-warn-bg-active-color: var(--mod-color-orange-100, #ffedd5);
+
+    --mod-button-outlined-info-color: var(--mod-color-blue-500, #3b82f6);
+    --mod-button-outlined-info-border: var(--mod-color-blue-500, #3b82f6);
+    --mod-button-outlined-info-bg-hover-color: var(--mod-color-blue-50, #eff6ff);
+    --mod-button-outlined-info-bg-active-color: var(--mod-color-blue-100, #dbeafe);
+
+    --mod-button-outlined-light-color: var(--mod-color-gray-500, #958e81);
+    --mod-button-outlined-light-border: var(--mod-color-gray-500, #958e81);
+    --mod-button-outlined-light-bg-hover-color: var(--mod-color-gray-50, #F7F7F6);
+    --mod-button-outlined-light-bg-active-color: var(--mod-color-gray-100, #f7f5f2);
+
+    --mod-button-outlined-dark-color: var(--mod-color-gray-950, #0f172a);
+    --mod-button-outlined-dark-border: var(--mod-color-gray-950, #0f172a);
+    --mod-button-outlined-dark-bg-hover-color: var(--mod-color-gray-50, #F7F7F6);
+    --mod-button-outlined-dark-bg-active-color: var(--mod-color-gray-100, #f7f5f2);
+
+    /* Contained Variant Color Variables */
+    --mod-button-contained-primary-bg-color: var(--mod-color-primary-500, #6366f1);
+    --mod-button-contained-primary-bg-hover-color: var(--mod-color-primary-400, #818cf8);
+    --mod-button-contained-primary-bg-active-color: var(--mod-color-primary-600, #4f46e5);
+    --mod-button-contained-primary-color: var(--mod-color-gray-50, #f7f5f2);
+
+    --mod-button-contained-secondary-bg-color: var(--mod-color-secondary-500, #a855f7);
+    --mod-button-contained-secondary-bg-hover-color: var(--mod-color-secondary-400, #c084fc);
+    --mod-button-contained-secondary-bg-active-color: var(--mod-color-secondary-600, #9333ea);
+    --mod-button-contained-secondary-color: var(--mod-color-gray-50, #f7f5f2);
+
+    --mod-button-contained-danger-bg-color: var(--mod-color-red-500, #ef4444);
+    --mod-button-contained-danger-bg-hover-color: var(--mod-color-red-400, #f87171);
+    --mod-button-contained-danger-bg-active-color: var(--mod-color-red-600, #dc2626);
+    --mod-button-contained-danger-color: var(--mod-color-gray-50, #f7f5f2);
+
+    --mod-button-contained-success-bg-color: var(--mod-color-green-500, #22c55e);
+    --mod-button-contained-success-bg-hover-color: var(--mod-color-green-400, #4ade80);
+    --mod-button-contained-success-bg-active-color: var(--mod-color-green-600, #16a34a);
+    --mod-button-contained-success-color: var(--mod-color-gray-50, #f7f5f2);
+
+    --mod-button-contained-warn-bg-color: var(--mod-color-orange-500, #f97316);
+    --mod-button-contained-warn-bg-hover-color: var(--mod-color-orange-400, #fb923c);
+    --mod-button-contained-warn-bg-active-color: var(--mod-color-orange-600, #ea580c);
+    --mod-button-contained-warn-color: var(--mod-color-gray-950, #0f172a);
+
+    --mod-button-contained-info-bg-color: var(--mod-color-blue-500, #3b82f6);
+    --mod-button-contained-info-bg-hover-color: var(--mod-color-blue-400, #60a5fa);
+    --mod-button-contained-info-bg-active-color: var(--mod-color-blue-600, #2563eb);
+    --mod-button-contained-info-color: var(--mod-color-gray-50, #f7f5f2);
+
+    --mod-button-contained-light-bg-color: var(--mod-color-primary-500, #958e81);
+    --mod-button-contained-light-bg-hover-color: var(--mod-color-primary-400, #b3ada2);
+    --mod-button-contained-light-bg-active-color: var(--mod-color-primary-600, #7c7468);
+    --mod-button-contained-light-color: var(--mod-color-gray-950, #0f172a);
+
+    --mod-button-contained-dark-bg-color: var(--mod-color-gray-800, #424242);
+    --mod-button-contained-dark-bg-hover-color: var(--mod-color-gray-900, #212121);
+    --mod-button-contained-dark-bg-active-color: var(--mod-color-gray-800, #424242);
+    --mod-button-contained-dark-color: var(--mod-color-gray-50, #f7f5f2);
+
+    /* Button Shape Variables */
+    --mod-button-square-border-radius: 0;
+    --mod-button-rounded-small-border-radius: 4px;
+    --mod-button-rounded-medium-border-radius: 6px;
+    --mod-button-rounded-large-border-radius: 8px;
+    --mod-button-circle-border-radius: 50%;
+
+    /* Disabled State Variables */
+    --mod-button-disabled-opacity: 0.75;
+    --mod-button-disabled-text-color: #a1a1aa;
+    --mod-button-disabled-bg-color: #f3f4f6;
+    --mod-button-disabled-border-color: #d1d5db;
+}
+
+.Button {
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    font-weight: 600;
+    position: relative;
+    transition: background-color .2s ease-in-out;
+}
+
+.Button.image-start {
+    flex-direction: row;
+}
+
+.Button.image-end {
+    flex-direction: row-reverse;
+}
+
+.Button>div:empty {
+    display: none;
+}
+
+.Button .Button-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.Button svg {
+    fill: currentColor;
+}
+
+.Button.hasVisualFeedback:hover {
+    transform: scale(1.02);
+  }
+
+.Button.hasVisualFeedback:active {
+    transform: scale(0.98);
+}
+
+/* Pending State */
+
+.Button.mod--pending {
+    pointer-events: none;
+    opacity: 0.75;
+}
+
+.Button.mod--pending .Button-image {
+    animation: Button-spin 1s linear infinite;
+}
+
+/* Size Variants */
+
+.Button.small {
+    padding: 8px 12px;
+    line-height: 14px;
+    font-size: 14px;
+    gap: 8px;
+}
+
+.Button.small .Button-image {
+    width: 16px;
+    height: 16px;
+}
+
+.Button.medium {
+    padding: 10px 12px;
+    line-height: 16px;
+    font-size: 16px;
+    gap: 12px;
+}
+
+.Button.medium .Button-image {
+    width: 18px;
+    height: 18px;
+}
+
+.Button.large {
+    padding: 14px 16px;
+    line-height: 18px;
+    font-size: 18px;
+    gap: 14px;
+}
+
+.Button.large .Button-image {
+    width: 20px;
+    height: 20px;
+}
+
+/* Text Variant */
+
+.Button.text {
+    background-color: transparent;
+}
+
+.Button.text.primary {
+    color: var(--mod-button-text-primary-color);
+}
+
+.Button.text.primary:hover {
+    background-color: var(--mod-button-text-primary-bg-hover-color);
+}
+
+.Button.text.primary:active {
+    background-color: var(--mod-button-text-primary-bg-active-color);
+}
+
+.Button.text.secondary {
+    color: var(--mod-button-text-secondary-color);
+}
+
+.Button.text.secondary:hover {
+    background-color: var(--mod-button-text-secondary-bg-hover-color);
+}
+
+.Button.text.secondary:active {
+    background-color: var(--mod-button-text-secondary-bg-active-color);
+}
+
+.Button.text.danger {
+    color: var(--mod-button-text-danger-color);
+}
+
+.Button.text.danger:hover {
+    background-color: var(--mod-button-text-danger-bg-hover-color);
+}
+
+.Button.text.danger:active {
+    background-color: var(--mod-button-text-danger-bg-active-color);
+}
+
+.Button.text.success {
+    color: var(--mod-button-text-success-color);
+}
+
+.Button.text.success:hover {
+    background-color: var(--mod-button-text-success-bg-hover-color);
+}
+
+.Button.text.success:active {
+    background-color: var(--mod-button-text-success-bg-active-color);
+}
+
+.Button.text.warn {
+    color: var(--mod-button-text-warn-color);
+}
+
+.Button.text.warn:hover {
+    background-color: var(--mod-button-text-warn-bg-hover-color);
+}
+
+.Button.text.warn:active {
+    background-color: var(--mod-button-text-warn-bg-active-color);
+}
+
+.Button.text.info {
+    color: var(--mod-button-text-info-color);
+}
+
+.Button.text.info:hover {
+    background-color: var(--mod-button-text-info-bg-hover-color);
+}
+
+.Button.text.info:active {
+    background-color: var(--mod-button-text-info-bg-active-color);
+}
+
+.Button.text.light {
+    color: var(--mod-button-text-light-color);
+}
+
+.Button.text.light:hover {
+    background-color: var(--mod-button-text-light-bg-hover-color);
+}
+
+.Button.text.light:active {
+    background-color: var(--mod-button-text-light-bg-active-color);
+}
+
+.Button.text.dark {
+    color: var(--mod-button-text-dark-color);
+}
+
+.Button.text.dark:hover {
+    background-color: var(--mod-button-text-dark-bg-hover-color);
+}
+
+.Button.text.dark:active {
+    background-color: var(--mod-button-text-dark-bg-active-color);
+}
+
+/* Contained Variant */
+
+.Button.contained.primary {
+    background-color: var(--mod-button-contained-primary-bg-color);
+    color: var(--mod-button-contained-primary-color);
+}
+
+.Button.contained.primary:hover {
+    background-color: var(--mod-button-contained-primary-bg-hover-color);
+}
+
+.Button.contained.primary:active {
+    background-color: var(--mod-button-contained-primary-bg-active-color);
+}
+
+.Button.contained.secondary {
+    background-color: var(--mod-button-contained-secondary-bg-color);
+    color: var(--mod-button-contained-secondary-color);
+}
+
+.Button.contained.secondary:hover {
+    background-color: var(--mod-button-contained-secondary-bg-hover-color);
+}
+
+.Button.contained.secondary:active {
+    background-color: var(--mod-button-contained-secondary-bg-active-color);
+}
+
+.Button.contained.danger {
+    background-color: var(--mod-button-contained-danger-bg-color);
+    color: var(--mod-button-contained-danger-color);
+}
+
+.Button.contained.danger:hover {
+    background-color: var(--mod-button-contained-danger-bg-hover-color);
+}
+
+.Button.contained.danger:active {
+    background-color: var(--mod-button-contained-danger-bg-active-color);
+}
+
+.Button.contained.success {
+    background-color: var(--mod-button-contained-success-bg-color);
+    color: var(--mod-button-contained-success-color);
+}
+
+.Button.contained.success:hover {
+    background-color: var(--mod-button-contained-success-bg-hover-color);
+}
+
+.Button.contained.success:active {
+    background-color: var(--mod-button-contained-success-bg-active-color);
+}
+
+.Button.contained.warn {
+    background-color: var(--mod-button-contained-warn-bg-color);
+    color: var(--mod-button-contained-warn-color);
+}
+
+.Button.contained.warn:hover {
+    background-color: var(--mod-button-contained-warn-bg-hover-color);
+}
+
+.Button.contained.warn:active {
+    background-color: var(--mod-button-contained-warn-bg-active-color);
+}
+
+.Button.contained.info {
+    background-color: var(--mod-button-contained-info-bg-color);
+    color: var(--mod-button-contained-info-color);
+}
+
+.Button.contained.info:hover {
+    background-color: var(--mod-button-contained-info-bg-hover-color);
+}
+
+.Button.contained.info:active {
+    background-color: var(--mod-button-contained-info-bg-active-color);
+}
+
+.Button.contained.light {
+    background-color: var(--mod-button-contained-light-bg-color);
+    color: var(--mod-button-contained-light-color);
+}
+
+.Button.contained.light:hover {
+    background-color: var(--mod-button-contained-light-bg-hover-color);
+}
+
+.Button.contained.light:active {
+    background-color: var(--mod-button-contained-light-bg-active-color);
+}
+
+.Button.contained.dark {
+    background-color: var(--mod-button-contained-dark-bg-color);
+    color: var(--mod-button-contained-dark-color);
+}
+
+.Button.contained.dark:hover {
+    background-color: var(--mod-button-contained-dark-bg-hover-color);
+}
+
+.Button.contained.dark:active {
+    background-color: var(--mod-button-contained-dark-bg-active-color);
+}
+
+/* Outlined Variant */
+
+.Button.outlined {
+    background-color: transparent;
+    border: 1px solid;
+}
+
+.Button.outlined.primary {
+    border-color: var(--mod-button-outlined-primary-border);
+    color: var(--mod-button-outlined-primary-color);
+}
+
+.Button.outlined.primary:hover {
+    background-color: var(--mod-button-outlined-primary-bg-hover-color);
+}
+
+.Button.outlined.primary:active {
+    background-color: var(--mod-button-outlined-primary-bg-active-color);
+}
+
+.Button.outlined.secondary {
+    border-color: var(--mod-button-outlined-secondary-border);
+    color: var(--mod-button-outlined-secondary-color);
+}
+
+.Button.outlined.secondary:hover {
+    background-color: var(--mod-button-outlined-secondary-bg-hover-color);
+}
+
+.Button.outlined.secondary:active {
+    background-color: var(--mod-button-outlined-secondary-bg-active-color);
+}
+
+.Button.outlined.danger {
+    border-color: var(--mod-button-outlined-danger-border);
+    color: var(--mod-button-outlined-danger-color);
+}
+
+.Button.outlined.danger:hover {
+    background-color: var(--mod-button-outlined-danger-bg-hover-color);
+}
+
+.Button.outlined.danger:active {
+    background-color: var(--mod-button-outlined-danger-bg-active-color);
+}
+
+.Button.outlined.success {
+    border-color: var(--mod-button-outlined-success-border);
+    color: var(--mod-button-outlined-success-color);
+}
+
+.Button.outlined.success:hover {
+    background-color: var(--mod-button-outlined-success-bg-hover-color);
+}
+
+.Button.outlined.success:active {
+    background-color: var(--mod-button-outlined-success-bg-active-color);
+}
+
+.Button.outlined.warn {
+    border-color: var(--mod-button-outlined-warn-border);
+    color: var(--mod-button-outlined-warn-color);
+}
+
+.Button.outlined.warn:hover {
+    background-color: var(--mod-button-outlined-warn-bg-hover-color);
+}
+
+.Button.outlined.warn:active {
+    background-color: var(--mod-button-outlined-warn-bg-active-color);
+}
+
+.Button.outlined.info {
+    border-color: var(--mod-button-outlined-info-border);
+    color: var(--mod-button-outlined-info-color);
+}
+
+.Button.outlined.info:hover {
+    background-color: var(--mod-button-outlined-info-bg-hover-color);
+}
+
+.Button.outlined.info:active {
+    background-color: var(--mod-button-outlined-info-bg-active-color);
+}
+
+.Button.outlined.light {
+    border-color: var(--mod-button-outlined-light-border);
+    color: var(--mod-button-outlined-light-color);
+}
+
+.Button.outlined.light:hover {
+    background-color: var(--mod-button-outlined-light-bg-hover-color);
+}
+
+.Button.outlined.light:active {
+    background-color: var(--mod-button-outlined-light-bg-active-color);
+}
+
+.Button.outlined.dark {
+    border-color: var(--mod-button-outlined-dark-border);
+    color: var(--mod-button-outlined-dark-color);
+}
+
+.Button.outlined.dark:hover {
+    background-color: var(--mod-button-outlined-dark-bg-hover-color);
+}
+
+.Button.outlined.dark:active {
+    background-color: var(--mod-button-outlined-dark-bg-active-color);
+}
+
+/* Shape Variants */
+.Button.square {
+    border-radius: var(--mod-button-square-border-radius);
+}
+
+.Button.rounded.small {
+    border-radius: var(--mod-button-rounded-small-border-radius);
+}
+
+.Button.rounded.medium {
+    border-radius: var(--mod-button-rounded-medium-border-radius);
+}
+
+.Button.rounded.large {
+    border-radius: var(--mod-button-rounded-large-border-radius);
+}
+
+.Button.circle {
+    border-radius: var(--mod-button-circle-border-radius);
+}
+
+/* Disabled State */
+.Button:disabled {
+    opacity: var(--mod-button-disabled-opacity);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Text Variant Disabled */
+.Button.text:disabled {
+    color: var(--mod-button-disabled-text-color);
+}
+
+/* Contained Variant Disabled */
+.Button.contained:disabled {
+    background-color: var(--mod-button-disabled-bg-color);
+    color: var(--mod-button-disabled-text-color);
+}
+
+/* Outlined Variant Disabled */
+.Button.outlined:disabled {
+    border-color: var(--mod-button-disabled-border-color);
+    color: var(--mod-button-disabled-text-color);
+}
+
+@keyframes Button-spin {
+    0% {
+        transform-origin: center;
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform-origin: center;
+        transform: rotate(360deg);
+    }
+}

@@ -1,13 +1,22 @@
  /*global require, exports*/
 
-/**
-    @module "mod/ui/native/button.mod"
-*/
-var Control = require("ui/control").Control,
-    KeyComposer = require("composer/key-composer").KeyComposer,
-    PressComposer = require("composer/press-composer").PressComposer;
+const { PressComposer } = require("composer/press-composer");
+const { throttle } = require("../../core/helpers/throttle");
+const { KeyComposer } = require("composer/key-composer");
+const { Control } = require("ui/control");
 
-// TODO migrate away from using undefinedGet and undefinedSet
+/**
+ *  @module "mod/ui/native/button.mod"
+ */
+
+/**
+ * @typedef {"primary"|"secondary"|"success"|"danger"|"warn"|"info"|"light"|"dark"} ButtonColor
+ * @typedef {"contained"|"outlined"|"image"|"text"} ButtonVariant
+ * @typedef {"small"|"medium"|"large"} ButtonSize
+ * @typedef {"left"|"right"} ButtonImagePlacement
+ * /
+
+// TODO: migrate away from using undefinedGet and undefinedSet
 
 /**
     Wraps a native <code>&lt;button></code> or <code>&lt;input[type="button"]></code> HTML element. The element's standard attributes are exposed as bindable properties.
@@ -43,11 +52,306 @@ b1.addEventListener("action", function(event) {
 }
 &lt;button data-mod-id="btnElement"></button>
 */
-var Button = exports.Button = class Button extends Control { /** @lends module:"mod/ui/native/button.mod".Button# */
+const Button = exports.Button = class Button extends Control { /** @lends module:"mod/ui/native/button.mod".Button# */
+    /**
+     * Available button colors
+     * @readonly
+     * @enum {ButtonColor}
+     * @default primary
+     */
+    static COLORS = Object.freeze({
+        primary: "primary",
+        secondary: "secondary",
+        success: "success",
+        danger: "danger",
+        warn: "warn",
+        info: "info",
+        light: "light",
+        dark: "dark",
+    });
+
+    /**
+     * Available button variants
+     * @readonly
+     * @enum {ButtonVariant}
+     * @default contained
+     */
+    static VARIANTS = Object.freeze({
+        contained: "contained",
+        outlined: "outlined",
+        text: "text",
+    });
+
+    /**
+     * Available button sizes
+     * @readonly
+     * @enum {ButtonSize}
+     * @default medium
+     */
+    static SIZES = Object.freeze({
+        small: "small",
+        medium: "medium",
+        large: "large",
+    });
+
+    /**
+     * Available image placements
+     * @readonly
+     * @enum {ButtonImagePlacement}
+     * @default start
+     */
+    static IMAGE_PLACEMENTS = Object.freeze({
+        start: "image-start",
+        end: "image-end",
+    });
+
+    /**
+     * Available shapes
+     * @readonly
+     * @enum {ButtonShape}
+     * @default rounded
+     */
+    static SHAPES = Object.freeze({
+        square: "square",
+        rounded: "rounded",
+        circle: "circle",
+    });
+
+    hasTemplate = true;
+
+    label = null;
+
+    get label () {
+        return this._label;
+    }
+
+    set label (value) {
+        const isDefined = typeof value !== "undefined";
+
+        if (isDefined && this.converter) {
+            try {
+                value = this.converter.convert(value);
+
+                if (this.error) {
+                    this.error = null;
+                }
+            } catch(e) {
+                // unable to convert - maybe error
+                this.error = e;
+            }
+        }
+
+        this._label = isDefined && value !== null ? String(value) : null;
+    }
+
+    _size = Button.SIZES.medium;
+
+    get size() {
+        return this._size;
+    }
+
+    set size(value) {
+        if (value !== this._size && Button.SIZES[value]) {
+            this._size = Button.SIZES[value];
+            this._applySizeStyles();
+        }
+    }
+
+    _color = Button.COLORS.primary;
+
+    /**
+     * Get the current button color
+     * @returns {ButtonColor} The current color
+     */
+    get color() {
+        return this._color;
+    }
+
+    set color(value) {
+        if (value !== this._color && Button.COLORS[value]) {
+            this._color = Button.COLORS[value];
+            this._applyColorStyles();
+        }
+    }
+
+    _variant = Button.VARIANTS.contained;
+
+    get variant() {
+        return this._variant;
+    }
+
+    set variant(value) {
+        if (value !== this._variant && Button.VARIANTS[value]) {
+            this._variant = Button.VARIANTS[value];
+            this._applyVariantStyles();
+        }
+    }
+
+    _imagePlacement = Button.IMAGE_PLACEMENTS.start;
+
+    get imagePlacement() {
+        return this._imagePlacement;
+    }
+
+    set imagePlacement(value) {
+        if (
+            value !== this._imagePlacement &&
+            Button.IMAGE_PLACEMENTS[value]
+        ) {
+            this._imagePlacement = Button.IMAGE_PLACEMENTS[value];
+            this._applyImagePlacementStyles();
+        }
+    }
+
+    _shape = Button.SHAPES.rounded;
+
+    get shape() {
+        return this._shape;
+    }
+
+    set shape(value) {
+        if (value !== this._shape && Button.SHAPES[value]) {
+            this._shape = Button.SHAPES[value];
+            this._applyShapeStyles();
+        }
+    }
+
+    /**
+     * Whether the button should display a visual feedback when clicked
+     * @type {boolean}
+     * @default false
+     */
+    hasVisualFeedback = false;
+
+    _isThrottled = false;
+
+    /**
+     * Whether the button should throttle the action event
+     * @type {boolean}
+     */
+    get isThrottled() {
+        return this._isThrottled;
+    }
+
+    set isThrottled(value) {
+        if (value !== this._isThrottled) {
+            this._isThrottled = value;
+            this._buildDispatchActionEvent();
+        }
+    }
+
+    _throttleDuration = 400;
+
+    /**
+     * The duration in milliseconds to throttle the action event
+     * @type {number}
+     */
+    get throttleDuration() {
+        return this._throttleDuration;
+    }
+
+    set throttleDuration(value) {
+        if (value !== this._throttleDuration) {
+            this._throttleDuration = value;
+            this._buildDispatchActionEvent();
+        }
+    }
+
+    enterDocument(firstDraw) {
+        super.enterDocument?.call(firstDraw);
+
+        if (firstDraw) {
+            this.element.setAttribute("role", "button");
+            this.element.addEventListener("keyup", this, false);
+            this._buildDispatchActionEvent();
+
+            // Apply the button styles
+            this._applyImagePlacementStyles();
+            this._applyColorStyles();
+            this._applyVariantStyles();
+            this._applySizeStyles();
+            this._applyShapeStyles();
+        }
+    }
+
+    /**
+     * Dispatches the action event, throttled if necessary
+     * @override
+     */
+    dispatchActionEvent() {
+        return this._dispatchActionEvent();
+    }
+
+    _buildDispatchActionEvent() {
+        if (this.isThrottled) {
+            this._dispatchActionEvent = throttle(
+                super.dispatchActionEvent,
+                this.throttleDuration
+            );
+        } else {
+            this._dispatchActionEvent = super.dispatchActionEvent;
+        }
+    }
+
+    /**
+     * Applies the current color's styling by updating CSS classes
+     * @private
+     */
+    _applyColorStyles() {
+        this._removeClassListTokens(...Object.values(Button.COLORS));
+        this.classList.add(this.color);
+    }
+
+    /**
+     * Applies the current variant's styling by updating CSS classes
+     * @private
+     */
+    _applyVariantStyles() {
+        this._removeClassListTokens(...Object.values(Button.VARIANTS));
+        this.classList.add(this.variant);
+    }
+
+    /**
+     * Applies the current size's styling by updating CSS classes
+     * @private
+     */
+    _applySizeStyles() {
+        this._removeClassListTokens(...Object.values(Button.SIZES));
+        this.classList.add(this.size);
+    }
+
+    /**
+     * Applies the current image placement's styling by updating CSS classes
+     * @private
+     */
+    _applyImagePlacementStyles() {
+        this._removeClassListTokens(
+            ...Object.values(Button.IMAGE_PLACEMENTS)
+        );
+
+        this.classList.add(this.imagePlacement);
+    }
+
+    /**
+     * Applies the current shape's styling by updating CSS classes
+     * @private
+     */
+    _applyShapeStyles() {
+        this._removeClassListTokens(...Object.values(Button.SHAPES));
+        this.classList.add(this.shape);
+    }
+
+    // FIXME: Remove this method when the classList's remove method is fixed!
+    // Our implementation doesn't support multiple arguments
+    // https://dom.spec.whatwg.org/#dom-domtokenlist-remove
+    _removeClassListTokens(...tokens) {
+        for (const token of tokens) {
+            this.classList.remove(token);
+        }
+    }
 }
 
 Button.addClassProperties( {
-
     /**
         Dispatched when the button is activated through a mouse click, finger tap,
         or when focused and the spacebar is pressed.
@@ -70,11 +374,6 @@ Button.addClassProperties( {
         value: "BUTTON"
     },
 
-    /* TODO: remove when adding template capability */
-    hasTemplate: {
-        value: false
-    },
-
     drawsFocusOnPointerActivation : {
         value: true
     },
@@ -85,60 +384,6 @@ Button.addClassProperties( {
         @type {Property}
         @default null
     */
-
-    /**
-      Stores the node that contains this button's value. Only used for
-      non-`<input>` elements.
-      @private
-    */
-    _labelNode: {value:undefined, enumerable: false},
-
-    _label: { value: undefined, enumerable: false },
-    defaultLabel: { value: "Button", enumerable: false },
-
-    /**
-        The displayed text on the button. In an &lt;input> element this is taken from the element's <code>value</code> attribute. On any other element (including &lt;button>) this is the first child node which is a text node. If one isn't found then it will be created.
-
-        If the button has a non-null <code>converter</code> property, the converter object's <code>convert()</code> method is called on the value before being assigned to the button instance.
-
-        @type {string}
-        @default undefined
-    */
-    label: {
-        get: function () {
-            return this._label;
-        },
-        set: function (value) {
-            if (typeof value !== "undefined" && this.converter) {
-                try {
-                    value = this.converter.convert(value);
-                    if (this.error) {
-                        this.error = null;
-                    }
-                } catch(e) {
-                    // unable to convert - maybe error
-                    this.error = e;
-                }
-            }
-
-            this._label = value !== void 0 && value !== null ?
-                String(value) : this.defaultLabel;
-
-            if (this.isInputElement) {
-                this._value = value;
-            }
-
-            this.needsDraw = true;
-        }
-    },
-
-    // setLabelInitialValue: {
-    //     value: function(value) {
-    //         if (this._label === undefined) {
-    //                 this._label = value;
-    //             }
-    //     }
-    // },
 
     _promise: {
         value: undefined
@@ -170,10 +415,10 @@ Button.addClassProperties( {
     },
 
     /**
-        The amount of time in milliseconds the user must press and hold the button a <code>hold</code> event is dispatched. The default is 1 second.
-        @type {number}
-        @default 1000
-    */
+     * The amount of time in milliseconds the user must press and hold the button a <code>hold</code> event is dispatched. The default is 1 second.
+     * @type {number}
+     * @default 1000
+     */
     holdThreshold: {
         get: function () {
             return this._pressComposer.longPressThreshold;
@@ -327,98 +572,6 @@ Button.addClassProperties( {
             this._removeEventListeners();
         }
     },
-
-    /**
-    If this is an input element then the label is handled differently.
-    @private
-    */
-    _isInputElement: {
-        value: undefined,
-        enumerable: false
-    },
-    isInputElement: {
-        get: function() {
-            return this._isInputElement !== undefined ? this._isInputElement : (this._isInputElement = (this.element ? (this.element.tagName === "INPUT") : false));
-        },
-        enumerable: false
-    },
-
-    enterDocument: {
-        value: function (firstDraw) {
-            if (Control.prototype.enterDocument) {
-                Control.prototype.enterDocument.apply(this, arguments);
-            }
-
-            if (firstDraw) {
-                // Only take the value from the element if it hasn't been set
-                // elsewhere (i.e. in the serialization)
-                if (this.isInputElement) {
-                    // NOTE: This might not be the best way to do this
-                    // With an input element value and label are one and the same
-                    Object.defineProperty(this, "value", {
-                        get: function() {
-                            return this._label;
-                        },
-                        set: function(value) {
-                            this.label = value;
-                        }
-                    });
-
-                    if (this._label === undefined) {
-                        this.label = this.originalElement.value;
-                    }
-                    //<button> && Custom
-                } else {
-                    if(this.originalElement === this.element &&
-                        this._label === void 0 &&
-                        this.originalElement.firstChild
-                    ) {
-                        this._label = this.originalElement.firstChild.data;
-                    }
-                    if (!this.element.firstChild) {
-                        this.element.appendChild(document.createTextNode(""));
-                    }
-                    this._labelNode = this.element.firstChild;
-                    // this.setLabelInitialValue(this._labelNode.data)
-                    // if (this._label === undefined) {
-                    //     this._label = this._labelNode.data;
-                    // }
-                }
-
-                //this.classList.add("mod-Button");
-                this.element.setAttribute("role", "button");
-                this.element.addEventListener("keyup", this, false);
-            }
-        }
-    },
-
-    /**
-    Draws the label to the DOM.
-    @function
-    @private
-    */
-    _drawLabel: {
-        enumerable: false,
-        value: function (value) {
-            if(typeof value !== "string") {
-                value = this.defaultLabel;
-            }
-            if (this.isInputElement) {
-                this._element.value = value;
-            } else if (this._labelNode) {
-                this._labelNode.data = value;
-            }
-        }
-    },
-
-
-    draw: {
-        value: function () {
-            this.super();
-            this._drawLabel(this._label);
-        }
-    }
-
 });
 
 Button.addAttributes( /** @lends module:"mod/ui/native/button.mod".Button# */{
@@ -471,15 +624,4 @@ Button.addAttributes( /** @lends module:"mod/ui/native/button.mod".Button# */{
     @default null
 */
     name: null,
-
-/**
-    <strong>Use <code>label</code> to set the displayed text on the button</strong>
-    The value associated with the element. This sets the value attribute of
-    the button that gets sent when the form is submitted.
-    @type {string}
-    @default null
-    @see label
-*/
-    value: null
-
 });
