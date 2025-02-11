@@ -406,12 +406,15 @@ const Button = (exports.Button = class Button extends Control {
 
     // <---- Event Handlers ---->
 
+    /**
+     * Handles keyup events: dispatching the action event on spacebar & enter
+     * when the button is focused.
+     * @param {mutableEvent} mutableEvent - The event object
+     */
     handleKeyPress(mutableEvent) {
-        // when focused action event on spacebar & enter
-        // FIXME: - property identifier is not set on the mutable event
         if (
-            mutableEvent._event.identifier === "space" ||
-            mutableEvent._event.identifier === "enter"
+            mutableEvent.identifier === "space" ||
+            mutableEvent.identifier === "enter"
         ) {
             this.active = false;
             this.dispatchActionEvent();
