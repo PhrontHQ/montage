@@ -1,5 +1,6 @@
 /*global require, exports*/
 
+const { ExecutionController } = require("core/execution-controller.js");
 const { PressComposer } = require("composer/press-composer");
 const { KeyComposer } = require("composer/key-composer");
 const { Control } = require("ui/control");
