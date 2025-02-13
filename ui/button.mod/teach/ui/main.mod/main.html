@@ -7,7 +7,7 @@
             "owner": {
                 "values": {
                     "element": {"#": "main"},
-                    "promiseButton": {"@": "promiseButton"}
+                    "throttledButton": {"<-": "@throttledButton"}
                 },
                 "listeners":[
                     {
@@ -25,7 +25,19 @@
                 "prototype": "mod/ui/button.mod",
                 "values": {
                     "element": {"#": "button-custom"},
-                    "label": "custom"
+                    "label": "custom",
+                    "imagePosition": "end",
+                    "orientation": "vertical"
+                }
+            },
+
+            "throttledButton": {
+                "prototype": "mod/ui/button.mod",
+                "values": {
+                    "element": {"#": "button-throttled"},
+                    "label": "throttled",
+                    "throttleDelay": 1000,
+                    "throttled": true
                 }
             },
 
@@ -49,6 +61,8 @@
                 "prototype": "mod/ui/button.mod",
                 "values": {
                     "element": {"#": "button-promise"},
+                    "promise": {"<-": "@owner.promise"},
+                    "disbaled": {"<-": "@owner.promiseButtonDisabled"},
                     "label": "promise"
                 }
             },
@@ -67,14 +81,16 @@
     <div data-mod-id="main" class="Main">
         <header>Teach Button Mod</header>
         <section class="buttons">
-            <div data-mod-id="button-custom" class="button custom"></div>
+            <div data-mod-id="button-custom" class="button custom">
+                <div data-arg="image">+</div>
+            </div>
             <input data-mod-id="button-input" type="button" class="button native"></input>
             <button data-mod-id="button-native" class="button native"></button>
             <button data-mod-id="button-promise" class="button"></button>
-            <span data-mod-id="text"></span>
+            <button data-mod-id="button-throttled" class="button"></button>
+            <span data-mod-id="text" class="infoText"></span>
             <br>
             <button>Bare Button</button>
-
         </section>
     </div>
 </body>
