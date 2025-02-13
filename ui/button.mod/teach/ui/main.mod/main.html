@@ -6,8 +6,7 @@
         {
             "owner": {
                 "values": {
-                    "element": {"#": "main"},
-                    "promiseButton": {"@": "promiseButton"}
+                    "element": {"#": "main"}
                 },
                 "listeners":[
                     {
@@ -51,6 +50,8 @@
                 "prototype": "mod/ui/button.mod",
                 "values": {
                     "element": {"#": "button-promise"},
+                    "promise": {"<-": "@owner.promise"},
+                    "disbaled": {"<-": "@owner.promiseButtonDisabled"},
                     "label": "promise"
                 }
             },
