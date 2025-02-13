@@ -6,7 +6,8 @@
         {
             "owner": {
                 "values": {
-                    "element": {"#": "main"}
+                    "element": {"#": "main"},
+                    "throttledButton": {"<-": "@throttledButton"}
                 },
                 "listeners":[
                     {
@@ -27,6 +28,16 @@
                     "label": "custom",
                     "imagePosition": "end",
                     "orientation": "vertical"
+                }
+            },
+
+            "throttledButton": {
+                "prototype": "mod/ui/button.mod",
+                "values": {
+                    "element": {"#": "button-throttled"},
+                    "label": "throttled",
+                    "throttleDelay": 1000,
+                    "throttled": true
                 }
             },
 
@@ -76,6 +87,7 @@
             <input data-mod-id="button-input" type="button" class="button native"></input>
             <button data-mod-id="button-native" class="button native"></button>
             <button data-mod-id="button-promise" class="button"></button>
+            <button data-mod-id="button-throttled" class="button"></button>
             <span data-mod-id="text" class="infoText"></span>
             <br>
             <button>Bare Button</button>

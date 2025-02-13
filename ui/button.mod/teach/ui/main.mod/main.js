@@ -5,6 +5,18 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 exports.Main = class Main extends Component {
     message = null;
 
+    enterDocument() {
+        this.throttledButton.element.addEventListener("click", this.handleClick);
+    }
+
+    handleClick(event) {
+        console.log('throttled button clicked');
+    }
+
+    handleThrottledButtonAction(event) {
+        console.log('throttled button action');
+    }
+
     handleAction(event) {
         this.message = `${event.target.identifier} button has been clicked`;
     }

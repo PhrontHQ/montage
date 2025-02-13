@@ -244,10 +244,44 @@ const Button = (exports.Button = class Button extends Control {
         return this.__enterKeyComposer;
     }
 
+    _throttled = false;
+
+    /**
+     * Whether the button should throttle the action event
+     * @type {boolean}
+     */
+    get throttled() {
+        return this._throttled;
+    }
+
+    set throttled(value) {
+        if (value !== this._throttled) {
+            this._throttled = value;
+        }
+    }
+
+    _throttleDuration = 400;
+
+    /**
+     * The duration in milliseconds to throttle the action event
+     * @type {number}
+     */
+    get throttleDuration() {
+        return this._throttleDuration;
+    }
+
+    set throttleDuration(value) {
+        if (value !== this._throttleDuration) {
+            this._throttleDuration = value;
+        }
+    }
+
     enterDocument(firstDraw) {
         super.enterDocument?.call(firstDraw);
 
         if (firstDraw) {
+            this._executionController = new ExecutionController(this);
+
             this.element.setAttribute("role", "button");
             this.element.addEventListener("keyup", this, false);
 
@@ -289,6 +323,21 @@ const Button = (exports.Button = class Button extends Control {
         }
     }
 
+    /**
+     * Dispatches the action event, throttled if necessary
+     * @override
+     */
+    _dispatchActionEvent() {
+        if (this.throttled) {
+            this._executionController.executeRateLimited(
+                "dispatchActionEvent",
+                this.throttleDuration
+            );
+        } else {
+            this.dispatchActionEvent();
+        }
+    }
+
     // <---- Event Handlers ---->
 
     /**
@@ -302,7 +351,7 @@ const Button = (exports.Button = class Button extends Control {
 
         if (identifier === "space" || identifier === "enter") {
             this.active = false;
-            this.dispatchActionEvent();
+            this._dispatchActionEvent();
         }
     }
 
@@ -327,7 +376,7 @@ const Button = (exports.Button = class Button extends Control {
     handlePress(mutableEvent) {
         if (!this._promise) {
             this.active = false;
-            this.dispatchActionEvent(event.details);
+            this._dispatchActionEvent(event.details);
             this._removeEventListeners();
         }
     }
